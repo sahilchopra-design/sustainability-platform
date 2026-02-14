@@ -13,6 +13,8 @@ import ScenarioBuilder from './pages/ScenarioBuilder';
 import DataHub from './pages/DataHub';
 import ComparisonPage from './pages/ComparisonPage';
 import ScenarioBrowserPage from './pages/ScenarioBrowserPage';
+import ImpactCalculatorPage from './pages/ImpactCalculatorPage';
+import PortfolioManagerPage from './pages/PortfolioManagerPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -148,6 +150,34 @@ function App() {
                 <span>⚖️</span>
                 <span>Comparison</span>
               </NavLink>
+              <NavLink
+                to="/impact"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-foreground hover:bg-muted'
+                  }`
+                }
+                data-testid="nav-impact"
+              >
+                <span>🎯</span>
+                <span>Impact Calculator</span>
+              </NavLink>
+              <NavLink
+                to="/portfolio-manager"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-foreground hover:bg-muted'
+                  }`
+                }
+                data-testid="nav-portfolio-manager"
+              >
+                <span>📋</span>
+                <span>Portfolio Manager</span>
+              </NavLink>
             </nav>
             <div className="p-4 border-t border-border text-xs text-muted-foreground">
               <p>NGFS Phase 5 Scenarios</p>
@@ -168,6 +198,8 @@ function App() {
               <Route path="/data-hub" element={<DataHub />} />
               <Route path="/browser" element={<ScenarioBrowserPage />} />
               <Route path="/comparison" element={<ComparisonPage />} />
+              <Route path="/impact" element={<ImpactCalculatorPage />} />
+              <Route path="/portfolio-manager" element={<PortfolioManagerPage />} />
             </Routes>
           </main>
         </div>
