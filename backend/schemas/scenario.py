@@ -1,181 +1,188 @@
-"""Scenario-related Pydantic schemas"""
+"""
+Pydantic schemas for scenario API validation and serialization.
+"""
+
+from pydantic import BaseModel, Field, validator
+from typing import Optional, Dict, Any, List
 from datetime import datetime
-from decimal import Decimal
-from typing import Optional, List, Dict
-from pydantic import BaseModel, Field, ConfigDict
-
-from schemas.common import ScenarioType, TimestampMixin, PaginatedResponse
+from enum import Enum
 
 
-class ScenarioBase(BaseModel):
-    """Base scenario fields"""
-    name: str = Field(min_length=1, max_length=255)
-    scenario_type: ScenarioType
-    description: Optional[str] = Field(default=None, max_length=2000)
-    temperature_target: Optional[Decimal] = Field(
-        default=None,
-        ge=1.0,
-        le=5.0,
-        decimal_places=1,
-        description="Temperature increase target (°C)"
-    )
-    carbon_price_trajectory: Optional[Dict[int, Decimal]] = Field(
-        default=None,
-        description="Carbon price by year (USD/tCO2)"
-    )
-    is_active: bool = Field(
-        default=True,
-        description="Whether scenario is available for analysis"
-    )
-    metadata: Optional[dict] = Field(
-        default=None,
-        description="Additional scenario parameters"
-    )
+class ScenarioSource(str, Enum):
+    """Source of scenario data."""
+    NGFS = "ngfs"
+    CUSTOM = "custom"
+    HYBRID = "hybrid"
 
 
-class ScenarioCreate(ScenarioBase):
-    """Schema for creating a scenario"""
+class ScenarioApprovalStatus(str, Enum):
+    """Approval status."""
+    DRAFT = "draft"
+    PENDING_APPROVAL = "pending_approval"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+    ARCHIVED = "archived"
+
+
+class NGFSScenarioType(str, Enum):
+    """NGFS scenario types."""
+    NET_ZERO_2050 = "net_zero_2050"
+    DELAYED_TRANSITION = "delayed_transition"
+    BELOW_2C = "below_2c"
+    NATIONALLY_DETERMINED_CONTRIBUTIONS = "ndc"
+    CURRENT_POLICIES = "current_policies"
+    FRAGMENTED_WORLD = "fragmented_world"
+
+
+class ScenarioParametersBase(BaseModel):
+    """Base scenario parameters."""
+    carbon_price: Dict[str, float] = Field(default_factory=dict, description="Carbon price trajectory by year (USD/tCO2)")
+    temperature_pathway: Dict[str, float] = Field(default_factory=dict, description="Temperature pathway by year (°C above pre-industrial)")
+    gdp_impact: Dict[str, float] = Field(default_factory=dict, description="GDP impact by year (% change)")
+    sectoral_multipliers: Dict[str, float] = Field(default_factory=dict, description="Sector-specific risk multipliers")
+    physical_risk: Dict[str, float] = Field(default_factory=dict, description="Physical risk factors by type")
     
-    model_config = ConfigDict(
-        json_schema_extra={
-            "example": {
-                "name": "Net Zero 2050",
-                "scenario_type": "Orderly",
-                "description": "Immediate policy action with net zero emissions by 2050",
-                "temperature_target": "1.5",
-                "carbon_price_trajectory": {
-                    "2030": "100.00",
-                    "2040": "250.00",
-                    "2050": "500.00"
-                },
-                "is_active": True,
-                "metadata": {
-                    "ngfs_version": "Phase 5",
-                    "model": "REMIND-MAgPIE 3.0",
-                    "policy_stringency": "high"
-                }
-            }
-        }
-    )
+    @validator('carbon_price', 'temperature_pathway', 'gdp_impact')
+    def validate_year_keys(cls, v):
+        """Ensure all keys are valid years."""
+        for key in v.keys():
+            try:
+                year = int(key)
+                if year < 2020 or year > 2100:
+                    raise ValueError(f"Year {year} out of range (2020-2100)")
+            except ValueError:
+                raise ValueError(f"Invalid year format: {key}")
+        return v
+
+
+class ScenarioCreate(BaseModel):
+    """Create a new scenario."""
+    name: str = Field(..., min_length=1, max_length=255)
+    description: Optional[str] = None
+    source: ScenarioSource = ScenarioSource.CUSTOM
+    ngfs_scenario_type: Optional[NGFSScenarioType] = None
+    base_scenario_id: Optional[str] = None
+    parameters: ScenarioParametersBase
+    created_by: Optional[str] = None
 
 
 class ScenarioUpdate(BaseModel):
-    """Schema for updating scenario"""
-    name: Optional[str] = Field(default=None, min_length=1, max_length=255)
-    description: Optional[str] = Field(default=None, max_length=2000)
-    temperature_target: Optional[Decimal] = Field(default=None, ge=1.0, le=5.0)
-    carbon_price_trajectory: Optional[Dict[int, Decimal]] = None
-    is_active: Optional[bool] = None
-    metadata: Optional[dict] = None
+    """Update scenario."""
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    description: Optional[str] = None
+    parameters: Optional[ScenarioParametersBase] = None
+    change_summary: Optional[str] = None
 
 
-class ScenarioVariable(BaseModel):
-    """Climate variable data point"""
-    variable_name: str = Field(description="e.g., Emissions|CO2, Price|Carbon")
-    region: str = Field(description="Geographic region or 'World'")
-    unit: str = Field(description="e.g., GtCO2, USD/tCO2")
-    values: Dict[int, Decimal] = Field(
-        description="Year -> value mapping"
-    )
-    
-    model_config = ConfigDict(
-        json_schema_extra={
-            "example": {
-                "variable_name": "Price|Carbon",
-                "region": "World",
-                "unit": "USD/tCO2",
-                "values": {
-                    "2030": "100.00",
-                    "2040": "250.00",
-                    "2050": "500.00"
-                }
-            }
-        }
-    )
-
-
-class ScenarioResponse(ScenarioBase, TimestampMixin):
-    """Full scenario response"""
-    id: str = Field(description="Scenario UUID")
-    variables: Optional[List[ScenarioVariable]] = Field(
-        default=None,
-        description="Associated climate variables"
-    )
-    
-    model_config = ConfigDict(from_attributes=True)
-
-
-class ScenarioSummary(BaseModel):
-    """Lightweight scenario for lists"""
+class ScenarioResponse(BaseModel):
+    """Scenario response."""
     id: str
     name: str
-    scenario_type: ScenarioType
-    temperature_target: Optional[Decimal] = Field(default=None, decimal_places=1)
-    is_active: bool
+    description: Optional[str]
+    source: ScenarioSource
+    ngfs_scenario_type: Optional[NGFSScenarioType]
+    ngfs_version: Optional[str]
+    base_scenario_id: Optional[str]
+    approval_status: ScenarioApprovalStatus
+    current_version: int
+    is_published: bool
+    parameters: Dict[str, Any]
+    created_at: datetime
+    updated_at: datetime
+    created_by: Optional[str]
+    submitted_by: Optional[str]
+    approved_by: Optional[str]
+    submitted_at: Optional[datetime]
+    approved_at: Optional[datetime]
     
-    model_config = ConfigDict(
-        from_attributes=True,
-        json_schema_extra={
-            "example": {
-                "id": "550e8400-e29b-41d4-a716-446655440000",
-                "name": "Net Zero 2050",
-                "scenario_type": "Orderly",
-                "temperature_target": "1.5",
-                "is_active": True
-            }
-        }
-    )
+    class Config:
+        from_attributes = True
 
 
-class ScenarioListResponse(PaginatedResponse):
-    """Paginated scenario list"""
-    items: List[ScenarioSummary]
-
-
-class ScenarioDataRefreshRequest(BaseModel):
-    """Request to refresh scenario data from external sources"""
-    force: bool = Field(
-        default=False,
-        description="Force refresh even if data exists"
-    )
-    source: Optional[str] = Field(
-        default=None,
-        description="Data source identifier (e.g., 'NGFS_Phase5')"
-    )
-    variables: Optional[List[str]] = Field(
-        default=None,
-        description="Specific variables to refresh (default: all)"
-    )
+class ScenarioVersionResponse(BaseModel):
+    """Scenario version response."""
+    id: str
+    scenario_id: str
+    version_number: int
+    parameters: Dict[str, Any]
+    change_summary: Optional[str]
+    changed_by: Optional[str]
+    created_at: datetime
     
-    model_config = ConfigDict(
-        json_schema_extra={
-            "example": {
-                "force": True,
-                "source": "NGFS_Phase5",
-                "variables": ["Price|Carbon", "Emissions|CO2", "GDP|PPP"]
-            }
-        }
-    )
+    class Config:
+        from_attributes = True
 
 
-class ScenarioDataRefreshResponse(BaseModel):
-    """Response from scenario data refresh"""
-    success: bool
-    records_inserted: int
-    records_updated: int
-    source_version: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
-    errors: Optional[List[str]] = None
+class ScenarioImpactSummary(BaseModel):
+    """Impact summary for a scenario on a portfolio."""
+    total_exposure: float
+    baseline_expected_loss: float
+    scenario_expected_loss: float
+    expected_loss_change: float
+    expected_loss_change_pct: float
+    by_sector: Dict[str, Dict[str, float]]
+    by_rating: Dict[str, Dict[str, float]]
+    top_impacted_holdings: List[Dict[str, Any]]
+
+
+class ScenarioImpactPreviewResponse(BaseModel):
+    """Scenario impact preview response."""
+    id: str
+    scenario_id: str
+    portfolio_id: str
+    impact_summary: ScenarioImpactSummary
+    calculated_at: datetime
+    calculation_version: str
     
-    model_config = ConfigDict(
-        json_schema_extra={
-            "example": {
-                "success": True,
-                "records_inserted": 2160,
-                "records_updated": 0,
-                "source_version": "NGFS_Phase5_20240115",
-                "timestamp": "2024-01-15T14:30:00Z",
-                "errors": None
-            }
-        }
-    )
+    class Config:
+        from_attributes = True
+
+
+class ScenarioTemplateResponse(BaseModel):
+    """NGFS scenario template."""
+    id: str
+    name: str
+    description: str
+    ngfs_scenario_type: NGFSScenarioType
+    parameters: Dict[str, Any]
+    version: str
+
+
+class NGFSDataSourceResponse(BaseModel):
+    """NGFS data source response."""
+    id: str
+    name: str
+    version: str
+    release_date: Optional[datetime]
+    last_synced_at: Optional[datetime]
+    last_sync_status: str
+    scenario_count: int
+    
+    class Config:
+        from_attributes = True
+
+
+class ScenarioSubmitForApproval(BaseModel):
+    """Submit scenario for approval."""
+    submitted_by: str = Field(..., min_length=1)
+    notes: Optional[str] = None
+
+
+class ScenarioApprovalDecision(BaseModel):
+    """Approve or reject scenario."""
+    approved: bool
+    approved_by: str = Field(..., min_length=1)
+    notes: Optional[str] = None
+
+
+class ScenarioForkRequest(BaseModel):
+    """Fork (copy) a scenario."""
+    new_name: str = Field(..., min_length=1, max_length=255)
+    description: Optional[str] = None
+    created_by: Optional[str] = None
+
+
+class ScenarioImpactPreviewRequest(BaseModel):
+    """Request impact preview calculation."""
+    portfolio_id: str = Field(..., description="Portfolio ID to calculate impact for")
+    parameters: Optional[ScenarioParametersBase] = Field(None, description="Override parameters for preview")
