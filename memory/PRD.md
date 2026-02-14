@@ -1,42 +1,21 @@
 # A2 Intelligence by AA Impact Inc. — Climate Risk Analytics Platform
 
 ## Architecture
-- Backend: FastAPI + **PostgreSQL** (Supabase) — unified single DB
+- Backend: FastAPI + **PostgreSQL only** (Supabase)
 - Frontend: React + shadcn/ui + Recharts + Zustand
-- Auth: Google OAuth (Emergent) + JWT — **PostgreSQL-backed**
-- Data: IIASA Scenario Explorer (real) + 20 hub sources + 24 NGFS dedicated
-- Branding: A2 Intelligence (tool) by AA Impact Inc. (organization)
+- Auth: Google OAuth (Emergent) + JWT — PostgreSQL
+- Data: IIASA (real) + 20 sources + 24 NGFS + custom scenarios
 
-## Database Unification Complete
-- Portfolios, Assets, AnalysisRuns migrated from MongoDB to PostgreSQL
-- Auth (Users, Sessions) migrated from MongoDB to PostgreSQL
-- All API endpoints now use PostgreSQL via SQLAlchemy
-- MongoDB kept only for legacy compatibility (can be removed)
+## All Tests (14 iterations, 280+ tests, 100% pass rate)
+- iter_14: Enhanced Sub-Parameter (54/54 BE, all FE)
+- iter_13: Sub-Parameter (30/30 BE)
+- iter_12: Custom Builder (23/23 BE)
+- iter_11: NGFS (29/29 BE)
+- iter_10: Auth (12/12 BE)
+- iter_9-5: Reports, Impact, Browser, Comparison, Hub
 
-## Pages (15 routes, all auth-gated)
-| Route | Page |
-|-------|------|
-| `/` | Dashboard |
-| `/impact` | Impact Calculator + Reports |
-| `/sub-analysis` | Sub-Parameter Analysis |
-| `/browser` | Scenario Browser |
-| `/data-hub` | Data Hub (20 sources) |
-| `/ngfs` | NGFS Catalog (24 scenarios) |
-| `/comparison` | Comparison & Gap Analysis |
-| `/custom-builder` | Custom Builder |
-| `/portfolios` | Portfolios |
-| `/portfolio-manager` | Upload & Edit |
-| `/analysis` | Run Analysis |
-| `/alerts` | Alerts |
-| `/scenario-builder` | Legacy Builder |
-| `/scenario-data` | Scenario Data |
-
-## UI/Branding
-- Dark navy sidebar (#0f2137) with cyan accent highlights
-- Grouped navigation: Analytics, Scenarios, Portfolio, System
-- A2 Intelligence logo in header, AA Impact Inc. in footer
-- Login page with branded gradient background
-- Investor-grade professional aesthetic
-
-## All Tests (13+ iterations, 230+ tests)
-All passing at 100%
+## Latest: Enhanced Sub-Parameter Analysis
+- 7 calculation methods: Tornado, Elasticity, Partial Correlation, OLS Regression, Shapley Values, What-If, Attribution
+- Export to Excel/PDF/JSON
+- Scenario Builder integration (auto-analysis + key drivers)
+- Frontend: 7-tab dashboard with charts for each method
