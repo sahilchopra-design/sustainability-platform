@@ -96,7 +96,60 @@ export default function SubAnalysisPage() {
     finally { setLoading(p => ({ ...p, interactions: false })); }
   };
 
-  const runAll = () => { runSensitivity(); runAttribution(); runInteractions(); };
+  const runElasticity = async () => {
+    if (!selectedScId) return;
+    setLoading(p => ({ ...p, elasticity: true }));
+    try {
+      const r = await fetch(`${API_URL}/api/v1/sub-parameter/elasticity`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scenario_id: selectedScId, target_metric: targetMetric }),
+      });
+      setElasticity(await r.json());
+    } catch { toast.error('Failed'); }
+    finally { setLoading(p => ({ ...p, elasticity: false })); }
+  };
+
+  const runOLS = async () => {
+    if (!selectedScId) return;
+    setLoading(p => ({ ...p, ols: true }));
+    try {
+      const r = await fetch(`${API_URL}/api/v1/sub-parameter/ols-attribution`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scenario_id: selectedScId, target_metric: targetMetric }),
+      });
+      setOls(await r.json());
+    } catch { toast.error('Failed'); }
+    finally { setLoading(p => ({ ...p, ols: false })); }
+  };
+
+  const runShapley = async () => {
+    if (!selectedScId) return;
+    setLoading(p => ({ ...p, shapley: true }));
+    try {
+      const r = await fetch(`${API_URL}/api/v1/sub-parameter/shapley`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scenario_id: selectedScId, target_metric: targetMetric, n_permutations: 15 }),
+      });
+      setShapley(await r.json());
+    } catch { toast.error('Failed'); }
+    finally { setLoading(p => ({ ...p, shapley: false })); }
+  };
+
+  const handleExport = async (format) => {
+    const analyses = [sensitivity, elasticity, ols, shapley, attribution].filter(Boolean);
+    if (!analyses.length) { toast.error('Run analyses first'); return; }
+    try {
+      const r = await fetch(`${API_URL}/api/v1/sub-parameter/export`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ analyses, format }),
+      });
+      const d = await r.json();
+      window.open(`${API_URL}${d.download_url}`, '_blank');
+      toast.success(`${format.toUpperCase()} exported`);
+    } catch { toast.error('Export failed'); }
+  };
+
+  const runAll = () => { runSensitivity(); runElasticity(); runOLS(); runShapley(); runAttribution(); runInteractions(); };
 
   return (
     <div className="p-6 space-y-6" data-testid="sub-analysis-page">
