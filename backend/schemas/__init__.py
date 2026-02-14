@@ -39,16 +39,12 @@ from .counterparty import (
     CounterpartyFilter
 )
 
-# Scenario
+# Scenario - note: scenario.py has been updated with new schema structure for NGFS scenarios
+# Importing selected compatible schemas only
 from .scenario import (
     ScenarioCreate,
     ScenarioUpdate,
     ScenarioResponse,
-    ScenarioSummary,
-    ScenarioListResponse,
-    ScenarioVariable,
-    ScenarioDataRefreshRequest,
-    ScenarioDataRefreshResponse
 )
 
 # Analysis
