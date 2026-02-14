@@ -40,7 +40,7 @@ def get_db():
 def init_db():
     """Initialize database - create all tables."""
     # Import all models to register them with Base.metadata
-    from backend.models.scenario import (
+    from db.models.scenario import (
         Scenario,
         ScenarioVersion,
         ScenarioImpactPreview,
