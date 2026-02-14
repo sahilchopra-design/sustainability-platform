@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 import uuid
 import enum
 
-from backend.db.base import Base
+from db.base import Base
 
 
 class ScenarioSource(str, enum.Enum):
