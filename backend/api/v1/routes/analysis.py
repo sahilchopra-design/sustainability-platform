@@ -382,17 +382,18 @@ class ReportRequest(BaseModel):
 
 
 @router.post("/reports/generate")
-async def generate_report(body: ReportRequest, db: Session = Depends(get_db)):
+def generate_report(body: ReportRequest, db: Session = Depends(get_db)):
     """Generate a downloadable impact report (PDF, Excel, or CSV)."""
-    from models import Portfolio
+    from db.models.portfolio_pg import PortfolioPG
+    from models import Asset, Company, AssetType, Sector
     from services.impact_calculator import run_impact_calculation
     from services.report_generator import generate_pdf_report, generate_excel_report, generate_csv_report
 
-    # Get portfolio
-    portfolio = await Portfolio.get(body.portfolio_id)
+    portfolio = db.get(PortfolioPG, body.portfolio_id)
     if not portfolio:
         raise HTTPException(404, "Portfolio not found")
     if not portfolio.assets:
+        raise HTTPException(400, "Portfolio has no assets")
         raise HTTPException(400, "Portfolio has no assets")
 
     portfolio_data = {
