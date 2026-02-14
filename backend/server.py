@@ -245,7 +245,7 @@ async def remove_asset_from_portfolio(portfolio_id: str, asset_id: str):
 async def get_scenario_data():
     """Get overview of available scenario data"""
     # Get unique scenarios, variables, regions
-    all_data = await ScenarioSeries.find_all().to_list()
+    all_data = await ScenarioSeries.find_all().limit(10000).to_list()
     
     scenarios = list(set(d.scenario for d in all_data))
     variables = list(set(d.variable for d in all_data))
