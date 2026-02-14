@@ -108,7 +108,7 @@ class DataHubTrajectoryResponse(BaseModel):
     unit: str
     region: str
     time_series: Dict[str, float]
-    metadata: Dict[str, Any] = {}
+    metadata_info: Dict[str, Any] = {}
 
     class Config:
         from_attributes = True

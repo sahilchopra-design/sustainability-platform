@@ -109,7 +109,7 @@ class DataHubTrajectory(Base):
     unit = Column(String(100), nullable=False)
     region = Column(String(255), nullable=False, default="World", index=True)
     time_series = Column(JSON, nullable=False)  # {"2025": 1.2, "2030": 1.5, ...}
-    metadata = Column(JSON, default=dict)
+    metadata_info = Column("metadata_info", JSON, default=dict)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
