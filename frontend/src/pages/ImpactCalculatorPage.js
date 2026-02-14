@@ -131,6 +131,20 @@ export default function ImpactCalculatorPage() {
             <h2 className="text-lg font-semibold">Impact Results</h2>
             <Badge>{result.scenario_name}</Badge>
             <Badge variant="outline">{result.engine_scenario}</Badge>
+            <div className="ml-auto flex gap-1.5">
+              <Button size="sm" variant="outline" onClick={() => handleExport('pdf')} disabled={exporting}
+                data-testid="export-pdf-btn">
+                <Download className="h-3 w-3 mr-1" />PDF
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => handleExport('excel')} disabled={exporting}
+                data-testid="export-excel-btn">
+                <Table2 className="h-3 w-3 mr-1" />Excel
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => handleExport('csv')} disabled={exporting}
+                data-testid="export-csv-btn">
+                <FileText className="h-3 w-3 mr-1" />CSV
+              </Button>
+            </div>
           </div>
 
           {/* Metrics cards */}
