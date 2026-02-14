@@ -333,39 +333,34 @@ def parse_portfolio_file(body: UploadParseRequest):
 
 
 @router.post("/portfolio-upload/create")
-async def create_portfolio_from_upload(body: PortfolioCreateFromUpload):
-    """Create a portfolio from parsed/validated assets."""
-    from models import Portfolio, Asset, Company, AssetType, Sector
+def create_portfolio_from_upload(body: PortfolioCreateFromUpload, db: Session = Depends(get_db)):
+    """Create a portfolio from parsed/validated assets (PostgreSQL)."""
+    from db.models.portfolio_pg import PortfolioPG, AssetPG
 
-    SECTOR_ENUM = {s.value: s for s in Sector}
-    TYPE_ENUM = {t.value: t for t in AssetType}
+    p = PortfolioPG(name=body.name, description=body.description)
+    db.add(p)
+    db.flush()
 
-    assets = []
     for a in body.assets:
-        company_data = a.get("company", {})
-        sector = SECTOR_ENUM.get(company_data.get("sector", "Power Generation"), Sector.POWER_GENERATION)
-        asset_type = TYPE_ENUM.get(a.get("asset_type", "Bond"), AssetType.BOND)
-        assets.append(Asset(
-            id=a.get("id", str(__import__("uuid").uuid4())),
-            asset_type=asset_type,
-            company=Company(name=company_data.get("name", "Unknown"), sector=sector,
-                          subsector=company_data.get("subsector")),
+        company = a.get("company", {})
+        db.add(AssetPG(
+            portfolio_id=p.id, asset_type=a.get("asset_type", "Bond"),
+            company_name=company.get("name", "Unknown"),
+            company_sector=company.get("sector", "Power Generation"),
+            company_subsector=company.get("subsector"),
             exposure=a.get("exposure", 0),
             market_value=a.get("market_value", a.get("exposure", 0)),
-            base_pd=a.get("base_pd", 0.02),
-            base_lgd=a.get("base_lgd", 0.45),
-            rating=a.get("rating", "BBB"),
-            maturity_years=a.get("maturity_years", 5),
+            base_pd=a.get("base_pd", 0.02), base_lgd=a.get("base_lgd", 0.45),
+            rating=a.get("rating", "BBB"), maturity_years=a.get("maturity_years", 5),
         ))
 
-    portfolio = Portfolio(name=body.name, description=body.description, assets=assets)
-    await portfolio.insert()
+    db.commit()
+    db.refresh(p)
 
     return {
-        "id": str(portfolio.id),
-        "name": portfolio.name,
-        "num_assets": len(assets),
-        "total_exposure": sum(a.exposure for a in assets),
+        "id": p.id, "name": p.name,
+        "num_assets": len(p.assets),
+        "total_exposure": sum(a.exposure for a in p.assets),
     }
 
 
