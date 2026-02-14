@@ -4,19 +4,17 @@ Tests all core functionalities in isolation before building the full app.
 
 This script validates:
 1. NGFS climate data ingestion from pyam API
-2. TimescaleDB time-series storage and querying
+2. MongoDB time-series storage and querying
 3. Risk calculation engine with 3 methodologies
 4. Portfolio scenario analysis outputs
 """
 
-import asyncio
 import sys
 import os
 from pathlib import Path
 import json
 from datetime import datetime
-import psycopg2
-from psycopg2.extras import execute_values
+from pymongo import MongoClient, ASCENDING
 import pandas as pd
 import numpy as np
 
@@ -24,13 +22,8 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Database configuration
-DB_CONFIG = {
-    'host': 'localhost',
-    'port': 5433,
-    'dbname': 'climate_risk_poc',
-    'user': 'climate_user',
-    'password': 'climate_pass_2026'
-}
+MONGO_URL = "mongodb://localhost:27017"
+DB_NAME = "climate_risk_poc"
 
 # NGFS Scenarios
 SCENARIOS = ['Orderly', 'Disorderly', 'Hot house world']
