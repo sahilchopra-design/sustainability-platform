@@ -171,6 +171,126 @@ export default function CBAMPage() {
           </div>
         </TabsContent>
 
+        {/* Calculator */}
+        <TabsContent value="calculator" className="mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Input Form */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center gap-2"><Calculator className="h-4 w-4" />Calculate Embedded Emissions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground block mb-1">Supplier *</label>
+                  <Select value={calcForm.supplier_id} onValueChange={v => setCalcForm(p => ({ ...p, supplier_id: v }))}>
+                    <SelectTrigger data-testid="calc-supplier"><SelectValue placeholder="Select supplier" /></SelectTrigger>
+                    <SelectContent>
+                      {suppliers.map(s => <SelectItem key={s.id} value={s.id}>{s.supplier_name} ({s.country_code})</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground block mb-1">Product (CN Code) *</label>
+                  <Select value={calcForm.product_category_id} onValueChange={v => setCalcForm(p => ({ ...p, product_category_id: v }))}>
+                    <SelectTrigger data-testid="calc-product"><SelectValue placeholder="Select product" /></SelectTrigger>
+                    <SelectContent>
+                      {products.map(p => <SelectItem key={p.id} value={p.id}>{p.cn_code} — {p.product_name}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground block mb-1">Production Volume (tonnes) *</label>
+                  <Input type="number" step="0.01" value={calcForm.production_volume} data-testid="calc-volume"
+                    onChange={e => setCalcForm(p => ({ ...p, production_volume: e.target.value }))} placeholder="e.g., 1000" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground block mb-1">Reporting Year *</label>
+                  <Input type="number" value={calcForm.reporting_year}
+                    onChange={e => setCalcForm(p => ({ ...p, reporting_year: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground block mb-1">Electricity Consumed (MWh)</label>
+                  <Input type="number" step="0.01" value={calcForm.electricity_mwh} data-testid="calc-electricity"
+                    onChange={e => setCalcForm(p => ({ ...p, electricity_mwh: e.target.value }))} placeholder="e.g., 500" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <input type="checkbox" checked={calcForm.use_defaults} className="rounded h-4 w-4"
+                    onChange={e => setCalcForm(p => ({ ...p, use_defaults: e.target.checked }))} data-testid="calc-defaults" />
+                  <label className="text-xs text-muted-foreground">Use EU default emission values</label>
+                </div>
+                <Button className="w-full" onClick={runCalculation} disabled={calcLoading || !calcForm.supplier_id || !calcForm.product_category_id}
+                  data-testid="calc-submit">
+                  {calcLoading ? <><RefreshCw className="h-3 w-3 animate-spin mr-1" />Calculating...</> : <>Calculate Emissions</>}
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Results */}
+            <Card>
+              <CardHeader className="pb-2"><CardTitle className="text-sm">Calculation Results</CardTitle></CardHeader>
+              <CardContent>
+                {!calcResult ? (
+                  <div className="text-center py-12 text-muted-foreground text-sm">Fill in the form and click Calculate to see results</div>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Emission cards */}
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="bg-blue-50 p-3 rounded-lg text-center">
+                        <p className="text-xl font-bold text-blue-700">{calcResult.specific_direct_emissions?.toFixed(4)}</p>
+                        <p className="text-[10px] text-blue-600">Direct (tCO2/t)</p>
+                      </div>
+                      <div className="bg-emerald-50 p-3 rounded-lg text-center">
+                        <p className="text-xl font-bold text-emerald-700">{calcResult.specific_indirect_emissions?.toFixed(4)}</p>
+                        <p className="text-[10px] text-emerald-600">Indirect (tCO2/t)</p>
+                      </div>
+                      <div className="bg-violet-50 p-3 rounded-lg text-center">
+                        <p className="text-xl font-bold text-violet-700">{calcResult.specific_total_emissions?.toFixed(4)}</p>
+                        <p className="text-[10px] text-violet-600">Total SEE (tCO2/t)</p>
+                      </div>
+                    </div>
+
+                    {/* Total embedded */}
+                    <div className="bg-muted/50 p-3 rounded-lg">
+                      <p className="text-xs text-muted-foreground">Total Embedded Emissions</p>
+                      <p className="text-2xl font-bold">{calcResult.total_embedded_emissions_tco2?.toLocaleString()} tCO2</p>
+                    </div>
+
+                    {/* Estimated cost */}
+                    <div className="bg-muted/50 p-3 rounded-lg">
+                      <p className="text-xs text-muted-foreground">Estimated CBAM Cost (at ~€80/tCO2)</p>
+                      <p className="text-2xl font-bold">€{calcResult.estimated_cbam_cost_eur?.toLocaleString()}</p>
+                    </div>
+
+                    {/* Warnings */}
+                    {calcResult.uses_default_values && (
+                      <div className="flex items-start gap-2 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                        <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />
+                        <div>
+                          <p className="text-xs font-medium text-amber-800">Default values used</p>
+                          <p className="text-[10px] text-amber-600">{(calcResult.default_value_markup_applied * 100).toFixed(0)}% markup applied ({calcResult.markup_type})</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {!calcResult.uses_default_values && (
+                      <div className="flex items-start gap-2 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+                        <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
+                        <p className="text-xs text-emerald-800">Actual emissions data used — no markup applied</p>
+                      </div>
+                    )}
+
+                    <div className="flex gap-2 pt-2">
+                      <Button variant="outline" className="flex-1" size="sm" onClick={() => toast.info('Saved to emissions records')}>Save</Button>
+                      <Button className="flex-1" size="sm" onClick={() => toast.info('Added to compliance report')}>Add to Report</Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+
         {/* Products */}
         <TabsContent value="products" className="mt-4">
           <Card>
