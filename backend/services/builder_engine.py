@@ -67,7 +67,12 @@ def calculate_impacts(base_trajectories: List[dict], customizations: List[dict])
     # Apply customizations
     for c in customizations:
         key = (c["variable_name"], c.get("region", "World"))
-        custom_vals = c.get("customized_values", {})
+        custom_vals = {}
+        for k, v in c.get("customized_values", {}).items():
+            try:
+                custom_vals[str(k)] = float(v)
+            except (ValueError, TypeError):
+                custom_vals[str(k)] = v
         method = c.get("interpolation_method", "linear")
         if key in traj_map:
             traj_map[key].update(custom_vals)
