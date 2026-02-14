@@ -253,19 +253,33 @@ class ImpactRequest(BaseModel):
 
 
 @router.post("/impact")
-async def calculate_impact(body: ImpactRequest, db: Session = Depends(get_db)):
-    """Calculate scenario impact on a portfolio."""
-    from models import Portfolio
+def calculate_impact(body: ImpactRequest, db: Session = Depends(get_db)):
+    """Calculate scenario impact on a portfolio (PostgreSQL-backed)."""
+    from db.models.portfolio_pg import PortfolioPG
     from services.impact_calculator import run_impact_calculation
+    from models import Asset, Company, AssetType, Sector
 
-    portfolio = await Portfolio.get(body.portfolio_id)
+    portfolio = db.get(PortfolioPG, body.portfolio_id)
     if not portfolio:
         raise HTTPException(404, "Portfolio not found")
     if not portfolio.assets:
         raise HTTPException(400, "Portfolio has no assets")
 
+    # Convert PG assets to Beanie-compatible Asset objects for the calculator
+    SECTOR_MAP = {s.value: s for s in Sector}
+    TYPE_MAP = {t.value: t for t in AssetType}
+    compat_assets = []
+    for a in portfolio.assets:
+        compat_assets.append(Asset(
+            id=a.id, asset_type=TYPE_MAP.get(a.asset_type, AssetType.BOND),
+            company=Company(name=a.company_name, sector=SECTOR_MAP.get(a.company_sector, Sector.POWER_GENERATION),
+                          subsector=a.company_subsector),
+            exposure=a.exposure, market_value=a.market_value or a.exposure,
+            base_pd=a.base_pd, base_lgd=a.base_lgd, rating=a.rating, maturity_years=a.maturity_years,
+        ))
+
     try:
-        result = run_impact_calculation(db, body.scenario_id, portfolio.assets, body.horizons)
+        result = run_impact_calculation(db, body.scenario_id, compat_assets, body.horizons)
         return result
     except ValueError as e:
         raise HTTPException(404, str(e))
