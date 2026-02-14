@@ -183,4 +183,54 @@ class DataHubFavorite(Base):
         UniqueConstraint("user_id", "scenario_id", name="uq_hub_fav_user_scenario"),
     )
 
+
+class GapAnalysis(Base):
+    """Gap analysis between scenarios."""
+    __tablename__ = "hub_gap_analyses"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    comparison_id = Column(String, ForeignKey("hub_comparisons.id", ondelete="CASCADE"), nullable=False)
+    gap_type = Column(String(50), nullable=False)  # policy, ambition, implementation
+    variable = Column(String(255), nullable=False)
+    region = Column(String(255), default="World")
+    base_value = Column(Float)
+    target_value = Column(Float)
+    gap_value = Column(Float)
+    gap_pct = Column(Float)
+    gap_unit = Column(String(100))
+    required_action = Column(Text)
+    confidence_level = Column(Float, default=0.5)
+    year = Column(Integer)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class ConsistencyCheck(Base):
+    """Consistency check results for a scenario."""
+    __tablename__ = "hub_consistency_checks"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    scenario_id = Column(String, ForeignKey("hub_scenarios.id", ondelete="CASCADE"), nullable=False)
+    check_type = Column(String(100), nullable=False)  # carbon_budget, energy_balance, tech_deployment, economic_feasibility
+    status = Column(String(20), nullable=False, default="pass")  # pass, warning, fail
+    score = Column(Float, default=1.0)  # 0-1
+    issues = Column(JSON, default=list)
+    details = Column(JSON, default=dict)
+    checked_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class ScenarioAlert(Base):
+    """In-app alert for scenario updates."""
+    __tablename__ = "hub_alerts"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String(255), nullable=False, default="default_user", index=True)
+    alert_type = Column(String(50), nullable=False)  # new_scenario, major_revision, trend_change, new_source
+    scenario_id = Column(String, ForeignKey("hub_scenarios.id", ondelete="SET NULL"), nullable=True)
+    source_id = Column(String, ForeignKey("hub_sources.id", ondelete="SET NULL"), nullable=True)
+    title = Column(String(255), nullable=False)
+    message = Column(Text)
+    is_read = Column(Boolean, default=False, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
     scenario = relationship("DataHubScenario", back_populates="favorites")
