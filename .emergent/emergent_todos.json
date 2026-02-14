@@ -13,11 +13,11 @@
   },
   {
     "content": "Create engine_poc.py script to test the calculation engine in isolation with sample data",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Run engine_poc.py and verify outputs are consistent, bounded, and performance is acceptable",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Review and validate calculation engine outputs against existing risk_engine.py for directional correctness",
