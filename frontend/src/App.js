@@ -132,6 +132,7 @@ function AppRouter() {
             <SideLink to="/" end icon="layout" label="Dashboard" />
             <SideLink to="/impact" icon="target" label="Impact Calculator" />
             <SideLink to="/sub-analysis" icon="microscope" label="Sub-Parameter" />
+            <SideLink to="/cbam" icon="globe" label="CBAM" />
           </NavGroup>
           {/* Scenarios */}
           <NavGroup label="Scenarios">
