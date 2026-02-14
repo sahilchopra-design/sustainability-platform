@@ -5,11 +5,11 @@
   },
   {
     "content": "Set up DATABASE_URL environment variable with URL-encoded password",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Create SQLAlchemy models for all entities (Portfolio, Asset, ScenarioSeries, AnalysisRun, ScenarioResult)",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Set up Alembic and create initial migration",
