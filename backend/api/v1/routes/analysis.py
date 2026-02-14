@@ -336,3 +336,99 @@ async def create_portfolio_from_upload(body: PortfolioCreateFromUpload):
         "num_assets": len(assets),
         "total_exposure": sum(a.exposure for a in assets),
     }
+
+
+
+# ============================================================================
+# Report Generator
+# ============================================================================
+
+class ReportRequest(BaseModel):
+    scenario_id: str
+    portfolio_id: str
+    format: str = "pdf"  # pdf, excel, csv
+    horizons: List[int] = [2030, 2040, 2050]
+
+
+@router.post("/reports/generate")
+async def generate_report(body: ReportRequest, db: Session = Depends(get_db)):
+    """Generate a downloadable impact report (PDF, Excel, or CSV)."""
+    from models import Portfolio
+    from services.impact_calculator import run_impact_calculation
+    from services.report_generator import generate_pdf_report, generate_excel_report, generate_csv_report
+
+    # Get portfolio
+    portfolio = await Portfolio.get(body.portfolio_id)
+    if not portfolio:
+        raise HTTPException(404, "Portfolio not found")
+    if not portfolio.assets:
+        raise HTTPException(400, "Portfolio has no assets")
+
+    portfolio_data = {
+        "name": portfolio.name,
+        "num_assets": len(portfolio.assets),
+        "total_exposure": sum(a.exposure for a in portfolio.assets),
+    }
+
+    # Run impact calculation
+    try:
+        impact_data = run_impact_calculation(db, body.scenario_id, portfolio.assets, body.horizons)
+    except ValueError as e:
+        raise HTTPException(404, str(e))
+
+    # Get scenario details
+    from db.models.data_hub import DataHubScenario
+    sc = db.get(DataHubScenario, body.scenario_id)
+    scenario_data = {}
+    if sc:
+        scenario_data = {
+            "name": sc.display_name or sc.name,
+            "source_name": sc.source.name if sc.source else "",
+            "category": sc.category,
+            "temperature_target": sc.temperature_target,
+            "carbon_neutral_year": sc.carbon_neutral_year,
+            "model": sc.model,
+            "description": sc.description,
+        }
+
+    # Generate report
+    fmt = body.format.lower()
+    if fmt == "pdf":
+        filename = generate_pdf_report(impact_data, portfolio_data, scenario_data)
+        content_type = "application/pdf"
+    elif fmt in ("excel", "xlsx"):
+        filename = generate_excel_report(impact_data, portfolio_data, scenario_data)
+        content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    elif fmt == "csv":
+        filename = generate_csv_report(impact_data, portfolio_data)
+        content_type = "text/csv"
+    else:
+        raise HTTPException(400, f"Unsupported format: {fmt}. Use pdf, excel, or csv.")
+
+    return {
+        "filename": filename,
+        "format": fmt,
+        "download_url": f"/api/v1/analysis/reports/download/{filename}",
+    }
+
+
+@router.get("/reports/download/{filename}")
+async def download_report(filename: str):
+    """Download a generated report file."""
+    from fastapi.responses import FileResponse
+    import os
+
+    filepath = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))),
+        "reports_output", filename
+    )
+    if not os.path.exists(filepath):
+        raise HTTPException(404, "Report not found")
+
+    media_type = "application/pdf"
+    if filename.endswith(".xlsx"):
+        media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    elif filename.endswith(".csv"):
+        media_type = "text/csv"
+
+    return FileResponse(filepath, filename=filename, media_type=media_type)
