@@ -126,21 +126,14 @@ def setup_mongo_schema():
 
 
 def ingest_ngfs_data():
-    """Test 3: Ingest NGFS climate scenario data using pyam"""
+    """Test 3: Ingest NGFS climate scenario data"""
     print_test("Ingesting NGFS climate scenario data...", 'running')
     
     try:
-        import pyam
-        
-        # Try to connect to NGFS database
-        print_test("Connecting to IIASA NGFS database...", 'info')
-        
-        # Since NGFS data download can be large, we'll create synthetic but realistic data
-        # that follows NGFS scenario patterns for the POC
         print_test("Generating NGFS-pattern synthetic data for POC...", 'info')
         
-        conn = get_db_connection()
-        cursor = conn.cursor()
+        db = get_db()
+        collection = db.scenario_series
         
         # Generate synthetic scenario data following NGFS patterns
         records = []
@@ -188,8 +181,6 @@ def ingest_ngfs_data():
             profile = scenario_profiles[scenario]
             
             for idx, year in enumerate(HORIZONS):
-                year_timestamp = f"{year}-01-01"
-                
                 for region in regions:
                     # Regional adjustments (simple multipliers)
                     if region == 'United States':
@@ -202,71 +193,83 @@ def ingest_ngfs_data():
                         region_mult = 1.0
                     
                     # Carbon price
-                    records.append((
-                        year_timestamp, scenario, model_name, region,
-                        'Price|Carbon', 'USD/tCO2',
-                        baseline['carbon_price'] * profile['carbon_price_mult'][idx] * region_mult,
-                        source_version
-                    ))
+                    records.append({
+                        'year': year,
+                        'scenario': scenario,
+                        'model': model_name,
+                        'region': region,
+                        'variable': 'Price|Carbon',
+                        'unit': 'USD/tCO2',
+                        'value': baseline['carbon_price'] * profile['carbon_price_mult'][idx] * region_mult,
+                        'source_version': source_version
+                    })
                     
                     # GDP
-                    records.append((
-                        year_timestamp, scenario, model_name, region,
-                        'GDP|PPP', 'Index (2020=100)',
-                        baseline['gdp'] * profile['gdp_growth'][idx] * region_mult,
-                        source_version
-                    ))
+                    records.append({
+                        'year': year,
+                        'scenario': scenario,
+                        'model': model_name,
+                        'region': region,
+                        'variable': 'GDP|PPP',
+                        'unit': 'Index (2020=100)',
+                        'value': baseline['gdp'] * profile['gdp_growth'][idx] * region_mult,
+                        'source_version': source_version
+                    })
                     
                     # Emissions
-                    records.append((
-                        year_timestamp, scenario, model_name, region,
-                        'Emissions|CO2', 'GtCO2',
-                        baseline['emissions'] * profile['emissions_mult'][idx] * region_mult,
-                        source_version
-                    ))
+                    records.append({
+                        'year': year,
+                        'scenario': scenario,
+                        'model': model_name,
+                        'region': region,
+                        'variable': 'Emissions|CO2',
+                        'unit': 'GtCO2',
+                        'value': baseline['emissions'] * profile['emissions_mult'][idx] * region_mult,
+                        'source_version': source_version
+                    })
                     
                     # Coal energy
-                    records.append((
-                        year_timestamp, scenario, model_name, region,
-                        'Primary Energy|Coal', 'EJ/yr',
-                        baseline['coal_energy'] * profile['coal_mult'][idx] * region_mult,
-                        source_version
-                    ))
+                    records.append({
+                        'year': year,
+                        'scenario': scenario,
+                        'model': model_name,
+                        'region': region,
+                        'variable': 'Primary Energy|Coal',
+                        'unit': 'EJ/yr',
+                        'value': baseline['coal_energy'] * profile['coal_mult'][idx] * region_mult,
+                        'source_version': source_version
+                    })
                     
                     # Gas energy
-                    records.append((
-                        year_timestamp, scenario, model_name, region,
-                        'Primary Energy|Gas', 'EJ/yr',
-                        baseline['gas_energy'] * profile['coal_mult'][idx] * 1.1 * region_mult,
-                        source_version
-                    ))
+                    records.append({
+                        'year': year,
+                        'scenario': scenario,
+                        'model': model_name,
+                        'region': region,
+                        'variable': 'Primary Energy|Gas',
+                        'unit': 'EJ/yr',
+                        'value': baseline['gas_energy'] * profile['coal_mult'][idx] * 1.1 * region_mult,
+                        'source_version': source_version
+                    })
                     
                     # Temperature
-                    records.append((
-                        year_timestamp, scenario, model_name, region,
-                        'Temperature|Global Mean', '°C',
-                        baseline['temperature'] + profile['temp_increase'][idx],
-                        source_version
-                    ))
+                    records.append({
+                        'year': year,
+                        'scenario': scenario,
+                        'model': model_name,
+                        'region': region,
+                        'variable': 'Temperature|Global Mean',
+                        'unit': '°C',
+                        'value': baseline['temperature'] + profile['temp_increase'][idx],
+                        'source_version': source_version
+                    })
         
         # Bulk insert
-        insert_query = """
-            INSERT INTO scenario_series 
-            (time, scenario, model, region, variable, unit, value, source_version)
-            VALUES %s
-            ON CONFLICT (time, scenario, model, region, variable) 
-            DO UPDATE SET value = EXCLUDED.value, source_version = EXCLUDED.source_version;
-        """
-        
-        execute_values(cursor, insert_query, records)
-        conn.commit()
+        if records:
+            collection.insert_many(records)
         
         # Verify data
-        cursor.execute("SELECT COUNT(*) FROM scenario_series;")
-        count = cursor.fetchone()[0]
-        
-        cursor.close()
-        conn.close()
+        count = collection.count_documents({})
         
         print_test(f"Ingested {count} scenario data points", 'pass')
         print_test(f"  Scenarios: {', '.join(SCENARIOS)}", 'info')
