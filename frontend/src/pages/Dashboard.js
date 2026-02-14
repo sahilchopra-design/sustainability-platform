@@ -57,13 +57,18 @@ function Dashboard() {
 
   // Calculate summary stats from analysis results
   const summaryStats = analysisResults?.results ? {
-    worstCaseScenario: analysisResults.results.reduce((worst, r) => 
-      (r.portfolio_metrics?.expected_loss || 0) > (worst?.portfolio_metrics?.expected_loss || 0) ? r : worst
-    , null),
+    worstCaseScenario: analysisResults.results.reduce((worst, r) => {
+      const rLoss = r.portfolio_metrics?.expected_loss || r.expected_loss || 0;
+      const worstLoss = worst?.portfolio_metrics?.expected_loss || worst?.expected_loss || 0;
+      return rLoss > worstLoss ? r : worst;
+    }, null),
     avgImpact: analysisResults.results.reduce((sum, r) => 
-      sum + (r.portfolio_metrics?.expected_loss || 0), 0
+      sum + (r.portfolio_metrics?.expected_loss || r.expected_loss || 0), 0
     ) / analysisResults.results.length,
   } : null;
+
+  // Helper to get scenario name from result
+  const getScenarioName = (result) => result?.scenario_name || result?.scenario || 'N/A';
 
   return (
     <div className="p-6 space-y-6" data-testid="dashboard-page">
