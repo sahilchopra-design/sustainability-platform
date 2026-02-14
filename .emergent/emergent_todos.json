@@ -1,34 +1,30 @@
 [
   {
     "content": "Create SQLAlchemy models for Scenario, ScenarioVersion, ScenarioImpactPreview",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Create Pydantic schemas for scenario validation and API responses",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Build NGFSSyncService for data integration with external sources",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Build ScenarioBuilderService for creating and managing scenarios",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Build ScenarioImpactService for calculating scenario impacts on portfolios",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Create async worker tasks for NGFS data synchronization",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Create API routes for scenario management endpoints",
-    "status": "pending"
-  },
-  {
-    "content": "Add celery/background task configuration if needed",
-    "status": "pending"
+    "status": "completed"
   }
 ]
