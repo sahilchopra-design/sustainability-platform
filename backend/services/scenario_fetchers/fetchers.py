@@ -170,7 +170,7 @@ class NGFSFetcher(BaseFetcher):
                         "unit": unit,
                         "region": region,
                         "time_series": ts,
-                        "metadata": {"model": sc["model"]},
+                        "metadata_info": {"model": sc["model"]},
                     })
         return {"scenarios": scenarios, "trajectories": trajectories}
 
@@ -249,7 +249,7 @@ class IPCCFetcher(BaseFetcher):
                         "unit": unit,
                         "region": region,
                         "time_series": ts,
-                        "metadata": {"model": "IPCC AR6 WGIII"},
+                        "metadata_info": {"model": "IPCC AR6 WGIII"},
                     })
         return {"scenarios": scenarios, "trajectories": trajectories}
 
@@ -335,7 +335,7 @@ class IEAFetcher(BaseFetcher):
                         "unit": unit,
                         "region": region,
                         "time_series": ts,
-                        "metadata": {"model": "IEA WEO 2024"},
+                        "metadata_info": {"model": "IEA WEO 2024"},
                     })
         return {"scenarios": scenarios, "trajectories": trajectories}
 
@@ -410,7 +410,7 @@ class IRENAFetcher(BaseFetcher):
                         "unit": unit,
                         "region": region,
                         "time_series": ts,
-                        "metadata": {"model": "IRENA WETO 2023"},
+                        "metadata_info": {"model": "IRENA WETO 2023"},
                     })
         return {"scenarios": scenarios, "trajectories": trajectories}
 
