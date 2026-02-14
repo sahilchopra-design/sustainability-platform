@@ -92,6 +92,20 @@ function App() {
                 <span>🌍</span>
                 <span>Scenario Data</span>
               </NavLink>
+              <NavLink
+                to="/scenario-builder"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-foreground hover:bg-muted'
+                  }`
+                }
+                data-testid="nav-scenario-builder"
+              >
+                <span>⚗️</span>
+                <span>Scenario Builder</span>
+              </NavLink>
             </nav>
             <div className="p-4 border-t border-border text-xs text-muted-foreground">
               <p>NGFS Phase 5 Scenarios</p>
