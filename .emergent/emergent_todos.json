@@ -17,6 +17,6 @@
   },
   {
     "content": "Run frontend smoke test - generate sample data, run analysis, view results",
-    "status": "in_progress"
+    "status": "completed"
   }
 ]
