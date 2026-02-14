@@ -24,6 +24,7 @@ export default function ImpactCalculatorPage() {
   const [selectedScenario, setSelectedScenario] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     fetch(`${API_URL}/api/portfolios`).then(r => r.json()).then(d => setPortfolios(d.portfolios || []));
@@ -43,6 +44,23 @@ export default function ImpactCalculatorPage() {
       toast.success('Impact calculated');
     } catch (e) { toast.error('Calculation failed: ' + e.message); }
     finally { setLoading(false); }
+  };
+
+  const handleExport = async (format) => {
+    if (!selectedPortfolio || !selectedScenario) return;
+    setExporting(true);
+    try {
+      const r = await fetch(`${API_URL}/api/v1/analysis/reports/generate`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scenario_id: selectedScenario, portfolio_id: selectedPortfolio, format }),
+      });
+      if (!r.ok) throw new Error('Report generation failed');
+      const d = await r.json();
+      // Trigger download
+      window.open(`${API_URL}${d.download_url}`, '_blank');
+      toast.success(`${format.toUpperCase()} report downloaded`);
+    } catch (e) { toast.error(e.message); }
+    finally { setExporting(false); }
   };
 
   const portfolio = portfolios.find(p => p.id === selectedPortfolio);
