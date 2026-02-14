@@ -87,10 +87,21 @@ def sync_source(source_id: str, db: Session = Depends(get_db)):
 
 
 @router.post("/sync-all")
-def sync_all_sources(db: Session = Depends(get_db)):
-    """Sync all active sources."""
+def sync_all_sources(
+    include_real: bool = Query(True, description="Include real IIASA data sources (slower)"),
+    db: Session = Depends(get_db),
+):
+    """Sync all active sources. Set include_real=false for fast synthetic-only sync."""
     orch = ScenarioSyncOrchestrator(db)
-    results = orch.sync_all()
+    results = orch.sync_all(include_real_data=include_real)
+    return {"results": results}
+
+
+@router.post("/sync-synthetic")
+def sync_synthetic_only(db: Session = Depends(get_db)):
+    """Sync only synthetic data sources (fast, no network calls)."""
+    orch = ScenarioSyncOrchestrator(db)
+    results = orch.sync_synthetic_only()
     return {"results": results}
 
 
