@@ -111,7 +111,8 @@ export const useBrowserStore = create((set, get) => ({
   setViewMode: (m) => set({ viewMode: m }),
   clearFilters: () => {
     set({ selectedSourceIds: [], selectedCategories: [], temperatureRange: [1.0, 5.0], searchQuery: '' });
-    get().fetchScenarios();
+    // Use setTimeout to ensure state is updated before fetching
+    setTimeout(() => get().fetchScenarios(), 0);
   },
 
   // -- Filtered + sorted scenarios --
