@@ -31,6 +31,11 @@ export default function CBAMPage() {
   const [freeAlloc, setFreeAlloc] = useState({});
   const [newSupplier, setNewSupplier] = useState({ supplier_name: '', country_code: '' });
 
+  // Calculator state
+  const [calcForm, setCalcForm] = useState({ supplier_id: '', product_category_id: '', production_volume: 1000, reporting_year: 2026, electricity_mwh: '', use_defaults: false });
+  const [calcResult, setCalcResult] = useState(null);
+  const [calcLoading, setCalcLoading] = useState(false);
+
   const load = async () => {
     const [d, p, s, c, cp, fa] = await Promise.all([
       fetch(`${API_URL}/api/v1/cbam/dashboard`).then(r => r.json()),
