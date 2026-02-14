@@ -17,6 +17,7 @@ import ImpactCalculatorPage from './pages/ImpactCalculatorPage';
 import PortfolioManagerPage from './pages/PortfolioManagerPage';
 import LoginPage from './pages/LoginPage';
 import AlertsPage from './pages/AlertsPage';
+import NGFSScenariosPage from './pages/NGFSScenariosPage';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -129,6 +130,7 @@ function AppRouter() {
             { to: '/impact', label: 'Impact Calculator', icon: '🎯', id: 'impact' },
             { to: '/portfolio-manager', label: 'Portfolio Manager', icon: '📋', id: 'portfolio-manager' },
             { to: '/alerts', label: 'Alerts', icon: '🔔', id: 'alerts' },
+            { to: '/ngfs', label: 'NGFS Scenarios', icon: '🌐', id: 'ngfs' },
           ].map(item => (
             <NavLink key={item.id} to={item.to} end={item.end}
               className={({ isActive }) =>
@@ -177,6 +179,7 @@ function AppRouter() {
           <Route path="/impact" element={<ImpactCalculatorPage />} />
           <Route path="/portfolio-manager" element={<PortfolioManagerPage />} />
               <Route path="/alerts" element={<AlertsPage />} />
+              <Route path="/ngfs" element={<NGFSScenariosPage />} />
         </Routes>
       </main>
     </div>
