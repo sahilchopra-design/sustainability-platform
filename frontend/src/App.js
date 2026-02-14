@@ -212,4 +212,49 @@ function App() {
   );
 }
 
+/* Nav helpers */
+function NavGroup({ label, children }) {
+  return (
+    <div>
+      <p className="text-[10px] font-semibold text-white/30 uppercase tracking-widest mb-1 px-2">{label}</p>
+      <div className="space-y-0.5">{children}</div>
+    </div>
+  );
+}
+
+const ICON_MAP = {
+  layout: 'M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z',
+  target: 'M12 2a10 10 0 100 20 10 10 0 000-20zm0 4a6 6 0 100 12 6 6 0 000-12zm0 4a2 2 0 100 4 2 2 0 000-4z',
+  microscope: 'M9 2v6h2V2H9zm-1 8a4 4 0 108 0H8zm-4 8h16v2H4v-2z',
+  search: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z',
+  database: 'M4 7v10c0 2 3.6 4 8 4s8-2 8-4V7M4 7c0 2 3.6 4 8 4s8-2 8-4M4 7c0-2 3.6-4 8-4s8 2 8 4',
+  globe: 'M12 2a10 10 0 100 20 10 10 0 000-20zM2 12h20M12 2a15 15 0 014 10 15 15 0 01-4 10 15 15 0 01-4-10A15 15 0 0112 2z',
+  'git-compare': 'M18 21a3 3 0 100-6 3 3 0 000 6zM6 9a3 3 0 100-6 3 3 0 000 6zm12 3V9a3 3 0 00-3-3h-4M6 15v-3',
+  wrench: 'M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z',
+  briefcase: 'M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zM16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2',
+  upload: 'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12',
+  'bar-chart': 'M18 20V10M12 20V4M6 20v-6',
+  bell: 'M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0',
+  layers: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
+  archive: 'M21 8v13H3V8M1 3h22v5H1zM10 12h4',
+};
+
+function SideLink({ to, icon, label, end }) {
+  const d = ICON_MAP[icon] || ICON_MAP.layout;
+  return (
+    <NavLink to={to} end={end}
+      className={({ isActive }) =>
+        `flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-[13px] transition-all ${
+          isActive ? 'bg-cyan-500/15 text-cyan-300 font-medium' : 'text-white/60 hover:text-white/90 hover:bg-white/5'
+        }`
+      }
+      data-testid={`nav-${to.replace('/', '') || 'dashboard'}`}>
+      <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d={d} />
+      </svg>
+      <span>{label}</span>
+    </NavLink>
+  );
+}
+
 export default App;
