@@ -13,39 +13,39 @@ A comprehensive portfolio analysis and scenario building application for climate
 ### Backend (FastAPI)
 - **Database**: Dual database setup
   - MongoDB (Beanie ODM): Portfolios, Assets, Analysis Runs, Scenario Series
-  - PostgreSQL (SQLAlchemy): Scenarios, Scenario Versions, Data Hub (19 sources, 99 scenarios, 875 trajectories)
-- **Location**: `/app/backend/`
-- **Real Data Integration**: IIASA Scenario Explorer via `pyam-iamc` library for NGFS, IPCC AR6, IAMC 1.5C
+  - PostgreSQL (SQLAlchemy): Scenarios, Data Hub (19 sources, 99 scenarios, 875 trajectories), Comparisons, Gap Analysis, Consistency Checks
+- **Real Data Integration**: IIASA Scenario Explorer via `pyam-iamc` for NGFS, IPCC AR6, IAMC 1.5C
 
 ### Frontend (React + shadcn/ui)
-- **Location**: `/app/frontend/`
-- **Key Pages**: Dashboard, Portfolios, Analysis, Scenario Builder, **Data Hub**
+- **Key Pages**: Dashboard, Portfolios, Analysis, Scenario Builder, Data Hub, **Comparison**
 
 ---
 
 ## What's Been Implemented
 
-### Completed (Feb 14, 2026)
+### Completed (Feb 14, 2026) — Latest
 
-#### Universal Scenario Data Hub — Full Expansion (P0)
-**19 sources across 6 tiers — 99 scenarios — 875 trajectories — 62 variables — 13 regions**
-
+#### Scenario Comparison & Analysis Engine (P0)
 Backend:
-- Extended PostgreSQL models with: display_name, carbon_neutral_year, variable_code, sector, data_quality_score, interpolation_method, sync_type
-- 3 REAL DATA fetchers (IIASA pyam): NGFS Phase V (27 scenarios), IPCC AR6 (8), IAMC 1.5C (10)
-- 16 Synthetic fetchers: IEA, IRENA, REMIND, GCAM, MESSAGEix, IMAGE, WITCH, TIAM, EU Ref, UK CCC, US EIA, China, Japan, IEA Sectors, Carbon Pricing, Physical Risk
-- Analytics endpoints: /analytics/coverage, /analytics/temperature-range, /analytics/carbon-price-range, /trajectories/available-variables
-- 25+ API endpoints at `/api/v1/data-hub/*`
+- 3 new DB models: GapAnalysis, ConsistencyCheck, ScenarioAlert
+- ScenarioComparisonService with full comparison data builder, diff calculations, statistics
+- Gap analysis: policy/ambition/implementation gaps at 2030/2040/2050
+- Consistency checks: carbon budget, energy balance, tech deployment, economic feasibility
+- 12+ new API endpoints at `/api/v1/analysis/*`
 
 Frontend:
-- DataHub page with Browse, Data Sources (grouped by tier), Analytics, Sync History tabs
-- Source filter pills with tier badges (T1-T6)
-- "REAL DATA" badge on IIASA-sourced scenarios
-- Analytics tab: Temperature distribution chart, Scenarios by Tier pie, Category breakdown bar
-- Scenario detail: Data quality indicator, net zero year, expanded metadata
-- TrajectoryViewer with Chart+Table toggle, variable/region selectors
+- ComparisonPage (`/comparison`) with 4 tabs: Builder, Results, Gap Analysis, Consistency
+- Scenario picker with search (99 scenarios), colored badges, BASE/compare labels
+- Multi-line overlay charts with statistics (min, max, mean, spread%)
+- Gap Analysis table grouped by type (policy/ambition/implementation)
+- Consistency view with overall score, per-check cards with pass/warning/fail
 
-Testing: 24/24 backend + all frontend = 100% (iteration_5)
+Testing: 18/18 backend + all frontend = 100% (iteration_6)
+
+#### Universal Scenario Data Hub (P0) — Previously completed
+- 19 sources, 6 tiers, 99 scenarios, 875 trajectories, 62 variables, 13 regions
+- 3 REAL DATA sources (IIASA): NGFS, IPCC AR6, IAMC15
+- Analytics tab, tier badges, temperature distribution
 
 #### Scenario Builder (P0) — Previously completed
 #### Portfolio Analysis Dashboard (P0) — Previously completed
@@ -57,44 +57,44 @@ Testing: 24/24 backend + all frontend = 100% (iteration_5)
 ### P1 - High Priority
 1. Portfolio File Upload System
 2. Portfolio Editor
-3. Scenario Comparison Builder (select 2-3 scenarios, overlay trajectories)
+3. Scenario Impact Calculator (connect scenarios to portfolios for PD/LGD/EL)
+4. Custom Scenario Builder (blend trajectories from multiple sources)
 
 ### P2 - Medium Priority
-1. Live API for remaining sources (when APIs become available)
-2. User authentication/authorization
+1. Scenario Alert System (in-app notifications for updates)
+2. User authentication
 3. Report generation (PDF/Excel export)
 4. Database unification (MongoDB to PostgreSQL)
 
 ### P3 - Future
-1. Scheduled sync jobs
-2. Redis caching for trajectories
-3. Data quality scoring improvements
-4. Additional regional sources (ASEAN, Latin America)
+1. Live APIs for remaining 16 synthetic sources
+2. Scheduled sync jobs, Redis caching
+3. Additional regional sources
 
 ---
 
 ## Key Files
 
+### Comparison & Analysis
+- `/app/backend/api/v1/routes/analysis.py` — API routes
+- `/app/backend/services/scenario_comparison_service.py` — Service
+- `/app/frontend/src/pages/ComparisonPage.js` — Frontend page
+- `/app/frontend/src/store/comparisonStore.js` — Zustand store
+
 ### Data Hub
-- `/app/backend/db/models/data_hub.py` — 6 SQLAlchemy models
-- `/app/backend/schemas/data_hub.py` — Pydantic schemas
 - `/app/backend/api/v1/routes/data_hub.py` — API routes
-- `/app/backend/services/data_hub_service.py` — CRUD + analytics service
-- `/app/backend/services/sync_orchestrator.py` — 19-source orchestrator
-- `/app/backend/services/scenario_fetchers/fetchers.py` — All fetchers (real + synthetic)
-- `/app/frontend/src/pages/DataHub.js` — Main page (browse + analytics)
-- `/app/frontend/src/components/data-hub/TrajectoryViewer.js` — Chart component
-- `/app/frontend/src/store/dataHubStore.js` — Zustand store
+- `/app/backend/services/data_hub_service.py` — Service
+- `/app/backend/services/scenario_fetchers/fetchers.py` — Fetchers
+- `/app/frontend/src/pages/DataHub.js` — Frontend page
 
 ---
 
 ## Testing
-- `/app/test_reports/iteration_5.json` — Expanded Data Hub (24/24 backend, all frontend)
+- `/app/test_reports/iteration_6.json` — Comparison & Analysis (18/18 backend, all frontend)
+- `/app/test_reports/iteration_5.json` — Expanded Data Hub (24/24 backend)
 - `/app/test_reports/iteration_4.json` — Initial Data Hub (19/19 backend)
-- `/app/test_reports/iteration_3.json` — Dashboard
-- `/app/test_reports/iteration_2.json` — Scenario Builder
 
 ## Tech Stack
-- Backend: FastAPI, SQLAlchemy, Pydantic, pyam-iamc (IIASA data)
+- Backend: FastAPI, SQLAlchemy, Pydantic, pyam-iamc
 - Frontend: React, Recharts, Zustand, shadcn/ui, TanStack Table
 - DB: PostgreSQL (Supabase), MongoDB (legacy)
