@@ -399,33 +399,35 @@ def test_risk_engine():
         print_test(f"Created portfolio with {len(portfolio['assets'])} assets", 'info')
         
         # Get scenario data
-        conn = get_db_connection()
-        cursor = conn.cursor()
+        db = get_db()
+        collection = db.scenario_series
         
         # Get carbon prices and GDP for all scenarios
-        cursor.execute("""
-            SELECT scenario, EXTRACT(YEAR FROM time) as year, 
-                   AVG(CASE WHEN variable = 'Price|Carbon' THEN value END) as carbon_price,
-                   AVG(CASE WHEN variable = 'GDP|PPP' THEN value END) as gdp_index
-            FROM scenario_series
-            WHERE region = 'World'
-            AND variable IN ('Price|Carbon', 'GDP|PPP')
-            GROUP BY scenario, year
-            ORDER BY scenario, year;
-        """)
-        
         scenario_params = {}
-        for row in cursor.fetchall():
-            scenario, year, carbon_price, gdp_index = row
-            if scenario not in scenario_params:
-                scenario_params[scenario] = {}
-            scenario_params[scenario][int(year)] = {
-                'carbon_price': carbon_price,
-                'gdp_index': gdp_index
-            }
         
-        cursor.close()
-        conn.close()
+        for scenario in SCENARIOS:
+            scenario_params[scenario] = {}
+            for year in HORIZONS:
+                # Get carbon price
+                carbon_doc = collection.find_one({
+                    'scenario': scenario,
+                    'year': year,
+                    'region': 'World',
+                    'variable': 'Price|Carbon'
+                })
+                
+                # Get GDP
+                gdp_doc = collection.find_one({
+                    'scenario': scenario,
+                    'year': year,
+                    'region': 'World',
+                    'variable': 'GDP|PPP'
+                })
+                
+                scenario_params[scenario][year] = {
+                    'carbon_price': carbon_doc['value'] if carbon_doc else 50,
+                    'gdp_index': gdp_doc['value'] if gdp_doc else 100
+                }
         
         # Define sector risk multipliers by scenario and horizon
         sector_multipliers = {
