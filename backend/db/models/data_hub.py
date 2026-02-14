@@ -52,6 +52,7 @@ class DataHubSource(Base):
     data_license = Column(String(255))
     coverage_regions = Column(JSON, default=list)
     coverage_variables = Column(JSON, default=list)
+    update_frequency = Column(String(100))
     last_synced_at = Column(DateTime(timezone=True))
     scenario_count = Column(Integer, default=0)
     trajectory_count = Column(Integer, default=0)
@@ -72,6 +73,7 @@ class DataHubScenario(Base):
     source_id = Column(String, ForeignKey("hub_sources.id", ondelete="CASCADE"), nullable=False, index=True)
     external_id = Column(String(255))
     name = Column(String(500), nullable=False, index=True)
+    display_name = Column(String(500))
     description = Column(Text)
     category = Column(String(100))
     model = Column(String(255))
@@ -79,6 +81,7 @@ class DataHubScenario(Base):
     parameters = Column(JSON, default=dict)
     tags = Column(JSON, default=list)
     temperature_target = Column(Float)
+    carbon_neutral_year = Column(Integer)
     time_horizon_start = Column(Integer)
     time_horizon_end = Column(Integer)
     regions = Column(JSON, default=list)
@@ -106,9 +109,13 @@ class DataHubTrajectory(Base):
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     scenario_id = Column(String, ForeignKey("hub_scenarios.id", ondelete="CASCADE"), nullable=False, index=True)
     variable_name = Column(String(255), nullable=False, index=True)
+    variable_code = Column(String(255))
     unit = Column(String(100), nullable=False)
     region = Column(String(255), nullable=False, default="World", index=True)
+    sector = Column(String(100))
     time_series = Column(JSON, nullable=False)  # {"2025": 1.2, "2030": 1.5, ...}
+    interpolation_method = Column(String(50), default="linear")
+    data_quality_score = Column(Integer, default=3)  # 1-5
     metadata_info = Column("metadata_info", JSON, default=dict)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
@@ -144,11 +151,13 @@ class DataHubSyncLog(Base):
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     source_id = Column(String, ForeignKey("hub_sources.id", ondelete="CASCADE"), nullable=False, index=True)
+    sync_type = Column(String(50), default="full")  # full, incremental
     status = Column(SQLEnum(SyncStatus), nullable=False, default=SyncStatus.PENDING)
     started_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     completed_at = Column(DateTime(timezone=True))
     scenarios_added = Column(Integer, default=0)
     scenarios_updated = Column(Integer, default=0)
+    scenarios_deprecated = Column(Integer, default=0)
     trajectories_added = Column(Integer, default=0)
     error_message = Column(Text)
 
