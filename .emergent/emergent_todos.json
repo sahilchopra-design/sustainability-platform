@@ -1,7 +1,7 @@
 [
   {
     "content": "Create TypeScript types for portfolio editing (Portfolio, Holding, ChangeLog)",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Create portfolioEditorStore.ts with Zustand for state management",
