@@ -616,7 +616,7 @@ def run_all_tests():
     
     tests = [
         ("Database Connection", test_database_connection),
-        ("TimescaleDB Schema Setup", setup_timescale_schema),
+        ("MongoDB Schema Setup", setup_mongo_schema),
         ("NGFS Data Ingestion", ingest_ngfs_data),
         ("Scenario Data Queries", query_scenario_data),
         ("Risk Calculation Engine", test_risk_engine),
