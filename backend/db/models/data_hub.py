@@ -233,6 +233,3 @@ class ScenarioAlert(Base):
     message = Column(Text)
     is_read = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
-
-
-    scenario = relationship("DataHubScenario", back_populates="favorites")
