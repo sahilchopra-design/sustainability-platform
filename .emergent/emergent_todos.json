@@ -13,15 +13,15 @@
   },
   {
     "content": "Set up Alembic and create initial migration",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Test PostgreSQL connection and create tables",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Create pg_poc.py script to validate schema and basic CRUD operations",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Build repository layer (PortfolioRepository, ScenarioRepository, AnalysisRepository)",
