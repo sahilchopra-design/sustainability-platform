@@ -22,6 +22,33 @@ from schemas.data_hub import (
 router = APIRouter(prefix="/api/v1/data-hub", tags=["data-hub"])
 
 
+def _scenario_to_response(sc) -> DataHubScenarioResponse:
+    """Convert a DataHubScenario ORM object to response schema."""
+    traj_count = len(sc.trajectories) if sc.trajectories else 0
+    return DataHubScenarioResponse(
+        id=sc.id,
+        source_id=sc.source_id,
+        source_name=sc.source.name if sc.source else None,
+        external_id=sc.external_id,
+        name=sc.name,
+        display_name=sc.display_name,
+        description=sc.description,
+        category=sc.category,
+        model=sc.model,
+        version=sc.version,
+        tags=sc.tags or [],
+        temperature_target=sc.temperature_target,
+        carbon_neutral_year=sc.carbon_neutral_year,
+        time_horizon_start=sc.time_horizon_start,
+        time_horizon_end=sc.time_horizon_end,
+        regions=sc.regions or [],
+        variables=sc.variables or [],
+        trajectory_count=traj_count,
+        is_active=sc.is_active,
+        created_at=sc.created_at,
+    )
+
+
 # ============================================================================
 # Stats / Overview
 # ============================================================================
