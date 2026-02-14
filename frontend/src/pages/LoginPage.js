@@ -61,14 +61,14 @@ export default function LoginPage({ onAuth }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4" data-testid="login-page">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'linear-gradient(135deg, #0f2137 0%, #1a3a5c 50%, #0f2137 100%)' }} data-testid="login-page">
+      <Card className="w-full max-w-md border-0 shadow-2xl">
         <CardHeader className="text-center pb-2">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Shield className="h-8 w-8 text-primary" />
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <img src="/a2-intelligence-logo.png" alt="A2 Intelligence" className="h-14 w-14 rounded-lg object-contain" />
           </div>
-          <CardTitle className="text-xl">Climate Risk Platform</CardTitle>
-          <p className="text-sm text-muted-foreground">Sign in to access your portfolio analysis</p>
+          <CardTitle className="text-xl" style={{ color: '#0f2137' }}>A2 Intelligence</CardTitle>
+          <p className="text-xs text-muted-foreground">Climate Risk Analytics by AA Impact Inc.</p>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Google Auth */}
