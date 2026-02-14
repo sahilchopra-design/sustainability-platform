@@ -1,15 +1,11 @@
 [
   {
-    "content": "Phase 2: Build frontend UI with all pages and components",
+    "content": "Phase 2: End to End Testing using Testing Agent",
     "status": "completed"
   },
   {
-    "content": "Phase 2: End to End Testing using Testing Agent",
-    "status": "in_progress"
-  },
-  {
     "content": "Phase 2: All user stories covered in Development and testing",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Phase 3: Implement JWT authentication (registration, login, token refresh)",
