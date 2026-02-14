@@ -9,9 +9,9 @@ from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
-from backend.db.base import get_db
-from backend.models.scenario import ScenarioApprovalStatus, ScenarioSource, NGFSDataSource, Scenario
-from backend.schemas.scenario import (
+from db.base import get_db
+from models.scenario import ScenarioApprovalStatus, ScenarioSource, NGFSDataSource, Scenario
+from schemas.scenario import (
     ScenarioCreate,
     ScenarioUpdate,
     ScenarioResponse,
@@ -24,10 +24,10 @@ from backend.schemas.scenario import (
     ScenarioForkRequest,
     ScenarioImpactPreviewRequest,
 )
-from backend.services.ngfs_sync_service import NGFSSyncService
-from backend.services.scenario_builder_service import ScenarioBuilderService
-from backend.services.scenario_impact_service import ScenarioImpactService
-from backend.workers.tasks.ngfs_sync_tasks import sync_ngfs_data_task, calculate_scenario_impact_task
+from services.ngfs_sync_service import NGFSSyncService
+from services.scenario_builder_service import ScenarioBuilderService
+from services.scenario_impact_service import ScenarioImpactService
+from workers.tasks.ngfs_sync_tasks import sync_ngfs_data_task, calculate_scenario_impact_task
 
 router = APIRouter(prefix="/api/v1/scenarios", tags=["scenarios"])
 
