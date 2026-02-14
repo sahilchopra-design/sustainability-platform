@@ -74,71 +74,51 @@ def print_test(message, status='info'):
         print(f"  {message}")
 
 
-def get_db_connection():
-    """Create database connection"""
-    return psycopg2.connect(**DB_CONFIG)
+def get_db():
+    """Get MongoDB database connection"""
+    client = MongoClient(MONGO_URL)
+    return client[DB_NAME]
 
 
 def test_database_connection():
     """Test 1: Database connectivity"""
     print_test("Testing database connection...", 'running')
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT version();")
-        version = cursor.fetchone()[0]
-        cursor.close()
-        conn.close()
-        print_test(f"Database connected: {version[:50]}...", 'pass')
+        db = get_db()
+        # Test connection
+        db.command('ping')
+        info = db.client.server_info()
+        print_test(f"MongoDB connected: version {info['version']}", 'pass')
         return True
     except Exception as e:
         print_test(f"Database connection failed: {str(e)}", 'fail')
         return False
 
 
-def setup_timescale_schema():
-    """Test 2: Create TimescaleDB hypertable for scenario data"""
-    print_test("Setting up TimescaleDB schema...", 'running')
+def setup_mongo_schema():
+    """Test 2: Create MongoDB collections and indexes for scenario data"""
+    print_test("Setting up MongoDB schema...", 'running')
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
+        db = get_db()
         
-        # Enable TimescaleDB extension
-        cursor.execute("CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;")
+        # Drop existing collection if any
+        if 'scenario_series' in db.list_collection_names():
+            db.scenario_series.drop()
         
-        # Create scenario data table
-        cursor.execute("""
-            DROP TABLE IF EXISTS scenario_series CASCADE;
-            
-            CREATE TABLE scenario_series (
-                time TIMESTAMPTZ NOT NULL,
-                scenario TEXT NOT NULL,
-                model TEXT NOT NULL,
-                region TEXT NOT NULL,
-                variable TEXT NOT NULL,
-                unit TEXT NOT NULL,
-                value DOUBLE PRECISION,
-                source_version TEXT,
-                UNIQUE (time, scenario, model, region, variable)
-            );
-        """)
-        
-        # Convert to hypertable
-        cursor.execute("""
-            SELECT create_hypertable('scenario_series', 'time', 
-                                      if_not_exists => TRUE);
-        """)
+        # Create collection
+        db.create_collection('scenario_series')
         
         # Create indexes for efficient querying
-        cursor.execute("""
-            CREATE INDEX IF NOT EXISTS idx_scenario_series_scenario 
-            ON scenario_series (scenario, variable, region);
-        """)
+        db.scenario_series.create_index([
+            ('scenario', ASCENDING),
+            ('variable', ASCENDING),
+            ('region', ASCENDING),
+            ('year', ASCENDING)
+        ])
         
-        conn.commit()
-        cursor.close()
-        conn.close()
-        print_test("TimescaleDB hypertable created successfully", 'pass')
+        db.scenario_series.create_index([('year', ASCENDING)])
+        
+        print_test("MongoDB schema created successfully", 'pass')
         return True
     except Exception as e:
         print_test(f"Schema setup failed: {str(e)}", 'fail')
