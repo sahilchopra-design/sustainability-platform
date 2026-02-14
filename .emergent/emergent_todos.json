@@ -1,11 +1,11 @@
 [
   {
     "content": "Update index.css to import Google Fonts (Space Grotesk, IBM Plex Sans, IBM Plex Mono)",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Create useFileUpload.ts hook with file selection, validation, upload progress, and error handling",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Create useColumnMapping.ts hook with mapping state, auto-suggestions, and template management",
