@@ -1,26 +1,26 @@
 [
   {
-    "content": "Phase 2: End to End Testing using Testing Agent",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 2: All user stories covered in Development and testing",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 3: Implement JWT authentication (registration, login, token refresh)",
+    "content": "Create var_calculator.py for Value at Risk (VaR) calculations with 95% and 99% confidence levels",
     "status": "pending"
   },
   {
-    "content": "Phase 3: Add multi-user isolation and row-level permissions",
+    "content": "Create portfolio_metrics.py for aggregated portfolio-level metrics (HHI, risk-adjusted return, etc.)",
     "status": "pending"
   },
   {
-    "content": "Phase 3: Testing with multi-user scenarios",
+    "content": "Create calculation_engine.py orchestrator to coordinate all calculators and run scenario×horizon loops",
     "status": "pending"
   },
   {
-    "content": "Phase 3: All user stories covered",
+    "content": "Create engine_poc.py script to test the calculation engine in isolation with sample data",
+    "status": "pending"
+  },
+  {
+    "content": "Run engine_poc.py and verify outputs are consistent, bounded, and performance is acceptable",
+    "status": "pending"
+  },
+  {
+    "content": "Review and validate calculation engine outputs against existing risk_engine.py for directional correctness",
     "status": "pending"
   }
 ]
