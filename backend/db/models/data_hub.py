@@ -138,6 +138,9 @@ class DataHubComparison(Base):
     compare_scenario_ids = Column(JSON, default=list)
     variable_filter = Column(JSON, default=list)
     region_filter = Column(JSON, default=list)
+    sector_filter = Column(JSON, default=list)
+    time_range = Column(JSON, default=dict)  # {"start_year": 2020, "end_year": 2100}
+    is_public = Column(Boolean, default=False)
     created_by = Column(String(255))
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc),
