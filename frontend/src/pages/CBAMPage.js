@@ -390,55 +390,131 @@ export default function CBAMPage() {
           </Card>
         </TabsContent>
 
-        {/* Cost Projections */}
+        {/* Cost Projections — Enhanced with controls */}
         <TabsContent value="projections" className="mt-4 space-y-4">
+          {/* Projection Controls */}
+          <Card>
+            <CardContent className="pt-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground block mb-1">Supplier *</label>
+                  <Select value={projSupplier} onValueChange={setProjSupplier}>
+                    <SelectTrigger data-testid="proj-supplier"><SelectValue placeholder="Select supplier" /></SelectTrigger>
+                    <SelectContent>
+                      {suppliers.map(s => <SelectItem key={s.id} value={s.id}>{s.supplier_name} ({s.country_code})</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground block mb-1">Scenario</label>
+                  <Select value={projScenario} onValueChange={setProjScenario}>
+                    <SelectTrigger data-testid="proj-scenario"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="current_trend">Current Trend</SelectItem>
+                      <SelectItem value="ambitious">Ambitious</SelectItem>
+                      <SelectItem value="conservative">Conservative</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground block mb-1">Projection Period</label>
+                  <Select value={projYears} onValueChange={setProjYears}>
+                    <SelectTrigger data-testid="proj-years"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5 years (2026–2030)</SelectItem>
+                      <SelectItem value="10">10 years (2026–2035)</SelectItem>
+                      <SelectItem value="15">15 years (2026–2040)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button onClick={async () => {
+                  if (!projSupplier) { toast.error('Select a supplier'); return; }
+                  setProjLoading(true);
+                  try {
+                    const r = await fetch(`${API_URL}/api/v1/cbam/project-costs`, {
+                      method: 'POST', headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ supplier_id: projSupplier, start_year: 2026, end_year: 2026 + parseInt(projYears), scenario: projScenario }),
+                    });
+                    const d = await r.json();
+                    setProjections(d.projections || []);
+                    toast.success(`Projection complete: €${d.total_net_cbam_cost_eur?.toLocaleString()} total`);
+                  } catch { toast.error('Projection failed'); }
+                  finally { setProjLoading(false); }
+                }} disabled={!projSupplier || projLoading} data-testid="run-projection-btn">
+                  {projLoading ? <><RefreshCw className="h-3 w-3 animate-spin mr-1" />Running...</> : <>Run Projection</>}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Results */}
           {projections.length === 0 ? (
-            <p className="text-center py-8 text-muted-foreground text-sm">Select a supplier to see cost projections</p>
+            <div className="text-center py-12 text-muted-foreground text-sm">
+              <DollarSign className="h-8 w-8 mx-auto mb-2 opacity-30" />
+              <p>Select a supplier and run projection to see cost forecasts</p>
+            </div>
           ) : (
             <>
+              {/* Line Chart */}
               <Card>
-                <CardHeader className="pb-1"><CardTitle className="text-sm">CBAM Cost Projection — {projections[0]?.supplier_name}</CardTitle></CardHeader>
+                <CardHeader className="pb-1"><CardTitle className="text-sm">Projected CBAM Costs — {projScenario.replace('_', ' ')}</CardTitle></CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={(() => {
-                      const years = [...new Set(projections.map(p => p.year))].sort();
-                      return years.map(y => {
-                        const row = { year: y };
-                        projections.filter(p => p.year === y).forEach(p => { row[p.scenario] = p.net_cbam_cost_eur; });
-                        return row;
-                      });
-                    })()}>
+                    <LineChart data={projections} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                       <XAxis dataKey="year" tick={{ fontSize: 10 }} />
                       <YAxis tick={{ fontSize: 10 }} tickFormatter={v => `€${(v/1000).toFixed(0)}K`} />
-                      <Tooltip formatter={v => [`€${v?.toLocaleString()}`, '']} />
-                      <Legend wrapperStyle={{ fontSize: 10 }} />
-                      {['Current Trend', 'Ambitious', 'Conservative'].map((s, i) => (
-                        <Bar key={s} dataKey={s} fill={COLORS[i]} radius={[2, 2, 0, 0]} />
-                      ))}
-                    </BarChart>
+                      <Tooltip formatter={v => [`€${v?.toLocaleString()}`, '']} contentStyle={{ fontSize: 11 }} />
+                      <Line type="monotone" dataKey="net_cbam_cost_eur" name="Net CBAM Cost" stroke="#1e40af" strokeWidth={2} dot />
+                      <Line type="monotone" dataKey="gross_cbam_cost_eur" name="Gross Cost" stroke="#dc2626" strokeWidth={1.5} strokeDasharray="5 5" dot={false} />
+                    </LineChart>
                   </ResponsiveContainer>
+                  <div className="flex gap-4 text-[10px] text-muted-foreground mt-2 justify-center">
+                    <span>Solid = Net (after credits & free allocation)</span>
+                    <span>Dashed = Gross (before deductions)</span>
+                  </div>
                 </CardContent>
               </Card>
+
+              {/* Summary cards */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <Card><CardContent className="pt-3 pb-2">
+                  <p className="text-[10px] text-muted-foreground">Total Net CBAM Cost</p>
+                  <p className="text-lg font-bold">€{projections.reduce((s, p) => s + p.net_cbam_cost_eur, 0).toLocaleString()}</p>
+                </CardContent></Card>
+                <Card><CardContent className="pt-3 pb-2">
+                  <p className="text-[10px] text-muted-foreground">Avg Annual Cost</p>
+                  <p className="text-lg font-bold">€{Math.round(projections.reduce((s, p) => s + p.net_cbam_cost_eur, 0) / projections.length).toLocaleString()}</p>
+                </CardContent></Card>
+                <Card><CardContent className="pt-3 pb-2">
+                  <p className="text-[10px] text-muted-foreground">Peak Year Cost</p>
+                  <p className="text-lg font-bold">€{Math.max(...projections.map(p => p.net_cbam_cost_eur)).toLocaleString()}</p>
+                </CardContent></Card>
+                <Card><CardContent className="pt-3 pb-2">
+                  <p className="text-[10px] text-muted-foreground">ETS Price ({projections[projections.length-1]?.year})</p>
+                  <p className="text-lg font-bold">€{projections[projections.length-1]?.eu_ets_price_eur}/tCO2</p>
+                </CardContent></Card>
+              </div>
+
+              {/* Detail table */}
               <Card>
                 <CardContent className="pt-4 overflow-auto max-h-[300px]">
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Year</TableHead><TableHead>Scenario</TableHead><TableHead className="text-right">Volume (t)</TableHead>
-                        <TableHead className="text-right">Emissions (tCO2)</TableHead><TableHead className="text-right">ETS Price</TableHead>
-                        <TableHead className="text-right">Free Alloc %</TableHead><TableHead className="text-right">Net CBAM Cost</TableHead>
+                        <TableHead>Year</TableHead><TableHead className="text-right">ETS Price</TableHead>
+                        <TableHead className="text-right">Free Alloc %</TableHead><TableHead className="text-right">Gross Cost</TableHead>
+                        <TableHead className="text-right">Domestic Credit</TableHead><TableHead className="text-right">Net CBAM Cost</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {projections.slice(0, 30).map((p, i) => (
+                      {projections.map((p, i) => (
                         <TableRow key={i}>
-                          <TableCell className="text-xs">{p.year}</TableCell>
-                          <TableCell className="text-xs">{p.scenario}</TableCell>
-                          <TableCell className="text-right tabular-nums text-xs">{p.import_volume_tonnes?.toLocaleString()}</TableCell>
-                          <TableCell className="text-right tabular-nums text-xs">{p.embedded_emissions_tco2?.toLocaleString()}</TableCell>
+                          <TableCell className="text-xs font-medium">{p.year}</TableCell>
                           <TableCell className="text-right tabular-nums text-xs">€{p.eu_ets_price_eur}</TableCell>
                           <TableCell className="text-right tabular-nums text-xs">{p.free_allocation_pct}%</TableCell>
+                          <TableCell className="text-right tabular-nums text-xs">€{p.gross_cbam_cost_eur?.toLocaleString()}</TableCell>
+                          <TableCell className="text-right tabular-nums text-xs">€{p.domestic_carbon_credit_eur?.toLocaleString()}</TableCell>
                           <TableCell className="text-right tabular-nums text-xs font-medium">€{p.net_cbam_cost_eur?.toLocaleString()}</TableCell>
                         </TableRow>
                       ))}
