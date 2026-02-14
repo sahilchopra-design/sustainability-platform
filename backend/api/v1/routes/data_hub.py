@@ -167,29 +167,7 @@ def search_scenarios(body: DataHubScenarioSearch, db: Session = Depends(get_db))
     """Full-text search on hub scenarios."""
     svc = DataHubService(db)
     rows, total = svc.search_scenarios(body.model_dump())
-    scenarios_out = []
-    for sc in rows:
-        traj_count = len(sc.trajectories) if sc.trajectories else 0
-        scenarios_out.append(DataHubScenarioResponse(
-            id=sc.id,
-            source_id=sc.source_id,
-            source_name=sc.source.name if sc.source else None,
-            external_id=sc.external_id,
-            name=sc.name,
-            description=sc.description,
-            category=sc.category,
-            model=sc.model,
-            version=sc.version,
-            tags=sc.tags or [],
-            temperature_target=sc.temperature_target,
-            time_horizon_start=sc.time_horizon_start,
-            time_horizon_end=sc.time_horizon_end,
-            regions=sc.regions or [],
-            variables=sc.variables or [],
-            trajectory_count=traj_count,
-            is_active=sc.is_active,
-            created_at=sc.created_at,
-        ))
+    scenarios_out = [_scenario_to_response(sc) for sc in rows]
     return {"scenarios": scenarios_out, "total": total}
 
 
