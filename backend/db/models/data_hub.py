@@ -227,8 +227,8 @@ class ScenarioAlert(Base):
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(String(255), nullable=False, default="default_user", index=True)
     alert_type = Column(String(50), nullable=False)  # new_scenario, major_revision, trend_change, new_source
-    scenario_id = Column(String, ForeignKey("hub_scenarios.id", ondelete="SET NULL"), nullable=True)
-    source_id = Column(String, ForeignKey("hub_sources.id", ondelete="SET NULL"), nullable=True)
+    scenario_id = Column(String, nullable=True)
+    source_id = Column(String, nullable=True)
     title = Column(String(255), nullable=False)
     message = Column(Text)
     is_read = Column(Boolean, default=False, nullable=False)
