@@ -1,27 +1,27 @@
 [
   {
     "content": "Phase 2: Setup project structure (backend + frontend)",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Phase 2: Install all backend dependencies (FastAPI, SQLAlchemy, TimescaleDB, pyam, etc.)",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Phase 2: Install all frontend dependencies (React, TypeScript, Tailwind, Recharts)",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Phase 2: Create backend database models and schemas",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Phase 2: Build backend API endpoints (portfolios, assets, scenario analysis)",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Phase 2: Build frontend UI with all pages and components",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Phase 2: End to End Testing using Testing Agent",
