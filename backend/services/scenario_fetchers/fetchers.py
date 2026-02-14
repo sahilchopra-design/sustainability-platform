@@ -357,67 +357,55 @@ class IPCCAR6Fetcher(IIASAFetcher):
 
 
 class IAMCFetcher(IIASAFetcher):
-    """Fetches REAL data from IAMC 1.5°C database (REMIND, GCAM, MESSAGEix, IMAGE, WITCH)."""
+    """Fetches REAL data from IAMC 1.5C database."""
     source_short_name = "iamc15"
     iiasa_database = "iamc15"
-    model_filter = None  # All models
+    model_filter = None
     scenario_filter = None
     data_quality = 4
+    variable_filter = ["Emissions|CO2", "Price|Carbon", "Primary Energy", "GDP|PPP",
+                       "Primary Energy|Coal", "Primary Energy|Gas", "Primary Energy|Renewables"]
+    region_filter = ["World"]
 
     def fetch(self) -> Dict[str, Any]:
         import pyam
         import warnings
         warnings.filterwarnings("ignore")
 
-        logger.info("Connecting to IAMC 1.5°C database")
         conn = pyam.iiasa.Connection(self.iiasa_database)
         props = conn.properties()
 
         available_vars = set(conn.variables())
-        vars_to_fetch = [v for v in IIASA_KEY_VARIABLES if v in available_vars]
-        if not vars_to_fetch:
-            vars_to_fetch = [v for v in available_vars
-                            if any(k in v for k in ["Emissions|CO2", "Price|Carbon", "Primary Energy"])][:8]
-
-        available_regions = set(conn.regions())
-        regions_to_fetch = [r for r in ["World"] if r in available_regions]
+        vars_to_fetch = [v for v in self.variable_filter if v in available_vars]
+        regions_to_fetch = [r for r in self.region_filter if r in set(conn.regions())]
 
         scenarios_out = []
         trajectories_out = []
-
-        # Take top 10 scenario entries
         all_entries = list(props.index)[:10]
 
         for model, scenario in all_entries:
             try:
-                df = conn.query(model=model, scenario=scenario, variable=vars_to_fetch, region=regions_to_fetch)
+                df = conn.query(model=model, scenario=scenario,
+                               variable=vars_to_fetch, region=regions_to_fetch)
                 if df is None or len(df.data) == 0:
                     continue
             except Exception:
                 continue
-
             sc_id = str(uuid.uuid4())
             data = df.data
             years = sorted(data["year"].unique().tolist())
             sc_variables = data["variable"].unique().tolist()
-
             scenarios_out.append({
-                "id": sc_id,
-                "external_id": f"{model}|{scenario}",
-                "name": scenario,
-                "display_name": f"{scenario} [{model}]",
+                "id": sc_id, "external_id": f"{model}|{scenario}",
+                "name": scenario, "display_name": f"{scenario} [{model}]",
                 "category": "IAM 1.5C Pathways",
-                "description": f"IAMC 1.5°C scenario: {scenario} from {model}",
-                "temperature_target": 1.5,
-                "model": model,
-                "version": "SR1.5",
+                "description": f"IAMC 1.5C scenario: {scenario} from {model}",
+                "temperature_target": 1.5, "model": model, "version": "SR1.5",
                 "tags": ["iamc", "1.5c"],
                 "time_horizon_start": min(years) if years else None,
                 "time_horizon_end": max(years) if years else None,
-                "regions": data["region"].unique().tolist(),
-                "variables": sc_variables,
+                "regions": data["region"].unique().tolist(), "variables": sc_variables,
             })
-
             for var in sc_variables:
                 var_data = data[data["variable"] == var]
                 unit = var_data["unit"].iloc[0] if len(var_data) > 0 else ""
@@ -426,18 +414,12 @@ class IAMCFetcher(IIASAFetcher):
                     ts = _build_timeseries(rd["year"].tolist(), rd["value"].tolist())
                     if ts:
                         trajectories_out.append({
-                            "scenario_id": sc_id,
-                            "variable_name": var,
-                            "variable_code": var,
-                            "unit": unit,
-                            "region": region,
-                            "sector": _infer_sector(var),
-                            "time_series": ts,
-                            "data_quality_score": 4,
+                            "scenario_id": sc_id, "variable_name": var, "variable_code": var,
+                            "unit": unit, "region": region, "sector": _infer_sector(var),
+                            "time_series": ts, "data_quality_score": 4,
+                            "interpolation_method": "none",
                             "metadata_info": {"model": model, "source_db": "iamc15"},
                         })
-
-        logger.info(f"IAMC: {len(scenarios_out)} scenarios, {len(trajectories_out)} trajectories")
         return {"scenarios": scenarios_out, "trajectories": trajectories_out}
 
 
