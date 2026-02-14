@@ -12,6 +12,7 @@ import ScenarioData from './pages/ScenarioData';
 import ScenarioBuilder from './pages/ScenarioBuilder';
 import DataHub from './pages/DataHub';
 import ComparisonPage from './pages/ComparisonPage';
+import ScenarioBrowserPage from './pages/ScenarioBrowserPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -120,6 +121,20 @@ function App() {
                 <span>Data Hub</span>
               </NavLink>
               <NavLink
+                to="/browser"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-foreground hover:bg-muted'
+                  }`
+                }
+                data-testid="nav-browser"
+              >
+                <span>🔍</span>
+                <span>Scenario Browser</span>
+              </NavLink>
+              <NavLink
                 to="/comparison"
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
@@ -151,6 +166,7 @@ function App() {
               <Route path="/scenario-data" element={<ScenarioData />} />
               <Route path="/scenario-builder" element={<ScenarioBuilder />} />
               <Route path="/data-hub" element={<DataHub />} />
+              <Route path="/browser" element={<ScenarioBrowserPage />} />
               <Route path="/comparison" element={<ComparisonPage />} />
             </Routes>
           </main>
