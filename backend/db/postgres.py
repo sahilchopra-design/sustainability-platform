@@ -51,8 +51,9 @@ def init_db():
 def test_connection():
     """Test database connection"""
     try:
+        from sqlalchemy import text
         with engine.connect() as conn:
-            result = conn.execute("SELECT version()")
+            result = conn.execute(text("SELECT version()"))
             version = result.fetchone()[0]
             print(f"✅ PostgreSQL connection successful")
             print(f"   Version: {version}")
