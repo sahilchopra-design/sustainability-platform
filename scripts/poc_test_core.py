@@ -286,35 +286,28 @@ def ingest_ngfs_data():
 
 
 def query_scenario_data():
-    """Test 4: Query TimescaleDB for scenario data"""
+    """Test 4: Query MongoDB for scenario data"""
     print_test("Testing scenario data queries...", 'running')
     
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
+        db = get_db()
+        collection = db.scenario_series
         
         # Query example: Get carbon prices for all scenarios in 2030
-        cursor.execute("""
-            SELECT scenario, region, value
-            FROM scenario_series
-            WHERE variable = 'Price|Carbon'
-            AND EXTRACT(YEAR FROM time) = 2030
-            ORDER BY scenario, region;
-        """)
-        
-        results = cursor.fetchall()
+        results = list(collection.find({
+            'variable': 'Price|Carbon',
+            'year': 2030
+        }).sort([('scenario', 1), ('region', 1)]))
         
         if len(results) > 0:
             print_test(f"Query returned {len(results)} records", 'pass')
             print_test("Sample carbon prices for 2030:", 'info')
-            for scenario, region, value in results[:6]:
-                print_test(f"  {scenario} ({region}): ${value:.2f}/tCO2", 'info')
+            for doc in results[:6]:
+                print_test(f"  {doc['scenario']} ({doc['region']}): ${doc['value']:.2f}/tCO2", 'info')
         else:
             print_test("No data returned from query", 'fail')
             return False
         
-        cursor.close()
-        conn.close()
         return True
         
     except Exception as e:
