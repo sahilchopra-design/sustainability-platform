@@ -1,7 +1,7 @@
 [
   {
     "content": "Create asset input mapper function to convert Portfolio.assets to AssetInput objects for the calculation engine",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Create result mapper function to convert ScenarioHorizonResult to existing ScenarioResult model for backwards compatibility",
