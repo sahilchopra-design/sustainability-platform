@@ -16,6 +16,7 @@ import ScenarioBrowserPage from './pages/ScenarioBrowserPage';
 import ImpactCalculatorPage from './pages/ImpactCalculatorPage';
 import PortfolioManagerPage from './pages/PortfolioManagerPage';
 import LoginPage from './pages/LoginPage';
+import AlertsPage from './pages/AlertsPage';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -127,6 +128,7 @@ function AppRouter() {
             { to: '/comparison', label: 'Comparison', icon: '⚖️', id: 'comparison' },
             { to: '/impact', label: 'Impact Calculator', icon: '🎯', id: 'impact' },
             { to: '/portfolio-manager', label: 'Portfolio Manager', icon: '📋', id: 'portfolio-manager' },
+            { to: '/alerts', label: 'Alerts', icon: '🔔', id: 'alerts' },
           ].map(item => (
             <NavLink key={item.id} to={item.to} end={item.end}
               className={({ isActive }) =>
