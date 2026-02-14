@@ -11,6 +11,7 @@ import Results from './pages/Results';
 import ScenarioData from './pages/ScenarioData';
 import UploadPage from './pages/UploadPage';
 import ReviewPage from './pages/ReviewPage';
+import PortfolioEditPage from './pages/PortfolioEditPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
