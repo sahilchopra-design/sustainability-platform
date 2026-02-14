@@ -11,14 +11,14 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select, or_
 import copy
 
-from backend.models.scenario import (
+from models.scenario import (
     Scenario,
     ScenarioVersion,
     ScenarioSource,
     ScenarioApprovalStatus,
     NGFSScenarioType,
 )
-from backend.schemas.scenario import (
+from schemas.scenario import (
     ScenarioCreate,
     ScenarioUpdate,
 )
