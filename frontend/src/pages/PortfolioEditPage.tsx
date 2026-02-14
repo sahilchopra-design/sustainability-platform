@@ -233,7 +233,7 @@ export default function PortfolioEditPage() {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deleteConfirmId} onOpenChange={() => setDeleteConfirmId(null)}>
-        <AlertDialogContent data-testid=\"delete-holding-dialog\">
+        <AlertDialogContent data-testid="delete-holding-dialog">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Holding?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -242,11 +242,11 @@ export default function PortfolioEditPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel data-testid=\"cancel-delete-button\">Cancel</AlertDialogCancel>
+            <AlertDialogCancel data-testid="cancel-delete-button">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteConfirmId && handleDelete(deleteConfirmId)}
-              className=\"bg-destructive hover:bg-destructive/90\"
-              data-testid=\"confirm-delete-button\"
+              className="bg-destructive hover:bg-destructive/90"
+              data-testid="confirm-delete-button"
             >
               Delete
             </AlertDialogAction>
@@ -256,7 +256,7 @@ export default function PortfolioEditPage() {
 
       {/* Bulk Delete Confirmation Dialog */}
       <AlertDialog open={bulkDeleteConfirm} onOpenChange={setBulkDeleteConfirm}>
-        <AlertDialogContent data-testid=\"bulk-delete-dialog\">
+        <AlertDialogContent data-testid="bulk-delete-dialog">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete {selectedHoldingIds.length} Holdings?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -265,13 +265,13 @@ export default function PortfolioEditPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel data-testid=\"cancel-bulk-delete-button\">
+            <AlertDialogCancel data-testid="cancel-bulk-delete-button">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleBulkDelete}
-              className=\"bg-destructive hover:bg-destructive/90\"
-              data-testid=\"confirm-bulk-delete-button\"
+              className="bg-destructive hover:bg-destructive/90"
+              data-testid="confirm-bulk-delete-button"
             >
               Delete All
             </AlertDialogAction>
