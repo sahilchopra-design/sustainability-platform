@@ -222,3 +222,117 @@ def mark_alert_read(alert_id: str, db: Session = Depends(get_db)):
     if not alert:
         raise HTTPException(404, "Alert not found")
     return alert
+
+
+
+# ============================================================================
+# Impact Calculator
+# ============================================================================
+
+class ImpactRequest(BaseModel):
+    scenario_id: str
+    portfolio_id: str
+    horizons: List[int] = [2030, 2040, 2050]
+
+
+@router.post("/impact")
+async def calculate_impact(body: ImpactRequest, db: Session = Depends(get_db)):
+    """Calculate scenario impact on a portfolio."""
+    from models import Portfolio
+    from services.impact_calculator import run_impact_calculation
+
+    portfolio = await Portfolio.get(body.portfolio_id)
+    if not portfolio:
+        raise HTTPException(404, "Portfolio not found")
+    if not portfolio.assets:
+        raise HTTPException(400, "Portfolio has no assets")
+
+    try:
+        result = run_impact_calculation(db, body.scenario_id, portfolio.assets, body.horizons)
+        return result
+    except ValueError as e:
+        raise HTTPException(404, str(e))
+    except Exception as e:
+        raise HTTPException(500, f"Calculation error: {e}")
+
+
+# ============================================================================
+# Custom Scenario Builder
+# ============================================================================
+
+class CustomScenarioRequest(BaseModel):
+    name: str = Field(..., min_length=1, max_length=255)
+    description: str = ""
+    base_scenario_id: str
+    overrides: List[dict] = []  # [{"variable": "...", "region": "World", "source_scenario_id": "..."}]
+
+
+@router.post("/custom-scenarios", status_code=201)
+def create_custom_scenario(body: CustomScenarioRequest, db: Session = Depends(get_db)):
+    """Create a custom blended scenario."""
+    from services.custom_scenario_builder import build_custom_scenario
+    try:
+        return build_custom_scenario(
+            db, body.name, body.description, body.base_scenario_id, body.overrides
+        )
+    except ValueError as e:
+        raise HTTPException(404, str(e))
+
+
+# ============================================================================
+# Portfolio Upload
+# ============================================================================
+
+class UploadParseRequest(BaseModel):
+    content: str
+    column_mapping: Optional[dict] = None
+
+
+class PortfolioCreateFromUpload(BaseModel):
+    name: str
+    description: str = ""
+    assets: List[dict]
+
+
+@router.post("/portfolio-upload/parse")
+def parse_portfolio_file(body: UploadParseRequest):
+    """Parse CSV content and return mapped assets with validation."""
+    from services.portfolio_upload import parse_portfolio_csv
+    return parse_portfolio_csv(body.content, body.column_mapping)
+
+
+@router.post("/portfolio-upload/create")
+async def create_portfolio_from_upload(body: PortfolioCreateFromUpload):
+    """Create a portfolio from parsed/validated assets."""
+    from models import Portfolio, Asset, Company, AssetType, Sector
+
+    SECTOR_ENUM = {s.value: s for s in Sector}
+    TYPE_ENUM = {t.value: t for t in AssetType}
+
+    assets = []
+    for a in body.assets:
+        company_data = a.get("company", {})
+        sector = SECTOR_ENUM.get(company_data.get("sector", "Power Generation"), Sector.POWER_GENERATION)
+        asset_type = TYPE_ENUM.get(a.get("asset_type", "Bond"), AssetType.BOND)
+        assets.append(Asset(
+            id=a.get("id", str(__import__("uuid").uuid4())),
+            asset_type=asset_type,
+            company=Company(name=company_data.get("name", "Unknown"), sector=sector,
+                          subsector=company_data.get("subsector")),
+            exposure=a.get("exposure", 0),
+            market_value=a.get("market_value", a.get("exposure", 0)),
+            base_pd=a.get("base_pd", 0.02),
+            base_lgd=a.get("base_lgd", 0.45),
+            rating=a.get("rating", "BBB"),
+            maturity_years=a.get("maturity_years", 5),
+        ))
+
+    portfolio = Portfolio(name=body.name, description=body.description, assets=assets)
+    await portfolio.insert()
+
+    return {
+        "id": str(portfolio.id),
+        "name": portfolio.name,
+        "num_assets": len(assets),
+        "total_exposure": sum(a.exposure for a in assets),
+    }
