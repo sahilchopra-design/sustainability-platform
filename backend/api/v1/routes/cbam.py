@@ -248,3 +248,77 @@ def _supplier_dict(s):
         "domestic_carbon_price": s.domestic_carbon_price,
         "risk_score": s.risk_score, "risk_category": s.risk_category,
     }
+
+
+# ============================================================================
+# Advanced Calculator Endpoints
+# ============================================================================
+
+class CalcEmissionsRequest(BaseModel):
+    supplier_id: str
+    product_category_id: str
+    production_volume_tonnes: float = Field(..., gt=0)
+    electricity_consumed_mwh: Optional[float] = None
+    use_default_values: bool = False
+    direct_emissions_data: Optional[dict] = None
+    indirect_emissions_data: Optional[dict] = None
+
+
+@router.post("/calculate-emissions")
+def calculate_emissions(body: CalcEmissionsRequest, db: Session = Depends(get_db)):
+    """Calculate Specific Embedded Emissions per EU CBAM Article 7."""
+    from decimal import Decimal
+    from services.cbam_calculator import CBAMEmissionsCalculator
+    calc = CBAMEmissionsCalculator(db)
+    try:
+        return calc.calculate_embedded_emissions(
+            supplier_id=body.supplier_id,
+            product_category_id=body.product_category_id,
+            production_volume_tonnes=Decimal(str(body.production_volume_tonnes)),
+            direct_emissions_data=body.direct_emissions_data,
+            indirect_emissions_data=body.indirect_emissions_data,
+            electricity_consumed_mwh=Decimal(str(body.electricity_consumed_mwh)) if body.electricity_consumed_mwh else None,
+            use_defaults=body.use_default_values,
+        )
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+class ProjectCostsRequest(BaseModel):
+    supplier_id: str
+    start_year: int = 2026
+    end_year: int = 2040
+    scenario: str = "current_trend"
+
+
+@router.post("/project-costs")
+def project_costs(body: ProjectCostsRequest, db: Session = Depends(get_db)):
+    """Project CBAM costs for a supplier under a scenario."""
+    from services.cbam_calculator import CBAMCostProjector
+    projector = CBAMCostProjector(db)
+    projections = projector.project_supplier_costs(body.supplier_id, body.start_year, body.end_year, body.scenario)
+    total = sum(p["net_cbam_cost_eur"] for p in projections)
+    return {"supplier_id": body.supplier_id, "scenario": body.scenario,
+            "total_net_cbam_cost_eur": round(total, 2), "projections": projections}
+
+
+class PortfolioExposureRequest(BaseModel):
+    supplier_ids: List[str]
+    year: int = 2030
+    scenario: str = "current_trend"
+
+
+@router.post("/portfolio-exposure")
+def portfolio_exposure(body: PortfolioExposureRequest, db: Session = Depends(get_db)):
+    """Calculate total CBAM exposure across multiple suppliers."""
+    from services.cbam_calculator import CBAMCostProjector
+    projector = CBAMCostProjector(db)
+    return projector.calculate_portfolio_exposure(body.supplier_ids, body.year, body.scenario)
+
+
+@router.get("/supplier-risk/{supplier_id}")
+def supplier_risk_profile(supplier_id: str, db: Session = Depends(get_db)):
+    """Get comprehensive risk profile with compliance score."""
+    from services.cbam_calculator import CBAMComplianceScorer
+    scorer = CBAMComplianceScorer(db)
+    return scorer.score_supplier_compliance(supplier_id)
