@@ -1,0 +1,9 @@
+Climate Risk Impact Report
+Portfolio,Sample Climate Risk Portfolio
+Scenario,WITCH 1.5C
+Engine Type,Orderly
+
+Horizon,Expected Loss,EL %,VaR 95%,VaR 99%,Avg PD Change %,Weighted Avg PD,Total Exposure
+2030,814365.4,1.2286,1570252.23,4169090.32,27.98,0.026585,66281819.2
+2040,1039061.88,1.5676,2568715.22,4770337.14,49.49,0.03129,66281819.2
+2050,1288152.85,1.9434,3187253.55,6015743.78,71.0,0.035995,66281819.2
