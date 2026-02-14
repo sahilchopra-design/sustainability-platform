@@ -265,6 +265,81 @@ export default function SubAnalysisPage() {
           ) : <Empty msg="Select a scenario and run analysis" />}
         </TabsContent>
 
+
+        {/* Elasticity */}
+        <TabsContent value="elasticity" className="mt-4 space-y-4">
+          {loading.elasticity ? <Loading /> : elasticity?.elasticities ? (
+            <Card>
+              <CardHeader className="pb-1"><CardTitle className="text-sm">Elasticity Analysis — {targetMetric}</CardTitle></CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground mb-3">% change in outcome per 1% change in parameter</p>
+                <div className="space-y-2">
+                  {elasticity.elasticities.map((e, i) => (
+                    <div key={i} className="flex items-center gap-3 text-sm">
+                      <span className="w-40 text-xs truncate">{e.parameter}</span>
+                      <div className="flex-1 bg-muted rounded-full h-2">
+                        <div className="h-2 rounded-full bg-cyan-500" style={{ width: `${Math.min(100, Math.abs(e.elasticity) * 10)}%` }} />
+                      </div>
+                      <span className="w-16 text-right tabular-nums text-xs font-medium">{e.elasticity.toFixed(2)}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-3">{elasticity.elasticities[0]?.interpretation}</p>
+              </CardContent>
+            </Card>
+          ) : <Empty msg="Run elasticity analysis" />}
+        </TabsContent>
+
+        {/* OLS Regression */}
+        <TabsContent value="ols" className="mt-4 space-y-4">
+          {loading.ols ? <Loading /> : ols?.coefficients ? (
+            <>
+              <div className="flex gap-2 text-sm">
+                <Badge>R² = {ols.r_squared?.toFixed(4)}</Badge>
+                <Badge variant="outline">{ols.n_samples} samples</Badge>
+              </div>
+              <Card>
+                <CardHeader className="pb-1"><CardTitle className="text-sm">OLS Regression Coefficients</CardTitle></CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={ols.coefficients}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis dataKey="parameter" tick={{ fontSize: 8 }} />
+                      <YAxis tick={{ fontSize: 10 }} />
+                      <Tooltip contentStyle={{ fontSize: 11 }} />
+                      <Bar dataKey="weight_pct" name="Weight %" radius={[3, 3, 0, 0]}>
+                        {ols.coefficients.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </>
+          ) : <Empty msg="Run OLS attribution" />}
+        </TabsContent>
+
+        {/* Shapley Values */}
+        <TabsContent value="shapley" className="mt-4 space-y-4">
+          {loading.shapley ? <Loading /> : shapley?.attributions ? (
+            <Card>
+              <CardHeader className="pb-1"><CardTitle className="text-sm">Shapley Value Attribution ({shapley.n_permutations} permutations)</CardTitle></CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={shapley.attributions}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="parameter" tick={{ fontSize: 8 }} />
+                    <YAxis tick={{ fontSize: 10 }} unit="%" />
+                    <Tooltip contentStyle={{ fontSize: 11 }} />
+                    <Bar dataKey="contribution_pct" name="Contribution %" radius={[3, 3, 0, 0]}>
+                      {shapley.attributions.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          ) : <Empty msg="Run Shapley attribution" />}
+        </TabsContent>
+
         {/* What-If */}
         <TabsContent value="whatif" className="mt-4 space-y-4">
           <Card>
