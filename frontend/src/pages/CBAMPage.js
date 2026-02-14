@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { toast } from 'sonner';
 import {
   Globe, Shield, Factory, TrendingUp, DollarSign, Plus,
-  RefreshCw, BarChart3, AlertTriangle, Leaf,
+  RefreshCw, BarChart3, AlertTriangle, Leaf, Calculator, CheckCircle,
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
