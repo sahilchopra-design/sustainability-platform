@@ -176,6 +176,7 @@ function AppRouter() {
           <Route path="/comparison" element={<ComparisonPage />} />
           <Route path="/impact" element={<ImpactCalculatorPage />} />
           <Route path="/portfolio-manager" element={<PortfolioManagerPage />} />
+              <Route path="/alerts" element={<AlertsPage />} />
         </Routes>
       </main>
     </div>
