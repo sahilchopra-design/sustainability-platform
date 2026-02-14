@@ -309,3 +309,36 @@ def remove_favorite(favorite_id: str, db: Session = Depends(get_db)):
     svc = DataHubService(db)
     if not svc.remove_favorite(favorite_id):
         raise HTTPException(404, "Favorite not found")
+
+
+
+# ============================================================================
+# Analytics
+# ============================================================================
+
+@router.get("/analytics/coverage")
+def get_coverage_analytics(db: Session = Depends(get_db)):
+    """Coverage analytics — sources, scenarios, variables by tier/category."""
+    svc = DataHubService(db)
+    return svc.get_coverage_analytics()
+
+
+@router.get("/analytics/temperature-range")
+def get_temperature_range(db: Session = Depends(get_db)):
+    """Temperature target distribution across all scenarios."""
+    svc = DataHubService(db)
+    return svc.get_temperature_analytics()
+
+
+@router.get("/analytics/carbon-price-range")
+def get_carbon_price_range(db: Session = Depends(get_db)):
+    """Carbon price trajectory summary across scenarios."""
+    svc = DataHubService(db)
+    return svc.get_carbon_price_analytics()
+
+
+@router.get("/trajectories/available-variables")
+def get_available_variables(db: Session = Depends(get_db)):
+    """List all unique variable names across all trajectories."""
+    svc = DataHubService(db)
+    return svc.get_available_variables()
