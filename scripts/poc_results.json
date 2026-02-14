@@ -1,0 +1,143 @@
+{
+  "portfolio": {
+    "id": "portfolio_001",
+    "name": "Sample Climate Risk Portfolio",
+    "num_assets": 16,
+    "total_exposure": 90527128.57012358
+  },
+  "results": {
+    "Orderly": {
+      "2030": {
+        "expected_loss": 1060830.7097234451,
+        "expected_loss_pct": 1.171837355806233,
+        "risk_adjusted_return": 3.8281626441937675,
+        "avg_pd_change_pct": 24.75,
+        "rating_migrations": {
+          "upgrades": 0,
+          "downgrades": 14,
+          "stable": 2
+        },
+        "var_95": 141200.1180887656,
+        "concentration_hhi": 1803.3216084901612,
+        "total_exposure": 90527128.57012358
+      },
+      "2040": {
+        "expected_loss": 1343009.1153703663,
+        "expected_loss_pct": 1.483543261101066,
+        "risk_adjusted_return": 3.5164567388989343,
+        "avg_pd_change_pct": 57.5,
+        "rating_migrations": {
+          "upgrades": 0,
+          "downgrades": 16,
+          "stable": 0
+        },
+        "var_95": 182501.62320746374,
+        "concentration_hhi": 1803.3216084901612,
+        "total_exposure": 90527128.57012358
+      },
+      "2050": {
+        "expected_loss": 1636974.9507852714,
+        "expected_loss_pct": 1.808270047488856,
+        "risk_adjusted_return": 3.191729952511144,
+        "avg_pd_change_pct": 91.31249999999999,
+        "rating_migrations": {
+          "upgrades": 0,
+          "downgrades": 16,
+          "stable": 0
+        },
+        "var_95": 227642.6535810847,
+        "concentration_hhi": 1803.3216084901612,
+        "total_exposure": 90527128.57012358
+      }
+    },
+    "Disorderly": {
+      "2030": {
+        "expected_loss": 1066360.4048961012,
+        "expected_loss_pct": 1.177945685165617,
+        "risk_adjusted_return": 3.822054314834383,
+        "avg_pd_change_pct": 25.000000000000007,
+        "rating_migrations": {
+          "upgrades": 0,
+          "downgrades": 12,
+          "stable": 4
+        },
+        "var_95": 144496.71609928587,
+        "concentration_hhi": 1803.3216084901612,
+        "total_exposure": 90527128.57012358
+      },
+      "2040": {
+        "expected_loss": 1605326.3801874476,
+        "expected_loss_pct": 1.7733097310646933,
+        "risk_adjusted_return": 3.2266902689353074,
+        "avg_pd_change_pct": 87.5,
+        "rating_migrations": {
+          "upgrades": 0,
+          "downgrades": 16,
+          "stable": 0
+        },
+        "var_95": 223842.1628702669,
+        "concentration_hhi": 1803.3216084901612,
+        "total_exposure": 90527128.57012358
+      },
+      "2050": {
+        "expected_loss": 2031437.9473355224,
+        "expected_loss_pct": 2.244010143061085,
+        "risk_adjusted_return": 2.7559898569389154,
+        "avg_pd_change_pct": 135.625,
+        "rating_migrations": {
+          "upgrades": 0,
+          "downgrades": 16,
+          "stable": 0
+        },
+        "var_95": 289614.4285311844,
+        "concentration_hhi": 1803.3216084901612,
+        "total_exposure": 90527128.57012358
+      }
+    },
+    "Hot house world": {
+      "2030": {
+        "expected_loss": 889844.8171068983,
+        "expected_loss_pct": 0.9829592865276977,
+        "risk_adjusted_return": 4.017040713472303,
+        "avg_pd_change_pct": 4.687500000000002,
+        "rating_migrations": {
+          "upgrades": 0,
+          "downgrades": 0,
+          "stable": 16
+        },
+        "var_95": 115061.54126923351,
+        "concentration_hhi": 1803.3216084901612,
+        "total_exposure": 90527128.57012358
+      },
+      "2040": {
+        "expected_loss": 1054325.3068001354,
+        "expected_loss_pct": 1.1646512194225185,
+        "risk_adjusted_return": 3.835348780577482,
+        "avg_pd_change_pct": 23.250000000000007,
+        "rating_migrations": {
+          "upgrades": 0,
+          "downgrades": 10,
+          "stable": 6
+        },
+        "var_95": 135146.41511567042,
+        "concentration_hhi": 1803.3216084901612,
+        "total_exposure": 90527128.57012358
+      },
+      "2050": {
+        "expected_loss": 1397085.2075867346,
+        "expected_loss_pct": 1.5432779429257306,
+        "risk_adjusted_return": 3.45672205707427,
+        "avg_pd_change_pct": 61.37500000000001,
+        "rating_migrations": {
+          "upgrades": 0,
+          "downgrades": 16,
+          "stable": 0
+        },
+        "var_95": 182808.21145268113,
+        "concentration_hhi": 1803.3216084901612,
+        "total_exposure": 90527128.57012358
+      }
+    }
+  },
+  "timestamp": "2026-02-14T00:31:31.816042"
+}
