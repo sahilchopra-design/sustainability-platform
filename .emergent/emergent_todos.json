@@ -1,26 +1,22 @@
 [
   {
-    "content": "Create var_calculator.py for Value at Risk (VaR) calculations with 95% and 99% confidence levels",
-    "status": "completed"
+    "content": "Create asset input mapper function to convert Portfolio.assets to AssetInput objects for the calculation engine",
+    "status": "pending"
   },
   {
-    "content": "Create portfolio_metrics.py for aggregated portfolio-level metrics (HHI, risk-adjusted return, etc.)",
-    "status": "completed"
+    "content": "Create result mapper function to convert ScenarioHorizonResult to existing ScenarioResult model for backwards compatibility",
+    "status": "pending"
   },
   {
-    "content": "Create calculation_engine.py orchestrator to coordinate all calculators and run scenario×horizon loops",
-    "status": "completed"
+    "content": "Integrate ClimateRiskCalculationEngine into /api/analysis/run endpoint replacing legacy risk_engine",
+    "status": "pending"
   },
   {
-    "content": "Create engine_poc.py script to test the calculation engine in isolation with sample data",
-    "status": "completed"
+    "content": "Test /api/analysis/run endpoint with curl to ensure it returns valid results",
+    "status": "pending"
   },
   {
-    "content": "Run engine_poc.py and verify outputs are consistent, bounded, and performance is acceptable",
-    "status": "completed"
-  },
-  {
-    "content": "Review and validate calculation engine outputs against existing risk_engine.py for directional correctness",
-    "status": "completed"
+    "content": "Run frontend smoke test - generate sample data, run analysis, view results",
+    "status": "pending"
   }
 ]
