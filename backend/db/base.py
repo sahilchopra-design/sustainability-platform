@@ -57,5 +57,10 @@ def init_db():
         ConsistencyCheck,
         ScenarioAlert,
     )
+    from db.models.ngfs_v2 import (
+        NGFSScenario,
+        NGFSScenarioParameter,
+        NGFSScenarioTimeSeries,
+    )
     Base.metadata.create_all(bind=engine)
     print("✅ PostgreSQL database tables created")
