@@ -24,7 +24,8 @@ from api.v1.routes.analysis import router as analysis_router
 from api.v1.routes.ngfs_v2 import router as ngfs_v2_router
 from api.v1.routes.scenario_builder_v2 import router as builder_v2_router
 from api.v1.routes.sub_parameter import router as sub_param_router
-from api.auth import router as auth_router
+from api.auth_pg import router as auth_router
+from api.v1.routes.portfolio_pg import router as portfolio_pg_router
 
 
 @asynccontextmanager
@@ -52,8 +53,10 @@ app.include_router(scenarios_router)
 app.include_router(data_hub_router)
 # Include analysis routes
 app.include_router(analysis_router)
-# Include auth routes
+# Include auth routes (PostgreSQL)
 app.include_router(auth_router)
+# Include PG portfolio routes
+app.include_router(portfolio_pg_router)
 # Include NGFS v2 routes
 app.include_router(ngfs_v2_router)
 # Include scenario builder v2 routes
