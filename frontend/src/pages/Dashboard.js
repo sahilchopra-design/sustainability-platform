@@ -215,7 +215,7 @@ function Dashboard() {
                     <CardContent className="pt-6">
                       <p className="text-xs text-muted-foreground mb-1">Worst Case Scenario</p>
                       <p className="text-lg font-semibold">
-                        {summaryStats.worstCaseScenario?.scenario_name || 'N/A'}
+                        {getScenarioName(summaryStats.worstCaseScenario)}
                       </p>
                     </CardContent>
                   </Card>
