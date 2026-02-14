@@ -1,46 +1,34 @@
 [
   {
-    "content": "Create TypeScript types for portfolio editing (Portfolio, Holding, ChangeLog)",
-    "status": "completed"
+    "content": "Create SQLAlchemy models for Scenario, ScenarioVersion, ScenarioImpactPreview",
+    "status": "pending"
   },
   {
-    "content": "Create portfolioEditorStore.ts with Zustand for state management",
-    "status": "completed"
+    "content": "Create Pydantic schemas for scenario validation and API responses",
+    "status": "pending"
   },
   {
-    "content": "Build PortfolioMetricsSummary.tsx with real-time metrics and visual indicators",
-    "status": "completed"
+    "content": "Build NGFSSyncService for data integration with external sources",
+    "status": "pending"
   },
   {
-    "content": "Build BulkEditToolbar.tsx with multi-select and bulk actions",
-    "status": "completed"
+    "content": "Build ScenarioBuilderService for creating and managing scenarios",
+    "status": "pending"
   },
   {
-    "content": "Build AddHoldingModal.tsx with 3-step wizard",
-    "status": "completed"
+    "content": "Build ScenarioImpactService for calculating scenario impacts on portfolios",
+    "status": "pending"
   },
   {
-    "content": "Build EditHoldingDrawer.tsx with slide-out drawer and validation",
-    "status": "completed"
+    "content": "Create async worker tasks for NGFS data synchronization",
+    "status": "pending"
   },
   {
-    "content": "Build ChangeHistoryLog.tsx with audit trail and undo capability",
-    "status": "completed"
+    "content": "Create API routes for scenario management endpoints",
+    "status": "pending"
   },
   {
-    "content": "Build HoldingsManager.tsx with full CRUD, search, filter, and bulk operations",
-    "status": "completed"
-  },
-  {
-    "content": "Build PortfolioEditor.tsx with tab navigation",
-    "status": "completed"
-  },
-  {
-    "content": "Create PortfolioEditPage.tsx composing all portfolio components",
-    "status": "completed"
-  },
-  {
-    "content": "Add route for portfolio edit page and verify build passes",
-    "status": "completed"
+    "content": "Add celery/background task configuration if needed",
+    "status": "pending"
   }
 ]
