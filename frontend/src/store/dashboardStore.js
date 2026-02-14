@@ -32,7 +32,7 @@ export const useDashboardStore = create((set, get) => ({
   fetchPortfolios: async () => {
     set({ portfolioLoading: true });
     try {
-      const res = await fetch(`${API_URL}/api/portfolios`);
+      const res = await fetch(`${API_URL}/api/pg/portfolios`);
       const data = await res.json();
       set({ portfolios: data.portfolios || [], portfolioLoading: false });
     } catch (error) {
@@ -83,7 +83,7 @@ export const useDashboardStore = create((set, get) => ({
   fetchPortfolioMetrics: async (portfolioId) => {
     set({ metricsLoading: true });
     try {
-      const res = await fetch(`${API_URL}/api/portfolios/${portfolioId}`);
+      const res = await fetch(`${API_URL}/api/pg/portfolios/${portfolioId}`);
       const data = await res.json();
       
       // Calculate metrics from portfolio data
@@ -141,7 +141,7 @@ export const useDashboardStore = create((set, get) => ({
   fetchHoldings: async (portfolioId) => {
     set({ holdingsLoading: true });
     try {
-      const res = await fetch(`${API_URL}/api/portfolios/${portfolioId}`);
+      const res = await fetch(`${API_URL}/api/pg/portfolios/${portfolioId}`);
       const data = await res.json();
       set({ holdings: data.assets || [], holdingsLoading: false });
     } catch (error) {

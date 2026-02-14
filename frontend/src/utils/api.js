@@ -12,15 +12,15 @@ const api = axios.create({
 export default api;
 
 // Portfolios
-export const getPortfolios = () => api.get('/api/portfolios');
-export const getPortfolio = (id) => api.get(`/api/portfolios/${id}`);
-export const createPortfolio = (data) => api.post('/api/portfolios', data);
-export const updatePortfolio = (id, data) => api.put(`/api/portfolios/${id}`, data);
-export const deletePortfolio = (id) => api.delete(`/api/portfolios/${id}`);
+export const getPortfolios = () => api.get('/api/pg/portfolios');
+export const getPortfolio = (id) => api.get(`/api/pg/portfolios/${id}`);
+export const createPortfolio = (data) => api.post('/api/pg/portfolios', data);
+export const updatePortfolio = (id, data) => api.put(`/api/pg/portfolios/${id}`, data);
+export const deletePortfolio = (id) => api.delete(`/api/pg/portfolios/${id}`);
 export const addAssetToPortfolio = (portfolioId, asset) =>
-  api.post(`/api/portfolios/${portfolioId}/assets`, { asset });
+  api.post(`/api/pg/portfolios/${portfolioId}/assets`, { asset });
 export const removeAssetFromPortfolio = (portfolioId, assetId) =>
-  api.delete(`/api/portfolios/${portfolioId}/assets/${assetId}`);
+  api.delete(`/api/pg/portfolios/${portfolioId}/assets/${assetId}`);
 
 // Scenario Data
 export const getScenarioData = () => api.get('/api/scenario-data');

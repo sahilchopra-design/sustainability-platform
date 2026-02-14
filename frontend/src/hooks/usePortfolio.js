@@ -14,7 +14,7 @@ export function usePortfolio(portfolioId) {
     setError(null);
     
     try {
-      const res = await fetch(`${API_URL}/api/portfolios/${portfolioId}`);
+      const res = await fetch(`${API_URL}/api/pg/portfolios/${portfolioId}`);
       if (!res.ok) throw new Error('Failed to fetch portfolio');
       const data = await res.json();
       setPortfolio(data);
@@ -42,7 +42,7 @@ export function usePortfolios() {
     setError(null);
     
     try {
-      const res = await fetch(`${API_URL}/api/portfolios`);
+      const res = await fetch(`${API_URL}/api/pg/portfolios`);
       if (!res.ok) throw new Error('Failed to fetch portfolios');
       const data = await res.json();
       setPortfolios(data.portfolios || []);
@@ -59,7 +59,7 @@ export function usePortfolios() {
 
   const createPortfolio = async (name, description) => {
     try {
-      const res = await fetch(`${API_URL}/api/portfolios`, {
+      const res = await fetch(`${API_URL}/api/pg/portfolios`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, description }),
@@ -75,7 +75,7 @@ export function usePortfolios() {
 
   const deletePortfolio = async (id) => {
     try {
-      const res = await fetch(`${API_URL}/api/portfolios/${id}`, {
+      const res = await fetch(`${API_URL}/api/pg/portfolios/${id}`, {
         method: 'DELETE',
       });
       if (!res.ok) throw new Error('Failed to delete portfolio');
@@ -107,7 +107,7 @@ export function usePortfolioMetrics(portfolioId) {
     setError(null);
     
     try {
-      const res = await fetch(`${API_URL}/api/portfolios/${portfolioId}`);
+      const res = await fetch(`${API_URL}/api/pg/portfolios/${portfolioId}`);
       if (!res.ok) throw new Error('Failed to fetch portfolio');
       const data = await res.json();
       
