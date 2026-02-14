@@ -1,8 +1,12 @@
 """SQLAlchemy Base and session management"""
 import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.pool import NullPool
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Get DATABASE_URL from environment
 DATABASE_URL = os.environ.get("DATABASE_URL")
