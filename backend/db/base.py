@@ -62,5 +62,10 @@ def init_db():
         NGFSScenarioParameter,
         NGFSScenarioTimeSeries,
     )
+    from db.models.custom_builder import (
+        CustomScenario,
+        ParameterCustomization,
+        SimulationRun,
+    )
     Base.metadata.create_all(bind=engine)
     print("✅ PostgreSQL database tables created")

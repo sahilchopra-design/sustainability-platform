@@ -22,6 +22,7 @@ from api.v1.routes.scenarios import router as scenarios_router
 from api.v1.routes.data_hub import router as data_hub_router
 from api.v1.routes.analysis import router as analysis_router
 from api.v1.routes.ngfs_v2 import router as ngfs_v2_router
+from api.v1.routes.scenario_builder_v2 import router as builder_v2_router
 from api.auth import router as auth_router
 
 
@@ -54,6 +55,8 @@ app.include_router(analysis_router)
 app.include_router(auth_router)
 # Include NGFS v2 routes
 app.include_router(ngfs_v2_router)
+# Include scenario builder v2 routes
+app.include_router(builder_v2_router)
 
 # CORS
 app.add_middleware(
