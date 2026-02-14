@@ -1,0 +1,122 @@
+{
+  "Orderly": {
+    "2030": {
+      "expected_loss": 790760.86541752,
+      "expected_loss_pct": 1.1930283069056205,
+      "var_95": 1515242.3979669632,
+      "var_99": 3788206.7589873034,
+      "expected_shortfall_95": 3017382.004602871,
+      "expected_shortfall_99": 5440020.794682898,
+      "risk_adjusted_return": 3.80697169309438,
+      "weighted_avg_pd": 0.02636298425922431,
+      "avg_pd_change_pct": 26.54085,
+      "sector_hhi": 1990.9853823398757,
+      "geographic_hhi": 10000.000000000004,
+      "rating_migrations": {
+        "upgrades": 0,
+        "downgrades": 10,
+        "stable": 6
+      },
+      "total_exposure": 66281819.202474006
+    },
+    "2050": {
+      "expected_loss": 1205416.4866675055,
+      "expected_loss_pct": 1.8186231174272185,
+      "var_95": 3418224.2864642236,
+      "var_99": 5258023.087786217,
+      "expected_shortfall_95": 4490686.693435649,
+      "expected_shortfall_99": 7179108.739769591,
+      "risk_adjusted_return": 3.1813768825727817,
+      "weighted_avg_pd": 0.035533837329951065,
+      "avg_pd_change_pct": 68.80365,
+      "sector_hhi": 1990.9853823398757,
+      "geographic_hhi": 10000.000000000004,
+      "rating_migrations": {
+        "upgrades": 0,
+        "downgrades": 14,
+        "stable": 2
+      },
+      "total_exposure": 66281819.202474006
+    }
+  },
+  "Disorderly": {
+    "2030": {
+      "expected_loss": 920530.7422153382,
+      "expected_loss_pct": 1.3888133326626901,
+      "var_95": 2722638.384492252,
+      "var_99": 4473751.374925721,
+      "expected_shortfall_95": 3813020.0791931134,
+      "expected_shortfall_99": 5816959.852251462,
+      "risk_adjusted_return": 3.61118666733731,
+      "weighted_avg_pd": 0.03053819863568443,
+      "avg_pd_change_pct": 46.0959375,
+      "sector_hhi": 1990.9853823398757,
+      "geographic_hhi": 10000.000000000004,
+      "rating_migrations": {
+        "upgrades": 0,
+        "downgrades": 12,
+        "stable": 4
+      },
+      "total_exposure": 66281819.202474006
+    },
+    "2050": {
+      "expected_loss": 1555122.1500341848,
+      "expected_loss_pct": 2.3462273195665984,
+      "var_95": 3768067.4710070873,
+      "var_99": 7415007.101406785,
+      "expected_shortfall_95": 6040764.357352384,
+      "expected_shortfall_99": 9579174.596984254,
+      "risk_adjusted_return": 2.6537726804334016,
+      "weighted_avg_pd": 0.045276004208358,
+      "avg_pd_change_pct": 114.43218749999998,
+      "sector_hhi": 1990.9853823398757,
+      "geographic_hhi": 10000.000000000004,
+      "rating_migrations": {
+        "upgrades": 0,
+        "downgrades": 16,
+        "stable": 0
+      },
+      "total_exposure": 66281819.202474006
+    }
+  },
+  "Hot house world": {
+    "2030": {
+      "expected_loss": 770838.3880985242,
+      "expected_loss_pct": 1.1629710792092323,
+      "var_95": 1513110.7556720506,
+      "var_99": 3584584.631048451,
+      "expected_shortfall_95": 2949113.4772564294,
+      "expected_shortfall_99": 4933139.956182045,
+      "risk_adjusted_return": 3.8370289207907677,
+      "weighted_avg_pd": 0.025702125857159017,
+      "avg_pd_change_pct": 22.2729375,
+      "sector_hhi": 1990.9853823398757,
+      "geographic_hhi": 10000.000000000004,
+      "rating_migrations": {
+        "upgrades": 0,
+        "downgrades": 8,
+        "stable": 8
+      },
+      "total_exposure": 66281819.202474006
+    },
+    "2050": {
+      "expected_loss": 1154526.0215300987,
+      "expected_loss_pct": 1.7418441971294072,
+      "var_95": 3424640.1401823005,
+      "var_99": 5212678.575357551,
+      "expected_shortfall_95": 4415687.378148705,
+      "expected_shortfall_99": 7035075.573128102,
+      "risk_adjusted_return": 3.258155802870593,
+      "weighted_avg_pd": 0.0339918343917987,
+      "avg_pd_change_pct": 58.8451875,
+      "sector_hhi": 1990.9853823398757,
+      "geographic_hhi": 10000.000000000004,
+      "rating_migrations": {
+        "upgrades": 0,
+        "downgrades": 14,
+        "stable": 2
+      },
+      "total_exposure": 66281819.202474006
+    }
+  }
+}
