@@ -1,54 +1,50 @@
 [
   {
-    "content": "Update index.css to import Google Fonts (Space Grotesk, IBM Plex Sans, IBM Plex Mono)",
-    "status": "completed"
+    "content": "Create TypeScript types for portfolio editing (Portfolio, Holding, ChangeLog)",
+    "status": "pending"
   },
   {
-    "content": "Create useFileUpload.ts hook with file selection, validation, upload progress, and error handling",
-    "status": "completed"
+    "content": "Create portfolioEditorStore.ts with Zustand for state management",
+    "status": "pending"
   },
   {
-    "content": "Create useColumnMapping.ts hook with mapping state, auto-suggestions, and template management",
-    "status": "completed"
+    "content": "Build PortfolioMetricsSummary.tsx with real-time metrics and visual indicators",
+    "status": "pending"
   },
   {
-    "content": "Build FileUploadZone.tsx component with drag-and-drop, validation, and progress bar",
-    "status": "completed"
+    "content": "Build BulkEditToolbar.tsx with multi-select and bulk actions",
+    "status": "pending"
   },
   {
-    "content": "Build UploadProgressTracker.tsx component with stepper UI and status tracking",
-    "status": "completed"
+    "content": "Build AddHoldingModal.tsx with 3-step wizard",
+    "status": "pending"
   },
   {
-    "content": "Build ColumnMappingWizard.tsx component with step-by-step mapping and confidence scores",
-    "status": "completed"
+    "content": "Build EditHoldingDrawer.tsx with slide-out drawer and validation",
+    "status": "pending"
   },
   {
-    "content": "Build DataPreviewTable.tsx component with pagination, inline editing, and row selection",
-    "status": "completed"
+    "content": "Build ChangeHistoryLog.tsx with audit trail and undo capability",
+    "status": "pending"
   },
   {
-    "content": "Build ValidationResultsPanel.tsx component with summary cards, filters, and issue table",
-    "status": "completed"
+    "content": "Build HoldingsManager.tsx with full CRUD, search, filter, and bulk operations",
+    "status": "pending"
   },
   {
-    "content": "Build ImportHistoryList.tsx component with status badges and quick actions",
-    "status": "completed"
+    "content": "Build PortfolioEditor.tsx with tab navigation",
+    "status": "pending"
   },
   {
-    "content": "Create UploadPage.tsx page composing upload zone, history, and progress tracker",
-    "status": "completed"
+    "content": "Create PortfolioEditPage.tsx composing all portfolio components",
+    "status": "pending"
   },
   {
-    "content": "Create ReviewPage.tsx page composing mapping wizard, preview, and validation results",
-    "status": "completed"
+    "content": "Add Zustand dependency and route for portfolio edit page",
+    "status": "pending"
   },
   {
-    "content": "Add routes to App.js for upload and review pages",
-    "status": "completed"
-  },
-  {
-    "content": "Test components with screenshots and verify design compliance",
-    "status": "completed"
+    "content": "Test portfolio editing components and verify functionality",
+    "status": "pending"
   }
 ]
