@@ -29,7 +29,7 @@ async def load_sample_portfolio():
     """Load sample portfolio from MongoDB"""
     mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
     client = AsyncIOMotorClient(mongo_url)
-    db = client['climate_risk']
+    db = client['climate_risk_platform']
     
     # Find sample portfolio
     portfolio_doc = await db.portfolios.find_one({'name': 'Sample Climate Risk Portfolio'})
@@ -55,7 +55,7 @@ async def load_scenario_data():
     """Load scenario parameters from MongoDB"""
     mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
     client = AsyncIOMotorClient(mongo_url)
-    db = client['climate_risk']
+    db = client['climate_risk_platform']
     
     scenarios = ['Orderly', 'Disorderly', 'Hot house world']
     horizons = [2030, 2040, 2050]
