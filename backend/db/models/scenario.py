@@ -115,7 +115,7 @@ class ScenarioImpactPreview(Base):
     
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     scenario_id = Column(String, ForeignKey("scenarios.id", ondelete="CASCADE"), nullable=False, index=True)
-    portfolio_id = Column(String, ForeignKey("portfolios.id", ondelete="CASCADE"), nullable=False, index=True)
+    portfolio_id = Column(String, nullable=False, index=True)  # Reference to MongoDB portfolio - no FK
     
     # Impact summary (JSON)
     impact_summary = Column(JSON, nullable=False)
