@@ -183,6 +183,8 @@ class DataHubFavorite(Base):
         UniqueConstraint("user_id", "scenario_id", name="uq_hub_fav_user_scenario"),
     )
 
+    scenario = relationship("DataHubScenario", back_populates="favorites")
+
 
 class GapAnalysis(Base):
     """Gap analysis between scenarios."""
