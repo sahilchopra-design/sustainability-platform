@@ -1,7 +1,7 @@
 [
   {
     "content": "Add PostgreSQL dependencies (SQLAlchemy 2.x, asyncpg, alembic, psycopg2-binary)",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Set up DATABASE_URL environment variable with URL-encoded password",
