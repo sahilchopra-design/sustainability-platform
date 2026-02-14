@@ -46,5 +46,13 @@ def init_db():
         ScenarioImpactPreview,
         NGFSDataSource,
     )
+    from db.models.data_hub import (
+        DataHubSource,
+        DataHubScenario,
+        DataHubTrajectory,
+        DataHubComparison,
+        DataHubSyncLog,
+        DataHubFavorite,
+    )
     Base.metadata.create_all(bind=engine)
     print("✅ PostgreSQL database tables created")
