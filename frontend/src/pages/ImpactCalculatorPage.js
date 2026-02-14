@@ -27,7 +27,7 @@ export default function ImpactCalculatorPage() {
   const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/portfolios`).then(r => r.json()).then(d => setPortfolios(d.portfolios || []));
+    fetch(`${API_URL}/api/pg/portfolios`).then(r => r.json()).then(d => setPortfolios(d.portfolios || []));
     fetch(`${API_URL}/api/v1/data-hub/scenarios?limit=200`).then(r => r.json()).then(d => setScenarios(d.scenarios || []));
   }, []);
 

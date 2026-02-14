@@ -32,7 +32,7 @@ export default function PortfolioManagerPage() {
   const [editLoading, setEditLoading] = useState(false);
 
   const fetchPortfolios = useCallback(async () => {
-    const r = await fetch(`${API_URL}/api/portfolios`);
+    const r = await fetch(`${API_URL}/api/pg/portfolios`);
     const d = await r.json();
     setPortfolios(d.portfolios || []);
   }, []);
@@ -81,7 +81,7 @@ export default function PortfolioManagerPage() {
     setEditLoading(true);
     setEditPortfolioId(id);
     try {
-      const r = await fetch(`${API_URL}/api/portfolios/${id}`);
+      const r = await fetch(`${API_URL}/api/pg/portfolios/${id}`);
       const d = await r.json();
       setEditAssets(d.assets || []);
     } catch { toast.error('Failed to load'); }
@@ -115,7 +115,7 @@ export default function PortfolioManagerPage() {
   const savePortfolio = async () => {
     if (!editPortfolioId) return;
     try {
-      await fetch(`${API_URL}/api/portfolios/${editPortfolioId}`, {
+      await fetch(`${API_URL}/api/pg/portfolios/${editPortfolioId}`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ assets: editAssets }),
       });
