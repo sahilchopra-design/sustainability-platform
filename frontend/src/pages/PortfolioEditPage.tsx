@@ -111,37 +111,37 @@ export default function PortfolioEditPage() {
   }
 
   return (
-    <div className=\"min-h-screen bg-background\" data-testid=\"portfolio-edit-page\">
+    <div className="min-h-screen bg-background" data-testid="portfolio-edit-page">
       {/* Hero band with gradient */}
       <div
-        className=\"relative border-b border-border\"
+        className="relative border-b border-border"
         style={{
           background:
             'radial-gradient(1200px 600px at 12% 20%, hsla(199,89%,56%,0.18), transparent 55%), radial-gradient(900px 500px at 78% 30%, hsla(158,64%,38%,0.12), transparent 60%), linear-gradient(180deg, hsla(210,20%,98%,1), hsla(210,20%,98%,0.0))',
         }}
       >
-        <div className=\"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8\">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Button
-            variant=\"ghost\"
-            size=\"sm\"
-            className=\"mb-3 -ml-2\"
+            variant="ghost"
+            size="sm"
+            className="mb-3 -ml-2"
             onClick={() => navigate('/portfolios')}
-            data-testid=\"back-to-portfolios-button\"
+            data-testid="back-to-portfolios-button"
           >
-            <ArrowLeft className=\"h-4 w-4 mr-2\" />
+            <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Portfolios
           </Button>
           <div>
             <h1
-              className=\"text-4xl sm:text-5xl font-semibold tracking-tight text-foreground\"
-              data-testid=\"portfolio-name-title\"
+              className="text-4xl sm:text-5xl font-semibold tracking-tight text-foreground"
+              data-testid="portfolio-name-title"
             >
               {portfolio.name}
             </h1>
-            <p className=\"text-base md:text-lg text-muted-foreground mt-2\">
+            <p className="text-base md:text-lg text-muted-foreground mt-2">
               {portfolio.description || 'Edit portfolio details and manage holdings'}
             </p>
-            <p className=\"text-sm text-muted-foreground mt-1 font-mono\">
+            <p className="text-sm text-muted-foreground mt-1 font-mono">
               ID: {portfolio.id}
             </p>
           </div>
