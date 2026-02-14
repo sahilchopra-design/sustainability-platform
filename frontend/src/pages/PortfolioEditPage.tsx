@@ -149,15 +149,15 @@ export default function PortfolioEditPage() {
       </div>
 
       {/* Main Content */}
-      <div className=\"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6\">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <PortfolioEditor
           portfolio={portfolio}
           onUpdate={updatePortfolio}
           saving={saving}
         >
           {/* Override tab content based on active tab */}
-          <Tabs defaultValue=\"overview\"  className=\"hidden\">
-            <TabsContent value=\"overview\">
+          <Tabs defaultValue="overview"  className="hidden">
+            <TabsContent value="overview">
               <PortfolioMetricsSummary
                 metrics={metrics}
                 loading={loading}
@@ -165,7 +165,7 @@ export default function PortfolioEditPage() {
               />
             </TabsContent>
 
-            <TabsContent value=\"holdings\">
+            <TabsContent value="holdings">
               <HoldingsManager
                 holdings={holdings}
                 selectedIds={selectedHoldingIds}
@@ -179,7 +179,7 @@ export default function PortfolioEditPage() {
               />
             </TabsContent>
 
-            <TabsContent value=\"history\">
+            <TabsContent value="history">
               <ChangeHistoryLog
                 changeLog={changeLog}
                 loading={loading}
