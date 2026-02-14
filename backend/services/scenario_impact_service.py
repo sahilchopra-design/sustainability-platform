@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 import statistics
 
-from backend.models.scenario import (
+from models.scenario import (
     Scenario,
     ScenarioImpactPreview,
 )
