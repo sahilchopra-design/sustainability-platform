@@ -125,6 +125,7 @@ function App() {
               <Route path="/analysis" element={<Analysis />} />
               <Route path="/results/:runId" element={<Results />} />
               <Route path="/scenario-data" element={<ScenarioData />} />
+              <Route path="/scenario-builder" element={<ScenarioBuilder />} />
             </Routes>
           </main>
         </div>
