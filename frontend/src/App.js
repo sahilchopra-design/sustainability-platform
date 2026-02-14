@@ -114,61 +114,71 @@ function AppRouter() {
   return (
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
-      <aside className="w-64 bg-card border-r border-border flex flex-col">
-        <div className="p-6 border-b border-border">
-          <h1 className="text-lg font-semibold text-foreground">Climate Risk Platform</h1>
-          <p className="text-xs text-muted-foreground mt-1">Portfolio Scenario Analysis</p>
+      <aside className="w-60 bg-[#0f2137] flex flex-col shrink-0">
+        {/* Brand Header */}
+        <div className="p-4 border-b border-white/10">
+          <div className="flex items-center gap-2.5">
+            <img src="/a2-intelligence-logo.png" alt="A2" className="h-9 w-9 rounded object-contain bg-white/5" />
+            <div>
+              <h1 className="text-sm font-semibold text-white tracking-tight">A2 Intelligence</h1>
+              <p className="text-[10px] text-cyan-300/70">by AA Impact Inc.</p>
+            </div>
+          </div>
         </div>
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          {[
-            { to: '/', label: 'Dashboard', icon: '🏠', id: 'dashboard', end: true },
-            { to: '/portfolios', label: 'Portfolios', icon: '📁', id: 'portfolios' },
-            { to: '/analysis', label: 'Run Analysis', icon: '📊', id: 'analysis' },
-            { to: '/scenario-data', label: 'Scenario Data', icon: '🌍', id: 'scenario-data' },
-            { to: '/scenario-builder', label: 'Scenario Builder', icon: '⚗️', id: 'scenario-builder' },
-            { to: '/data-hub', label: 'Data Hub', icon: '🗄️', id: 'data-hub' },
-            { to: '/browser', label: 'Scenario Browser', icon: '🔍', id: 'browser' },
-            { to: '/comparison', label: 'Comparison', icon: '⚖️', id: 'comparison' },
-            { to: '/impact', label: 'Impact Calculator', icon: '🎯', id: 'impact' },
-            { to: '/portfolio-manager', label: 'Portfolio Manager', icon: '📋', id: 'portfolio-manager' },
-            { to: '/alerts', label: 'Alerts', icon: '🔔', id: 'alerts' },
-            { to: '/ngfs', label: 'NGFS Scenarios', icon: '🌐', id: 'ngfs' },
-            { to: '/custom-builder', label: 'Custom Builder', icon: '🔧', id: 'custom-builder' },
-            { to: '/sub-analysis', label: 'Sub-Parameter', icon: '🔬', id: 'sub-analysis' },
-          ].map(item => (
-            <NavLink key={item.id} to={item.to} end={item.end}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                  isActive ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted'
-                }`
-              }
-              data-testid={`nav-${item.id}`}>
-              <span>{item.icon}</span>
-              <span className="text-sm">{item.label}</span>
-            </NavLink>
-          ))}
+        <nav className="flex-1 p-3 space-y-4 overflow-y-auto">
+          {/* Analytics */}
+          <NavGroup label="Analytics">
+            <SideLink to="/" end icon="layout" label="Dashboard" />
+            <SideLink to="/impact" icon="target" label="Impact Calculator" />
+            <SideLink to="/sub-analysis" icon="microscope" label="Sub-Parameter" />
+          </NavGroup>
+          {/* Scenarios */}
+          <NavGroup label="Scenarios">
+            <SideLink to="/browser" icon="search" label="Scenario Browser" />
+            <SideLink to="/data-hub" icon="database" label="Data Hub" />
+            <SideLink to="/ngfs" icon="globe" label="NGFS Catalog" />
+            <SideLink to="/comparison" icon="git-compare" label="Comparison" />
+            <SideLink to="/custom-builder" icon="wrench" label="Custom Builder" />
+          </NavGroup>
+          {/* Portfolio */}
+          <NavGroup label="Portfolio">
+            <SideLink to="/portfolios" icon="briefcase" label="Portfolios" />
+            <SideLink to="/portfolio-manager" icon="upload" label="Upload & Edit" />
+            <SideLink to="/analysis" icon="bar-chart" label="Run Analysis" />
+          </NavGroup>
+          {/* System */}
+          <NavGroup label="System">
+            <SideLink to="/alerts" icon="bell" label="Alerts" />
+            <SideLink to="/scenario-builder" icon="layers" label="Legacy Builder" />
+            <SideLink to="/scenario-data" icon="archive" label="Scenario Data" />
+          </NavGroup>
         </nav>
-        <div className="p-4 border-t border-border">
+        {/* User footer */}
+        <div className="p-3 border-t border-white/10">
           <div className="flex items-center gap-2 mb-2">
             {user.picture ? (
               <img src={user.picture} alt="" className="w-7 h-7 rounded-full" />
             ) : (
-              <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">
+              <div className="w-7 h-7 rounded-full bg-cyan-500/20 flex items-center justify-center text-xs font-medium text-cyan-300">
                 {user.name?.[0]?.toUpperCase() || 'U'}
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium truncate">{user.name}</p>
-              <p className="text-[10px] text-muted-foreground truncate">{user.email}</p>
+              <p className="text-xs font-medium text-white/90 truncate">{user.name}</p>
+              <p className="text-[10px] text-white/40 truncate">{user.email}</p>
             </div>
           </div>
-          <button onClick={handleLogout} className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+          <button onClick={handleLogout} className="text-[10px] text-white/40 hover:text-white/70 transition-colors"
             data-testid="logout-btn">Sign out</button>
+          <div className="mt-2 pt-2 border-t border-white/10 flex items-center gap-1.5">
+            <img src="/aa-impact-logo.jpg" alt="AA Impact" className="h-5 w-5 rounded object-cover" />
+            <span className="text-[9px] text-white/30">AA Impact Inc.</span>
+          </div>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto bg-[#f8fafc]">
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/portfolios" element={<Portfolios />} />
