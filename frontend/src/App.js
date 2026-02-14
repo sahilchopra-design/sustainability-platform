@@ -18,6 +18,7 @@ import PortfolioManagerPage from './pages/PortfolioManagerPage';
 import LoginPage from './pages/LoginPage';
 import AlertsPage from './pages/AlertsPage';
 import NGFSScenariosPage from './pages/NGFSScenariosPage';
+import CustomBuilderPage from './pages/CustomBuilderPage';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -131,6 +132,7 @@ function AppRouter() {
             { to: '/portfolio-manager', label: 'Portfolio Manager', icon: '📋', id: 'portfolio-manager' },
             { to: '/alerts', label: 'Alerts', icon: '🔔', id: 'alerts' },
             { to: '/ngfs', label: 'NGFS Scenarios', icon: '🌐', id: 'ngfs' },
+            { to: '/custom-builder', label: 'Custom Builder', icon: '🔧', id: 'custom-builder' },
           ].map(item => (
             <NavLink key={item.id} to={item.to} end={item.end}
               className={({ isActive }) =>
@@ -180,6 +182,7 @@ function AppRouter() {
           <Route path="/portfolio-manager" element={<PortfolioManagerPage />} />
               <Route path="/alerts" element={<AlertsPage />} />
               <Route path="/ngfs" element={<NGFSScenariosPage />} />
+              <Route path="/custom-builder" element={<CustomBuilderPage />} />
         </Routes>
       </main>
     </div>
