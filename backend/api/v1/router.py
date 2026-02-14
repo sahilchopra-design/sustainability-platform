@@ -1,7 +1,7 @@
 """Main API v1 router"""
 from fastapi import APIRouter
 
-from api.v1.routes import portfolios, counterparties, scenarios, analysis, exports
+from api.v1.routes import portfolios, counterparties, scenarios, analysis, exports, uploads
 
 # Create main v1 router
 api_router = APIRouter(prefix="/api/v1")
@@ -12,3 +12,4 @@ api_router.include_router(counterparties.router)
 api_router.include_router(scenarios.router)
 api_router.include_router(analysis.router)
 api_router.include_router(exports.router)
+api_router.include_router(uploads.router)
