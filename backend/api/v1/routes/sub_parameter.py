@@ -13,6 +13,8 @@ from db.models.data_hub import DataHubScenario, DataHubTrajectory
 from services.sub_parameter_engine import (
     run_sensitivity_analysis, run_what_if, run_attribution,
     run_interaction_analysis, get_visualization_tornado, get_visualization_waterfall,
+    run_elasticity_analysis, run_partial_correlation, run_ols_attribution,
+    run_enhanced_shapley, get_key_drivers,
     ANALYZABLE_PARAMS,
 )
 
