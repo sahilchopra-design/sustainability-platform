@@ -271,14 +271,19 @@ class IPCCAR6Fetcher(IIASAFetcher):
         "REMIND-MAgPIE 2.1-4.2",
         "IMAGE 3.0.1",
     ]
-    scenario_filter = None  # Take all scenarios for these models
+    scenario_filter = None
     category_map = {}
     temperature_map = {}
     carbon_neutral_map = {}
     data_quality = 5
+    variable_filter = ["Emissions|CO2", "Price|Carbon", "Primary Energy", "GDP|PPP",
+                       "Primary Energy|Coal", "Primary Energy|Gas", "Primary Energy|Oil",
+                       "Primary Energy|Solar", "Primary Energy|Wind",
+                       "Secondary Energy|Electricity"]
+    region_filter = ["World"]
 
     def fetch(self) -> Dict[str, Any]:
-        # AR6 has thousands of scenarios; limit to 15 most relevant per model
+        """Custom fetch: AR6 has thousands of scenarios, so limit per model."""
         import pyam
         import warnings
         warnings.filterwarnings("ignore")
@@ -288,24 +293,21 @@ class IPCCAR6Fetcher(IIASAFetcher):
         props = conn.properties()
 
         available_vars = set(conn.variables())
-        vars_to_fetch = [v for v in IIASA_KEY_VARIABLES if v in available_vars]
-        if not vars_to_fetch:
-            vars_to_fetch = [v for v in available_vars
-                            if any(k in v for k in ["Emissions|CO2", "Price|Carbon", "Primary Energy"])][:8]
-
-        available_regions = set(conn.regions())
-        regions_to_fetch = [r for r in ["World"] if r in available_regions]
+        vars_to_fetch = [v for v in self.variable_filter if v in available_vars]
+        regions_to_fetch = [r for r in self.region_filter if r in set(conn.regions())]
 
         scenarios_out = []
         trajectories_out = []
 
         for model in (self.model_filter or []):
-            model_props = props.loc[props.index.get_level_values("model") == model]
+            model_mask = props.index.get_level_values("model") == model
+            model_props = props.loc[model_mask]
             model_scenarios = model_props.index.get_level_values("scenario").unique().tolist()[:5]
 
             for scenario in model_scenarios:
                 try:
-                    df = conn.query(model=model, scenario=scenario, variable=vars_to_fetch, region=regions_to_fetch)
+                    df = conn.query(model=model, scenario=scenario,
+                                   variable=vars_to_fetch, region=regions_to_fetch)
                     if df is None or len(df.data) == 0:
                         continue
                 except Exception:
@@ -342,13 +344,11 @@ class IPCCAR6Fetcher(IIASAFetcher):
                         if ts:
                             trajectories_out.append({
                                 "scenario_id": sc_id,
-                                "variable_name": var,
-                                "variable_code": var,
-                                "unit": unit,
-                                "region": region,
+                                "variable_name": var, "variable_code": var,
+                                "unit": unit, "region": region,
                                 "sector": _infer_sector(var),
-                                "time_series": ts,
-                                "data_quality_score": 5,
+                                "time_series": ts, "data_quality_score": 5,
+                                "interpolation_method": "none",
                                 "metadata_info": {"model": model, "source_db": "ar6-public"},
                             })
 
