@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
-from models.scenario import (
+from db.models.scenario import (
     NGFSDataSource,
     Scenario,
     ScenarioSource,
