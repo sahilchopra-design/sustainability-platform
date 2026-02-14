@@ -14,6 +14,8 @@ from models import (
     Scenario
 )
 from risk_engine import RiskEngine, SECTOR_MULTIPLIERS
+from services.calculation_engine import ClimateRiskCalculationEngine
+from services.engine_integration import assets_to_inputs, engine_results_to_models
 
 
 @asynccontextmanager
@@ -357,7 +359,7 @@ async def refresh_scenario_data(data: ScenarioDataRefresh):
 # Analysis endpoints
 @app.post("/api/analysis/run")
 async def run_analysis(data: AnalysisRequest):
-    """Run scenario analysis on a portfolio"""
+    """Run scenario analysis on a portfolio using the new calculation engine"""
     # Get portfolio
     portfolio = await Portfolio.get(data.portfolio_id)
     if not portfolio:
@@ -366,42 +368,28 @@ async def run_analysis(data: AnalysisRequest):
     if len(portfolio.assets) == 0:
         raise HTTPException(status_code=400, detail="Portfolio has no assets")
     
-    # Get scenario data
-    scenario_params = {}
-    for scenario in data.scenarios:
-        scenario_params[scenario] = {}
-        for year in data.horizons:
-            carbon_doc = await ScenarioSeries.find_one(
-                ScenarioSeries.scenario == scenario,
-                ScenarioSeries.year == year,
-                ScenarioSeries.region == "World",
-                ScenarioSeries.variable == "Price|Carbon"
-            )
-            
-            gdp_doc = await ScenarioSeries.find_one(
-                ScenarioSeries.scenario == scenario,
-                ScenarioSeries.year == year,
-                ScenarioSeries.region == "World",
-                ScenarioSeries.variable == "GDP|PPP"
-            )
-            
-            scenario_params[scenario][year] = {
-                'carbon_price': carbon_doc.value if carbon_doc else 50,
-                'gdp_index': gdp_doc.value if gdp_doc else 100
-            }
+    # Convert portfolio assets to calculation engine input format
+    asset_inputs = assets_to_inputs(portfolio.assets)
     
-    # Run risk engine
-    engine = RiskEngine(scenario_params)
-    results = []
+    # Initialize calculation engine
+    engine = ClimateRiskCalculationEngine(
+        n_simulations=10000,
+        correlation=0.3,
+        var_method='monte_carlo',
+        base_return=0.05,
+        random_seed=42
+    )
     
-    for scenario in data.scenarios:
-        for horizon in data.horizons:
-            result = engine.calculate_scenario_impact(
-                portfolio.assets,
-                scenario,
-                horizon
-            )
-            results.append(result)
+    # Run calculation for all scenario-horizon combinations
+    engine_results = engine.calculate_multiple_scenarios(
+        assets=asset_inputs,
+        scenarios=data.scenarios,
+        horizons=data.horizons,
+        include_sector_breakdown=False
+    )
+    
+    # Convert engine results to API response format (ScenarioResult models)
+    results = engine_results_to_models(engine_results)
     
     # Save analysis run
     analysis = AnalysisRun(
