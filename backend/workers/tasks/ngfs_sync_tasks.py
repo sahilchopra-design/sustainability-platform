@@ -27,8 +27,8 @@ def sync_ngfs_data_task(source_id: str) -> Dict[str, Any]:
     Returns:
         Dict with sync results
     """
-    from backend.db.base import SessionLocal
-    from backend.services.ngfs_sync_service import NGFSSyncService
+    from db.base import SessionLocal
+    from services.ngfs_sync_service import NGFSSyncService
     
     logger.info(f"Starting NGFS sync task for source {source_id}")
     
@@ -57,8 +57,8 @@ def scheduled_ngfs_sync_task() -> Dict[str, Any]:
     
     This would run on a schedule (e.g., daily) in production.
     """
-    from backend.db.base import SessionLocal
-    from backend.services.ngfs_sync_service import NGFSSyncService
+    from db.base import SessionLocal
+    from services.ngfs_sync_service import NGFSSyncService
     
     logger.info("Starting scheduled NGFS sync for all sources")
     
@@ -110,8 +110,8 @@ def calculate_scenario_impact_task(scenario_id: str, portfolio_id: str) -> Dict[
     
     Can be computationally expensive for large portfolios.
     """
-    from backend.db.base import SessionLocal
-    from backend.services.scenario_impact_service import ScenarioImpactService
+    from db.base import SessionLocal
+    from services.scenario_impact_service import ScenarioImpactService
     
     logger.info(f"Starting scenario impact calculation: scenario={scenario_id}, portfolio={portfolio_id}")
     
