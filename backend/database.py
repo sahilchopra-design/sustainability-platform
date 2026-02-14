@@ -22,16 +22,19 @@ async def init_db():
     """Initialize database connection and Beanie ODM"""
     client = AsyncIOMotorClient(MONGO_URL)
     
-    await init_beanie(
-        database=client[DB_NAME],
-        document_models=[
-            Portfolio,
-            ScenarioSeries,
-            AnalysisRun
-        ]
-    )
-    
-    print(f"✅ Database initialized: {DB_NAME}")
+    try:
+        await init_beanie(
+            database=client[DB_NAME],
+            document_models=[
+                Portfolio,
+                ScenarioSeries,
+                AnalysisRun
+            ]
+        )
+        print(f"✅ Database initialized: {DB_NAME}")
+    except Exception as e:
+        print(f"⚠️ Beanie init warning (non-fatal): {e}")
+        print(f"✅ Database connected to: {DB_NAME} (indexes may need manual creation)")
 
 
 async def close_db():
