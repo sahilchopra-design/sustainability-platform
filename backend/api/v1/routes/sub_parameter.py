@@ -160,3 +160,117 @@ def viz_waterfall(scenario_id: str, db: Session = Depends(get_db)):
             high = {y: round(v * 1.1, 4) for y, v in ts.items() if isinstance(v, (int, float))}
             custs.append({"variable_name": t["variable_name"], "region": t.get("region", "World"), "customized_values": high})
     return get_visualization_waterfall(trajs, custs)
+
+
+
+# ============================================================================
+# Enhanced Calculation Methods
+# ============================================================================
+
+class ElasticityRequest(BaseModel):
+    scenario_id: str
+    target_metric: str = "temperature"
+    parameters: List[str] = []
+    delta_pct: float = Field(1.0, ge=0.1, le=10.0)
+
+
+@router.post("/elasticity")
+def elasticity_analysis(body: ElasticityRequest, db: Session = Depends(get_db)):
+    """Elasticity analysis: % outcome change per 1% parameter change."""
+    trajs = _get_trajs(db, body.scenario_id)
+    return run_elasticity_analysis(trajs, body.target_metric, body.parameters or None, body.delta_pct)
+
+
+@router.post("/partial-correlation")
+def partial_corr(body: SensitivityRequest, db: Session = Depends(get_db)):
+    """Partial correlation controlling for other parameters."""
+    trajs = _get_trajs(db, body.scenario_id)
+    return run_partial_correlation(trajs, body.target_metric, body.parameters or None)
+
+
+@router.post("/ols-attribution")
+def ols_attribution(body: SensitivityRequest, db: Session = Depends(get_db)):
+    """OLS regression-based attribution with R-squared."""
+    trajs = _get_trajs(db, body.scenario_id)
+    return run_ols_attribution(trajs, body.target_metric, body.parameters or None)
+
+
+class ShapleyRequest(BaseModel):
+    scenario_id: str
+    target_metric: str = "temperature"
+    parameters: List[str] = []
+    n_permutations: int = Field(20, ge=5, le=100)
+
+
+@router.post("/shapley")
+def shapley_attribution(body: ShapleyRequest, db: Session = Depends(get_db)):
+    """Enhanced Shapley value attribution with permutation sampling."""
+    trajs = _get_trajs(db, body.scenario_id)
+    return run_enhanced_shapley(trajs, body.target_metric, body.parameters or None, body.n_permutations)
+
+
+# ============================================================================
+# Export
+# ============================================================================
+
+class ExportRequest(BaseModel):
+    analyses: List[dict]
+    format: str = "excel"  # excel, pdf, json
+
+
+@router.post("/export")
+def export_analyses(body: ExportRequest, db: Session = Depends(get_db)):
+    """Export analysis results to Excel/PDF/JSON."""
+    from services.analysis_export import export_analysis_excel, export_analysis_pdf, export_analysis_json
+
+    if body.format == "pdf":
+        filename = export_analysis_pdf(body.analyses)
+    elif body.format == "json":
+        filename = export_analysis_json(body.analyses)
+    else:
+        filename = export_analysis_excel(body.analyses)
+
+    return {
+        "filename": filename,
+        "format": body.format,
+        "download_url": f"/api/v1/analysis/reports/download/{filename}",
+    }
+
+
+# ============================================================================
+# Scenario Builder Integration
+# ============================================================================
+
+@router.post("/custom-scenario/{cs_id}/analysis")
+def analyze_custom_scenario(cs_id: str, db: Session = Depends(get_db)):
+    """Auto-run full analysis on a custom scenario's base trajectories."""
+    from db.models.custom_builder import CustomScenario
+    cs = db.get(CustomScenario, cs_id)
+    if not cs or not cs.base_scenario_id:
+        raise HTTPException(404, "Custom scenario not found")
+
+    trajs = _get_trajs(db, cs.base_scenario_id)
+    sensitivity = run_sensitivity_analysis(trajs)
+    elasticity = run_elasticity_analysis(trajs)
+    attribution = run_attribution(trajs)
+
+    return {
+        "custom_scenario_id": cs_id,
+        "base_scenario_id": cs.base_scenario_id,
+        "sensitivity": sensitivity,
+        "elasticity": elasticity,
+        "attribution": attribution,
+    }
+
+
+@router.get("/custom-scenario/{cs_id}/key-drivers")
+def custom_key_drivers(cs_id: str, db: Session = Depends(get_db)):
+    """Top 5 parameters driving a custom scenario's outcomes."""
+    from db.models.custom_builder import CustomScenario
+    cs = db.get(CustomScenario, cs_id)
+    if not cs or not cs.base_scenario_id:
+        raise HTTPException(404, "Custom scenario not found")
+
+    trajs = _get_trajs(db, cs.base_scenario_id)
+    drivers = get_key_drivers(trajs, top_n=5)
+    return {"custom_scenario_id": cs_id, "key_drivers": drivers}
