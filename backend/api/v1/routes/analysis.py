@@ -225,6 +225,23 @@ def mark_alert_read(alert_id: str, db: Session = Depends(get_db)):
 
 
 
+class AlertCreate(BaseModel):
+    alert_type: str
+    title: str
+    message: Optional[str] = None
+    user_id: str = "default_user"
+    ref_scenario_id: Optional[str] = None
+    ref_source_id: Optional[str] = None
+
+
+@router.post("/alerts", response_model=AlertResponse, status_code=201)
+def create_alert(body: AlertCreate, db: Session = Depends(get_db)):
+    """Create a new alert."""
+    svc = ScenarioComparisonService(db)
+    return svc.create_alert(body.model_dump())
+
+
+
 # ============================================================================
 # Impact Calculator
 # ============================================================================
