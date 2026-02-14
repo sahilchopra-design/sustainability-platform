@@ -1,22 +1,46 @@
 [
   {
-    "content": "Create asset input mapper function to convert Portfolio.assets to AssetInput objects for the calculation engine",
-    "status": "completed"
+    "content": "Add PostgreSQL dependencies (SQLAlchemy 2.x, asyncpg, alembic, psycopg2-binary)",
+    "status": "pending"
   },
   {
-    "content": "Create result mapper function to convert ScenarioHorizonResult to existing ScenarioResult model for backwards compatibility",
-    "status": "completed"
+    "content": "Set up DATABASE_URL environment variable with URL-encoded password",
+    "status": "pending"
   },
   {
-    "content": "Integrate ClimateRiskCalculationEngine into /api/analysis/run endpoint replacing legacy risk_engine",
-    "status": "completed"
+    "content": "Create SQLAlchemy models for all entities (Portfolio, Asset, ScenarioSeries, AnalysisRun, ScenarioResult)",
+    "status": "pending"
   },
   {
-    "content": "Test /api/analysis/run endpoint with curl to ensure it returns valid results",
-    "status": "completed"
+    "content": "Set up Alembic and create initial migration",
+    "status": "pending"
   },
   {
-    "content": "Run frontend smoke test - generate sample data, run analysis, view results",
-    "status": "completed"
+    "content": "Test PostgreSQL connection and create tables",
+    "status": "pending"
+  },
+  {
+    "content": "Create pg_poc.py script to validate schema and basic CRUD operations",
+    "status": "pending"
+  },
+  {
+    "content": "Build repository layer (PortfolioRepository, ScenarioRepository, AnalysisRepository)",
+    "status": "pending"
+  },
+  {
+    "content": "Migrate API endpoints to use repositories instead of Beanie ODM",
+    "status": "pending"
+  },
+  {
+    "content": "Create data migration script to transfer existing data from MongoDB to PostgreSQL",
+    "status": "pending"
+  },
+  {
+    "content": "Run data migration and verify all data transferred correctly",
+    "status": "pending"
+  },
+  {
+    "content": "Run end-to-end tests to ensure all functionality works with PostgreSQL",
+    "status": "pending"
   }
 ]
