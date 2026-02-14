@@ -58,16 +58,19 @@ function AuthCallback({ onAuth }) {
 function AppRouter() {
   const [user, setUser] = useState(null);
   const [checking, setChecking] = useState(true);
+  const [isCallback, setIsCallback] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Check for session_id in URL fragment (Google OAuth callback)
-  if (location.hash?.includes('session_id=')) {
-    return <AuthCallback onAuth={setUser} />;
-  }
-
   // Check existing session on mount
   useEffect(() => {
+    // Check for session_id in URL fragment (Google OAuth callback)
+    if (location.hash?.includes('session_id=')) {
+      setIsCallback(true);
+      setChecking(false);
+      return;
+    }
+
     const token = localStorage.getItem('session_token');
     if (!token) { setChecking(false); return; }
 
@@ -78,7 +81,12 @@ function AppRouter() {
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then(data => { setUser(data); setChecking(false); })
       .catch(() => { localStorage.removeItem('session_token'); setChecking(false); });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (isCallback) {
+    return <AuthCallback onAuth={setUser} />;
+  }
 
   const handleLogout = async () => {
     const token = localStorage.getItem('session_token');
