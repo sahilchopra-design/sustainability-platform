@@ -1,7 +1,7 @@
 [
   {
     "content": "Create var_calculator.py for Value at Risk (VaR) calculations with 95% and 99% confidence levels",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Create portfolio_metrics.py for aggregated portfolio-level metrics (HHI, risk-adjusted return, etc.)",
