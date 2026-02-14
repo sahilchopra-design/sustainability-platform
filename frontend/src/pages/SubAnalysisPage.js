@@ -194,17 +194,26 @@ export default function SubAnalysisPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-3 pb-2 flex items-end">
-            <Button onClick={runAll} disabled={!selectedScId} className="w-full" data-testid="run-all-btn">
-              <Play className="h-4 w-4 mr-1" />Run All Analyses
+          <CardContent className="pt-3 pb-2 flex items-end gap-2">
+            <Button onClick={runAll} disabled={!selectedScId} className="flex-1" data-testid="run-all-btn">
+              <Play className="h-4 w-4 mr-1" />Run All
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => handleExport('excel')} data-testid="export-excel">
+              <Download className="h-3 w-3 mr-1" />Excel
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => handleExport('pdf')} data-testid="export-pdf">
+              <Download className="h-3 w-3 mr-1" />PDF
             </Button>
           </CardContent>
         </Card>
       </div>
 
       <Tabs defaultValue="sensitivity">
-        <TabsList>
-          <TabsTrigger value="sensitivity" data-testid="tab-sensitivity"><BarChart3 className="h-3 w-3 mr-1" />Sensitivity</TabsTrigger>
+        <TabsList className="flex-wrap">
+          <TabsTrigger value="sensitivity" data-testid="tab-sensitivity"><BarChart3 className="h-3 w-3 mr-1" />Tornado</TabsTrigger>
+          <TabsTrigger value="elasticity" data-testid="tab-elasticity"><TrendingUp className="h-3 w-3 mr-1" />Elasticity</TabsTrigger>
+          <TabsTrigger value="ols" data-testid="tab-ols"><Hash className="h-3 w-3 mr-1" />OLS</TabsTrigger>
+          <TabsTrigger value="shapley" data-testid="tab-shapley"><Target className="h-3 w-3 mr-1" />Shapley</TabsTrigger>
           <TabsTrigger value="whatif" data-testid="tab-whatif"><ArrowRightLeft className="h-3 w-3 mr-1" />What-If</TabsTrigger>
           <TabsTrigger value="attribution" data-testid="tab-attribution"><Target className="h-3 w-3 mr-1" />Attribution</TabsTrigger>
           <TabsTrigger value="interactions" data-testid="tab-interactions"><Layers className="h-3 w-3 mr-1" />Interactions</TabsTrigger>
