@@ -269,10 +269,7 @@ class IPCCAR6Fetcher(IIASAFetcher):
     iiasa_database = "ar6-public"
     model_filter = [
         "REMIND-MAgPIE 2.1-4.2",
-        "MESSAGEix-GLOBIOM 1.1-M-R12",
         "IMAGE 3.0.1",
-        "GCAM 5.3",
-        "WITCH 5.0",
     ]
     scenario_filter = None  # Take all scenarios for these models
     category_map = {}
@@ -304,7 +301,7 @@ class IPCCAR6Fetcher(IIASAFetcher):
 
         for model in (self.model_filter or []):
             model_props = props.loc[props.index.get_level_values("model") == model]
-            model_scenarios = model_props.index.get_level_values("scenario").unique().tolist()[:10]
+            model_scenarios = model_props.index.get_level_values("scenario").unique().tolist()[:5]
 
             for scenario in model_scenarios:
                 try:
@@ -388,8 +385,8 @@ class IAMCFetcher(IIASAFetcher):
         scenarios_out = []
         trajectories_out = []
 
-        # Take top 20 scenario entries
-        all_entries = list(props.index)[:20]
+        # Take top 10 scenario entries
+        all_entries = list(props.index)[:10]
 
         for model, scenario in all_entries:
             try:
