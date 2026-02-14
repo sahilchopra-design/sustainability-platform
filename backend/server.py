@@ -452,9 +452,9 @@ async def run_analysis(data: AnalysisRequest):
 async def get_analysis_runs(portfolio_id: Optional[str] = None):
     """Get all analysis runs, optionally filtered by portfolio"""
     if portfolio_id:
-        runs = await AnalysisRun.find(AnalysisRun.portfolio_id == portfolio_id).to_list()
+        runs = await AnalysisRun.find(AnalysisRun.portfolio_id == portfolio_id).sort("-created_at").limit(50).to_list()
     else:
-        runs = await AnalysisRun.find_all().to_list()
+        runs = await AnalysisRun.find_all().sort("-created_at").limit(100).to_list()
     
     return {
         "runs": [
