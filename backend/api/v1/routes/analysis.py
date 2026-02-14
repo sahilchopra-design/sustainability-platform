@@ -91,8 +91,8 @@ class AlertResponse(BaseModel):
     id: str
     user_id: str
     alert_type: str
-    scenario_id: Optional[str] = None
-    source_id: Optional[str] = None
+    ref_scenario_id: Optional[str] = None
+    ref_source_id: Optional[str] = None
     title: str
     message: Optional[str] = None
     is_read: bool
