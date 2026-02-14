@@ -44,6 +44,19 @@ def get_ngfs_sources(db: Session = Depends(get_db)):
     return sources
 
 
+@router.post("/ngfs/sources", response_model=NGFSDataSourceResponse, status_code=status.HTTP_201_CREATED)
+def create_ngfs_source(
+    name: str = "NGFS Phase V",
+    version: str = "5.0",
+    url: str = "https://data.ece.iiasa.ac.at/ngfs/",
+    db: Session = Depends(get_db),
+):
+    """Create a new NGFS data source."""
+    service = NGFSSyncService(db)
+    source = service.create_or_update_source(name, url, version)
+    return source
+
+
 @router.post("/ngfs/sync")
 def sync_ngfs_data(
     source_id: Optional[str] = None,
