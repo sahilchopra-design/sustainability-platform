@@ -9,11 +9,11 @@
   },
   {
     "content": "Integrate ClimateRiskCalculationEngine into /api/analysis/run endpoint replacing legacy risk_engine",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Test /api/analysis/run endpoint with curl to ensure it returns valid results",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Run frontend smoke test - generate sample data, run analysis, view results",
