@@ -125,6 +125,7 @@ export default function CBAMPage() {
       <Tabs defaultValue="overview">
         <TabsList>
           <TabsTrigger value="overview" data-testid="tab-overview">Overview</TabsTrigger>
+          <TabsTrigger value="calculator" data-testid="tab-calculator"><Calculator className="h-3 w-3 mr-1" />Calculator</TabsTrigger>
           <TabsTrigger value="products" data-testid="tab-products">Products ({products.length})</TabsTrigger>
           <TabsTrigger value="suppliers" data-testid="tab-suppliers">Suppliers ({suppliers.length})</TabsTrigger>
           <TabsTrigger value="countries" data-testid="tab-countries">Country Risk</TabsTrigger>
