@@ -119,7 +119,7 @@ export default function ComparisonPage() {
           <TabsTrigger value="gaps" data-testid="tab-gaps" disabled={!gapAnalysis}>
             Gap Analysis
           </TabsTrigger>
-          <TabsTrigger value="consistency" data-testid="tab-consistency" disabled={!consistencyChecks}>
+          <TabsTrigger value="consistency" data-testid="tab-consistency" disabled={selectedScenarios.length === 0}>
             Consistency
           </TabsTrigger>
         </TabsList>
