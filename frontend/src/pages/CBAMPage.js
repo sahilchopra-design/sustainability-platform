@@ -66,6 +66,29 @@ export default function CBAMPage() {
     setProjections(d);
   };
 
+  const runCalculation = async () => {
+    if (!calcForm.supplier_id || !calcForm.product_category_id || !calcForm.production_volume) return;
+    setCalcLoading(true);
+    try {
+      const r = await fetch(`${API_URL}/api/v1/cbam/calculate-emissions`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          supplier_id: calcForm.supplier_id,
+          product_category_id: calcForm.product_category_id,
+          production_volume_tonnes: Number(calcForm.production_volume),
+          electricity_consumed_mwh: calcForm.electricity_mwh ? Number(calcForm.electricity_mwh) : null,
+          use_default_values: calcForm.use_defaults,
+        }),
+      });
+      const d = await r.json();
+      // Estimate CBAM cost at current ETS price ~€80
+      d.estimated_cbam_cost_eur = Math.round(d.total_embedded_emissions_tco2 * 80 * 100) / 100;
+      setCalcResult(d);
+      toast.success('Emissions calculated');
+    } catch { toast.error('Calculation failed'); }
+    finally { setCalcLoading(false); }
+  };
+
   // Chart data
   const priceChartData = (() => {
     const years = new Set();
