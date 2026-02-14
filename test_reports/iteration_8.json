@@ -1,0 +1,68 @@
+{
+  "summary": "Full testing of 3 new features: Impact Calculator, Custom Scenario Builder, and Portfolio Upload/Editor. All 15 backend API tests passed. All 12 frontend features verified working via Playwright automation.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_impact_portfolio_endpoints.py",
+    "/app/test_reports/pytest/impact_portfolio_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_impact_portfolio_endpoints.py"
+  ],
+  "success_rate": {
+    "backend": "100% (15/15 tests passed)",
+    "frontend": "100% (12/12 features verified)"
+  },
+  "test_credentials": null,
+  "seed_data_creation": "Used existing portfolios (Sample 16 assets, Uploaded 4 assets, UI Test 0 assets) and 99+ hub scenarios.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Three new features fully tested and working: 1) Impact Calculator at /impact - calculates PD/LGD/EL/VaR across horizons with charts and multipliers. 2) Custom Scenario Builder creates blended scenarios with trajectory overrides. 3) Portfolio Manager at /portfolio-manager with Upload (CSV parsing), Editor (add/remove/save assets), and Portfolios list tabs.",
+  "passed_tests": [
+    "=== Backend API Tests (15/15 passed) ===",
+    "TestImpactCalculator::test_impact_returns_horizons_with_expected_loss - POST /api/v1/analysis/impact returns horizons array with expected_loss, var_95, avg_pd_change_pct",
+    "TestImpactCalculator::test_impact_returns_multipliers - Returns multipliers (carbon_price_2030, carbon_price_2050, emissions_change_pct, temperature_2050)",
+    "TestImpactCalculator::test_impact_returns_404_for_invalid_portfolio - Returns 404 for non-existent portfolio",
+    "TestImpactCalculator::test_impact_returns_400_for_empty_portfolio - Returns 400 for portfolio with 0 assets",
+    "TestImpactCalculator::test_impact_with_default_horizons - Uses default [2030, 2040, 2050] horizons",
+    "TestImpactCalculator::test_impact_sector_breakdown - Returns sector_breakdown in results",
+    "TestCustomScenarioBuilder::test_create_custom_scenario_with_overrides - POST /api/v1/analysis/custom-scenarios creates blended scenario with overrides",
+    "TestCustomScenarioBuilder::test_create_custom_scenario_minimal - Creates scenario without overrides (copy base)",
+    "TestCustomScenarioBuilder::test_custom_scenario_404_for_invalid_base - Returns 404 for invalid base_scenario_id",
+    "TestPortfolioUpload::test_parse_csv_returns_assets_and_mapping - POST /api/v1/analysis/portfolio-upload/parse returns assets and column_mapping",
+    "TestPortfolioUpload::test_parse_csv_auto_maps_columns - Auto-detects column mapping from CSV headers",
+    "TestPortfolioUpload::test_parse_csv_reports_errors - Reports errors for invalid rows",
+    "TestPortfolioUpload::test_create_portfolio_from_parsed_assets - POST /api/v1/analysis/portfolio-upload/create creates portfolio",
+    "TestCleanup::test_cleanup_test_scenarios - Cleanup custom scenarios",
+    "TestCleanup::test_cleanup_test_portfolios - Cleanup TEST_ portfolios",
+    "",
+    "=== Frontend UI Tests (12/12 features verified) ===",
+    "/impact page loads with Portfolio and Scenario selectors",
+    "Portfolio selector shows portfolios with asset counts (Sample 16, Uploaded 4, UI Test 0)",
+    "Scenario selector shows hub scenarios (WITCH 1.5C, IRENA 1.5C, etc.)",
+    "Calculate button disabled until both portfolio and scenario selected",
+    "Calculate button click triggers impact calculation",
+    "Impact Results shows Expected Loss cards for 2030, 2040, 2050 ($814K, $1.04M, $1.29M)",
+    "Impact Results shows VaR 95% card ($3.19M) with PD change percentage",
+    "Bar chart 'Expected Loss by Horizon' displays correctly",
+    "Line chart 'PD Change by Horizon' displays correctly",
+    "Scenario Multipliers section visible",
+    "/portfolio-manager Upload tab shows drag-drop zone and CSV file input",
+    "/portfolio-manager Portfolios tab lists 3 portfolios with Edit buttons",
+    "/portfolio-manager Editor tab shows portfolio selector, Add Asset, Save buttons, and editable assets table",
+    "Navigation sidebar shows Impact Calculator and Portfolio Manager links"
+  ],
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": []
+  }
+}
