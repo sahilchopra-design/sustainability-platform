@@ -45,10 +45,10 @@
   },
   {
     "content": "Add routes to App.js for upload and review pages",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Test components with screenshots and verify design compliance",
-    "status": "pending"
+    "status": "in_progress"
   }
 ]
