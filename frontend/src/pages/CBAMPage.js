@@ -36,6 +36,12 @@ export default function CBAMPage() {
   const [calcResult, setCalcResult] = useState(null);
   const [calcLoading, setCalcLoading] = useState(false);
 
+  // Projection controls state
+  const [projSupplier, setProjSupplier] = useState('');
+  const [projScenario, setProjScenario] = useState('current_trend');
+  const [projYears, setProjYears] = useState('10');
+  const [projLoading, setProjLoading] = useState(false);
+
   const load = async () => {
     const [d, p, s, c, cp, fa] = await Promise.all([
       fetch(`${API_URL}/api/v1/cbam/dashboard`).then(r => r.json()),
