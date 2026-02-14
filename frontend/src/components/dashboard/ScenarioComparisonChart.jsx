@@ -85,7 +85,8 @@ export function ScenarioComparisonChart({
     const scenarioGroups = {};
     
     analysisResults.results.forEach(result => {
-      const scenario = result.scenario_name;
+      // Support both old format (scenario_name, portfolio_metrics) and new format (scenario, expected_loss)
+      const scenario = result.scenario_name || result.scenario;
       const horizon = result.horizon;
       
       if (!scenarioGroups[horizon]) {
@@ -93,10 +94,10 @@ export function ScenarioComparisonChart({
       }
       
       scenarioGroups[horizon][scenario] = {
-        expected_loss: result.portfolio_metrics?.expected_loss || 0,
-        pd_change: result.portfolio_metrics?.avg_pd_change || 0,
+        expected_loss: result.portfolio_metrics?.expected_loss || result.expected_loss || 0,
+        pd_change: result.portfolio_metrics?.avg_pd_change || result.avg_pd_change_pct || 0,
         lgd_change: result.portfolio_metrics?.avg_lgd_change || 0,
-        exposure_change: result.portfolio_metrics?.total_exposure_at_risk || 0,
+        exposure_change: result.portfolio_metrics?.total_exposure_at_risk || result.total_exposure || 0,
       };
     });
 
