@@ -252,3 +252,108 @@ class DataHubService:
             ).filter(DataHubScenario.source_id == source_id).scalar() or 0
             src.last_synced_at = datetime.now(timezone.utc)
             self.db.commit()
+
+
+    # ---- Analytics ----
+
+    def get_coverage_analytics(self):
+        """Coverage of sources, scenarios, variables by tier and category."""
+        sources = self.db.query(DataHubSource).all()
+        scenarios = self.db.query(DataHubScenario).filter(DataHubScenario.is_active.is_(True)).all()
+
+        by_tier = {}
+        for src in sources:
+            tier = str(src.tier)
+            if tier not in by_tier:
+                by_tier[tier] = {"sources": 0, "scenarios": 0}
+            by_tier[tier]["sources"] += 1
+            by_tier[tier]["scenarios"] += src.scenario_count or 0
+
+        by_category = {}
+        for sc in scenarios:
+            cat = sc.category or "Uncategorized"
+            by_category[cat] = by_category.get(cat, 0) + 1
+
+        all_variables = set()
+        all_regions = set()
+        for sc in scenarios:
+            if sc.variables:
+                all_variables.update(sc.variables)
+            if sc.regions:
+                all_regions.update(sc.regions)
+
+        return {
+            "by_tier": by_tier,
+            "by_category": by_category,
+            "total_variables": len(all_variables),
+            "total_regions": len(all_regions),
+            "variables": sorted(all_variables),
+            "regions": sorted(all_regions),
+        }
+
+    def get_temperature_analytics(self):
+        """Temperature target distribution."""
+        scenarios = self.db.query(DataHubScenario).filter(
+            DataHubScenario.is_active.is_(True),
+            DataHubScenario.temperature_target.isnot(None),
+        ).all()
+
+        buckets = {"<1.5C": 0, "1.5-2.0C": 0, "2.0-3.0C": 0, "3.0-4.0C": 0, ">4.0C": 0}
+        details = []
+        for sc in scenarios:
+            t = sc.temperature_target
+            if t < 1.5:
+                buckets["<1.5C"] += 1
+            elif t <= 2.0:
+                buckets["1.5-2.0C"] += 1
+            elif t <= 3.0:
+                buckets["2.0-3.0C"] += 1
+            elif t <= 4.0:
+                buckets["3.0-4.0C"] += 1
+            else:
+                buckets[">4.0C"] += 1
+            details.append({"id": sc.id, "name": sc.name, "temperature_target": t,
+                           "source_id": sc.source_id, "category": sc.category})
+
+        return {"buckets": buckets, "total_with_target": len(scenarios), "details": details}
+
+    def get_carbon_price_analytics(self):
+        """Carbon price range across scenarios."""
+        trajs = self.db.query(DataHubTrajectory).filter(
+            DataHubTrajectory.variable_name.ilike("%Price%Carbon%")
+        ).all()
+
+        if not trajs:
+            return {"count": 0, "min": None, "max": None, "scenarios": []}
+
+        all_vals = []
+        scenario_summaries = []
+        for t in trajs:
+            vals = [v for v in t.time_series.values() if v is not None]
+            if vals:
+                all_vals.extend(vals)
+                scenario_summaries.append({
+                    "scenario_id": t.scenario_id,
+                    "region": t.region,
+                    "unit": t.unit,
+                    "min_price": round(min(vals), 2),
+                    "max_price": round(max(vals), 2),
+                    "latest_price": round(vals[-1], 2) if vals else None,
+                })
+
+        return {
+            "count": len(trajs),
+            "min": round(min(all_vals), 2) if all_vals else None,
+            "max": round(max(all_vals), 2) if all_vals else None,
+            "scenarios": scenario_summaries[:20],
+        }
+
+    def get_available_variables(self):
+        """Get all unique variable names with their units."""
+        rows = self.db.query(
+            DataHubTrajectory.variable_name,
+            DataHubTrajectory.unit,
+            func.count(DataHubTrajectory.id),
+        ).group_by(DataHubTrajectory.variable_name, DataHubTrajectory.unit).all()
+
+        return [{"variable": r[0], "unit": r[1], "count": r[2]} for r in rows]
