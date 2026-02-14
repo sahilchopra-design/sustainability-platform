@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 
 from db.base import get_db
-from models.scenario import ScenarioApprovalStatus, ScenarioSource, NGFSDataSource, Scenario
+from db.models.scenario import ScenarioApprovalStatus, ScenarioSource, NGFSDataSource, Scenario
 from schemas.scenario import (
     ScenarioCreate,
     ScenarioUpdate,
