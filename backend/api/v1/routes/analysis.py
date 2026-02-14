@@ -394,7 +394,6 @@ def generate_report(body: ReportRequest, db: Session = Depends(get_db)):
         raise HTTPException(404, "Portfolio not found")
     if not portfolio.assets:
         raise HTTPException(400, "Portfolio has no assets")
-        raise HTTPException(400, "Portfolio has no assets")
 
     portfolio_data = {
         "name": portfolio.name,
@@ -402,9 +401,20 @@ def generate_report(body: ReportRequest, db: Session = Depends(get_db)):
         "total_exposure": sum(a.exposure for a in portfolio.assets),
     }
 
+    # Convert PG assets for calculator
+    SECTOR_MAP = {s.value: s for s in Sector}
+    TYPE_MAP = {t.value: t for t in AssetType}
+    compat_assets = [Asset(
+        id=a.id, asset_type=TYPE_MAP.get(a.asset_type, AssetType.BOND),
+        company=Company(name=a.company_name, sector=SECTOR_MAP.get(a.company_sector, Sector.POWER_GENERATION),
+                      subsector=a.company_subsector),
+        exposure=a.exposure, market_value=a.market_value or a.exposure,
+        base_pd=a.base_pd, base_lgd=a.base_lgd, rating=a.rating, maturity_years=a.maturity_years,
+    ) for a in portfolio.assets]
+
     # Run impact calculation
     try:
-        impact_data = run_impact_calculation(db, body.scenario_id, portfolio.assets, body.horizons)
+        impact_data = run_impact_calculation(db, body.scenario_id, compat_assets, body.horizons)
     except ValueError as e:
         raise HTTPException(404, str(e))
 
