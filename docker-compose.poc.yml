@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  timescale_poc:
+    image: timescale/timescaledb:latest-pg16
+    container_name: climate_timescale_poc
+    environment:
+      POSTGRES_DB: climate_risk_poc
+      POSTGRES_USER: climate_user
+      POSTGRES_PASSWORD: climate_pass_2026
+    ports:
+      - "5433:5432"
+    volumes:
+      - timescale_poc_data:/var/lib/postgresql/data
+    command: postgres -c shared_preload_libraries=timescaledb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U climate_user -d climate_risk_poc"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  timescale_poc_data:

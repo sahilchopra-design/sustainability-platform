@@ -1,7 +1,7 @@
 [
   {
     "content": "Phase 1: POC - Setup PostgreSQL with TimescaleDB in Docker",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Phase 1: POC - Create climate data ingestion script using pyam + NGFS API",
