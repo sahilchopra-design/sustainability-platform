@@ -46,6 +46,7 @@ class Portfolio(Base):
     # Relationships
     assets = relationship("Asset", back_populates="portfolio", cascade="all, delete-orphan")
     analysis_runs = relationship("AnalysisRun", back_populates="portfolio", cascade="all, delete-orphan")
+    file_uploads = relationship("FileUpload", back_populates="portfolio", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<Portfolio(id={self.id}, name={self.name})>"
