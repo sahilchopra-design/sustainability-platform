@@ -24,6 +24,7 @@ from api.v1.routes.analysis import router as analysis_router
 from api.v1.routes.ngfs_v2 import router as ngfs_v2_router
 from api.v1.routes.scenario_builder_v2 import router as builder_v2_router
 from api.v1.routes.sub_parameter import router as sub_param_router
+from api.v1.routes.cbam import router as cbam_router
 from api.auth_pg import router as auth_router
 from api.v1.routes.portfolio_pg import router as portfolio_pg_router
 
@@ -63,6 +64,8 @@ app.include_router(ngfs_v2_router)
 app.include_router(builder_v2_router)
 # Include sub-parameter analysis routes
 app.include_router(sub_param_router)
+# Include CBAM routes
+app.include_router(cbam_router)
 
 # CORS
 app.add_middleware(

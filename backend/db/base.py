@@ -70,5 +70,10 @@ def init_db():
     from db.models.portfolio_pg import (
         PortfolioPG, AssetPG, AnalysisRunPG, UserPG, UserSessionPG,
     )
+    from db.models.cbam import (
+        CBAMProductCategory, CBAMSupplier, CBAMEmbeddedEmissions,
+        CBAMCostProjection, CBAMComplianceReport, CBAMCountryRisk,
+        CBAMCertificatePrice, CBAMVerifier,
+    )
     Base.metadata.create_all(bind=engine)
     print("✅ PostgreSQL database tables created")
