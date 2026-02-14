@@ -53,6 +53,9 @@ def init_db():
         DataHubComparison,
         DataHubSyncLog,
         DataHubFavorite,
+        GapAnalysis,
+        ConsistencyCheck,
+        ScenarioAlert,
     )
     Base.metadata.create_all(bind=engine)
     print("✅ PostgreSQL database tables created")
