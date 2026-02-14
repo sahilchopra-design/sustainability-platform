@@ -31,6 +31,9 @@ export default function SubAnalysisPage() {
   const [whatIf, setWhatIf] = useState(null);
   const [attribution, setAttribution] = useState(null);
   const [interactions, setInteractions] = useState(null);
+  const [elasticity, setElasticity] = useState(null);
+  const [ols, setOls] = useState(null);
+  const [shapley, setShapley] = useState(null);
   const [loading, setLoading] = useState({});
 
   // What-if config
