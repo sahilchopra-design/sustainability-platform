@@ -5,7 +5,7 @@ from models import Portfolio, ScenarioSeries, AnalysisRun
 
 
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
-DB_NAME = "climate_risk_platform"
+DB_NAME = os.getenv("DB_NAME", "test_database")
 
 _client = None
 
