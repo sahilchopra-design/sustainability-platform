@@ -45,6 +45,7 @@ export default function DataHub() {
     fetchSources();
     fetchScenarios();
     fetchSyncLogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSearch = () => {
