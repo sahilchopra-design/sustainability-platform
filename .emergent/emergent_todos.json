@@ -1,30 +1,54 @@
 [
   {
-    "content": "Create SQLAlchemy models for Scenario, ScenarioVersion, ScenarioImpactPreview",
-    "status": "completed"
+    "content": "Create TypeScript types for scenario builder frontend",
+    "status": "pending"
   },
   {
-    "content": "Create Pydantic schemas for scenario validation and API responses",
-    "status": "completed"
+    "content": "Create useScenarioBuilder.ts hook for scenario creation and editing",
+    "status": "pending"
   },
   {
-    "content": "Build NGFSSyncService for data integration with external sources",
-    "status": "completed"
+    "content": "Create useScenarioTemplates.ts hook for template management",
+    "status": "pending"
   },
   {
-    "content": "Build ScenarioBuilderService for creating and managing scenarios",
-    "status": "completed"
+    "content": "Build ScenarioTemplateGallery.tsx with filtering and search",
+    "status": "pending"
   },
   {
-    "content": "Build ScenarioImpactService for calculating scenario impacts on portfolios",
-    "status": "completed"
+    "content": "Build ParameterConfigurator.tsx with organized parameter groups",
+    "status": "pending"
   },
   {
-    "content": "Create async worker tasks for NGFS data synchronization",
-    "status": "completed"
+    "content": "Build TrajectoryVisualizer.tsx with interactive charts and editable points",
+    "status": "pending"
   },
   {
-    "content": "Create API routes for scenario management endpoints",
-    "status": "completed"
+    "content": "Build ScenarioImpactPreviewPanel.tsx with quick impact calculation",
+    "status": "pending"
+  },
+  {
+    "content": "Build ScenarioVersionTimeline.tsx with version history",
+    "status": "pending"
+  },
+  {
+    "content": "Build ScenarioComparisonView.tsx for side-by-side comparison",
+    "status": "pending"
+  },
+  {
+    "content": "Build NGFSDataBrowser.tsx for data source management",
+    "status": "pending"
+  },
+  {
+    "content": "Build ScenarioBuilderWizard.tsx with 5-step wizard",
+    "status": "pending"
+  },
+  {
+    "content": "Create ScenarioBuilderPage.tsx and ScenarioGalleryPage.tsx",
+    "status": "pending"
+  },
+  {
+    "content": "Add routes and test scenario builder components",
+    "status": "pending"
   }
 ]
