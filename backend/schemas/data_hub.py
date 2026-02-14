@@ -39,6 +39,7 @@ class DataHubSourceResponse(BaseModel):
     data_license: Optional[str] = None
     coverage_regions: List[str] = []
     coverage_variables: List[str] = []
+    update_frequency: Optional[str] = None
     last_synced_at: Optional[datetime] = None
     scenario_count: int = 0
     trajectory_count: int = 0
@@ -68,12 +69,14 @@ class DataHubScenarioResponse(BaseModel):
     source_name: Optional[str] = None
     external_id: Optional[str] = None
     name: str
+    display_name: Optional[str] = None
     description: Optional[str] = None
     category: Optional[str] = None
     model: Optional[str] = None
     version: Optional[str] = None
     tags: List[str] = []
     temperature_target: Optional[float] = None
+    carbon_neutral_year: Optional[int] = None
     time_horizon_start: Optional[int] = None
     time_horizon_end: Optional[int] = None
     regions: List[str] = []
@@ -105,9 +108,13 @@ class DataHubTrajectoryResponse(BaseModel):
     id: str
     scenario_id: str
     variable_name: str
+    variable_code: Optional[str] = None
     unit: str
     region: str
+    sector: Optional[str] = None
     time_series: Dict[str, float]
+    interpolation_method: Optional[str] = "linear"
+    data_quality_score: Optional[int] = 3
     metadata_info: Dict[str, Any] = {}
 
     class Config:
@@ -152,11 +159,13 @@ class DataHubComparisonResponse(BaseModel):
 class DataHubSyncLogResponse(BaseModel):
     id: str
     source_id: str
+    sync_type: str = "full"
     status: SyncStatus
     started_at: datetime
     completed_at: Optional[datetime] = None
     scenarios_added: int = 0
     scenarios_updated: int = 0
+    scenarios_deprecated: int = 0
     trajectories_added: int = 0
     error_message: Optional[str] = None
 
