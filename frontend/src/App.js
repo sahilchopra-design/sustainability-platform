@@ -9,6 +9,8 @@ import PortfolioDetail from './pages/PortfolioDetail';
 import Analysis from './pages/Analysis';
 import Results from './pages/Results';
 import ScenarioData from './pages/ScenarioData';
+import UploadPage from './pages/UploadPage';
+import ReviewPage from './pages/ReviewPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
