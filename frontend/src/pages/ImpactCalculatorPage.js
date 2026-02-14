@@ -7,7 +7,7 @@ import { Separator } from '../components/ui/separator';
 import { toast } from 'sonner';
 import {
   Calculator, Play, RefreshCw, TrendingUp, AlertTriangle,
-  DollarSign, Shield, BarChart3, Layers,
+  DollarSign, Shield, BarChart3, Layers, Download, FileText, Table2,
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
