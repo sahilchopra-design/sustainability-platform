@@ -113,7 +113,7 @@ async def health_check():
 @app.get("/api/portfolios")
 async def get_portfolios():
     """Get all portfolios"""
-    portfolios = await Portfolio.find_all().to_list()
+    portfolios = await Portfolio.find_all().limit(100).to_list()
     return {
         "portfolios": [
             {
