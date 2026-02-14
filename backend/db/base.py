@@ -67,5 +67,8 @@ def init_db():
         ParameterCustomization,
         SimulationRun,
     )
+    from db.models.portfolio_pg import (
+        PortfolioPG, AssetPG, AnalysisRunPG, UserPG, UserSessionPG,
+    )
     Base.metadata.create_all(bind=engine)
     print("✅ PostgreSQL database tables created")
