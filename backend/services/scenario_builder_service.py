@@ -91,6 +91,7 @@ class ScenarioBuilderService:
             "Initial version",
             scenario_data.created_by,
         )
+        self.db.commit()  # Commit the version record
         
         logger.info(f"Created scenario {scenario.id}: {scenario.name}")
         return scenario
