@@ -47,7 +47,7 @@ async def load_sample_portfolio():
     print(f"  - Total assets: {len(assets)}")
     print(f"  - Total exposure: ${sum(a.exposure for a in assets):,.0f}")
     
-    await client.close()
+    client.close()
     return assets
 
 
@@ -85,7 +85,7 @@ async def load_scenario_data():
                 'gdp_index': gdp_doc['value'] if gdp_doc else 100
             }
     
-    await client.close()
+    client.close()
     return scenario_params
 
 
