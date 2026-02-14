@@ -103,6 +103,8 @@ function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/portfolios" element={<Portfolios />} />
               <Route path="/portfolios/:id" element={<PortfolioDetail />} />
+              <Route path="/portfolios/:portfolioId/upload" element={<UploadPage />} />
+              <Route path="/portfolios/:portfolioId/upload/:uploadId/review" element={<ReviewPage />} />
               <Route path="/analysis" element={<Analysis />} />
               <Route path="/results/:runId" element={<Results />} />
               <Route path="/scenario-data" element={<ScenarioData />} />
