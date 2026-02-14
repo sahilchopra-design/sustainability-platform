@@ -29,18 +29,18 @@
   },
   {
     "content": "Build HoldingsManager.tsx with full CRUD, search, filter, and bulk operations",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Build PortfolioEditor.tsx with tab navigation",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Create PortfolioEditPage.tsx composing all portfolio components",
-    "status": "pending"
+    "status": "completed"
   },
   {
-    "content": "Add route for portfolio edit page and test functionality",
-    "status": "pending"
+    "content": "Add route for portfolio edit page and verify build passes",
+    "status": "completed"
   }
 ]
