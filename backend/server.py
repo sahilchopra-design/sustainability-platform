@@ -17,11 +17,17 @@ from risk_engine import RiskEngine, SECTOR_MULTIPLIERS
 from services.calculation_engine import ClimateRiskCalculationEngine
 from services.engine_integration import assets_to_inputs, engine_results_to_models
 
+# Import v1 scenario routes
+from api.v1.routes.scenarios import router as scenarios_router
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
     await init_db()
+    # Initialize PostgreSQL tables for scenarios
+    from db.base import init_db as init_postgres_db
+    init_postgres_db()
     yield
     # Shutdown
     await close_db()
@@ -33,6 +39,9 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
+
+# Include scenario builder routes
+app.include_router(scenarios_router)
 
 # CORS
 app.add_middleware(
