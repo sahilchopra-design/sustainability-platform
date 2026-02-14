@@ -104,6 +104,13 @@ export const useDashboardStore = create((set, get) => ({
         return acc;
       }, {});
 
+      // Geographic breakdown
+      const geoBreakdown = assets.reduce((acc, asset) => {
+        const country = asset.company?.country || 'Unknown';
+        acc[country] = (acc[country] || 0) + (asset.exposure || 0);
+        return acc;
+      }, {});
+
       // Rating breakdown
       const ratingBreakdown = assets.reduce((acc, asset) => {
         const rating = asset.rating || 'NR';
@@ -117,8 +124,9 @@ export const useDashboardStore = create((set, get) => ({
           expectedLoss,
           avgPD: avgPD * 100,
           avgLGD: avgLGD * 100,
-          numCounterparties: assets.length,
+          numAssets: assets.length,
           sectorBreakdown,
+          geoBreakdown,
           ratingBreakdown,
         },
         metricsLoading: false 
