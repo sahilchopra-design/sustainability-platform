@@ -1,125 +1,236 @@
-// Custom hook for column mapping
-import { useState, useCallback } from 'react';
-import type { MappingTemplate } from '@/types/upload';
+import { useState, useCallback, useMemo } from 'react';
+import axios from 'axios';
+import { toast } from 'sonner';
+import { MappingTemplate } from '../types/upload';
 
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || '';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-export const useColumnMapping = () => {
+// Required fields for portfolio holdings
+const REQUIRED_FIELDS = [
+  { key: 'counterparty_name', label: 'Counterparty Name', required: true },
+  { key: 'exposure', label: 'Exposure Amount', required: true },
+  { key: 'currency', label: 'Currency', required: false },
+  { key: 'sector', label: 'Sector', required: false },
+  { key: 'rating', label: 'Credit Rating', required: false },
+  { key: 'lei', label: 'LEI Code', required: false },
+  { key: 'isin', label: 'ISIN', required: false },
+  { key: 'country', label: 'Country', required: false },
+];
+
+export interface ColumnMapping {
+  [systemField: string]: string; // system field -> file column name
+}
+
+export interface MappingSuggestion {
+  systemField: string;
+  suggestedColumn: string;
+  confidence: number; // 0-100
+}
+
+export interface UseColumnMappingOptions {
+  uploadId: string;
+  fileColumns: string[];
+  onMappingComplete?: (mapping: ColumnMapping) => void;
+}
+
+export const useColumnMapping = ({ uploadId, fileColumns, onMappingComplete }: UseColumnMappingOptions) => {
+  const [mapping, setMapping] = useState<ColumnMapping>({});
   const [templates, setTemplates] = useState<MappingTemplate[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loadingTemplates, setLoadingTemplates] = useState(false);
 
-  // Fetch mapping templates
-  const fetchTemplates = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/uploads/templates`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch templates');
-      }
-      
-      const data = await response.json();
-      setTemplates(data);
-      return data;
-    } catch (error) {
-      console.error('Failed to fetch templates:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // Auto-suggest mappings based on column names
+  const suggestions = useMemo<MappingSuggestion[]>(() => {
+    const results: MappingSuggestion[] = [];
 
-  // Save mapping template
-  const saveTemplate = useCallback(async (
-    name: string,
-    description: string,
-    mapping: Record<string, string>,
-    fileFormat: string
-  ) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/uploads/templates`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          description,
-          mapping_config: mapping,
-          file_format: fileFormat,
-        }),
+    REQUIRED_FIELDS.forEach((field) => {
+      let bestMatch = '';
+      let maxConfidence = 0;
+
+      fileColumns.forEach((col) => {
+        const colLower = col.toLowerCase().trim();
+        const fieldLower = field.key.toLowerCase();
+        const labelLower = field.label.toLowerCase();
+
+        let confidence = 0;
+
+        // Exact match
+        if (colLower === fieldLower || colLower === labelLower) {
+          confidence = 100;
+        }
+        // Contains match
+        else if (colLower.includes(fieldLower) || fieldLower.includes(colLower)) {
+          confidence = 80;
+        }
+        // Partial word match
+        else if (colLower.includes(fieldLower.split('_')[0])) {
+          confidence = 60;
+        }
+        // Synonym/common variations
+        else {
+          const synonyms: Record<string, string[]> = {
+            counterparty_name: ['name', 'company', 'entity', 'borrower', 'obligor'],
+            exposure: ['amount', 'value', 'balance', 'ead', 'outstanding'],
+            currency: ['ccy', 'curr'],
+            sector: ['industry', 'vertical'],
+            rating: ['grade', 'score'],
+            lei: ['legal entity identifier'],
+          };
+
+          if (synonyms[field.key]) {
+            synonyms[field.key].forEach((syn) => {
+              if (colLower.includes(syn)) {
+                confidence = Math.max(confidence, 50);
+              }
+            });
+          }
+        }
+
+        if (confidence > maxConfidence) {
+          maxConfidence = confidence;
+          bestMatch = col;
+        }
       });
-      
-      if (!response.ok) {
-        throw new Error('Failed to save template');
+
+      if (maxConfidence > 40) {
+        results.push({
+          systemField: field.key,
+          suggestedColumn: bestMatch,
+          confidence: maxConfidence,
+        });
       }
-      
-      const data = await response.json();
-      setTemplates(prev => [data, ...prev]);
-      return data;
-    } catch (error) {
-      console.error('Failed to save template:', error);
-      throw error;
+    });
+
+    return results;
+  }, [fileColumns]);
+
+  // Apply auto-suggestions
+  const applyAutoMapping = useCallback(() => {
+    const autoMapping: ColumnMapping = {};
+    suggestions.forEach((suggestion) => {
+      if (suggestion.confidence >= 60) {
+        autoMapping[suggestion.systemField] = suggestion.suggestedColumn;
+      }
+    });
+    setMapping(autoMapping);
+    toast.success('Auto-Mapping Applied', {
+      description: `${Object.keys(autoMapping).length} fields mapped automatically`,
+    });
+  }, [suggestions]);
+
+  // Update a single mapping
+  const updateMapping = useCallback((systemField: string, fileColumn: string | null) => {
+    setMapping((prev) => {
+      const newMapping = { ...prev };
+      if (fileColumn) {
+        newMapping[systemField] = fileColumn;
+      } else {
+        delete newMapping[systemField];
+      }
+      return newMapping;
+    });
+  }, []);
+
+  // Clear all mappings
+  const clearMapping = useCallback(() => {
+    setMapping({});
+  }, []);
+
+  // Validate mapping completeness
+  const validateMapping = useCallback((): { valid: boolean; errors: string[] } => {
+    const errors: string[] = [];
+
+    REQUIRED_FIELDS.forEach((field) => {
+      if (field.required && !mapping[field.key]) {
+        errors.push(`${field.label} is required but not mapped`);
+      }
+    });
+
+    return {
+      valid: errors.length === 0,
+      errors,
+    };
+  }, [mapping]);
+
+  // Save mapping as template
+  const saveAsTemplate = useCallback(async (name: string, description?: string) => {
+    const validation = validateMapping();
+    if (!validation.valid) {
+      toast.error('Invalid Mapping', {
+        description: 'Please complete all required field mappings before saving',
+      });
+      return;
+    }
+
+    try {
+      await axios.post(`${BACKEND_URL}/api/v1/mapping-templates`, {
+        name,
+        description,
+        mapping_config: mapping,
+        file_format: 'csv', // Infer from upload
+      });
+
+      toast.success('Template Saved', {
+        description: `Mapping template "${name}" saved successfully`,
+      });
+    } catch (err: any) {
+      toast.error('Save Failed', {
+        description: err.response?.data?.detail || 'Could not save template',
+      });
+    }
+  }, [mapping, validateMapping]);
+
+  // Load templates
+  const loadTemplates = useCallback(async () => {
+    setLoadingTemplates(true);
+    try {
+      const response = await axios.get<MappingTemplate[]>(`${BACKEND_URL}/api/v1/mapping-templates`);
+      setTemplates(response.data);
+    } catch (err: any) {
+      toast.error('Load Failed', {
+        description: 'Could not load mapping templates',
+      });
+    } finally {
+      setLoadingTemplates(false);
     }
   }, []);
 
-  // Calculate confidence score for auto-mapping
-  const getConfidenceScore = useCallback((
-    uploadedColumn: string,
-    standardField: string
-  ): number => {
-    const normalizedUpload = uploadedColumn.toLowerCase().replace(/[_\s]/g, '');
-    const normalizedStandard = standardField.toLowerCase().replace(/[_\s]/g, '');
-    
-    // Exact match
-    if (normalizedUpload === normalizedStandard) return 100;
-    
-    // Contains match
-    if (normalizedUpload.includes(normalizedStandard) || 
-        normalizedStandard.includes(normalizedUpload)) {
-      return 85;
-    }
-    
-    // Partial match (Levenshtein-like)
-    const maxLen = Math.max(normalizedUpload.length, normalizedStandard.length);
-    const distance = levenshteinDistance(normalizedUpload, normalizedStandard);
-    const similarity = ((maxLen - distance) / maxLen) * 100;
-    
-    return Math.round(similarity);
+  // Apply a saved template
+  const applyTemplate = useCallback((template: MappingTemplate) => {
+    setMapping(template.mapping_config);
+    toast.success('Template Applied', {
+      description: `Using mapping template: ${template.name}`,
+    });
   }, []);
+
+  // Complete mapping (trigger validation and callback)
+  const completeMapping = useCallback(() => {
+    const validation = validateMapping();
+    if (!validation.valid) {
+      toast.error('Incomplete Mapping', {
+        description: validation.errors[0],
+      });
+      return false;
+    }
+
+    if (onMappingComplete) {
+      onMappingComplete(mapping);
+    }
+    return true;
+  }, [mapping, validateMapping, onMappingComplete]);
 
   return {
+    mapping,
+    suggestions,
     templates,
-    loading,
-    fetchTemplates,
-    saveTemplate,
-    getConfidenceScore,
+    loadingTemplates,
+    requiredFields: REQUIRED_FIELDS,
+    updateMapping,
+    applyAutoMapping,
+    clearMapping,
+    validateMapping,
+    saveAsTemplate,
+    loadTemplates,
+    applyTemplate,
+    completeMapping,
   };
 };
-
-// Levenshtein distance helper
-function levenshteinDistance(str1: string, str2: string): number {
-  const matrix: number[][] = [];
-  
-  for (let i = 0; i <= str2.length; i++) {
-    matrix[i] = [i];
-  }
-  
-  for (let j = 0; j <= str1.length; j++) {
-    matrix[0][j] = j;
-  }
-  
-  for (let i = 1; i <= str2.length; i++) {
-    for (let j = 1; j <= str1.length; j++) {
-      if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
-        matrix[i][j] = matrix[i - 1][j - 1];
-      } else {
-        matrix[i][j] = Math.min(
-          matrix[i - 1][j - 1] + 1,
-          matrix[i][j - 1] + 1,
-          matrix[i - 1][j] + 1
-        );
-      }
-    }
-  }
-  
-  return matrix[str2.length][str1.length];
-}

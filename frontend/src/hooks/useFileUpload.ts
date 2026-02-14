@@ -1,207 +1,133 @@
-// Custom hook for file upload operations
 import { useState, useCallback } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import type { UploadStatus, UploadPreview, ValidationError } from '@/types/upload';
+import axios from 'axios';
+import { toast } from 'sonner';
+import { UploadStatus } from '../types/upload';
 
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || '';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+const ALLOWED_TYPES = ['text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
 
-export const useFileUpload = (portfolioId: string) => {
+export interface UseFileUploadOptions {
+  portfolioId: string;
+  onUploadComplete?: (uploadId: string) => void;
+  onError?: (error: string) => void;
+}
+
+export const useFileUpload = ({ portfolioId, onUploadComplete, onError }: UseFileUploadOptions) => {
+  const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState<UploadStatus | null>(null);
-  const [preview, setPreview] = useState<UploadPreview | null>(null);
-  const [errors, setErrors] = useState<ValidationError[]>([]);
-  const { toast } = useToast();
+  const [error, setError] = useState<string | null>(null);
 
-  // Upload file
-  const uploadFile = useCallback(async (file: File) => {
-    setUploading(true);
+  const validateFile = useCallback((file: File): { valid: boolean; error?: string } => {
+    // Check file size
+    if (file.size > MAX_FILE_SIZE) {
+      return { valid: false, error: `File size exceeds ${MAX_FILE_SIZE / (1024 * 1024)}MB limit` };
+    }
+
+    // Check file type
+    if (!ALLOWED_TYPES.includes(file.type) && !file.name.match(/\.(csv|xlsx|xls)$/i)) {
+      return { valid: false, error: 'File type not supported. Please upload CSV or Excel files.' };
+    }
+
+    return { valid: true };
+  }, []);
+
+  const selectFile = useCallback((selectedFile: File) => {
+    const validation = validateFile(selectedFile);
     
+    if (!validation.valid) {
+      setError(validation.error!);
+      toast.error('Invalid File', {
+        description: validation.error,
+        duration: 5000,
+      });
+      return false;
+    }
+
+    setFile(selectedFile);
+    setError(null);
+    return true;
+  }, [validateFile]);
+
+  const uploadFile = useCallback(async () => {
+    if (!file) {
+      setError('No file selected');
+      return;
+    }
+
+    setUploading(true);
+    setProgress(0);
+    setError(null);
+
+    const formData = new FormData();
+    formData.append('file', file);
+
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/uploads?portfolio_id=${portfolioId}`,
+      const response = await axios.post<UploadStatus>(
+        `${BACKEND_URL}/api/v1/portfolios/${portfolioId}/upload`,
+        formData,
         {
-          method: 'POST',
-          body: formData,
+          headers: { 'Content-Type': 'multipart/form-data' },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+              setProgress(percentCompleted);
+            }
+          },
         }
       );
-      
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || 'Upload failed');
+
+      setUploadStatus(response.data);
+      toast.success('Upload Complete', {
+        description: `${file.name} uploaded successfully. ${response.data.total_rows} rows detected.`,
+        duration: 5000,
+      });
+
+      if (onUploadComplete) {
+        onUploadComplete(response.data.upload_id);
       }
-      
-      const data = await response.json();
-      setUploadStatus(data);
-      
-      toast({
-        title: 'File uploaded successfully',
-        description: `${data.total_rows} rows detected`,
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.detail || err.message || 'Upload failed';
+      setError(errorMsg);
+      toast.error('Upload Failed', {
+        description: errorMsg,
+        duration: 7000,
       });
       
-      return data.upload_id;
-    } catch (error) {
-      toast({
-        title: 'Upload failed',
-        description: error instanceof Error ? error.message : 'Unknown error',
-        variant: 'destructive',
-      });
-      throw error;
+      if (onError) {
+        onError(errorMsg);
+      }
     } finally {
       setUploading(false);
     }
-  }, [portfolioId, toast]);
+  }, [file, portfolioId, onUploadComplete, onError]);
 
-  // Get upload status
-  const fetchStatus = useCallback(async (uploadId: string) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/uploads/${uploadId}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch status');
-      }
-      
-      const data = await response.json();
-      setUploadStatus(data);
-      return data;
-    } catch (error) {
-      console.error('Failed to fetch status:', error);
-      throw error;
-    }
+  const reset = useCallback(() => {
+    setFile(null);
+    setUploading(false);
+    setProgress(0);
+    setUploadStatus(null);
+    setError(null);
   }, []);
 
-  // Get preview
-  const fetchPreview = useCallback(async (uploadId: string, maxRows: number = 100) => {
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/uploads/${uploadId}/preview?max_rows=${maxRows}`
-      );
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch preview');
-      }
-      
-      const data = await response.json();
-      setPreview(data);
-      return data;
-    } catch (error) {
-      console.error('Failed to fetch preview:', error);
-      throw error;
-    }
-  }, []);
-
-  // Get validation errors
-  const fetchErrors = useCallback(async (uploadId: string) => {
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/uploads/${uploadId}/errors`
-      );
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch errors');
-      }
-      
-      const data = await response.json();
-      setErrors(data);
-      return data;
-    } catch (error) {
-      console.error('Failed to fetch errors:', error);
-      throw error;
-    }
-  }, []);
-
-  // Update mapping
-  const updateMapping = useCallback(async (
-    uploadId: string,
-    mapping: Record<string, string>
-  ) => {
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/uploads/${uploadId}/mapping`,
-        {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ mapping }),
-        }
-      );
-      
-      if (!response.ok) {
-        throw new Error('Failed to update mapping');
-      }
-      
-      const data = await response.json();
-      setUploadStatus(data);
-      
-      toast({
-        title: 'Mapping updated',
-        description: 'Column mapping has been saved',
-      });
-      
-      return data;
-    } catch (error) {
-      toast({
-        title: 'Failed to update mapping',
-        description: error instanceof Error ? error.message : 'Unknown error',
-        variant: 'destructive',
-      });
-      throw error;
-    }
-  }, [toast]);
-
-  // Process upload
-  const processUpload = useCallback(async (
-    uploadId: string,
-    options: { skip_invalid?: boolean; auto_enrich?: boolean } = {}
-  ) => {
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/uploads/${uploadId}/process`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            skip_invalid: options.skip_invalid ?? false,
-            auto_enrich: options.auto_enrich ?? true,
-          }),
-        }
-      );
-      
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || 'Processing failed');
-      }
-      
-      const data = await response.json();
-      setUploadStatus(data);
-      
-      toast({
-        title: 'Processing started',
-        description: 'Your file is being processed in the background',
-      });
-      
-      return data;
-    } catch (error) {
-      toast({
-        title: 'Processing failed',
-        description: error instanceof Error ? error.message : 'Unknown error',
-        variant: 'destructive',
-      });
-      throw error;
-    }
-  }, [toast]);
+  const cancelUpload = useCallback(() => {
+    // TODO: Implement axios cancel token
+    reset();
+    toast.info('Upload Cancelled');
+  }, [reset]);
 
   return {
+    file,
     uploading,
+    progress,
     uploadStatus,
-    preview,
-    errors,
+    error,
+    selectFile,
     uploadFile,
-    fetchStatus,
-    fetchPreview,
-    fetchErrors,
-    updateMapping,
-    processUpload,
+    reset,
+    cancelUpload,
+    validateFile,
   };
 };
