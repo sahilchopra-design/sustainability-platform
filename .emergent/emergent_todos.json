@@ -1,7 +1,7 @@
 [
   {
     "content": "Create SQLAlchemy models for Scenario, ScenarioVersion, ScenarioImpactPreview",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Create Pydantic schemas for scenario validation and API responses",
