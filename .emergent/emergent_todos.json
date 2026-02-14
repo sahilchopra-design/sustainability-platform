@@ -9,11 +9,11 @@
   },
   {
     "content": "Create SQLAlchemy models for all entities (Portfolio, Asset, ScenarioSeries, AnalysisRun, ScenarioResult)",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Set up Alembic and create initial migration",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Test PostgreSQL connection and create tables",
