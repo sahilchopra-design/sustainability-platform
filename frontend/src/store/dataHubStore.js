@@ -102,6 +102,26 @@ export const useDataHubStore = create((set, get) => ({
 
   setFilters: (filters) => set({ filters }),
 
+  // Analytics
+  analytics: null,
+  analyticsLoading: false,
+  temperatureAnalytics: null,
+  availableVariables: [],
+
+  fetchAnalytics: async () => {
+    set({ analyticsLoading: true });
+    try {
+      const [coverage, temp, vars] = await Promise.all([
+        fetch(`${API_URL}/api/v1/data-hub/analytics/coverage`).then(r => r.json()),
+        fetch(`${API_URL}/api/v1/data-hub/analytics/temperature-range`).then(r => r.json()),
+        fetch(`${API_URL}/api/v1/data-hub/trajectories/available-variables`).then(r => r.json()),
+      ]);
+      set({ analytics: coverage, temperatureAnalytics: temp, availableVariables: vars, analyticsLoading: false });
+    } catch {
+      set({ analyticsLoading: false });
+    }
+  },
+
   seedSources: async () => {
     const res = await fetch(`${API_URL}/api/v1/data-hub/sources/seed`, { method: 'POST' });
     return res.json();
