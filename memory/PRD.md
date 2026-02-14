@@ -1,35 +1,42 @@
 # Climate Credit Risk Intelligence Platform - PRD
 
-## Original Problem Statement
-Comprehensive portfolio analysis and scenario building application for climate risk assessment.
-
 ## Architecture
 - Backend: FastAPI + PostgreSQL (Supabase) + MongoDB
 - Frontend: React + shadcn/ui + Recharts + Zustand
-- Real Data: IIASA Scenario Explorer (pyam-iamc) for NGFS, IPCC AR6, IAMC 1.5C
+- Auth: Google OAuth (Emergent) + JWT email/password
+- Real Data: IIASA Scenario Explorer (pyam-iamc)
 
-## Pages & Routes
-| Route | Page | Status |
-|-------|------|--------|
-| `/` | Dashboard | Done |
-| `/portfolios` | Portfolios | Done |
-| `/analysis` | Run Analysis | Done |
-| `/scenario-data` | Scenario Data | Done |
-| `/scenario-builder` | Scenario Builder | Done |
-| `/data-hub` | Data Hub (19 sources) | Done |
-| `/browser` | Scenario Browser | Done |
-| `/comparison` | Comparison & Gap Analysis | Done |
-| `/impact` | Impact Calculator + **Report Export** | Done |
-| `/portfolio-manager` | Portfolio Upload + Editor | Done |
+## Pages (11 routes, all auth-gated)
+| Route | Page |
+|-------|------|
+| `/` | Dashboard |
+| `/portfolios` | Portfolios |
+| `/analysis` | Run Analysis |
+| `/scenario-data` | Scenario Data |
+| `/scenario-builder` | Scenario Builder |
+| `/data-hub` | Data Hub (19 sources) |
+| `/browser` | Scenario Browser |
+| `/comparison` | Comparison & Gap Analysis |
+| `/impact` | Impact Calculator + Report Export |
+| `/portfolio-manager` | Portfolio Upload + Editor |
+| `/alerts` | Scenario Alerts |
 
-## Completed Features (All Tested)
+## All Completed Features
+
+### Authentication — Feb 14, 2026
+- Google OAuth via Emergent Auth (primary) + JWT email/password (fallback)
+- Session tokens in MongoDB (users + user_sessions collections)
+- Auth gates all pages, user profile in sidebar with logout
+- Testing: 12/12 BE + 7/7 FE (iteration_10)
+
+### Alert System UI — Feb 14, 2026
+- In-app notifications for scenario updates, revisions, trend changes
+- Unread badges, mark read/all read, unread-only filter
+- POST/GET/PATCH endpoints for alert CRUD
+- Route: `/alerts`
 
 ### Report Generator — Feb 14, 2026
-- Professional PDF reports (reportlab): Cover page, executive summary, metrics tables, scenario details, multipliers
-- Excel reports (openpyxl): Multi-sheet workbook with Summary, Impact Results, Multipliers, Scenario Details
-- CSV reports: Flat data export for further analysis
-- Frontend: PDF/Excel/CSV export buttons on Impact Calculator, opens download in new tab
-- API: `POST /api/v1/analysis/reports/generate` + `GET /api/v1/analysis/reports/download/{filename}`
+- PDF (reportlab), Excel (openpyxl), CSV export from Impact Calculator
 - Testing: 11/11 BE + 6/6 FE (iteration_9)
 
 ### Impact Calculator + Custom Builder + Portfolio Manager — Feb 14, 2026
@@ -46,9 +53,8 @@ Comprehensive portfolio analysis and scenario building application for climate r
 
 ## Backlog
 ### P2
-- User authentication
-- Alert System UI (in-app notifications)
 - Database unification (MongoDB → PostgreSQL)
 ### P3
 - Live APIs for remaining 16 synthetic sources
 - Scheduled sync jobs, Redis caching
+- Role-based access control
