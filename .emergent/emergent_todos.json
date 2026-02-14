@@ -1,27 +1,7 @@
 [
   {
-    "content": "Phase 1: POC - Setup PostgreSQL with TimescaleDB in Docker",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 1: POC - Create climate data ingestion script using pyam + NGFS API",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 1: POC - Build risk calculation engine with 3 methodologies (risk multipliers, PD adjustments, Expected Loss)",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 1: POC - Test all POC scripts and verify outputs",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 1: POC - All user stories covered and tested",
-    "status": "completed"
-  },
-  {
     "content": "Phase 2: Setup project structure (backend + frontend)",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Phase 2: Install all backend dependencies (FastAPI, SQLAlchemy, TimescaleDB, pyam, etc.)",
@@ -33,7 +13,7 @@
   },
   {
     "content": "Phase 2: Get design guidelines from design agent",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Phase 2: Create backend database models and schemas",
