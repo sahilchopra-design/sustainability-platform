@@ -19,6 +19,7 @@ import LoginPage from './pages/LoginPage';
 import AlertsPage from './pages/AlertsPage';
 import NGFSScenariosPage from './pages/NGFSScenariosPage';
 import CustomBuilderPage from './pages/CustomBuilderPage';
+import SubAnalysisPage from './pages/SubAnalysisPage';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -133,6 +134,7 @@ function AppRouter() {
             { to: '/alerts', label: 'Alerts', icon: '🔔', id: 'alerts' },
             { to: '/ngfs', label: 'NGFS Scenarios', icon: '🌐', id: 'ngfs' },
             { to: '/custom-builder', label: 'Custom Builder', icon: '🔧', id: 'custom-builder' },
+            { to: '/sub-analysis', label: 'Sub-Parameter', icon: '🔬', id: 'sub-analysis' },
           ].map(item => (
             <NavLink key={item.id} to={item.to} end={item.end}
               className={({ isActive }) =>
@@ -183,6 +185,7 @@ function AppRouter() {
               <Route path="/alerts" element={<AlertsPage />} />
               <Route path="/ngfs" element={<NGFSScenariosPage />} />
               <Route path="/custom-builder" element={<CustomBuilderPage />} />
+              <Route path="/sub-analysis" element={<SubAnalysisPage />} />
         </Routes>
       </main>
     </div>
