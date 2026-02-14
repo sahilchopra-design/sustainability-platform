@@ -5,47 +5,47 @@
   },
   {
     "content": "Create useFileUpload.ts hook with file selection, validation, upload progress, and error handling",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Create useColumnMapping.ts hook with mapping state, auto-suggestions, and template management",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Build FileUploadZone.tsx component with drag-and-drop, validation, and progress bar",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Build UploadProgressTracker.tsx component with stepper UI and status tracking",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Build ColumnMappingWizard.tsx component with step-by-step mapping and confidence scores",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Build DataPreviewTable.tsx component with pagination, inline editing, and row selection",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Build ValidationResultsPanel.tsx component with summary cards, filters, and issue table",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Build ImportHistoryList.tsx component with status badges and quick actions",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Create UploadPage.tsx page composing upload zone, history, and progress tracker",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Create ReviewPage.tsx page composing mapping wizard, preview, and validation results",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Add routes to App.js for upload and review pages",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Test components with screenshots and verify design compliance",
