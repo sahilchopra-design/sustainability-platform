@@ -13,10 +13,10 @@
   },
   {
     "content": "Test /api/analysis/run endpoint with curl to ensure it returns valid results",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Run frontend smoke test - generate sample data, run analysis, view results",
-    "status": "pending"
+    "status": "in_progress"
   }
 ]
