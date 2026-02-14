@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select, or_
 import copy
 
-from models.scenario import (
+from db.models.scenario import (
     Scenario,
     ScenarioVersion,
     ScenarioSource,
