@@ -1,15 +1,15 @@
 [
   {
     "content": "Create asset input mapper function to convert Portfolio.assets to AssetInput objects for the calculation engine",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Create result mapper function to convert ScenarioHorizonResult to existing ScenarioResult model for backwards compatibility",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Integrate ClimateRiskCalculationEngine into /api/analysis/run endpoint replacing legacy risk_engine",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Test /api/analysis/run endpoint with curl to ensure it returns valid results",
