@@ -1,109 +1,74 @@
 # Climate Credit Risk Intelligence Platform - PRD
 
 ## Original Problem Statement
-A comprehensive portfolio analysis and scenario building application for climate risk assessment. The platform enables risk analysts to analyze credit portfolios against NGFS climate scenarios, create custom scenarios, and run impact analyses.
+Comprehensive portfolio analysis and scenario building application for climate risk assessment.
 
-## User Personas
-- **Bank Risk Analysts**: Primary users who need to assess climate risk impact on credit portfolios
-- **Portfolio Managers**: Users managing asset allocations and risk exposures
-- **Asset Managers**: Users responsible for investment decisions based on climate risk
+## Architecture
+- Backend: FastAPI + PostgreSQL (Supabase) + MongoDB
+- Frontend: React + shadcn/ui + Recharts + Zustand
+- Real Data: IIASA Scenario Explorer (pyam-iamc) for NGFS, IPCC AR6, IAMC 1.5C
 
-## Core Architecture
+## Pages & Routes
+| Route | Page | Status |
+|-------|------|--------|
+| `/` | Dashboard | Done |
+| `/portfolios` | Portfolios | Done |
+| `/analysis` | Run Analysis | Done |
+| `/scenario-data` | Scenario Data | Done |
+| `/scenario-builder` | Scenario Builder | Done |
+| `/data-hub` | Data Hub (19 sources) | Done |
+| `/browser` | Scenario Browser (filters, drawer, compare) | Done |
+| `/comparison` | Comparison & Gap Analysis | Done |
+| `/impact` | **Impact Calculator** | Done (New) |
+| `/portfolio-manager` | **Portfolio Manager (Upload + Editor)** | Done (New) |
 
-### Backend (FastAPI + PostgreSQL/MongoDB)
-- Real Data Integration: IIASA Scenario Explorer via `pyam-iamc` for NGFS, IPCC AR6, IAMC 1.5C
-- 19 data sources, 99 scenarios, 875 trajectories, 62 variables, 13 regions
+## Completed Features
 
-### Frontend (React + shadcn/ui + Recharts + Zustand)
-- **Pages**: Dashboard, Portfolios, Analysis, Scenario Builder, Data Hub, **Scenario Browser**, Comparison
+### Impact Calculator (P0) — Feb 14, 2026
+- Connects hub scenarios to portfolios via calculation engine
+- Maps scenario categories → engine types (Orderly/Disorderly/Hot House)
+- Calculates PD/LGD adjustments, Expected Loss, VaR 95%/99%, rating migrations
+- Extracts scenario multipliers (carbon price, emissions, temperature)
+- Frontend: Portfolio + Scenario selectors, EL/VaR cards, bar + line charts
 
----
+### Custom Scenario Builder (P0) — Feb 14, 2026
+- Blend trajectories from multiple scenarios
+- Select base scenario, override specific variable+region combinations
+- Lineage tracking in parameters JSON
+- Creates new entries in hub_scenarios with "custom" source
 
-## What's Been Implemented
+### Portfolio Upload & Editor (P1) — Feb 14, 2026
+- CSV upload with auto-column detection (name, sector, exposure, rating, pd, lgd, maturity)
+- Validation with error reporting
+- Create portfolio from parsed assets
+- Editor: Select portfolio, add/remove assets, edit fields inline, save
 
-### Completed (Feb 14, 2026) — Latest
+### Previously Completed
+- Scenario Browser: sidebar filters, grid/list, detail drawer, compare workspace, favorites, analytics
+- Comparison Engine: multi-scenario overlay, gap analysis, consistency checks
+- Data Hub: 19 sources, 99+ scenarios, 875+ trajectories, 3 real IIASA sources
 
-#### Scenario Browser UI (P0)
-Professional financial-grade scenario browser with:
-- **Sidebar Filters**: Temperature slider (1-5°C), source checkboxes grouped by 6 tiers, category multi-select
-- **Grid/List Views**: Toggle between card grid (4 cols) and compact list
-- **Detail Drawer**: Right-side slide-out with full metadata, trajectory chart preview, favorite/compare/check buttons, tags, regions
-- **Compare Workspace**: Add scenarios from cards, variable/region selectors, overlay charts with statistics
-- **Favorites**: Star scenarios, view in dedicated tab
-- **Analytics Dashboard**: Temperature distribution, tier pie chart, category breakdown, stat cards
-- **Filter Chips**: Active filters displayed as removable badges
-- **Search**: Sidebar search with real-time results
-- **Sort**: Name, Temperature, Data Size
-
-Components: ScenarioBrowserPage, FilterSidebar, ScenarioCard (grid+list), ScenarioDetailDrawer, CompareWorkspace
-Store: scenarioBrowserStore (Zustand)
-Route: `/browser`
-
-Testing: 15/15 features passed (iteration_7)
-
-#### Scenario Comparison & Analysis Engine (P0)
-- Multi-scenario comparison with diff calculations and statistics
-- Gap analysis (policy/ambition/implementation)
-- Consistency checks (carbon budget, energy balance, tech deployment, economic feasibility)
-Route: `/comparison`
-Testing: 18/18 backend + all frontend passed (iteration_6)
-
-#### Universal Scenario Data Hub (P0)
-- 19 sources, 6 tiers, 3 real IIASA + 16 synthetic
-Route: `/data-hub`
-Testing: 24/24 backend passed (iteration_5)
-
-#### Scenario Builder (P0) + Portfolio Analysis Dashboard (P0) — Previously completed
-
----
-
-## Prioritized Backlog
-
-### P1 - High Priority
-1. Scenario Impact Calculator (connect scenarios to portfolios for PD/LGD/EL)
-2. Portfolio File Upload System
-3. Portfolio Editor
-
-### P2 - Medium Priority
-1. Custom Scenario Builder (blend trajectories)
-2. Alert System UI
-3. User authentication
-4. Report generation
-
-### P3 - Future
-1. Live APIs for remaining sources
-2. Scheduled sync jobs, Redis caching
-
----
-
-## Key Files
-
-### Scenario Browser
-- `/app/frontend/src/pages/ScenarioBrowserPage.js`
-- `/app/frontend/src/store/scenarioBrowserStore.js`
-- `/app/frontend/src/components/scenario-browser/ScenarioCard.js`
-- `/app/frontend/src/components/scenario-browser/FilterSidebar.js`
-- `/app/frontend/src/components/scenario-browser/ScenarioDetailDrawer.js`
-- `/app/frontend/src/components/scenario-browser/CompareWorkspace.js`
-
-### Comparison & Analysis
+## Key Backend Files
+- `/app/backend/services/impact_calculator.py`
+- `/app/backend/services/custom_scenario_builder.py`
+- `/app/backend/services/portfolio_upload.py`
 - `/app/backend/api/v1/routes/analysis.py`
-- `/app/backend/services/scenario_comparison_service.py`
-- `/app/frontend/src/pages/ComparisonPage.js`
-
-### Data Hub
 - `/app/backend/api/v1/routes/data_hub.py`
-- `/app/backend/services/data_hub_service.py`
-- `/app/frontend/src/pages/DataHub.js`
-
----
+- `/app/backend/services/scenario_comparison_service.py`
 
 ## Testing
-- iteration_7: Scenario Browser (15/15 frontend)
-- iteration_6: Comparison & Analysis (18/18 backend, all frontend)
-- iteration_5: Expanded Data Hub (24/24 backend)
+- iteration_8: Impact + Custom Builder + Portfolio Upload (15/15 BE, 12/12 FE)
+- iteration_7: Scenario Browser (15/15 FE)
+- iteration_6: Comparison & Analysis (18/18 BE)
+- iteration_5: Expanded Data Hub (24/24 BE)
 
-## Tech Stack
-- Backend: FastAPI, SQLAlchemy, Pydantic, pyam-iamc
-- Frontend: React, Recharts, Zustand, shadcn/ui, TanStack Table
-- DB: PostgreSQL (Supabase), MongoDB (legacy)
+## Backlog
+### P2
+- User authentication
+- Report generation (PDF/Excel export)
+- Alert System UI
+- Database unification (MongoDB → PostgreSQL)
+### P3
+- Live APIs for remaining 16 synthetic sources
+- Scheduled sync jobs, Redis caching
+- Additional regional data sources
