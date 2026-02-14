@@ -4,6 +4,7 @@
 - ✅ Deliver a production-ready, high-performance Scenario Calculation Engine (PD/LGD + portfolio metrics + VaR) that runs quickly and deterministically.
 - ✅ Replace existing `/api/analysis/run` logic with the new engine while keeping API responses compatible with the current frontend.
 - 🔄 Migrate persistence from MongoDB/Beanie to **Supabase PostgreSQL** (TimescaleDB optional) without breaking core user flows.
+- 🆕 Build a **Portfolio File Upload UI** (frontend-only) that supports drag-and-drop upload, column mapping, validation review, and import management.
 - ⏳ Defer authentication until after DB migration and post-migration stabilization.
 
 ---
@@ -170,19 +171,112 @@
 
 ---
 
+### Phase 6: Portfolio File Upload UI Components (Status: Not Started)
+**Scope (frontend-only)**
+Build a comprehensive upload interface for portfolio holdings files with validation, column mapping, and import management. This phase assumes backend endpoints will exist (or will be stubbed during UI development) but does not implement backend logic.
+
+**User stories**
+1. As a portfolio manager, I can drag-and-drop a CSV/XLSX file to upload holdings and see upload progress.
+2. As a portfolio manager, I can map file columns to required holding fields using a step-by-step wizard with auto-suggestions and confidence scores.
+3. As a portfolio manager, I can review validation results (valid/warning/error), filter issues, and fix errors with inline edits.
+4. As a portfolio manager, I can preview data with pagination and row selection before importing.
+5. As a portfolio manager, I can track the upload/import lifecycle with clear step descriptions and estimated time remaining.
+6. As a portfolio manager, I can view previous imports with statuses and take quick actions (view details, retry, delete/cancel where applicable).
+
+**New information / constraints**
+- Frontend is currently CRA + React Router, predominantly **.js/.jsx**; new deliverables requested as **.ts/.tsx**.
+- Use existing Shadcn/UI components under `src/components/ui/`.
+- Use `lucide-react` for icons; no emoji icons.
+- Use Sonner for toasts.
+- Every interactive and key informational element must include stable `data-testid` attributes.
+- Avoid `transition-all`; use `transition-colors` and targeted transitions only.
+- Backend base URL is configured via `REACT_APP_BACKEND_URL`.
+- Existing TypeScript models live at `src/types/upload.ts`.
+
+**Implementation steps**
+1. **Scaffold pages & routing**
+   - Add `pages/UploadPage.tsx` and `pages/ReviewPage.tsx`.
+   - Add routes into `src/App.js` (or migrate to `App.tsx` if a TS conversion is explicitly desired).
+   - Ensure page header structure matches design guidelines (Title, subtitle, action cluster).
+2. **Create hooks (state + API integration boundaries)**
+   - Implement `hooks/useFileUpload.ts`:
+     - file selection + drag/drop
+     - file size/type validation
+     - upload progress tracking (XHR progress)
+     - error handling + Sonner notifications
+   - Implement `hooks/useColumnMapping.ts`:
+     - maintain mapping state
+     - auto-suggestion helpers (heuristics over column names)
+     - confidence scoring model (simple deterministic scoring)
+     - save/load mapping templates (UI + API boundary)
+3. **Build components (reusable, data-testid complete)**
+   - `components/upload/FileUploadZone.tsx`
+     - drag-and-drop surface
+     - file type/size validation
+     - progress bar and cancel/reset
+   - `components/upload/UploadProgressTracker.tsx`
+     - stepper UI (Uploaded → Validating → Mapping → Processing → Completed/Failed)
+     - step descriptions + estimated time remaining
+   - `components/upload/ColumnMappingWizard.tsx`
+     - step-by-step mapping
+     - suggested mappings + confidence scores
+     - “Save as template” option
+   - `components/upload/DataPreviewTable.tsx`
+     - paginated preview
+     - validation status indicators
+     - inline editing
+     - row selection
+   - `components/upload/ValidationResultsPanel.tsx`
+     - summary cards (Total, Valid, Warnings, Errors)
+     - filter tabs
+     - table with issue details
+     - inline editing flows for error correction
+   - `components/upload/ImportHistoryList.tsx`
+     - previous imports list
+     - status badges
+     - quick actions (view, retry, delete/cancel if supported)
+4. **Composition + flows**
+   - `UploadPage.tsx`: Upload zone + history list + progress tracker.
+   - `ReviewPage.tsx`: Mapping wizard + preview table + validation results + import actions.
+   - Ensure predictable navigation between pages (e.g., after upload → review).
+5. **UX polish and accessibility**
+   - Keyboard support for tables, tabs, dialogs.
+   - Clear empty/error states using Alert/Skeleton.
+   - Ensure meaning is not encoded by color alone (use icons/labels).
+6. **Testing (frontend)**
+   - Basic render/smoke tests (if test setup exists) or manual QA checklist.
+   - Validate `data-testid` coverage on critical controls.
+
+**Deliverables**
+- `components/upload/FileUploadZone.tsx`
+- `components/upload/ColumnMappingWizard.tsx`
+- `components/upload/ValidationResultsPanel.tsx`
+- `components/upload/DataPreviewTable.tsx`
+- `components/upload/UploadProgressTracker.tsx`
+- `components/upload/ImportHistoryList.tsx`
+- `hooks/useFileUpload.ts`
+- `hooks/useColumnMapping.ts`
+- `pages/UploadPage.tsx`
+- `pages/ReviewPage.tsx`
+
+---
+
 ## Next Actions
 1. Phase 3 (now):
    - Add SQLAlchemy + Alembic dependencies
    - Add Supabase `DATABASE_URL` (URL-encoded password)
    - Create SQLAlchemy models + initial migration
    - Run `pg_poc.py` to validate connectivity + persistence
-2. Phase 4:
+2. Phase 6 (in parallel; frontend-only):
+   - Implement Upload UI components + hooks + pages
+   - Add routes and integrate with configured backend base URL
+3. Phase 4:
    - Build repository layer
    - Migrate endpoints from Mongo/Beanie → Postgres/SQLAlchemy
    - Run Mongo → Postgres migration script
-3. Phase 5:
+4. Phase 5:
    - Full regression + performance validation
-4. After stabilization:
+5. After stabilization:
    - Revisit authentication
 
 ---
@@ -192,4 +286,5 @@
 - ✅ `/api/analysis/run` uses the new engine and the frontend Results/Runs pages work unchanged.
 - 🔄 Postgres migration POC proves: schema works, queries are efficient, and one analysis can be persisted.
 - 🔜 Full app runs on Postgres with parity for: portfolios, scenario-data, analysis runs, and results retrieval.
+- 🆕 Upload UI enables end-to-end user workflow (upload → map → validate → preview/edit → import) once backend endpoints are available, with clear progress feedback and audit-friendly validation review.
 - Automated tests pass; one end-to-end regression run completes without manual fixes.

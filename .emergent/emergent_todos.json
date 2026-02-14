@@ -1,46 +1,54 @@
 [
   {
-    "content": "Add PostgreSQL dependencies (SQLAlchemy 2.x, asyncpg, alembic, psycopg2-binary)",
-    "status": "completed"
-  },
-  {
-    "content": "Set up DATABASE_URL environment variable with URL-encoded password",
-    "status": "completed"
-  },
-  {
-    "content": "Create SQLAlchemy models for all entities (Portfolio, Asset, ScenarioSeries, AnalysisRun, ScenarioResult)",
-    "status": "completed"
-  },
-  {
-    "content": "Set up Alembic and create initial migration",
-    "status": "completed"
-  },
-  {
-    "content": "Test PostgreSQL connection and create tables",
-    "status": "completed"
-  },
-  {
-    "content": "Create pg_poc.py script to validate schema and basic CRUD operations",
-    "status": "in_progress"
-  },
-  {
-    "content": "Build repository layer (PortfolioRepository, ScenarioRepository, AnalysisRepository)",
+    "content": "Update index.css to import Google Fonts (Space Grotesk, IBM Plex Sans, IBM Plex Mono)",
     "status": "pending"
   },
   {
-    "content": "Migrate API endpoints to use repositories instead of Beanie ODM",
+    "content": "Create useFileUpload.ts hook with file selection, validation, upload progress, and error handling",
     "status": "pending"
   },
   {
-    "content": "Create data migration script to transfer existing data from MongoDB to PostgreSQL",
+    "content": "Create useColumnMapping.ts hook with mapping state, auto-suggestions, and template management",
     "status": "pending"
   },
   {
-    "content": "Run data migration and verify all data transferred correctly",
+    "content": "Build FileUploadZone.tsx component with drag-and-drop, validation, and progress bar",
     "status": "pending"
   },
   {
-    "content": "Run end-to-end tests to ensure all functionality works with PostgreSQL",
+    "content": "Build UploadProgressTracker.tsx component with stepper UI and status tracking",
+    "status": "pending"
+  },
+  {
+    "content": "Build ColumnMappingWizard.tsx component with step-by-step mapping and confidence scores",
+    "status": "pending"
+  },
+  {
+    "content": "Build DataPreviewTable.tsx component with pagination, inline editing, and row selection",
+    "status": "pending"
+  },
+  {
+    "content": "Build ValidationResultsPanel.tsx component with summary cards, filters, and issue table",
+    "status": "pending"
+  },
+  {
+    "content": "Build ImportHistoryList.tsx component with status badges and quick actions",
+    "status": "pending"
+  },
+  {
+    "content": "Create UploadPage.tsx page composing upload zone, history, and progress tracker",
+    "status": "pending"
+  },
+  {
+    "content": "Create ReviewPage.tsx page composing mapping wizard, preview, and validation results",
+    "status": "pending"
+  },
+  {
+    "content": "Add routes to App.js for upload and review pages",
+    "status": "pending"
+  },
+  {
+    "content": "Test components with screenshots and verify design compliance",
     "status": "pending"
   }
 ]
