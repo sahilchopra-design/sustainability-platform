@@ -10,7 +10,7 @@ import { Separator } from '../components/ui/separator';
 import { toast } from 'sonner';
 import {
   Microscope, Play, RefreshCw, TrendingUp, ArrowRightLeft,
-  BarChart3, Target, Layers, Zap, AlertTriangle,
+  BarChart3, Target, Layers, Zap, AlertTriangle, Download, Hash, LineChart as LineChartIcon,
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
