@@ -20,6 +20,7 @@ import AlertsPage from './pages/AlertsPage';
 import NGFSScenariosPage from './pages/NGFSScenariosPage';
 import CustomBuilderPage from './pages/CustomBuilderPage';
 import SubAnalysisPage from './pages/SubAnalysisPage';
+import CBAMPage from './pages/CBAMPage';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -196,6 +197,7 @@ function AppRouter() {
               <Route path="/ngfs" element={<NGFSScenariosPage />} />
               <Route path="/custom-builder" element={<CustomBuilderPage />} />
               <Route path="/sub-analysis" element={<SubAnalysisPage />} />
+              <Route path="/cbam" element={<CBAMPage />} />
         </Routes>
       </main>
     </div>
