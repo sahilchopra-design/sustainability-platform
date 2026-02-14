@@ -1,19 +1,19 @@
 [
   {
     "content": "Create var_calculator.py for Value at Risk (VaR) calculations with 95% and 99% confidence levels",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Create portfolio_metrics.py for aggregated portfolio-level metrics (HHI, risk-adjusted return, etc.)",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Create calculation_engine.py orchestrator to coordinate all calculators and run scenario×horizon loops",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Create engine_poc.py script to test the calculation engine in isolation with sample data",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Run engine_poc.py and verify outputs are consistent, bounded, and performance is acceptable",
