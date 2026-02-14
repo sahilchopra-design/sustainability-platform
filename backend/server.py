@@ -21,6 +21,7 @@ from services.engine_integration import assets_to_inputs, engine_results_to_mode
 from api.v1.routes.scenarios import router as scenarios_router
 from api.v1.routes.data_hub import router as data_hub_router
 from api.v1.routes.analysis import router as analysis_router
+from api.auth import router as auth_router
 
 
 @asynccontextmanager
@@ -48,6 +49,8 @@ app.include_router(scenarios_router)
 app.include_router(data_hub_router)
 # Include analysis routes
 app.include_router(analysis_router)
+# Include auth routes
+app.include_router(auth_router)
 
 # CORS
 app.add_middleware(
