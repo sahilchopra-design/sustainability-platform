@@ -17,58 +17,38 @@ Comprehensive portfolio analysis and scenario building application for climate r
 | `/scenario-data` | Scenario Data | Done |
 | `/scenario-builder` | Scenario Builder | Done |
 | `/data-hub` | Data Hub (19 sources) | Done |
-| `/browser` | Scenario Browser (filters, drawer, compare) | Done |
+| `/browser` | Scenario Browser | Done |
 | `/comparison` | Comparison & Gap Analysis | Done |
-| `/impact` | **Impact Calculator** | Done (New) |
-| `/portfolio-manager` | **Portfolio Manager (Upload + Editor)** | Done (New) |
+| `/impact` | Impact Calculator + **Report Export** | Done |
+| `/portfolio-manager` | Portfolio Upload + Editor | Done |
 
-## Completed Features
+## Completed Features (All Tested)
 
-### Impact Calculator (P0) — Feb 14, 2026
-- Connects hub scenarios to portfolios via calculation engine
-- Maps scenario categories → engine types (Orderly/Disorderly/Hot House)
-- Calculates PD/LGD adjustments, Expected Loss, VaR 95%/99%, rating migrations
-- Extracts scenario multipliers (carbon price, emissions, temperature)
-- Frontend: Portfolio + Scenario selectors, EL/VaR cards, bar + line charts
+### Report Generator — Feb 14, 2026
+- Professional PDF reports (reportlab): Cover page, executive summary, metrics tables, scenario details, multipliers
+- Excel reports (openpyxl): Multi-sheet workbook with Summary, Impact Results, Multipliers, Scenario Details
+- CSV reports: Flat data export for further analysis
+- Frontend: PDF/Excel/CSV export buttons on Impact Calculator, opens download in new tab
+- API: `POST /api/v1/analysis/reports/generate` + `GET /api/v1/analysis/reports/download/{filename}`
+- Testing: 11/11 BE + 6/6 FE (iteration_9)
 
-### Custom Scenario Builder (P0) — Feb 14, 2026
-- Blend trajectories from multiple scenarios
-- Select base scenario, override specific variable+region combinations
-- Lineage tracking in parameters JSON
-- Creates new entries in hub_scenarios with "custom" source
+### Impact Calculator + Custom Builder + Portfolio Manager — Feb 14, 2026
+- Testing: 15/15 BE + 12/12 FE (iteration_8)
 
-### Portfolio Upload & Editor (P1) — Feb 14, 2026
-- CSV upload with auto-column detection (name, sector, exposure, rating, pd, lgd, maturity)
-- Validation with error reporting
-- Create portfolio from parsed assets
-- Editor: Select portfolio, add/remove assets, edit fields inline, save
+### Scenario Browser — Feb 14, 2026
+- Testing: 15/15 FE (iteration_7)
 
-### Previously Completed
-- Scenario Browser: sidebar filters, grid/list, detail drawer, compare workspace, favorites, analytics
-- Comparison Engine: multi-scenario overlay, gap analysis, consistency checks
-- Data Hub: 19 sources, 99+ scenarios, 875+ trajectories, 3 real IIASA sources
+### Comparison & Analysis — Feb 14, 2026
+- Testing: 18/18 BE (iteration_6)
 
-## Key Backend Files
-- `/app/backend/services/impact_calculator.py`
-- `/app/backend/services/custom_scenario_builder.py`
-- `/app/backend/services/portfolio_upload.py`
-- `/app/backend/api/v1/routes/analysis.py`
-- `/app/backend/api/v1/routes/data_hub.py`
-- `/app/backend/services/scenario_comparison_service.py`
-
-## Testing
-- iteration_8: Impact + Custom Builder + Portfolio Upload (15/15 BE, 12/12 FE)
-- iteration_7: Scenario Browser (15/15 FE)
-- iteration_6: Comparison & Analysis (18/18 BE)
-- iteration_5: Expanded Data Hub (24/24 BE)
+### Data Hub (19 sources, 99+ scenarios, 875+ trajectories) — Feb 14, 2026
+- Testing: 24/24 BE (iteration_5)
 
 ## Backlog
 ### P2
 - User authentication
-- Report generation (PDF/Excel export)
-- Alert System UI
+- Alert System UI (in-app notifications)
 - Database unification (MongoDB → PostgreSQL)
 ### P3
 - Live APIs for remaining 16 synthetic sources
 - Scheduled sync jobs, Redis caching
-- Additional regional data sources
