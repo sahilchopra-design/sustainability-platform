@@ -120,6 +120,12 @@ class CarbonCalculationEngine:
         price_growth_rate: float = 0.05
     ) -> float:
         """Calculate Net Present Value of carbon credits over time."""
+        # Handle None values with defaults
+        if price_per_credit is None:
+            price_per_credit = 15.0  # Default carbon price
+        if annual_credits is None:
+            annual_credits = 0
+        
         npv = 0.0
         for year in range(1, years + 1):
             future_price = price_per_credit * ((1 + price_growth_rate) ** year)
