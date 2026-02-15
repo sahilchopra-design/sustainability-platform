@@ -4,7 +4,11 @@
  */
 
 import React, { useState, useCallback, useMemo } from 'react';
-import Map, { Marker, Popup, NavigationControl } from 'react-map-gl';
+// Import from explicit path to avoid webpack resolution issues
+import Map from 'react-map-gl/dist/esm/components/map';
+import Marker from 'react-map-gl/dist/esm/components/marker';
+import Popup from 'react-map-gl/dist/esm/components/popup';
+import NavigationControl from 'react-map-gl/dist/esm/components/navigation-control';
 import { MapPin } from 'lucide-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
