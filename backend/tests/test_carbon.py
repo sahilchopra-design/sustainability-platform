@@ -364,8 +364,9 @@ class TestCarbonScenarios:
         if not TestCarbonPortfolios.created_portfolio_id:
             pytest.skip("No portfolio created")
         
-        # Note: portfolio_id is in the URL, not in the payload
+        # Note: portfolio_id is also needed in payload for CarbonScenarioCreate schema
         payload = {
+            "portfolio_id": TestCarbonPortfolios.created_portfolio_id,
             "name": f"{TEST_PREFIX}High Risk Scenario",
             "description": "Scenario with higher risk assumptions",
             "is_default": False,
