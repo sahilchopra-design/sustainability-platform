@@ -3,16 +3,13 @@
  * Displays carbon projects on a map using Mapbox GL
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
-// Import from explicit path to avoid webpack resolution issues
-import Map from 'react-map-gl/dist/esm/components/map';
-import Marker from 'react-map-gl/dist/esm/components/marker';
-import Popup from 'react-map-gl/dist/esm/components/popup';
-import NavigationControl from 'react-map-gl/dist/esm/components/navigation-control';
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { MapPin } from 'lucide-react';
+import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN || 'pk.eyJ1IjoiY2hvcHJhc2FoaWwzIiwiYSI6ImNtanEzbnRqOTN0anEzZG9idjg5Mm9kdTkifQ.zxCEdfkhCT5Q1AbkeRyEEw';
+mapboxgl.accessToken = MAPBOX_TOKEN;
 
 // Country coordinates for projects without specific coordinates
 const COUNTRY_COORDS = {
@@ -45,12 +42,10 @@ export const GeographicMap = ({
   height = 400,
   onProjectClick
 }) => {
-  const [popupInfo, setPopupInfo] = useState(null);
-  const [viewState, setViewState] = useState({
-    latitude: 20,
-    longitude: 0,
-    zoom: 1.5
-  });
+  const mapContainer = useRef(null);
+  const map = useRef(null);
+  const markersRef = useRef([]);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   // Convert projects to markers
   const markers = useMemo(() => {
@@ -83,12 +78,85 @@ export const GeographicMap = ({
     return result;
   }, [projects]);
 
-  const handleMarkerClick = useCallback((project) => {
-    setPopupInfo(project);
-    if (onProjectClick) {
-      onProjectClick(project);
-    }
-  }, [onProjectClick]);
+  // Initialize map
+  useEffect(() => {
+    if (map.current) return; // Already initialized
+    
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/light-v11',
+      center: [0, 20],
+      zoom: 1.5
+    });
+
+    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    
+    map.current.on('load', () => {
+      setMapLoaded(true);
+    });
+
+    return () => {
+      map.current?.remove();
+      map.current = null;
+    };
+  }, []);
+
+  // Add markers when map is loaded
+  useEffect(() => {
+    if (!mapLoaded || !map.current) return;
+
+    // Clear existing markers
+    markersRef.current.forEach(marker => marker.remove());
+    markersRef.current = [];
+
+    // Add new markers
+    markers.forEach((project) => {
+      const el = document.createElement('div');
+      el.className = 'project-marker';
+      el.style.cssText = `
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        transition: transform 0.2s;
+      `;
+      el.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="${getRiskColor(project.risk_level)}" stroke="white" stroke-width="1">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3" fill="white"/>
+        </svg>
+      `;
+      
+      el.addEventListener('mouseenter', () => {
+        el.style.transform = 'scale(1.2)';
+      });
+      el.addEventListener('mouseleave', () => {
+        el.style.transform = 'scale(1)';
+      });
+
+      const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
+        <div style="padding: 8px; min-width: 160px;">
+          <h4 style="font-weight: 600; color: #1e293b; font-size: 13px; margin-bottom: 4px;">${project.name}</h4>
+          <div style="font-size: 11px; color: #64748b;">
+            <p><strong>Type:</strong> ${project.project_type?.replace(/_/g, ' ')}</p>
+            <p><strong>Credits:</strong> ${project.annual_credits?.toLocaleString()} tCO2e/yr</p>
+            <p><strong>Standard:</strong> ${project.standard}</p>
+            <p><strong>Risk:</strong> <span style="color: ${getRiskColor(project.risk_level)}">${project.risk_level || 'N/A'}</span></p>
+          </div>
+        </div>
+      `);
+
+      const marker = new mapboxgl.Marker(el)
+        .setLngLat([project.longitude, project.latitude])
+        .setPopup(popup)
+        .addTo(map.current);
+
+      el.addEventListener('click', () => {
+        if (onProjectClick) onProjectClick(project);
+      });
+
+      markersRef.current.push(marker);
+    });
+  }, [mapLoaded, markers, onProjectClick]);
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 p-6" data-testid="geographic-map">
@@ -96,64 +164,11 @@ export const GeographicMap = ({
         Project Locations
       </h3>
       
-      <div className="rounded-lg overflow-hidden border border-slate-200" style={{ height }}>
-        <Map
-          {...viewState}
-          onMove={(evt) => setViewState(evt.viewState)}
-          mapStyle="mapbox://styles/mapbox/light-v11"
-          mapboxAccessToken={MAPBOX_TOKEN}
-          style={{ width: '100%', height: '100%' }}
-        >
-          <NavigationControl position="top-right" />
-          
-          {markers.map((project, index) => (
-            <Marker
-              key={project.id || index}
-              latitude={project.latitude}
-              longitude={project.longitude}
-              anchor="bottom"
-              onClick={(e) => {
-                e.originalEvent.stopPropagation();
-                handleMarkerClick(project);
-              }}
-            >
-              <div 
-                className="cursor-pointer transition-transform hover:scale-110"
-                style={{ color: getRiskColor(project.risk_level) }}
-              >
-                <MapPin className="w-6 h-6 drop-shadow-md" fill="currentColor" />
-              </div>
-            </Marker>
-          ))}
-          
-          {popupInfo && (
-            <Popup
-              anchor="top"
-              latitude={popupInfo.latitude}
-              longitude={popupInfo.longitude}
-              onClose={() => setPopupInfo(null)}
-              closeOnClick={false}
-            >
-              <div className="p-2 min-w-[180px]">
-                <h4 className="font-semibold text-slate-900 text-sm mb-1">
-                  {popupInfo.name}
-                </h4>
-                <div className="text-xs text-slate-600 space-y-1">
-                  <p><span className="font-medium">Type:</span> {popupInfo.project_type?.replace(/_/g, ' ')}</p>
-                  <p><span className="font-medium">Credits:</span> {popupInfo.annual_credits?.toLocaleString()} tCO2e/yr</p>
-                  <p><span className="font-medium">Standard:</span> {popupInfo.standard}</p>
-                  <p>
-                    <span className="font-medium">Risk:</span>{' '}
-                    <span style={{ color: getRiskColor(popupInfo.risk_level) }}>
-                      {popupInfo.risk_level || 'N/A'}
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </Popup>
-          )}
-        </Map>
-      </div>
+      <div 
+        ref={mapContainer} 
+        className="rounded-lg overflow-hidden border border-slate-200" 
+        style={{ height }}
+      />
       
       {/* Legend */}
       <div className="mt-4 flex items-center gap-4 text-xs text-slate-500">
