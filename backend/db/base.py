@@ -75,5 +75,9 @@ def init_db():
         CBAMCostProjection, CBAMComplianceReport, CBAMCountryRisk,
         CBAMCertificatePrice, CBAMVerifier,
     )
+    from db.models.carbon import (
+        CarbonMethodology, CarbonEmissionFactor, CarbonPortfolio,
+        CarbonProject, CarbonScenario, CarbonCalculation, CarbonReport,
+    )
     Base.metadata.create_all(bind=engine)
     print("✅ PostgreSQL database tables created")
