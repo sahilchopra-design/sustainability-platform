@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Provider } from 'react-redux';
+import { store } from './store';
 import './App.css';
 
 import Dashboard from './pages/Dashboard';
@@ -21,6 +23,7 @@ import NGFSScenariosPage from './pages/NGFSScenariosPage';
 import CustomBuilderPage from './pages/CustomBuilderPage';
 import SubAnalysisPage from './pages/SubAnalysisPage';
 import CBAMPage from './pages/CBAMPage';
+import CarbonDashboard from './features/carbon/pages/CarbonDashboard';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
