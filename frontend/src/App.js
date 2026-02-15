@@ -198,11 +198,12 @@ function AppRouter() {
           <Route path="/comparison" element={<ComparisonPage />} />
           <Route path="/impact" element={<ImpactCalculatorPage />} />
           <Route path="/portfolio-manager" element={<PortfolioManagerPage />} />
-              <Route path="/alerts" element={<AlertsPage />} />
-              <Route path="/ngfs" element={<NGFSScenariosPage />} />
-              <Route path="/custom-builder" element={<CustomBuilderPage />} />
-              <Route path="/sub-analysis" element={<SubAnalysisPage />} />
-              <Route path="/cbam" element={<CBAMPage />} />
+          <Route path="/alerts" element={<AlertsPage />} />
+          <Route path="/ngfs" element={<NGFSScenariosPage />} />
+          <Route path="/custom-builder" element={<CustomBuilderPage />} />
+          <Route path="/sub-analysis" element={<SubAnalysisPage />} />
+          <Route path="/cbam" element={<CBAMPage />} />
+          <Route path="/carbon" element={<CarbonDashboard />} />
         </Routes>
       </main>
     </div>
@@ -211,11 +212,13 @@ function AppRouter() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Router>
-        <AppRouter />
-      </Router>
-    </QueryClientProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <AppRouter />
+        </Router>
+      </QueryClientProvider>
+    </Provider>
   );
 }
 
