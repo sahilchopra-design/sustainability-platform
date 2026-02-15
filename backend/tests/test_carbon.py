@@ -364,6 +364,7 @@ class TestCarbonScenarios:
         if not TestCarbonPortfolios.created_portfolio_id:
             pytest.skip("No portfolio created")
         
+        # Note: portfolio_id is in the URL, not in the payload
         payload = {
             "name": f"{TEST_PREFIX}High Risk Scenario",
             "description": "Scenario with higher risk assumptions",
@@ -374,8 +375,10 @@ class TestCarbonScenarios:
             "market_risk_pct": 15.0,
             "base_carbon_price_usd": 20.0,
             "price_growth_rate_pct": 7.0,
+            "price_volatility_pct": 25.0,
             "discount_rate_pct": 10.0,
-            "projection_years": 15
+            "projection_years": 15,
+            "parameters": {}
         }
         response = requests.post(
             f"{BASE_URL}/api/v1/carbon/portfolios/{TestCarbonPortfolios.created_portfolio_id}/scenarios",
