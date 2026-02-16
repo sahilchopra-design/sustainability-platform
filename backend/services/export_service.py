@@ -530,11 +530,13 @@ class ExportService:
         label_format = workbook.add_format({
             'bold': True, 'bg_color': '#f0fdf4', 'border': 1
         })
-        value_format = workbook.add_format({'border': 1})
-        percent_format = workbook.add_format({'border': 1, 'num_format': '0.0%'})
         title_format = workbook.add_format({
             'bold': True, 'font_size': 16, 'font_color': '#16a34a'
         })
+        
+        # Unused but defined for potential future use
+        _ = header_format  # Suppress linter warning
+        _ = label_format
         
         # Assessment Results Sheet
         sheet = workbook.add_worksheet('Assessment')
