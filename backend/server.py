@@ -90,6 +90,8 @@ app.include_router(stranded_assets_router)
 app.include_router(valuation_router)
 # Include Sustainability Frameworks routes
 app.include_router(sustainability_router)
+# Include Portfolio Analytics routes
+app.include_router(portfolio_analytics_router)
 
 # CORS
 app.add_middleware(
