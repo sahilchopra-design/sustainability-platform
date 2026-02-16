@@ -136,6 +136,21 @@ export default function SustainabilityPage() {
             <LEEDCalculator />
           </TabsContent>
 
+          <TabsContent value="breeam" className="mt-0">
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                <div className="p-1.5 bg-blue-100 rounded">
+                  <Building2 className="h-4 w-4 text-blue-600" />
+                </div>
+                BREEAM Certification Calculator
+              </h2>
+              <p className="text-sm text-slate-600 mt-1">
+                Building Research Establishment Environmental Assessment Method - the world's leading sustainability assessment for buildings with LEED comparison
+              </p>
+            </div>
+            <BREEAMCalculator />
+          </TabsContent>
+
           <TabsContent value="value-impact" className="mt-0">
             <div className="mb-4">
               <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
