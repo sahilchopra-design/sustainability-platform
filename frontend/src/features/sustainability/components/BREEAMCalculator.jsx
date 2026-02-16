@@ -24,14 +24,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui
 import {
   Building2, Calculator, ArrowRight, TrendingUp, Award, BarChart3,
   Leaf, Zap, Droplet, Recycle, TreePine, CloudRain, Factory, 
-  Heart, Users, AlertCircle, CheckCircle2, ArrowUpDown, Scale
+  Heart, Users, AlertCircle, CheckCircle2, ArrowUpDown, Scale,
+  Download, FileText, FileSpreadsheet
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend,
   Cell
 } from 'recharts';
-import { useBREEAMCalculator, useLEEDCalculator } from '../hooks/useSustainability';
+import { useBREEAMCalculator, useLEEDCalculator, useExportAssessment } from '../hooks/useSustainability';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../../../components/ui/dropdown-menu';
 
 // BREEAM Category configurations
 const BREEAM_CATEGORIES = [
