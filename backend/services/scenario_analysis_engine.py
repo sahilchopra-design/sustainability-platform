@@ -96,24 +96,150 @@ def get_sample_properties() -> Dict[str, Dict]:
     }
 
 
-# ============ Scenario Storage (In-Memory) ============
+# ============ Scenario Storage (PostgreSQL with In-Memory Fallback) ============
 
-_scenarios_store: Dict[str, Dict] = {}
+_db_engine = None
+
+def _get_db_engine():
+    """Get or create database engine."""
+    global _db_engine
+    if _db_engine is None:
+        DATABASE_URL = os.environ.get("DATABASE_URL")
+        if DATABASE_URL:
+            try:
+                _db_engine = create_engine(DATABASE_URL, poolclass=NullPool)
+                with _db_engine.connect() as conn:
+                    conn.execute(text("SELECT 1"))
+            except Exception as e:
+                print(f"Warning: Could not connect to PostgreSQL for scenarios: {e}")
+                _db_engine = None
+    return _db_engine
 
 
 def save_scenario(scenario_id: str, scenario_data: Dict) -> None:
-    """Save scenario to store."""
-    _scenarios_store[scenario_id] = scenario_data
+    """Save scenario to PostgreSQL."""
+    engine = _get_db_engine()
+    if not engine:
+        return
+    
+    try:
+        with engine.connect() as conn:
+            # Prepare parameters as JSON
+            parameters = {
+                "property_id": scenario_data.get("property_id"),
+                "modifications": scenario_data.get("modifications", []),
+                "base_value": str(scenario_data.get("base_value", 0)),
+                "modified_value": str(scenario_data.get("modified_value", 0)),
+                "value_change_amount": str(scenario_data.get("value_change_amount", 0)),
+                "value_change_percent": str(scenario_data.get("value_change_percent", 0)),
+                "component_impacts": scenario_data.get("component_impacts", []),
+            }
+            
+            conn.execute(text("""
+                INSERT INTO scenarios (id, name, description, source, parameters, created_at, updated_at)
+                VALUES (:id, :name, :description, 'custom', :parameters, :created_at, :updated_at)
+                ON CONFLICT (id) DO UPDATE SET
+                    name = EXCLUDED.name,
+                    description = EXCLUDED.description,
+                    parameters = EXCLUDED.parameters,
+                    updated_at = EXCLUDED.updated_at
+            """), {
+                "id": scenario_id,
+                "name": scenario_data.get("name", f"Scenario {scenario_id[:8]}"),
+                "description": scenario_data.get("description"),
+                "parameters": json.dumps(parameters),
+                "created_at": scenario_data.get("created_at", datetime.now(timezone.utc)),
+                "updated_at": datetime.now(timezone.utc),
+            })
+            conn.commit()
+    except Exception as e:
+        print(f"Error saving scenario: {e}")
 
 
 def get_scenario(scenario_id: str) -> Optional[Dict]:
-    """Get scenario from store."""
-    return _scenarios_store.get(scenario_id)
+    """Get scenario from PostgreSQL."""
+    engine = _get_db_engine()
+    if not engine:
+        return None
+    
+    try:
+        with engine.connect() as conn:
+            result = conn.execute(text("""
+                SELECT id, name, description, parameters, created_at, updated_at
+                FROM scenarios WHERE id = :id
+            """), {"id": scenario_id})
+            row = result.fetchone()
+            
+            if row:
+                params = row[3] if isinstance(row[3], dict) else json.loads(row[3]) if row[3] else {}
+                return {
+                    "id": str(row[0]),
+                    "name": row[1],
+                    "description": row[2],
+                    "property_id": params.get("property_id"),
+                    "modifications": params.get("modifications", []),
+                    "base_value": Decimal(params.get("base_value", "0")),
+                    "modified_value": Decimal(params.get("modified_value", "0")),
+                    "value_change_amount": Decimal(params.get("value_change_amount", "0")),
+                    "value_change_percent": Decimal(params.get("value_change_percent", "0")),
+                    "component_impacts": params.get("component_impacts", []),
+                    "created_at": row[4],
+                    "updated_at": row[5],
+                }
+    except Exception as e:
+        print(f"Error getting scenario: {e}")
+    return None
 
 
 def list_scenarios() -> List[Dict]:
-    """List all scenarios."""
-    return list(_scenarios_store.values())
+    """List all scenarios from PostgreSQL."""
+    engine = _get_db_engine()
+    if not engine:
+        return []
+    
+    try:
+        with engine.connect() as conn:
+            result = conn.execute(text("""
+                SELECT id, name, description, parameters, created_at, updated_at
+                FROM scenarios WHERE source = 'custom'
+                ORDER BY updated_at DESC
+                LIMIT 100
+            """))
+            
+            scenarios = []
+            for row in result:
+                params = row[3] if isinstance(row[3], dict) else json.loads(row[3]) if row[3] else {}
+                scenarios.append({
+                    "id": str(row[0]),
+                    "name": row[1],
+                    "description": row[2],
+                    "property_id": params.get("property_id"),
+                    "base_value": Decimal(params.get("base_value", "0")),
+                    "modified_value": Decimal(params.get("modified_value", "0")),
+                    "value_change_percent": Decimal(params.get("value_change_percent", "0")),
+                    "created_at": row[4],
+                    "updated_at": row[5],
+                })
+            return scenarios
+    except Exception as e:
+        print(f"Error listing scenarios: {e}")
+    return []
+
+
+def delete_scenario(scenario_id: str) -> bool:
+    """Delete scenario from PostgreSQL."""
+    engine = _get_db_engine()
+    if not engine:
+        return False
+    
+    try:
+        with engine.connect() as conn:
+            result = conn.execute(text("DELETE FROM scenarios WHERE id = :id"), {"id": scenario_id})
+            conn.commit()
+            return result.rowcount > 0
+    except Exception as e:
+        print(f"Error deleting scenario: {e}")
+    return False
 
 
 # ============ Core Calculation Functions ============
