@@ -1,6 +1,10 @@
 """
 Add Real Estate Valuation Tables
 
+Revision ID: 004_add_real_estate_valuation_tables
+Revises: 003_add_nature_risk_tables
+Create Date: 2025-01-15
+
 This migration adds tables for the Real Estate Valuation Engine:
 - properties: Core property data
 - valuations: Valuation results with all three approaches
