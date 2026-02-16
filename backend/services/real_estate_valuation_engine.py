@@ -330,26 +330,26 @@ class RealEstateValuationEngine:
         
         # Calculate IRR (using Newton-Raphson method)
         irr = self._calculate_irr(
-            [-inputs.equity_investment] + 
+            [-equity_investment] + 
             [cf.cfads for cf in cash_flows[:-1]] + 
             [cash_flows[-1].cfads + terminal_value_net]
         )
         
         # Equity Multiple
-        total_return = sum(cf.cfads for cf in cash_flows) + terminal_value_net
-        equity_multiple = total_return / inputs.equity_investment
+        total_return = sum((cf.cfads for cf in cash_flows), Decimal("0")) + terminal_value_net
+        equity_multiple = total_return / equity_investment if equity_investment > 0 else Decimal("0")
         
         # Cash on Cash Returns
-        cash_on_cash_year1 = cash_flows[0].cfads / inputs.equity_investment if inputs.equity_investment > 0 else Decimal("0")
-        avg_annual_cfads = sum(cf.cfads for cf in cash_flows) / len(cash_flows)
-        avg_cash_on_cash = avg_annual_cfads / inputs.equity_investment if inputs.equity_investment > 0 else Decimal("0")
+        cash_on_cash_year1 = cash_flows[0].cfads / equity_investment if equity_investment > 0 else Decimal("0")
+        avg_annual_cfads = sum((cf.cfads for cf in cash_flows), Decimal("0")) / len(cash_flows)
+        avg_cash_on_cash = avg_annual_cfads / equity_investment if equity_investment > 0 else Decimal("0")
         
         # Payback period
         payback_period = None
         cumulative_check = Decimal("0")
         for cf in cash_flows:
             cumulative_check += cf.cfads
-            if cumulative_check >= inputs.equity_investment:
+            if cumulative_check >= equity_investment:
                 payback_period = Decimal(str(cf.year))
                 break
         
@@ -358,12 +358,12 @@ class RealEstateValuationEngine:
         sensitivity_discount = {}
         
         for delta in [-0.01, -0.005, 0, 0.005, 0.01]:
-            adj_cap = inputs.terminal_cap_rate + Decimal(str(delta))
+            adj_cap = terminal_cap_rate + Decimal(str(delta))
             adj_terminal = terminal_noi / adj_cap if adj_cap > 0 else Decimal("0")
             adj_pv = adj_terminal * terminal_pv_factor
             sensitivity_cap[f"{float(adj_cap):.3f}"] = (total_pv + adj_pv).quantize(Decimal("0.01"))
             
-            adj_disc = inputs.discount_rate + Decimal(str(delta))
+            adj_disc = discount_rate + Decimal(str(delta))
             adj_pv_factor = Decimal("1") / ((Decimal("1") + adj_disc) ** inputs.projection_years)
             adj_npv = total_pv + terminal_value_net * adj_pv_factor
             sensitivity_discount[f"{float(adj_disc):.3f}"] = adj_npv.quantize(Decimal("0.01"))
