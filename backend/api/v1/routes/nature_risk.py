@@ -297,13 +297,13 @@ async def list_water_risk_locations(
     locations = get_sample_water_risk_locations()
     
     if country:
-        locations = [l for l in locations if l.get('country_code') == country]
+        locations = [loc for loc in locations if loc.get('country_code') == country]
     if basin:
-        locations = [l for l in locations if basin.lower() in (l.get('basin_name') or '').lower()]
+        locations = [loc for loc in locations if basin.lower() in (loc.get('basin_name') or '').lower()]
     if min_risk:
-        locations = [l for l in locations if (l.get('baseline_water_stress') or 0) >= min_risk]
+        locations = [loc for loc in locations if (loc.get('baseline_water_stress') or 0) >= min_risk]
     if linked_asset_type:
-        locations = [l for l in locations if l.get('linked_asset_type') == linked_asset_type]
+        locations = [loc for loc in locations if loc.get('linked_asset_type') == linked_asset_type]
     
     return locations
 
@@ -315,7 +315,7 @@ async def analyze_water_risk(request: WaterRiskAnalysisRequest):
     
     # Get locations
     all_locations = get_sample_water_risk_locations()
-    locations = [l for l in all_locations if l.get('id') in request.location_ids]
+    locations = [loc for loc in all_locations if loc.get('id') in request.location_ids]
     
     if not locations:
         # If no specific locations, use all
@@ -359,7 +359,7 @@ async def get_water_risk_report(
 ):
     """Get comprehensive water risk report for a location."""
     locations = get_sample_water_risk_locations()
-    location = next((l for l in locations if l.get('id') == location_id), None)
+    location = next((loc for loc in locations if loc.get('id') == location_id), None)
     
     if not location:
         raise HTTPException(status_code=404, detail="Location not found")
