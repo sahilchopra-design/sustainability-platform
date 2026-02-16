@@ -27,6 +27,7 @@ import CarbonDashboard from './features/carbon/pages/CarbonDashboard';
 import NatureRiskPage from './features/nature-risk/pages/NatureRiskPage';
 import StrandedAssetsPage from './features/stranded-assets/pages/StrandedAssetsPage';
 import ValuationPage from './features/valuation/pages/ValuationPage';
+import SustainabilityPage from './features/sustainability/pages/SustainabilityPage';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -143,6 +144,7 @@ function AppRouter() {
             <SideLink to="/nature-risk" icon="tree" label="Nature Risk" />
             <SideLink to="/stranded-assets" icon="trending-down" label="Stranded Assets" />
             <SideLink to="/valuation" icon="building" label="RE Valuation" />
+            <SideLink to="/sustainability" icon="award" label="Sustainability" />
           </NavGroup>
           {/* Scenarios */}
           <NavGroup label="Scenarios">
@@ -213,6 +215,7 @@ function AppRouter() {
           <Route path="/nature-risk" element={<NatureRiskPage />} />
           <Route path="/stranded-assets" element={<StrandedAssetsPage />} />
           <Route path="/valuation" element={<ValuationPage />} />
+          <Route path="/sustainability" element={<SustainabilityPage />} />
         </Routes>
       </main>
     </div>
@@ -260,6 +263,7 @@ const ICON_MAP = {
   tree: 'M12 22v-7m0 0c-3.5 0-6-2.5-6-6 0-2 1-4 3-5.5C10 2.5 11 2 12 2s2 .5 3 1.5c2 1.5 3 3.5 3 5.5 0 3.5-2.5 6-6 6z',
   'trending-down': 'M23 18l-9.5-9.5-5 5L1 6M17 18h6v-6',
   building: 'M3 21h18M5 21V7l8-4v18M19 21V11l-6-4M9 9v.01M9 12v.01M9 15v.01M9 18v.01',
+  award: 'M12 15l-2 5-1.5-4-4.5 1.5L6 13 2 11l4-2L4 4.5 8.5 6 10 2l2 5 2-5 1.5 4 4.5-1.5L18 9l4 2-4 2 2 4.5-4.5-1.5L14 20l-2-5z',
 };
 
 function SideLink({ to, icon, label, end }) {
