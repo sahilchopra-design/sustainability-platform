@@ -28,6 +28,7 @@ from api.v1.routes.cbam import router as cbam_router
 from api.v1.routes.carbon import router as carbon_router
 from api.v1.routes.nature_risk import router as nature_risk_router
 from api.v1.routes.stranded_assets import router as stranded_assets_router
+from api.v1.routes.real_estate_valuation import router as valuation_router
 from api.auth_pg import router as auth_router
 from api.v1.routes.portfolio_pg import router as portfolio_pg_router
 
