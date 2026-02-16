@@ -198,7 +198,7 @@ def list_scenarios() -> List[Dict]:
         with engine.connect() as conn:
             result = conn.execute(text("""
                 SELECT id, name, description, parameters, created_at, updated_at
-                FROM scenarios WHERE source = 'custom'
+                FROM scenarios WHERE source = 'CUSTOM'
                 ORDER BY updated_at DESC
                 LIMIT 100
             """))
