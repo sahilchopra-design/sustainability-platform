@@ -263,6 +263,13 @@ export default function CarbonDashboard() {
           >
             {calculate.isPending ? 'Calculating...' : 'Run Calculation'}
           </Button>
+          
+          <ExportButton 
+            onExport={handleExport}
+            label="Export"
+            disabled={!selectedPortfolioId || dashboardLoading}
+            data-testid="carbon-export-btn"
+          />
         </div>
       </div>
 
