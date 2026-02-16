@@ -1338,9 +1338,6 @@ class TechnologyDisruptionTracker:
         Get comprehensive technology disruption summary for a year.
         """
         ev_data = self.calculate_oil_displacement(year, region)
-        hp_data = self.calculate_gas_displacement(year, region)
-        h2_data = self.green_hydrogen_cost_curve(year, region)
-        battery_data = self.battery_cost_curve(year)
         
         # Build chart data for visualization
         chart_data = []
