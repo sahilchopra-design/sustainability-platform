@@ -15,6 +15,12 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 
+revision = '004_add_real_estate_valuation_tables'
+down_revision = '003_add_nature_risk_tables'
+branch_labels = None
+depends_on = None
+
+
 
 def upgrade():
     """Create real estate valuation tables."""
