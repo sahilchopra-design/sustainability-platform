@@ -59,9 +59,31 @@ export function ValuationDashboard() {
   }
 
   const properties = propertiesData?.items || [];
+  
+  const handleExport = async (format) => {
+    await exportValuation({
+      total_portfolio_value: kpis?.total_portfolio_value || 0,
+      total_properties: kpis?.total_properties || 0,
+      avg_cap_rate: kpis?.avg_cap_rate || 0,
+      avg_value_per_sf: kpis?.avg_value_per_sf || 0,
+      total_noi: kpis?.total_noi || 0,
+      properties: properties.slice(0, 10),
+    }, format, 'portfolio');
+  };
 
   return (
     <div className="space-y-6">
+      {/* Header with Export */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-slate-800">Valuation Overview</h2>
+        <ExportButton 
+          onExport={handleExport}
+          label="Export Valuation"
+          disabled={kpisLoading}
+          data-testid="valuation-export-btn"
+        />
+      </div>
+      
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="bg-gradient-to-br from-emerald-50 to-white border-emerald-200">
