@@ -388,3 +388,61 @@ class PortfolioDashboard(BaseModel):
     yearly_projections: List[YearlyProjection]
     risk_heat_map: List[RiskHeatMapItem]
     geographic_distribution: List[Dict[str, Any]]
+
+
+# ============ Methodology Calculation Schemas ============
+
+class MethodologyCalculationRequest(BaseModel):
+    """Request to calculate carbon credits using a specific methodology"""
+    methodology_code: str = Field(..., description="Methodology code (e.g., ACM0002, VM0048)")
+    inputs: Dict[str, Any] = Field(default={}, description="Methodology-specific inputs")
+    project_name: Optional[str] = None
+    country_code: Optional[str] = None
+
+
+class MethodologyCalculationResponse(BaseModel):
+    """Response from methodology calculation"""
+    methodology: str
+    version: Optional[str] = None
+    standard: Optional[str] = None
+    sector: Optional[str] = None
+    baseline_emissions: Optional[float] = None
+    project_emissions: Optional[float] = None
+    emission_reductions: float
+    unit: str = "tCO2e"
+    error: Optional[str] = None
+    additional_data: Optional[Dict[str, Any]] = None
+
+
+class MethodologyListItem(BaseModel):
+    """Item in list of methodologies"""
+    code: str
+    name: str
+    standard: str
+    sector: str
+    scale: Optional[str] = None
+
+
+class MethodologyDetailResponse(BaseModel):
+    """Detailed methodology information"""
+    code: str
+    name: str
+    standard: str
+    sector: str
+    version: Optional[str] = None
+    applicability: Optional[str] = None
+    baseline_approach: Optional[str] = None
+    crediting_period: Optional[str] = None
+    required_inputs: List[str] = []
+
+
+class BatchCalculationRequest(BaseModel):
+    """Request for batch calculations across multiple methodologies"""
+    calculations: List[MethodologyCalculationRequest]
+
+
+class BatchCalculationResponse(BaseModel):
+    """Response from batch methodology calculations"""
+    results: List[MethodologyCalculationResponse]
+    total_emission_reductions: float
+    calculation_count: int
