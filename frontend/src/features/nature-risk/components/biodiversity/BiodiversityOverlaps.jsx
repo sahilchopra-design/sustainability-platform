@@ -93,23 +93,23 @@ export function BiodiversityOverlaps() {
                 className="w-full pl-10 pr-4 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             </div>
-            <Select value={countryFilter} onValueChange={setCountryFilter}>
+            <Select value={countryFilter || 'all'} onValueChange={(v) => setCountryFilter(v === 'all' ? '' : v)}>
               <SelectTrigger>
                 <SelectValue placeholder="All Countries" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Countries</SelectItem>
+                <SelectItem value="all">All Countries</SelectItem>
                 {countries.map(code => (
                   <SelectItem key={code} value={code}>{code}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Select value={siteTypeFilter} onValueChange={setSiteTypeFilter}>
+            <Select value={siteTypeFilter || 'all'} onValueChange={(v) => setSiteTypeFilter(v === 'all' ? '' : v)}>
               <SelectTrigger>
                 <SelectValue placeholder="All Site Types" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Site Types</SelectItem>
+                <SelectItem value="all">All Site Types</SelectItem>
                 {siteTypes.map(type => (
                   <SelectItem key={type} value={type}>
                     {SITE_TYPE_LABELS[type] || type}
