@@ -134,6 +134,27 @@ async def list_all_scenarios(
     return ScenarioListResponse(items=items, total=total)
 
 
+# ============ Properties (for dropdown) - MUST be before /{scenario_id} route ============
+
+@router.get("/properties")
+async def get_available_properties():
+    """Get list of properties available for scenario analysis."""
+    properties = get_sample_properties()
+    return {
+        "properties": [
+            {
+                "id": p["id"],
+                "name": p["name"],
+                "property_type": p["property_type"],
+                "current_value": float(p["current_value"]),
+                "noi": float(p["noi"]),
+                "cap_rate": float(p["cap_rate"]),
+            }
+            for p in properties.values()
+        ]
+    }
+
+
 @router.get("/{scenario_id}", response_model=ScenarioResponse)
 async def get_scenario_by_id(scenario_id: str):
     """Get a specific scenario by ID."""
