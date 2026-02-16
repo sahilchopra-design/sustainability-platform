@@ -1,0 +1,144 @@
+{
+  "summary": "Completed testing of P2 (Scenario DB Persistence) and P3 (LEAP Assessment Wizard) features. Backend: 30/30 tests passed (100%). Frontend: LEAP wizard UI fully functional with all 4 steps (Locate, Evaluate, Assess, Prepare) and navigation working correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_scenario_persistence.py",
+    "/app/backend/tests/test_leap_assessment.py",
+    "/app/test_reports/pytest/scenario_leap_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_scenario_persistence.py",
+    "/app/backend/tests/test_leap_assessment.py"
+  ],
+  "success_rate": {
+    "backend": "100% (30/30 tests passed)",
+    "frontend": "100% (LEAP wizard verified)"
+  },
+  "test_credentials": {
+    "email": "newtestuser@test.com",
+    "password": "password"
+  },
+  "seed_data_creation": "Scenarios auto-created via POST /api/v1/scenarios/build during tests",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Scenario persistence and LEAP wizard fully tested. Scenarios are stored in PostgreSQL with source='CUSTOM' and approval_status='DRAFT'. LEAP tab visible in Nature Risk module at /nature-risk with 4-step wizard (Locate->Evaluate->Assess->Prepare).",
+  "passed_tests": [
+    "=== Backend Scenario Persistence Tests (15/15 passed) ===",
+    "TestScenarioBuild::test_build_scenario_returns_200 - POST /api/v1/scenarios/build returns 200",
+    "TestScenarioBuild::test_build_scenario_returns_scenario_id - Response contains scenario_id",
+    "TestScenarioBuild::test_build_scenario_returns_values - Response contains base_value, adjusted_value, value_change_pct",
+    "TestScenarioBuild::test_build_scenario_with_multiple_modifications - Supports multiple modifications array",
+    "TestScenarioList::test_list_scenarios_returns_200 - GET /api/v1/scenarios/list returns 200",
+    "TestScenarioList::test_list_scenarios_returns_items_array - Response has items array",
+    "TestScenarioList::test_list_scenarios_returns_total - Response has total count",
+    "TestScenarioList::test_list_scenarios_items_have_required_fields - Items have id, scenario_name, base_value, adjusted_value",
+    "TestScenarioGetById::test_get_scenario_by_id_returns_200 - GET /api/v1/scenarios/{id} returns 200",
+    "TestScenarioGetById::test_get_scenario_returns_correct_data - Retrieved scenario has correct name and id",
+    "TestScenarioGetById::test_get_nonexistent_scenario_returns_404 - Non-existent ID returns 404",
+    "TestScenarioPersistence::test_created_scenario_appears_in_list - Created scenario appears in list",
+    "TestScenarioProperties::test_properties_returns_200 - GET /api/v1/scenarios/properties returns 200",
+    "TestScenarioProperties::test_properties_returns_list - Properties endpoint returns list",
+    "TestScenarioProperties::test_property_has_required_fields - Properties have id, name, property_type",
+    "",
+    "=== Backend LEAP Assessment Tests (15/15 passed) ===",
+    "TestLEAPAssessmentCreate::test_create_leap_assessment_returns_200 - POST /api/v1/nature-risk/leap-assessments returns 200",
+    "TestLEAPAssessmentCreate::test_create_leap_assessment_returns_id - Created assessment has id",
+    "TestLEAPAssessmentList::test_list_leap_assessments_returns_200 - GET /api/v1/nature-risk/leap-assessments returns 200",
+    "TestLEAPAssessmentList::test_list_leap_assessments_returns_array - Returns array",
+    "TestLEAPAssessmentCalculate::test_calculate_leap_returns_200 - POST /api/v1/nature-risk/leap-assessments/calculate returns 200",
+    "TestLEAPAssessmentCalculate::test_calculate_leap_returns_scores - Returns locate, evaluate, assess, prepare scores",
+    "TestLEAPAssessmentCalculate::test_calculate_leap_returns_risk_rating - Returns overall_risk_rating",
+    "TestLEAPAssessmentCalculate::test_calculate_leap_returns_recommendations - Returns recommendations array",
+    "TestLEAPAssessmentCalculate::test_calculate_leap_with_invalid_scenario_returns_400 - Invalid scenario returns 400",
+    "TestNatureRiskScenarios::test_list_scenarios_returns_200 - GET /api/v1/nature-risk/scenarios returns 200",
+    "TestNatureRiskScenarios::test_list_scenarios_returns_array - Returns array of scenarios",
+    "TestNatureRiskScenarios::test_scenarios_have_required_fields - Scenarios have id, name, framework",
+    "TestENCOREEndpoints::test_encore_sectors_returns_200 - GET /api/v1/nature-risk/encore/sectors returns 200",
+    "TestENCOREEndpoints::test_encore_sectors_returns_array - Returns array",
+    "TestENCOREEndpoints::test_encore_ecosystem_services_returns_200 - GET /api/v1/nature-risk/encore/ecosystem-services returns 200",
+    "",
+    "=== Frontend LEAP Wizard UI Tests (all verified) ===",
+    "Login successful with newtestuser@test.com / password",
+    "Nature Risk page loads at /nature-risk",
+    "LEAP tab visible in Nature Risk module (data-testid: tab-leap)",
+    "LEAP Assessment Wizard component loads with data-testid: leap-wizard",
+    "Step 1 (Locate): Entity Name, Sector dropdown, Site Information fields visible",
+    "Step 2 (Evaluate): Ecosystem Service Dependencies checkboxes, ENCORE Dependencies section",
+    "Step 3 (Assess): Climate/Nature Scenario dropdown, Transition Risk slider (50%), Physical Risk slider (50%)",
+    "Step 4 (Prepare): Mitigation Strategies checkboxes, Additional Notes, TNFD disclosure checkbox, Calculate Assessment button",
+    "Next button (data-testid: leap-next-btn) works - navigates through steps",
+    "Previous button (data-testid: leap-prev-btn) works - navigates back",
+    "Calculate Assessment button (data-testid: leap-calculate-btn) visible on Step 4"
+  ],
+  "verified_features": {
+    "scenario_build": {
+      "endpoint": "POST /api/v1/scenarios/build",
+      "status": "Working",
+      "payload": {
+        "base_property_id": "UUID from /api/v1/scenarios/properties",
+        "scenario_name": "string",
+        "description": "string (optional)",
+        "modifications": [{"type": "cap_rate|vacancy|rent_growth|etc", "parameter": "string", "new_value": "number"}]
+      },
+      "returns": "scenario_id, scenario_name, base_value, adjusted_value, value_change, value_change_pct, component_impacts, modifications_applied"
+    },
+    "scenario_list": {
+      "endpoint": "GET /api/v1/scenarios/list",
+      "status": "Working",
+      "returns": "items array with scenarios, total count"
+    },
+    "scenario_get_by_id": {
+      "endpoint": "GET /api/v1/scenarios/{id}",
+      "status": "Working",
+      "returns": "Single scenario with id, scenario_name, base_value, adjusted_value, modifications"
+    },
+    "leap_wizard_ui": {
+      "location": "/nature-risk (LEAP tab)",
+      "status": "Working",
+      "steps": ["Locate", "Evaluate", "Assess", "Prepare"],
+      "navigation": "Next/Previous buttons functional"
+    },
+    "leap_calculate_api": {
+      "endpoint": "POST /api/v1/nature-risk/leap-assessments/calculate",
+      "status": "Working",
+      "payload": {
+        "entity_id": "string",
+        "entity_type": "company|asset",
+        "scenario_ids": ["scenario-tnfd-current", "scenario-tnfd-sustainable", "etc"],
+        "include_dependencies": "boolean",
+        "include_water_risk": "boolean",
+        "include_biodiversity_overlap": "boolean"
+      },
+      "returns": "scenario_results with locate_score, evaluate_score, assess_score, prepare_score, overall_score, overall_risk_rating, recommendations"
+    }
+  },
+  "mocked_apis": {
+    "has_mocked_apis": true,
+    "mocked_apis_list": ["LEAP calculation fallback to demo data if API fails"],
+    "notes": "LEAP calculation uses demo/sample data as fallback. Backend API works correctly with valid scenario IDs from /api/v1/nature-risk/scenarios."
+  },
+  "database_tables_verified": [
+    "scenarios - PostgreSQL table stores custom scenarios with source='CUSTOM', approval_status='DRAFT'"
+  ],
+  "sample_property_ids": [
+    "00000000-0000-0000-0000-000000000001 (Downtown Office Tower)",
+    "00000000-0000-0000-0000-000000000002 (Suburban Retail Center)",
+    "00000000-0000-0000-0000-000000000003 (Industrial Distribution Hub)"
+  ],
+  "valid_nature_risk_scenario_ids": [
+    "scenario-tnfd-current",
+    "scenario-tnfd-sustainable",
+    "scenario-ncore-physical",
+    "scenario-ncore-transition"
+  ]
+}
