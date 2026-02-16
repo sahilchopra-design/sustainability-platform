@@ -5,13 +5,13 @@
 
 import React, { useState } from 'react';
 import { Download, FileText, FileSpreadsheet, ChevronDown, Loader2 } from 'lucide-react';
-import { Button } from '../components/ui/button';
+import { Button } from '../ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '../components/ui/dropdown-menu';
+} from '../ui/dropdown-menu';
 import { toast } from 'sonner';
 
 export function ExportButton({ 
