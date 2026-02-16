@@ -65,6 +65,18 @@ export function ScenarioComparison() {
     change: parseFloat(row.value_change_pct),
     color: COLORS[idx % COLORS.length],
   })) || [];
+  
+  const handleExport = async (format) => {
+    if (!result) return;
+    await exportScenarioAnalysis({
+      base_property_id: selectedProperty,
+      scenario_ids: selectedScenarioIds,
+      comparison_table: result.comparison_table || [],
+      best_scenario: result.best_scenario,
+      worst_scenario: result.worst_scenario,
+      key_differentiators: result.key_differentiators || [],
+    }, format);
+  };
 
   return (
     <div className="space-y-6">
