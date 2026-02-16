@@ -10,6 +10,8 @@ import {
   BarChart3, PieChart, Home, Factory
 } from 'lucide-react';
 import { useDashboardKPIs, useProperties } from '../hooks/useValuation';
+import { ExportButton } from '../../../components/shared/ExportButton';
+import { exportValuation } from '../../../lib/exportUtils';
 
 const formatCurrency = (value, compact = false) => {
   if (!value) return '$0';
