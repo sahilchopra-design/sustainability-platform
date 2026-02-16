@@ -164,6 +164,29 @@ export function StrandedAssetDashboard() {
         </Card>
       </div>
 
+      {/* Asset Map Visualization */}
+      <div className="w-full">
+        {mapLoading ? (
+          <Card>
+            <CardContent className="flex items-center justify-center h-[500px]">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
+            </CardContent>
+          </Card>
+        ) : (
+          <AssetMapViewer
+            assets={mapData?.assets || []}
+            title="Stranded Asset Map"
+            subtitle="Geographic distribution of assets by risk level"
+            height="500px"
+            initialCenter={[0, 25]}
+            initialZoom={1.8}
+            showFilters={true}
+            showLegend={true}
+            module="stranded-assets"
+          />
+        )}
+      </div>
+
       {/* Risk Distribution & Critical Alerts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Risk Distribution */}
