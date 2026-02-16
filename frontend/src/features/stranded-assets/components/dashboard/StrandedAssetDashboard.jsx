@@ -5,7 +5,8 @@ import {
   Fuel, Factory, Building2, AlertTriangle, TrendingDown, 
   DollarSign, BarChart3, Target, Zap
 } from 'lucide-react';
-import { useDashboardKPIs, useCriticalAssets } from '../../hooks/useStrandedAssets';
+import { useDashboardKPIs, useCriticalAssets, useMapData } from '../../hooks/useStrandedAssets';
+import { AssetMapViewer } from '../../../../components/shared/AssetMapViewer';
 
 const RISK_COLORS = {
   low: { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
