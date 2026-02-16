@@ -120,3 +120,28 @@ export function useEnums() {
     staleTime: Infinity,
   });
 }
+
+// Export Functions
+export function useExportAssessment() {
+  return useMutation({
+    mutationFn: async ({ data, format, assessmentType }) => {
+      const response = await api.exportSustainabilityAssessment(data, format, assessmentType);
+      const ext = format === 'excel' ? 'xlsx' : 'pdf';
+      const filename = `${assessmentType}_assessment.${ext}`;
+      api.downloadFile(response.data, filename);
+      return response;
+    },
+  });
+}
+
+export function useExportCertifications() {
+  return useMutation({
+    mutationFn: async ({ format }) => {
+      const response = await api.exportCertifications(format);
+      const ext = format === 'excel' ? 'xlsx' : 'pdf';
+      const filename = `certifications_export.${ext}`;
+      api.downloadFile(response.data, filename);
+      return response;
+    },
+  });
+}
