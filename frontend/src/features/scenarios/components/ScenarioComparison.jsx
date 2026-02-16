@@ -189,7 +189,17 @@ export function ScenarioComparison() {
 
       {/* Results */}
       {result && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-slate-700">Comparison Results</h3>
+            <ExportButton 
+              onExport={handleExport}
+              label="Export Comparison"
+              data-testid="scenario-export-btn"
+            />
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Value Comparison Chart */}
           <Card>
             <CardHeader>
