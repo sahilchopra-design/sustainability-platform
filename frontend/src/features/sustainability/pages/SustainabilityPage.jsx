@@ -13,6 +13,7 @@ import {
 import { SustainabilityDashboard } from '../components/SustainabilityDashboard';
 import { GRESBCalculator } from '../components/GRESBCalculator';
 import { LEEDCalculator } from '../components/LEEDCalculator';
+import { BREEAMCalculator } from '../components/BREEAMCalculator';
 import { ValueImpactCalculator } from '../components/ValueImpactCalculator';
 
 export default function SustainabilityPage() {
