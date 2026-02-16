@@ -6,7 +6,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Calculator, Leaf, Factory, Trees, Wheat, Building2, 
-  Car, Home, Droplets, Mountain, ChevronDown, Info, RefreshCw
+  Car, Home, Droplets, Mountain, ChevronDown, Info, RefreshCw,
+  Save, Check, X
 } from 'lucide-react';
 
 import { Button } from '../../../../components/ui/button';
@@ -32,7 +33,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../../../../components/ui/tooltip';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../../../../components/ui/dialog';
 import { Skeleton } from '../../../../components/ui/skeleton';
+import { saveCalculationAsProject, fetchPortfolios } from '../../api/carbonApi';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
