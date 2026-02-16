@@ -265,7 +265,8 @@ class CarbonCalculationEngine:
                     "regulatory_risk": 0,
                     "market_risk": 0,
                     "total_risk_pct": 0
-                }
+                },
+                "yearly_projections": self.generate_yearly_projections(0, 0, years=10)
             }
         
         # Default scenario if not provided
