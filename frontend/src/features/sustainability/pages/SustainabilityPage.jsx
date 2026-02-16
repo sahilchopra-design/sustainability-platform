@@ -59,7 +59,7 @@ export default function SustainabilityPage() {
       {/* Main Content */}
       <div className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-6 bg-white border border-slate-200">
+          <TabsList className="grid w-full grid-cols-5 mb-6 bg-white border border-slate-200">
             <TabsTrigger
               value="dashboard"
               className="flex items-center gap-2 data-[state=active]:bg-slate-100"
@@ -83,6 +83,14 @@ export default function SustainabilityPage() {
             >
               <Leaf className="h-4 w-4" />
               <span className="hidden md:inline">LEED</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="breeam"
+              className="flex items-center gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700"
+              data-testid="tab-breeam"
+            >
+              <Building2 className="h-4 w-4" />
+              <span className="hidden md:inline">BREEAM</span>
             </TabsTrigger>
             <TabsTrigger
               value="value-impact"
