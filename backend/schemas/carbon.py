@@ -446,3 +446,16 @@ class BatchCalculationResponse(BaseModel):
     results: List[MethodologyCalculationResponse]
     total_emission_reductions: float
     calculation_count: int
+
+
+class SaveCalculationAsProjectRequest(BaseModel):
+    """Request to save a methodology calculation result as a new project"""
+    portfolio_id: str = Field(..., description="Portfolio to add the project to")
+    project_name: str = Field(..., description="Name for the new project")
+    methodology_code: str = Field(..., description="Methodology code used for calculation")
+    annual_credits: float = Field(..., description="Annual emission reductions (tCO2e)")
+    country_code: str = Field(default="US", description="Country code (ISO 3166-1 alpha-2)")
+    project_type: Optional[str] = Field(default=None, description="Override project type")
+    standard: Optional[str] = Field(default=None, description="Override standard")
+    calculation_inputs: Dict[str, Any] = Field(default={}, description="Original calculation inputs")
+    calculation_result: Dict[str, Any] = Field(default={}, description="Full calculation result for reference")
