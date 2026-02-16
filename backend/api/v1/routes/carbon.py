@@ -499,14 +499,6 @@ def create_project_from_calculation(
         quality_rating=quality_rating
     )
     
-    # Store calculation data as metadata
-    project_metadata = {
-        "source": "methodology_calculator",
-        "methodology_code": data.methodology_code,
-        "calculation_inputs": data.calculation_inputs,
-        "calculation_result": data.calculation_result
-    }
-    
     project = CarbonProject(
         id=str(uuid.uuid4()),
         portfolio_id=data.portfolio_id,
