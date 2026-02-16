@@ -267,21 +267,33 @@ class RealEstateValuationEngine:
         cash_flows = []
         cumulative = Decimal("0")
         
+        # Convert all inputs to Decimal explicitly
+        revenue_growth_rate = Decimal(str(inputs.revenue_growth_rate))
+        expense_growth_rate = Decimal(str(inputs.expense_growth_rate))
+        inflation_rate = Decimal(str(inputs.inflation_rate))
+        current_noi = Decimal(str(inputs.current_noi))
+        debt_service = Decimal(str(inputs.debt_service))
+        terminal_growth_rate = Decimal(str(inputs.terminal_growth_rate))
+        terminal_cap_rate = Decimal(str(inputs.terminal_cap_rate))
+        selling_costs_pct = Decimal(str(inputs.selling_costs_percent))
+        discount_rate = Decimal(str(inputs.discount_rate))
+        equity_investment = Decimal(str(inputs.equity_investment))
+        
         # Generate cash flow projections
         for year in range(1, inputs.projection_years + 1):
             # Revenue grows at specified rate
-            revenue_growth = (Decimal("1") + inputs.revenue_growth_rate) ** year
-            revenue = inputs.current_noi * Decimal("1.5") * revenue_growth  # Assume NOI is ~67% of revenue
+            revenue_growth = (Decimal("1") + revenue_growth_rate) ** year
+            revenue = current_noi * Decimal("1.5") * revenue_growth  # Assume NOI is ~67% of revenue
             
             # Expenses grow with inflation
-            expense_growth = (Decimal("1") + inputs.expense_growth_rate + inputs.inflation_rate) ** year
-            expenses = inputs.current_noi * Decimal("0.5") * expense_growth
+            expense_growth = (Decimal("1") + expense_growth_rate + inflation_rate) ** year
+            expenses = current_noi * Decimal("0.5") * expense_growth
             
             # Calculate NOI
             noi = revenue - expenses
             
             # Cash Flow After Debt Service
-            cfads = noi - inputs.debt_service
+            cfads = noi - debt_service
             cumulative += cfads
             
             cash_flows.append(DCFProjectionYear(
@@ -289,21 +301,20 @@ class RealEstateValuationEngine:
                 revenue=revenue.quantize(Decimal("0.01")),
                 expenses=expenses.quantize(Decimal("0.01")),
                 noi=noi.quantize(Decimal("0.01")),
-                debt_service=inputs.debt_service,
+                debt_service=debt_service,
                 cfads=cfads.quantize(Decimal("0.01")),
                 cumulative_cash_flow=cumulative.quantize(Decimal("0.01")),
             ))
         
         # Calculate Terminal Value (Gordon Growth Model)
         final_noi = cash_flows[-1].noi
-        terminal_noi = final_noi * (Decimal("1") + inputs.terminal_growth_rate)
-        terminal_value = terminal_noi / inputs.terminal_cap_rate
+        terminal_noi = final_noi * (Decimal("1") + terminal_growth_rate)
+        terminal_value = terminal_noi / terminal_cap_rate
         
         # Apply selling costs
-        terminal_value_net = terminal_value * (Decimal("1") - inputs.selling_costs_percent)
+        terminal_value_net = terminal_value * (Decimal("1") - selling_costs_pct)
         
         # Discount cash flows
-        discount_rate = inputs.discount_rate
         total_pv = Decimal("0")
         
         for cf in cash_flows:
