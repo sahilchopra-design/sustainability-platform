@@ -218,6 +218,7 @@ function AppRouter() {
           <Route path="/stranded-assets" element={<StrandedAssetsPage />} />
           <Route path="/valuation" element={<ValuationPage />} />
           <Route path="/sustainability" element={<SustainabilityPage />} />
+          <Route path="/scenario-analysis" element={<ScenarioAnalysisPage />} />
         </Routes>
       </main>
     </div>
