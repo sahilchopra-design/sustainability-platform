@@ -733,14 +733,30 @@ stranded-assets/
 **Testing**: 26/26 backend tests passed, all export buttons verified in 5 dashboards (iteration_26)
 
 ## Upcoming / Future Tasks
-1. **Carbon Sector Input Forms (P1)**: Create detailed input forms for remaining sectors (Transport, Buildings, Mining)
-2. **Refactor Mocked Backend Services (P1)**: Replace placeholder data in stranded_asset_calculator.py and real_estate_valuation_engine.py with real DB queries
-3. **Database Persistence for Scenarios (P2)**: Store scenarios in PostgreSQL instead of in-memory
-4. **LEAP Assessment Wizard (P3)**: Multi-step wizard for comprehensive LEAP assessments
-5. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
-6. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
+1. **Refactor Mocked Backend Services (P2)**: Replace placeholder data in stranded_asset_calculator.py and real_estate_valuation_engine.py with PostgreSQL queries - Currently using sensible defaults which work for demo purposes
+2. **Database Persistence for Scenarios (P2)**: Store scenarios in PostgreSQL instead of in-memory
+3. **LEAP Assessment Wizard (P3)**: Multi-step wizard for comprehensive LEAP assessments
+4. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
+5. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
+6. **Scheduled Report Export (P3)**: Automatic weekly/monthly PDF exports to email
 
 ## Mocked Services (Demo Data)
-- `stranded_asset_calculator.py` - Uses sample asset data
-- `real_estate_valuation_engine.py` - Uses placeholder CostDataService and MarketDataService
+- `stranded_asset_calculator.py` - Uses sample asset data for reserves, power plants, infrastructure
+- `real_estate_valuation_engine.py` - Uses reference data for construction costs and cap rates (this is appropriate for static reference data)
+
+## Implemented Carbon Sector Calculator Forms
+All sector input forms are implemented in `/app/frontend/src/features/carbon/components/calculator/MethodologyCalculator.jsx`:
+
+| Sector | Methodologies | Status |
+|--------|--------------|--------|
+| Energy | ACM0002, ACM0006, AMS-I.D | ✅ Complete |
+| Forestry | AR-AM0014, VM0045, VM0047 | ✅ Complete |
+| Waste | ACM0001, AMS-III.E, AMS-III.G | ✅ Complete |
+| Agriculture | VM0017, VM0019, VM0042 | ✅ Complete |
+| Industrial | ACM0007, AM0009, AMS-III.N | ✅ Complete |
+| Transport | ACM0023, AMS-III.C | ✅ Complete |
+| Buildings | MMECD, AMS-II.E | ✅ Complete |
+| Household | AMS-II.G, AMS-I.E | ✅ Complete |
+| Mining | ACM0008, VM0032 | ✅ Complete |
+| Blue Carbon | VM0033, VM0048 | ✅ Complete |
 
