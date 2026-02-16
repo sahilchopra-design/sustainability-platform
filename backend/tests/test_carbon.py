@@ -8,7 +8,7 @@ import requests
 import os
 import uuid
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://climate-risk-hub-2.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://asset-analytics-pro.preview.emergentagent.com')
 
 # Test data prefix for cleanup
 TEST_PREFIX = "TEST_CARBON_"
