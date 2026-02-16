@@ -45,10 +45,12 @@ class SensitivityVariableEnum(str, Enum):
 
 # ============ Modification Schemas ============
 
+from typing import Union
+
 class ScenarioModification(BaseModel):
     type: ModificationType
     parameter: str
-    new_value: float
+    new_value: Union[float, str]  # Can be float for numeric params or string for CERTIFICATION/CLIMATE
     description: Optional[str] = None
 
 
@@ -56,7 +58,7 @@ class ComponentImpact(BaseModel):
     modification: str
     parameter: str
     old_value: Optional[float] = None
-    new_value: float
+    new_value: Union[float, str]  # Can be float or string
     impact: Decimal
     impact_pct: Decimal
 
