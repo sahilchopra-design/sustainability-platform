@@ -779,7 +779,7 @@ export function BREEAMCalculator() {
                     <div className="text-center p-4 bg-blue-50 rounded-lg">
                       <Building2 className="h-8 w-8 text-blue-600 mx-auto mb-2" />
                       <div className="text-2xl font-bold text-blue-700">
-                        {(breeamResult?.weighted_score || previewScore).toFixed(1)}%
+                        {parseFloat(breeamResult?.weighted_score || previewScore).toFixed(1)}%
                       </div>
                       <Badge className={`${previewRating.bg} text-white mt-2`}>
                         {breeamResult?.rating?.replace('_', ' ').toUpperCase() || previewRating.label}
@@ -789,13 +789,13 @@ export function BREEAMCalculator() {
                       <div className="flex justify-between">
                         <span className="text-slate-500">Rent Premium</span>
                         <span className="font-medium text-emerald-600">
-                          +{(breeamResult?.estimated_rent_premium_percent || 7.5).toFixed(1)}%
+                          +{parseFloat(breeamResult?.estimated_rent_premium_percent || 7.5).toFixed(1)}%
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-500">Value Premium</span>
                         <span className="font-medium text-emerald-600">
-                          +{(breeamResult?.estimated_value_premium_percent || 12.8).toFixed(1)}%
+                          +{parseFloat(breeamResult?.estimated_value_premium_percent || 12.8).toFixed(1)}%
                         </span>
                       </div>
                       <div className="flex justify-between">
@@ -827,7 +827,7 @@ export function BREEAMCalculator() {
                       <div className="flex justify-between">
                         <span className="text-slate-500">Rent Premium</span>
                         <span className="font-medium text-emerald-600">
-                          +{(leedResult?.estimated_rent_premium_percent || 9.0).toFixed(1)}%
+                          +{parseFloat(leedResult?.estimated_rent_premium_percent || 9.0).toFixed(1)}%
                         </span>
                       </div>
                       <div className="flex justify-between">
