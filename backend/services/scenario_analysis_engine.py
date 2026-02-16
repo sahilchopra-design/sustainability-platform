@@ -24,11 +24,18 @@ from schemas.scenario_analysis import (
 
 # ============ Sample Property Data ============
 
+# Use consistent UUIDs for sample properties
+SAMPLE_PROPERTY_UUIDS = {
+    "office": "00000000-0000-0000-0000-000000000001",
+    "retail": "00000000-0000-0000-0000-000000000002",
+    "industrial": "00000000-0000-0000-0000-000000000003",
+}
+
 def get_sample_properties() -> Dict[str, Dict]:
     """Sample properties for scenario analysis."""
     return {
-        "prop-001": {
-            "id": "prop-001",
+        SAMPLE_PROPERTY_UUIDS["office"]: {
+            "id": SAMPLE_PROPERTY_UUIDS["office"],
             "name": "Downtown Office Tower",
             "property_type": "office",
             "gross_floor_area_sf": 450000,
@@ -45,8 +52,8 @@ def get_sample_properties() -> Dict[str, Dict]:
             "certifications": ["LEED Gold"],
             "epc_rating": "B",
         },
-        "prop-002": {
-            "id": "prop-002",
+        SAMPLE_PROPERTY_UUIDS["retail"]: {
+            "id": SAMPLE_PROPERTY_UUIDS["retail"],
             "name": "Suburban Retail Center",
             "property_type": "retail",
             "gross_floor_area_sf": 125000,
@@ -63,8 +70,8 @@ def get_sample_properties() -> Dict[str, Dict]:
             "certifications": [],
             "epc_rating": "C",
         },
-        "prop-003": {
-            "id": "prop-003",
+        SAMPLE_PROPERTY_UUIDS["industrial"]: {
+            "id": SAMPLE_PROPERTY_UUIDS["industrial"],
             "name": "Industrial Distribution Hub",
             "property_type": "industrial",
             "gross_floor_area_sf": 800000,
