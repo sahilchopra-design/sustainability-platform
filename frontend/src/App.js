@@ -267,6 +267,7 @@ const ICON_MAP = {
   'trending-down': 'M23 18l-9.5-9.5-5 5L1 6M17 18h6v-6',
   building: 'M3 21h18M5 21V7l8-4v18M19 21V11l-6-4M9 9v.01M9 12v.01M9 15v.01M9 18v.01',
   award: 'M12 15l-2 5-1.5-4-4.5 1.5L6 13 2 11l4-2L4 4.5 8.5 6 10 2l2 5 2-5 1.5 4 4.5-1.5L18 9l4 2-4 2 2 4.5-4.5-1.5L14 20l-2-5z',
+  calculator: 'M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm3 4h10M7 10h2M7 14h2M7 18h2M15 10h2M15 14h2M15 18h2M11 10h2M11 14h2M11 18h2',
 };
 
 function SideLink({ to, icon, label, end }) {
