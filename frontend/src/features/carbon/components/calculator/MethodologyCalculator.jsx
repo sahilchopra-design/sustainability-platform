@@ -260,6 +260,8 @@ export default function MethodologyCalculator() {
     if (!selectedMethodology) return;
     
     setLoading(true);
+    setSaveSuccess(false);
+    setSaveError(null);
     try {
       const response = await fetch(
         `${API_URL}/api/v1/carbon/calculate/methodology?methodology_code=${selectedMethodology}`,
@@ -276,6 +278,52 @@ export default function MethodologyCalculator() {
       setResult({ error: 'Calculation failed. Please try again.' });
     }
     setLoading(false);
+  };
+
+  const handleSaveAsProject = async () => {
+    if (!result || !saveFormData.portfolio_id || !saveFormData.project_name.trim()) {
+      setSaveError('Please fill in all required fields');
+      return;
+    }
+    
+    setSaving(true);
+    setSaveError(null);
+    
+    try {
+      await saveCalculationAsProject({
+        portfolio_id: saveFormData.portfolio_id,
+        project_name: saveFormData.project_name,
+        methodology_code: selectedMethodology,
+        annual_credits: result.emission_reductions,
+        country_code: saveFormData.country_code,
+        calculation_inputs: inputs,
+        calculation_result: result
+      });
+      
+      setSaveSuccess(true);
+      setTimeout(() => {
+        setShowSaveDialog(false);
+        setSaveSuccess(false);
+        setSaveFormData({ portfolio_id: portfolios[0]?.id || '', project_name: '', country_code: 'US' });
+      }, 1500);
+    } catch (error) {
+      console.error('Failed to save project:', error);
+      setSaveError(error.response?.data?.detail || 'Failed to save project. Please try again.');
+    }
+    setSaving(false);
+  };
+
+  const openSaveDialog = () => {
+    // Pre-populate project name with methodology name
+    const methodologyName = methodologies.find(m => m.code === selectedMethodology)?.name || selectedMethodology;
+    setSaveFormData(prev => ({
+      ...prev,
+      project_name: `${methodologyName} Project`,
+      portfolio_id: portfolios[0]?.id || prev.portfolio_id
+    }));
+    setShowSaveDialog(true);
+    setSaveSuccess(false);
+    setSaveError(null);
   };
 
   const formatNumber = (num) => {
