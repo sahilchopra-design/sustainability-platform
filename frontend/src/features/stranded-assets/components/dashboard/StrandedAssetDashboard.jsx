@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import { useDashboardKPIs, useCriticalAssets, useMapData } from '../../hooks/useStrandedAssets';
 import { AssetMapViewer } from '../../../../components/shared/AssetMapViewer';
+import { ExportButton } from '../../../../components/shared/ExportButton';
+import { exportStrandedAssets } from '../../../../lib/exportUtils';
 
 const RISK_COLORS = {
   low: { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
