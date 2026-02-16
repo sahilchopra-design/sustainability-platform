@@ -35,6 +35,7 @@ from api.v1.routes.scenario_analysis import sensitivity_router, whatif_router
 from api.auth_pg import router as auth_router
 from api.v1.routes.portfolio_pg import router as portfolio_pg_router
 from api.v1.routes.portfolio_analytics import router as portfolio_analytics_router
+from api.v1.routes.universal_exports import router as exports_router
 
 
 @asynccontextmanager
