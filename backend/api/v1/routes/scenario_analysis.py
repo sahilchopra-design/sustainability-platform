@@ -320,8 +320,7 @@ async def generate_spider_chart(request: SpiderRequest):
     """
     # Build variables with variation range
     variables = []
-    properties = get_sample_properties()
-    prop = list(properties.values())[0]  # Use first property for base values
+    _ = get_sample_properties()  # Verify properties exist
     
     var_defaults = {
         "cap_rate": (0.055, 0.04, 0.07),
