@@ -833,7 +833,7 @@ export function BREEAMCalculator() {
                       <div className="flex justify-between">
                         <span className="text-slate-500">Value Premium</span>
                         <span className="font-medium text-emerald-600">
-                          +{(leedResult?.estimated_value_premium_percent || 15.3).toFixed(1)}%
+                          +{parseFloat(leedResult?.estimated_value_premium_percent || 15.3).toFixed(1)}%
                         </span>
                       </div>
                       <div className="flex justify-between">
