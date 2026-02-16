@@ -425,6 +425,123 @@ def delete_project(project_id: str, db: Session = Depends(get_db)):
     return {"message": "Project deleted", "id": project_id}
 
 
+@router.post("/projects/from-calculation", response_model=CarbonProjectResponse)
+def create_project_from_calculation(
+    data: SaveCalculationAsProjectRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Create a new carbon project from a methodology calculation result.
+    This allows users to save their calculator results as actual projects in a portfolio.
+    """
+    # Verify portfolio exists
+    portfolio = db.query(CarbonPortfolio).filter(CarbonPortfolio.id == data.portfolio_id).first()
+    if not portfolio:
+        raise HTTPException(status_code=404, detail="Portfolio not found")
+    
+    # Map methodology codes to project types and standards
+    methodology_mapping = {
+        # Energy
+        "ACM0002": ("RENEWABLE_ENERGY", "CDM"),
+        "ACM0006": ("RENEWABLE_ENERGY", "CDM"),
+        "ACM0009": ("RENEWABLE_ENERGY", "CDM"),
+        "AMS-I.A": ("RENEWABLE_ENERGY", "CDM"),
+        "AMS-I.C": ("RENEWABLE_ENERGY", "CDM"),
+        "AMS-I.D": ("RENEWABLE_ENERGY", "CDM"),
+        "AMS-I.F": ("RENEWABLE_ENERGY", "CDM"),
+        # Forestry
+        "AR-ACM0003": ("AFFORESTATION", "CDM"),
+        "VM0047": ("AFFORESTATION", "VCS"),
+        "VM0048": ("FOREST_CONSERVATION", "VCS"),
+        "CAR-Forest": ("FOREST_CONSERVATION", "CAR"),
+        "ACR-IFM": ("FOREST_CONSERVATION", "ACR"),
+        # Waste
+        "ACM0001": ("METHANE_CAPTURE", "CDM"),
+        "ACM0022": ("METHANE_CAPTURE", "CDM"),
+        "AMS-III.B": ("METHANE_CAPTURE", "CDM"),
+        "AMS-III.C": ("METHANE_CAPTURE", "CDM"),
+        "AMS-III.D": ("METHANE_CAPTURE", "CDM"),
+        # Agriculture
+        "ACM0010": ("SOIL_CARBON", "CDM"),
+        "VM0022": ("SOIL_CARBON", "VCS"),
+        "VM0042": ("SOIL_CARBON", "VCS"),
+        "VM0044": ("BIOCHAR", "VCS"),
+        # Household
+        "TPDDTEC": ("COOKSTOVES", "GOLD_STANDARD"),
+        "TPDDTEC-SWH": ("RENEWABLE_ENERGY", "GOLD_STANDARD"),
+        # Buildings
+        "AMS-II.D": ("RENEWABLE_ENERGY", "CDM"),
+        "AMS-II.E": ("RENEWABLE_ENERGY", "CDM"),
+        # Transport
+        "AMS-III.S": ("OTHER", "CDM"),
+        "AM0031": ("OTHER", "CDM"),
+        # Blue Carbon
+        "VM0033": ("BLUE_CARBON", "VCS"),
+    }
+    
+    # Determine project type and standard
+    default_type, default_standard = methodology_mapping.get(
+        data.methodology_code, 
+        ("OTHER", "OTHER")
+    )
+    project_type = data.project_type or default_type
+    standard = data.standard or default_standard
+    
+    # Calculate quality metrics
+    quality_score, quality_rating = calc_engine.calculate_quality_score(
+        verification_status="unverified"
+    )
+    
+    # Calculate risk
+    risk_breakdown = calc_engine.calculate_project_risk(
+        project_type=project_type,
+        country_code=data.country_code,
+        quality_rating=quality_rating
+    )
+    
+    # Store calculation data as metadata
+    project_metadata = {
+        "source": "methodology_calculator",
+        "methodology_code": data.methodology_code,
+        "calculation_inputs": data.calculation_inputs,
+        "calculation_result": data.calculation_result
+    }
+    
+    project = CarbonProject(
+        id=str(uuid.uuid4()),
+        portfolio_id=data.portfolio_id,
+        methodology_id=None,  # Will be linked if we have methodology in DB
+        name=data.project_name,
+        project_type=project_type,
+        standard=standard,
+        registry_id=None,
+        country_code=data.country_code.upper(),
+        region=None,
+        coordinates=None,
+        annual_credits=data.annual_credits,
+        total_credits=data.annual_credits * 10,  # Assume 10-year crediting period
+        vintage_start=datetime.now(timezone.utc).year,
+        vintage_end=datetime.now(timezone.utc).year + 10,
+        crediting_period_years=10,
+        quality_rating=quality_rating,
+        quality_score=quality_score,
+        risk_level=_get_risk_level(risk_breakdown["total_risk_pct"]),
+        risk_score=risk_breakdown["total_risk_pct"],
+        price_per_credit_usd=15.0,  # Default market price
+        total_investment_usd=None,
+        sdg_contributions=[],
+        co_benefits=[],
+        status="active",
+        verification_status="unverified"
+    )
+    
+    db.add(project)
+    db.commit()
+    db.refresh(project)
+    
+    return project
+
+
 # ============ Scenarios ============
 
 @router.get("/portfolios/{portfolio_id}/scenarios", response_model=List[CarbonScenarioResponse])
