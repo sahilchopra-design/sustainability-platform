@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
 import { Badge } from '../../../components/ui/badge';
-import { Leaf, Droplets, TreePine, Building2, BarChart3, Target, FileText } from 'lucide-react';
+import { Leaf, Droplets, TreePine, Building2, BarChart3, Target, FileText, Compass } from 'lucide-react';
 import { NatureRiskDashboard } from '../components/dashboard/NatureRiskDashboard';
 import { PortfolioNatureRisk } from '../components/portfolio/PortfolioNatureRisk';
 import { WaterRiskAnalysis } from '../components/water/WaterRiskAnalysis';
 import { BiodiversityOverlaps } from '../components/biodiversity/BiodiversityOverlaps';
 import { ENCOREExplorer } from '../components/dashboard/ENCOREExplorer';
 import { GBFAlignment } from '../components/dashboard/GBFAlignment';
+import { LEAPAssessmentWizard } from '../components/leap/LEAPAssessmentWizard';
 
 export default function NatureRiskPage() {
   const [activeTab, setActiveTab] = useState('dashboard');
