@@ -40,6 +40,8 @@ import { GeographicMap } from '../components/dashboard/GeographicMap';
 import { ScenarioTabs } from '../components/scenarios/ScenarioTabs';
 import { RiskSliders } from '../components/scenarios/RiskSliders';
 import MethodologyCalculator from '../components/calculator/MethodologyCalculator';
+import { ExportButton } from '../../../components/shared/ExportButton';
+import { exportCarbonCalculation } from '../../../lib/exportUtils';
 
 import { 
   useCarbonPortfolios, 
