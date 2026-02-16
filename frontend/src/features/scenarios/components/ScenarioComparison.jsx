@@ -293,6 +293,7 @@ export function ScenarioComparison() {
             </CardContent>
           </Card>
         </div>
+        </div>
       )}
 
       {!result && !compareMutation.isPending && (
