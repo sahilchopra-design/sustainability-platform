@@ -119,6 +119,60 @@ const DEFAULT_INPUTS = {
     soil_carbon_density: 150,
     biomass_carbon_density: 20,
     risk_buffer: 0.25
+  },
+  // TRANSPORT sector methodologies
+  'ACM0023': {
+    fleet_name: 'City Bus Fleet',
+    vehicle_count: 100,
+    annual_distance_km: 80000,
+    baseline_emission_factor: 0.25,
+    project_emission_factor: 0.08,
+    vehicle_type: 'bus',
+    fuel_type_baseline: 'diesel',
+    fuel_type_project: 'electric'
+  },
+  'AMS-III.C': {
+    vehicle_count: 50,
+    annual_distance_km: 40000,
+    baseline_fuel_consumption: 12,
+    project_fuel_consumption: 8,
+    fuel_ncv: 43,
+    fuel_co2_ef: 74.1
+  },
+  // BUILDINGS sector methodologies
+  'MMECD': {
+    building_name: 'Commercial Building A',
+    building_area_sqm: 25000,
+    baseline_energy_consumption: 50000,
+    project_energy_consumption: 35000,
+    grid_emission_factor: 0.45,
+    monitoring_period_months: 12,
+    retrofit_type: 'hvac_upgrade'
+  },
+  'AMS-II.E': {
+    building_count: 10,
+    baseline_energy_per_building: 5000,
+    project_energy_per_building: 3500,
+    grid_emission_factor: 0.45,
+    efficiency_measure: 'led_lighting'
+  },
+  // MINING sector methodologies
+  'ACM0008': {
+    mine_name: 'Coal Mine Alpha',
+    ventilation_air_methane: 80000,
+    captured_methane: 50000,
+    methane_gwp: 28,
+    n2o_gwp: 265,
+    methane_density: 0.000717,
+    utilization_type: 'flaring',
+    mine_type: 'underground'
+  },
+  'VM0032': {
+    mine_area_hectares: 500,
+    overburden_volume: 1000000,
+    coal_seam_methane: 15,
+    capture_efficiency: 0.85,
+    methane_gwp: 28
   }
 };
 
