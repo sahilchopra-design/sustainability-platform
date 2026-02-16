@@ -326,11 +326,66 @@ SELECT create_hypertable('technology_disruption_metric', 'time', chunk_time_inte
 - 3 transition scenarios (IEA NZE, APS, STEPS)
 - 3 transition pathways (oil, gas, coal demand)
 
+### Frontend Components (Dec 2025)
+
+**Directory**: `frontend/src/features/stranded-assets/`
+
+**Structure**:
+```
+stranded-assets/
+├── api/strandedAssetsApi.js        # API client for all endpoints
+├── hooks/useStrandedAssets.js      # React hooks for data fetching
+├── components/
+│   ├── dashboard/StrandedAssetDashboard.jsx
+│   ├── calculator/ReserveImpairmentCalculator.jsx
+│   ├── calculator/PowerPlantValuationTool.jsx
+│   └── charts/TechnologyDisruptionChart.jsx
+└── pages/StrandedAssetsPage.jsx
+```
+
+**Components Implemented**:
+
+1. **StrandedAssetDashboard**
+   - KPI cards (Total Exposure, Value at Risk, High Risk Assets, Avg Risk Score)
+   - Asset type breakdown (Reserves, Plants, Infrastructure)
+   - Risk distribution bar chart
+   - Critical Asset Alerts panel
+
+2. **ReserveImpairmentCalculator**
+   - Multi-select reserve picker with type badges (Oil/Gas/Coal)
+   - Scenario dropdown (IEA NZE, APS, STEPS)
+   - Target years toggle buttons (2030-2050)
+   - Discount rate slider
+   - Results panel with risk gauge, stranded %, NPV impact
+   - Recommendations list
+
+3. **PowerPlantValuationTool**
+   - Technology filter buttons
+   - Plant multi-select with capacity display
+   - NPV comparison (baseline vs scenario)
+   - Repurposing options grid (CCS, Hydrogen, Storage, Retirement)
+   - Optimal retirement year indicator
+
+4. **TechnologyDisruptionChart**
+   - Metric selector (EV, Heat Pump, Hydrogen, Battery)
+   - Region dropdown
+   - Interactive area chart with Recharts
+   - Key projections panel (2030, 2040, 2050)
+   - CAGR badge
+
+5. **CriticalAssetsPanel** (in StrandedAssetsPage)
+   - Risk threshold filter
+   - Summary cards (critical/high/total)
+   - Sortable alerts table
+
+**Routing**: Added `/stranded-assets` route in App.js
+**Navigation**: Added "Stranded Assets" link in sidebar
+
 ## Upcoming / Future Tasks
-1. **Stranded Asset Module Frontend (P0)**: Build dashboard, asset management, and calculation UI
-2. **Sector Input Forms (P2)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
-3. **Export Features (P2)**: PDF/Excel export of calculation results and nature risk reports
-4. **LEAP Assessment Wizard (P2)**: Multi-step wizard for comprehensive LEAP assessments
-5. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
-6. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
-7. **Comparison Tool (P3)**: Compare multiple methodologies for the same project scenario
+1. **Sector Input Forms (P1)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
+2. **Export Features (P2)**: PDF/Excel export of calculation results and nature risk reports
+3. **LEAP Assessment Wizard (P2)**: Multi-step wizard for comprehensive LEAP assessments
+4. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
+5. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
+6. **Comparison Tool (P3)**: Compare multiple methodologies for the same project scenario
+
