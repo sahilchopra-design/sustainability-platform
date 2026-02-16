@@ -733,8 +733,8 @@ class WhatIfAnalysisEngine:
             # Higher vacancy → higher collection loss
             vacancy_change = new_value - old_value
             if vacancy_change > 0:
-                collection_loss_increase = vacancy_change * 0.3
-                # This would affect NOI, already handled
+                # Cascading effect: collection loss increases proportionally
+                cascading_impact += Decimal(str(vacancy_change * 0.3))
         
         elif parameter == "expense_ratio":
             # Higher expenses might reduce rent competitiveness
