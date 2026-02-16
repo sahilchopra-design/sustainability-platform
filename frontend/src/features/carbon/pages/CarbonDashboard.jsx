@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { 
   Leaf, TrendingUp, Shield, DollarSign, 
   Plus, RefreshCw, FileText, Settings,
-  ChevronDown
+  ChevronDown, Calculator
 } from 'lucide-react';
 
 import { Button } from '../../../components/ui/button';
@@ -39,6 +39,7 @@ import { ProjectTable } from '../components/dashboard/ProjectTable';
 import { GeographicMap } from '../components/dashboard/GeographicMap';
 import { ScenarioTabs } from '../components/scenarios/ScenarioTabs';
 import { RiskSliders } from '../components/scenarios/RiskSliders';
+import MethodologyCalculator from '../components/calculator/MethodologyCalculator';
 
 import { 
   useCarbonPortfolios, 
