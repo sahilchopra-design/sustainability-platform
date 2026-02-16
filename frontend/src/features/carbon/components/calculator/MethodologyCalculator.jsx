@@ -229,6 +229,59 @@ const INPUT_CONFIGS = {
     { key: 'biomass_carbon_density', label: 'Biomass Carbon Density', unit: 'tC/ha', type: 'number', step: 5 },
     { key: 'risk_buffer', label: 'Risk Buffer', unit: '%', type: 'number', step: 0.05, min: 0, max: 0.5 },
   ],
+  // TRANSPORT sector methodologies
+  'ACM0023': [
+    { key: 'fleet_name', label: 'Fleet Name', unit: '', type: 'text' },
+    { key: 'vehicle_count', label: 'Number of Vehicles', unit: '', type: 'number', step: 1, min: 1 },
+    { key: 'annual_distance_km', label: 'Annual Distance per Vehicle', unit: 'km', type: 'number', step: 1000 },
+    { key: 'baseline_emission_factor', label: 'Baseline Emission Factor', unit: 'kgCO2/km', type: 'number', step: 0.01 },
+    { key: 'project_emission_factor', label: 'Project Emission Factor', unit: 'kgCO2/km', type: 'number', step: 0.01 },
+    { key: 'vehicle_type', label: 'Vehicle Type', unit: '', type: 'select', options: ['car', 'bus', 'truck', 'motorcycle', 'taxi'] },
+    { key: 'fuel_type_baseline', label: 'Baseline Fuel Type', unit: '', type: 'select', options: ['diesel', 'petrol', 'cng', 'lpg'] },
+    { key: 'fuel_type_project', label: 'Project Fuel Type', unit: '', type: 'select', options: ['electric', 'hybrid', 'hydrogen', 'biofuel', 'cng'] },
+  ],
+  'AMS-III.C': [
+    { key: 'vehicle_count', label: 'Number of Vehicles', unit: '', type: 'number', step: 1, min: 1 },
+    { key: 'annual_distance_km', label: 'Annual Distance per Vehicle', unit: 'km', type: 'number', step: 1000 },
+    { key: 'baseline_fuel_consumption', label: 'Baseline Fuel Consumption', unit: 'L/100km', type: 'number', step: 0.5 },
+    { key: 'project_fuel_consumption', label: 'Project Fuel Consumption', unit: 'L/100km', type: 'number', step: 0.5 },
+    { key: 'fuel_ncv', label: 'Fuel Net Calorific Value', unit: 'MJ/L', type: 'number', step: 0.1 },
+    { key: 'fuel_co2_ef', label: 'Fuel CO2 Emission Factor', unit: 'gCO2/MJ', type: 'number', step: 0.1 },
+  ],
+  // BUILDINGS sector methodologies
+  'MMECD': [
+    { key: 'building_name', label: 'Building Name', unit: '', type: 'text' },
+    { key: 'building_area_sqm', label: 'Building Area', unit: 'm²', type: 'number', step: 100 },
+    { key: 'baseline_energy_consumption', label: 'Baseline Energy Consumption', unit: 'MWh/year', type: 'number', step: 100 },
+    { key: 'project_energy_consumption', label: 'Project Energy Consumption', unit: 'MWh/year', type: 'number', step: 100 },
+    { key: 'grid_emission_factor', label: 'Grid Emission Factor', unit: 'tCO2/MWh', type: 'number', step: 0.01 },
+    { key: 'monitoring_period_months', label: 'Monitoring Period', unit: 'months', type: 'number', step: 1, min: 1, max: 60 },
+    { key: 'retrofit_type', label: 'Retrofit Type', unit: '', type: 'select', options: ['hvac_upgrade', 'insulation', 'lighting', 'building_automation', 'combined'] },
+  ],
+  'AMS-II.E': [
+    { key: 'building_count', label: 'Number of Buildings', unit: '', type: 'number', step: 1, min: 1 },
+    { key: 'baseline_energy_per_building', label: 'Baseline Energy per Building', unit: 'kWh/year', type: 'number', step: 100 },
+    { key: 'project_energy_per_building', label: 'Project Energy per Building', unit: 'kWh/year', type: 'number', step: 100 },
+    { key: 'grid_emission_factor', label: 'Grid Emission Factor', unit: 'tCO2/MWh', type: 'number', step: 0.01 },
+    { key: 'efficiency_measure', label: 'Efficiency Measure', unit: '', type: 'select', options: ['led_lighting', 'efficient_appliances', 'hvac_optimization', 'smart_controls'] },
+  ],
+  // MINING sector methodologies  
+  'ACM0008': [
+    { key: 'mine_name', label: 'Mine Name', unit: '', type: 'text' },
+    { key: 'ventilation_air_methane', label: 'Ventilation Air Methane', unit: 'm³ CH4/year', type: 'number', step: 1000 },
+    { key: 'captured_methane', label: 'Captured Methane', unit: 'm³ CH4/year', type: 'number', step: 1000 },
+    { key: 'methane_gwp', label: 'Methane GWP', unit: '', type: 'number', step: 1, min: 1 },
+    { key: 'methane_density', label: 'Methane Density', unit: 'tonnes/m³', type: 'number', step: 0.000001 },
+    { key: 'utilization_type', label: 'Utilization Type', unit: '', type: 'select', options: ['flaring', 'power_generation', 'thermal_use', 'pipeline_injection'] },
+    { key: 'mine_type', label: 'Mine Type', unit: '', type: 'select', options: ['underground', 'surface', 'combined'] },
+  ],
+  'VM0032': [
+    { key: 'mine_area_hectares', label: 'Mine Area', unit: 'hectares', type: 'number', step: 10 },
+    { key: 'overburden_volume', label: 'Overburden Volume', unit: 'm³', type: 'number', step: 10000 },
+    { key: 'coal_seam_methane', label: 'Coal Seam Methane Content', unit: 'm³ CH4/tonne', type: 'number', step: 0.5 },
+    { key: 'capture_efficiency', label: 'Capture Efficiency', unit: '', type: 'number', step: 0.05, min: 0, max: 1 },
+    { key: 'methane_gwp', label: 'Methane GWP', unit: '', type: 'number', step: 1, min: 1 },
+  ],
 };
 
 export default function MethodologyCalculator() {
