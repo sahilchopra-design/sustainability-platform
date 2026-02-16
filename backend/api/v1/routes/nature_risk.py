@@ -9,7 +9,7 @@ from datetime import datetime, date
 from uuid import uuid4
 import json
 
-from db.base import get_pg_db
+from db.base import get_db
 from schemas.nature_risk import (
     # Scenarios
     NatureRiskScenarioCreate, NatureRiskScenarioUpdate, NatureRiskScenarioResponse,
