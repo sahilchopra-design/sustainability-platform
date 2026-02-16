@@ -233,8 +233,56 @@ SELECT create_hypertable('technology_disruption_metric', 'time', chunk_time_inte
 - `CriticalAssetAlert`, `CriticalAssetAlertList` - Risk alerts
 - `ScenarioComparison[Request/Result/Response]` - Multi-scenario comparison
 
+### Calculation Engine (Dec 2025)
+
+**File**: `backend/services/stranded_asset_calculator.py`
+
+**5 Calculator Classes**:
+
+1. **ReserveImpairmentCalculator**
+   - `calculate_impairment()`: Full reserve NPV analysis under climate scenarios
+   - Calculates stranded volume, NPV impact, risk score
+   - Generates yearly impairment forecasts for target years
+   - Identifies key drivers and recommendations
+
+2. **PowerPlantValuator**
+   - `value_plant()`: Complete plant valuation with repurposing options
+   - NPV analysis with carbon cost integration
+   - Optimal retirement year calculation
+   - Repurposing options: CCS, hydrogen, storage, retirement
+   - Capacity factor and wholesale price projections
+
+3. **InfrastructureValuator**
+   - `value_infrastructure()`: Pipeline, LNG terminal, refinery valuation
+   - Utilization decline modeling
+   - Contract exposure at risk calculation
+   - Transition readiness assessment (H2, ammonia, CCS)
+
+4. **TechnologyDisruptionTracker**
+   - `ev_adoption_s_curve()`: Logistic S-curve for EV adoption
+   - `calculate_oil_displacement()`: Oil demand reduction from EVs
+   - `heat_pump_adoption_curve()`: Heat pump adoption modeling
+   - `calculate_gas_displacement()`: Gas demand reduction
+   - `green_hydrogen_cost_curve()`: Learning curve for green H2
+   - `battery_cost_curve()`: Battery cost projections
+   - `get_disruption_summary()`: Comprehensive disruption metrics
+
+5. **PortfolioStrandingAnalyzer**
+   - `analyze_portfolio()`: Portfolio-level stranding analysis
+   - Aggregates reserves, plants, and infrastructure
+   - Risk distribution across portfolio
+   - Top risk assets identification
+   - Portfolio-level recommendations
+
+**Key Features**:
+- Risk scoring (0-1) with LOW/MEDIUM/HIGH/CRITICAL categories
+- Carbon price trajectory integration (EU ETS style)
+- Demand reduction modeling from transition pathways
+- NPV discounting with configurable rates
+- Comprehensive recommendations engine
+
 ## Upcoming / Future Tasks
-1. **Stranded Asset Module Backend (P0)**: Create Pydantic models, services, and API routes for the Stranded Asset Module
+1. **Stranded Asset API Routes (P0)**: Create FastAPI routes for CRUD and calculations
 2. **Stranded Asset Module Frontend (P1)**: Build dashboard, asset management, and calculation UI
 3. **Sector Input Forms (P2)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
 4. **Export Features (P2)**: PDF/Excel export of calculation results and nature risk reports
