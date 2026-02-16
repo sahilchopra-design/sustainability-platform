@@ -25,6 +25,7 @@ const formatCurrency = (value) => {
 export function StrandedAssetDashboard() {
   const { data: kpis, loading: kpisLoading } = useDashboardKPIs();
   const { data: criticalData, loading: criticalLoading } = useCriticalAssets({ risk_threshold: 'high' });
+  const { data: mapData, loading: mapLoading } = useMapData();
 
   if (kpisLoading) {
     return (
