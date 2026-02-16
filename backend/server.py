@@ -55,6 +55,12 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+# Include Scenario Analysis routes (must be BEFORE scenarios_router to avoid route conflicts)
+# These routes have specific paths like /dashboard, /properties that would otherwise
+# be matched by the {scenario_id} catch-all pattern in scenarios_router
+app.include_router(scenario_router)
+app.include_router(sensitivity_router)
+app.include_router(whatif_router)
 # Include scenario builder routes
 app.include_router(scenarios_router)
 # Include data hub routes
@@ -83,10 +89,6 @@ app.include_router(stranded_assets_router)
 app.include_router(valuation_router)
 # Include Sustainability Frameworks routes
 app.include_router(sustainability_router)
-# Include Scenario Analysis routes
-app.include_router(scenario_router)
-app.include_router(sensitivity_router)
-app.include_router(whatif_router)
 
 # CORS
 app.add_middleware(
