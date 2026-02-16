@@ -107,6 +107,12 @@ export const deleteProject = async (id) => {
   return response.data;
 };
 
+// Save calculation as project
+export const saveCalculationAsProject = async (data) => {
+  const response = await carbonApi.post('/projects/from-calculation', data);
+  return response.data;
+};
+
 // ============ Scenarios ============
 
 export const fetchScenarios = async (portfolioId) => {
