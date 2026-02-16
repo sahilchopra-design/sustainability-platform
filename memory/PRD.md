@@ -381,6 +381,31 @@ stranded-assets/
 **Routing**: Added `/stranded-assets` route in App.js
 **Navigation**: Added "Stranded Assets" link in sidebar
 
+## Latest Update: Interactive Asset Map Visualization (Feb 16, 2026)
+
+### NEW Feature: Mapbox Interactive Map for Stranded Assets ✅ COMPLETED
+
+**Implementation**:
+- Integrated `AssetMapViewer` component into `StrandedAssetDashboard`
+- Uses Mapbox GL with dark theme (`mapbox://styles/mapbox/dark-v11`)
+- Fetches data from `/api/v1/stranded-assets/map-data` endpoint (9 assets with coordinates)
+
+**Features**:
+- Color-coded markers by risk level (Critical: red, High: orange, Medium: yellow, Low: green)
+- Asset type filters: Reserves, Power Plants, Infrastructure, Nature Risk, Carbon Projects
+- Risk level filters: Critical, High, Medium, Low
+- Interactive popups on marker hover/click with asset details
+- Stats panel showing High Risk vs Lower Risk counts
+- Legend with risk level counts
+- Zoom controls (in, out, reset)
+- Fullscreen toggle
+
+**Files Modified**:
+- `frontend/src/components/shared/AssetMapViewer.jsx` - Fixed import paths
+- `frontend/src/features/stranded-assets/components/dashboard/StrandedAssetDashboard.jsx` - Integrated map component
+
+**Testing**: 13/13 backend tests passed, all frontend UI elements verified (iteration_20)
+
 ## Upcoming / Future Tasks
 1. **Sector Input Forms (P1)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
 2. **Export Features (P2)**: PDF/Excel export of calculation results and nature risk reports
