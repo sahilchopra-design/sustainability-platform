@@ -626,14 +626,73 @@ stranded-assets/
 
 **Note**: Uses IN-MEMORY SAMPLE data (3 portfolios with holdings). Data not persisted to PostgreSQL - this is by design for demonstration.
 
+## Latest Update: BREEAM Calculator & Universal Export (Feb 16, 2026)
+
+### NEW Feature: BREEAM Certification Calculator with LEED Comparison
+
+**Backend Implementation**:
+- Existing BREEAM API at `/api/v1/sustainability/breeam/assess` already functional
+- Returns: weighted_score, rating, category_weighted_scores, estimated_rent_premium_percent, estimated_value_premium_percent, improvement_priorities
+
+**Frontend Implementation** (`/app/frontend/src/features/sustainability/`):
+
+1. **BREEAMCalculator.jsx** (NEW):
+   - **BREEAM Calculator Tab**: Full form with property details and 10 category sliders (Management, Health & Wellbeing, Energy, Transport, Water, Materials, Waste, Land Use & Ecology, Pollution, Innovation)
+   - **Live Score Preview**: Real-time weighted score calculation with rating badge
+   - **BREEAM Rating Scale**: Pass (30%), Good (45%), Very Good (55%), Excellent (70%), Outstanding (85%)
+   - **Assessment Results**: Weighted Score, Rating Level, Rent Premium, Value Premium, Estimated Value Impact
+   - **Category Performance Chart**: Radar chart comparing scores to benchmark
+   - **Weighted Score Breakdown**: Horizontal bar chart
+   - **Improvement Priorities**: High/medium priority categories with potential gains
+   - **Export Button**: PDF/Excel export dropdown for assessment results
+
+2. **BREEAM vs LEED Comparison Tab**:
+   - Side-by-side category sliders for BREEAM and LEED
+   - Compare Certifications button
+   - Side-by-Side Comparison: BREEAM (percentage-based) vs LEED (points-based)
+   - Rent Premium, Value Premium, Market Focus comparisons
+   - Regional Recommendation (BREEAM for Europe, LEED for Americas)
+
+**SustainabilityPage.jsx Updated**:
+- Added 5th tab: BREEAM (with Building2 icon)
+- Grid columns updated from 4 to 5
+
+### NEW Feature: Universal PDF/Excel Export
+
+**Backend Implementation**:
+
+1. **Export Service** (`/app/backend/services/export_service.py`):
+   - PDF generation using ReportLab (A4 format, styled templates)
+   - Excel generation using xlsxwriter (formatted worksheets with colors)
+   - Module-specific generators:
+     - `generate_portfolio_analytics_pdf/excel` - Executive summary, property details
+     - `generate_sustainability_pdf/excel` - Assessment results, value impact
+     - `generate_stranded_assets_pdf/excel` - Risk summary, key drivers
+     - `generate_scenario_analysis_pdf/excel` - Scenario comparison tables
+
+2. **Universal Export API** (`/app/backend/api/v1/routes/universal_exports.py`):
+   - `GET /api/v1/exports/portfolio-analytics/{portfolio_id}` - Portfolio reports
+   - `POST /api/v1/exports/sustainability/assessment` - GRESB/LEED/BREEAM exports
+   - `POST /api/v1/exports/stranded-assets/analysis` - Stranded asset reports
+   - `POST /api/v1/exports/scenario-analysis/comparison` - Scenario comparisons
+   - `POST /api/v1/exports/nature-risk/assessment` - Nature risk reports
+   - `POST /api/v1/exports/valuation/analysis` - Valuation reports
+   - `POST /api/v1/exports/carbon/calculation` - Carbon credit reports
+   - `GET /api/v1/exports/bulk` - List all available exports
+
+**Frontend Implementation**:
+- `sustainabilityApi.js` updated with `exportSustainabilityAssessment()` and `downloadFile()` helper
+- `useSustainability.js` updated with `useExportAssessment()` hook
+- Export dropdown added to BREEAMCalculator results section
+
+**Testing**: 20/20 backend tests passed (iteration_25), frontend verified
+
 ## Upcoming / Future Tasks
 1. **Database Persistence for Portfolio Analytics (P1)**: Replace in-memory sample data with PostgreSQL storage
 2. **Refactor Mocked Backend Services (P1)**: Replace placeholder data in stranded_asset_calculator.py and real_estate_valuation_engine.py with real DB queries
-3. **Export Features (P2)**: PDF/Excel export of calculation results and nature risk reports
-4. **Sector Input Forms (P2)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
-5. **BREEAM Calculator Frontend (P2)**: Add BREEAM tab to Sustainability module
-6. **Database Persistence for Scenarios (P2)**: Store scenarios in PostgreSQL instead of in-memory
-7. **LEAP Assessment Wizard (P3)**: Multi-step wizard for comprehensive LEAP assessments
-8. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
-9. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
+3. **Sector Input Forms (P2)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
+4. **Database Persistence for Scenarios (P2)**: Store scenarios in PostgreSQL instead of in-memory
+5. **LEAP Assessment Wizard (P3)**: Multi-step wizard for comprehensive LEAP assessments
+6. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
+7. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
 
