@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../components/ui/card';
-import { Button } from '../../../components/ui/button';
-import { Badge } from '../../../components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
-import { Slider } from '../../../components/ui/slider';
-import { Alert, AlertDescription, AlertTitle } from '../../../components/ui/alert';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../../components/ui/card';
+import { Button } from '../../../../components/ui/button';
+import { Badge } from '../../../../components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../../components/ui/select';
+import { Slider } from '../../../../components/ui/slider';
+import { Alert, AlertDescription, AlertTitle } from '../../../../components/ui/alert';
 import { 
   TreePine, MapPin, AlertTriangle, Shield, Globe, 
   ChevronRight, Filter, Search 
