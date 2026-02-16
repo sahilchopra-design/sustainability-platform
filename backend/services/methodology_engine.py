@@ -1394,11 +1394,15 @@ def get_methodologies_by_sector(sector: str) -> List[Dict[str, Any]]:
         ],
         "TRANSPORT": [
             {"code": "ACM0023", "name": "Low Emission Vehicles", "standard": "CDM", "scale": "Large"},
-            {"code": "AMS-II.E", "name": "Transport Efficiency", "standard": "CDM", "scale": "Small"},
+            {"code": "AMS-III.C", "name": "Low Emission Vehicles/Tech", "standard": "CDM", "scale": "Small"},
+            {"code": "AMS-III.S", "name": "Electric/Hybrid Vehicles", "standard": "CDM", "scale": "Small"},
+            {"code": "VM0038", "name": "Transport Electrification", "standard": "VCS", "scale": "Large"},
         ],
         "BUILDINGS": [
             {"code": "AMS-II.D", "name": "Building Efficiency", "standard": "CDM", "scale": "Small"},
+            {"code": "AMS-II.E", "name": "Energy Efficient Lighting", "standard": "CDM", "scale": "Small"},
             {"code": "MMECD", "name": "Metered Energy Efficiency", "standard": "Gold Standard", "scale": "Large"},
+            {"code": "VM0040", "name": "Building Efficiency (VCS)", "standard": "VCS", "scale": "Large"},
         ],
         "HOUSEHOLD": [
             {"code": "TPDDTEC", "name": "Clean Cookstoves", "standard": "Gold Standard", "scale": "Large"},
@@ -1406,6 +1410,8 @@ def get_methodologies_by_sector(sector: str) -> List[Dict[str, Any]]:
         ],
         "MINING": [
             {"code": "ACM0008", "name": "Coal Mine Methane", "standard": "CDM", "scale": "Large"},
+            {"code": "VM0032", "name": "Coal Mine Methane (VCS)", "standard": "VCS", "scale": "Large"},
+            {"code": "AMS-III.K", "name": "Methane Avoidance", "standard": "CDM", "scale": "Small"},
         ],
         "BLUE_CARBON": [
             {"code": "VM0033", "name": "Tidal Wetland/Seagrass", "standard": "VCS", "scale": "Large"},
