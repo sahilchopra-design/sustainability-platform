@@ -452,6 +452,83 @@ def ACM0023_LowEmissionVehicles(inputs: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def AMS_III_C_LowEmissionVehicles(inputs: Dict[str, Any]) -> Dict[str, Any]:
+    """AMS-III.C: Emission Reductions by Low-Emission Vehicles - Transport Sector"""
+    vehicle_count = inputs.get("vehicle_count", 50)
+    annual_distance_km = inputs.get("annual_distance_km", 40000)
+    baseline_fuel_consumption = inputs.get("baseline_fuel_consumption", 12)  # L/100km
+    project_fuel_consumption = inputs.get("project_fuel_consumption", 8)  # L/100km
+    fuel_ncv = inputs.get("fuel_ncv", 43)  # MJ/L
+    fuel_co2_ef = inputs.get("fuel_co2_ef", 74.1)  # gCO2/MJ
+    
+    # BE_y = N × D × FC_BL × NCV × EF_CO2
+    total_distance = vehicle_count * annual_distance_km
+    baseline_fuel_total = total_distance * baseline_fuel_consumption / 100  # L
+    baseline_energy = baseline_fuel_total * fuel_ncv  # MJ
+    baseline_emissions = baseline_energy * fuel_co2_ef / 1e6  # tCO2
+    
+    # PE_y = N × D × FC_PJ × NCV × EF_CO2
+    project_fuel_total = total_distance * project_fuel_consumption / 100  # L
+    project_energy = project_fuel_total * fuel_ncv  # MJ
+    project_emissions = project_energy * fuel_co2_ef / 1e6  # tCO2
+    
+    emission_reductions = baseline_emissions - project_emissions
+    
+    return {
+        "methodology": "AMS-III.C",
+        "version": "8.0",
+        "sector": "Transport",
+        "scale": "Small-scale",
+        "vehicle_count": vehicle_count,
+        "total_distance_km": total_distance,
+        "baseline_emissions": round(baseline_emissions),
+        "project_emissions": round(project_emissions),
+        "emission_reductions": round(emission_reductions),
+        "unit": "tCO2e"
+    }
+
+
+def VM0032_CoalMineMethane(inputs: Dict[str, Any]) -> Dict[str, Any]:
+    """VM0032: Coal Mine Methane (VCS) - Mining Sector"""
+    mine_area_hectares = inputs.get("mine_area_hectares", 500)
+    overburden_volume = inputs.get("overburden_volume", 1000000)  # m³
+    coal_seam_methane = inputs.get("coal_seam_methane", 15)  # m³ CH4/tonne
+    capture_efficiency = inputs.get("capture_efficiency", 0.85)
+    methane_gwp = inputs.get("methane_gwp", 28)
+    coal_density = inputs.get("coal_density", 1.35)  # tonnes/m³
+    methane_density = inputs.get("methane_density", 0.000717)  # tonnes/m³
+    
+    # Estimate coal extracted based on area
+    coal_extracted = mine_area_hectares * 1000 * coal_density  # tonnes
+    
+    # Calculate methane generation
+    methane_volume = coal_extracted * coal_seam_methane  # m³ CH4
+    methane_mass = methane_volume * methane_density  # tonnes CH4
+    
+    # Baseline emissions (vented)
+    baseline_emissions = methane_mass * methane_gwp
+    
+    # Project emissions (captured and destroyed)
+    captured_methane = methane_mass * capture_efficiency
+    project_emissions = (methane_mass - captured_methane) * methane_gwp
+    
+    emission_reductions = baseline_emissions - project_emissions
+    
+    return {
+        "methodology": "VM0032",
+        "version": "1.0",
+        "standard": "VCS",
+        "sector": "Mining",
+        "mine_area_hectares": mine_area_hectares,
+        "coal_extracted_tonnes": round(coal_extracted),
+        "methane_captured_tonnes": round(captured_methane),
+        "baseline_emissions": round(baseline_emissions),
+        "project_emissions": round(project_emissions),
+        "emission_reductions": round(emission_reductions),
+        "unit": "tCO2e"
+    }
+
+
 # ============================================================================
 # CDM AMS METHODOLOGIES (Small Scale)
 # ============================================================================
