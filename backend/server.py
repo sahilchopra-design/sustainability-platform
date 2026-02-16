@@ -93,6 +93,8 @@ app.include_router(valuation_router)
 app.include_router(sustainability_router)
 # Include Portfolio Analytics routes
 app.include_router(portfolio_analytics_router)
+# Include Universal Export routes
+app.include_router(exports_router)
 
 # CORS
 app.add_middleware(
