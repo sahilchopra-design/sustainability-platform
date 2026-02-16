@@ -977,18 +977,27 @@ def _seed_default_emission_factors(db: Session):
     ]
     
     for f in factors:
-        factor = CarbonEmissionFactor(
-            id=str(uuid.uuid4()),
-            country_code=f["country_code"],
-            country_name=f["country_name"],
-            year=f["year"],
-            grid_emission_factor=f["grid_emission_factor"],
-            source="IEA",
-            is_default=True
-        )
-        db.add(factor)
+        # Check if factor already exists
+        existing = db.query(CarbonEmissionFactor).filter(
+            CarbonEmissionFactor.country_code == f["country_code"],
+            CarbonEmissionFactor.year == f["year"]
+        ).first()
+        if not existing:
+            factor = CarbonEmissionFactor(
+                id=str(uuid.uuid4()),
+                country_code=f["country_code"],
+                country_name=f["country_name"],
+                year=f["year"],
+                grid_emission_factor=f["grid_emission_factor"],
+                source="IEA",
+                is_default=True
+            )
+            db.add(factor)
     
-    db.commit()
+    try:
+        db.commit()
+    except Exception:
+        db.rollback()
 
 
 # ============ Methodology Calculation Endpoints ============
