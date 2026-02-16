@@ -928,6 +928,11 @@ def _get_geographic_distribution(projects: List[CarbonProject]) -> List[dict]:
 
 def _seed_default_methodologies(db: Session):
     """Seed default carbon methodologies."""
+    # Check if any methodologies exist
+    existing_count = db.query(CarbonMethodology).count()
+    if existing_count > 0:
+        return
+    
     methodologies = [
         {"code": "VM0007", "name": "REDD+ Methodology Framework", "standard": "VCS", "sector": "Forestry", "subsector": "REDD+"},
         {"code": "VM0015", "name": "Avoided Unplanned Deforestation", "standard": "VCS", "sector": "Forestry", "subsector": "AUD"},
@@ -938,18 +943,24 @@ def _seed_default_methodologies(db: Session):
     ]
     
     for m in methodologies:
-        methodology = CarbonMethodology(
-            id=str(uuid.uuid4()),
-            code=m["code"],
-            name=m["name"],
-            standard=m["standard"],
-            sector=m["sector"],
-            subsector=m.get("subsector"),
-            status="active"
-        )
-        db.add(methodology)
+        # Check if methodology already exists
+        existing = db.query(CarbonMethodology).filter(CarbonMethodology.code == m["code"]).first()
+        if not existing:
+            methodology = CarbonMethodology(
+                id=str(uuid.uuid4()),
+                code=m["code"],
+                name=m["name"],
+                standard=m["standard"],
+                sector=m["sector"],
+                subsector=m.get("subsector"),
+                status="active"
+            )
+            db.add(methodology)
     
-    db.commit()
+    try:
+        db.commit()
+    except Exception:
+        db.rollback()
 
 
 def _seed_default_emission_factors(db: Session):
