@@ -110,12 +110,12 @@ export function WaterRiskAnalysis() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="text-sm font-medium mb-2 block">Filter by Country</label>
-              <Select value={countryFilter} onValueChange={setCountryFilter}>
+              <Select value={countryFilter || 'all'} onValueChange={(v) => setCountryFilter(v === 'all' ? '' : v)}>
                 <SelectTrigger>
                   <SelectValue placeholder="All Countries" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Countries</SelectItem>
+                  <SelectItem value="all">All Countries</SelectItem>
                   {countries.map(code => (
                     <SelectItem key={code} value={code}>{code}</SelectItem>
                   ))}
@@ -124,7 +124,7 @@ export function WaterRiskAnalysis() {
             </div>
             <div>
               <label className="text-sm font-medium mb-2 block">Scenario</label>
-              <Select value={selectedScenario || ''} onValueChange={setSelectedScenario}>
+              <Select value={selectedScenario || 'none'} onValueChange={(v) => setSelectedScenario(v === 'none' ? null : v)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select scenario" />
                 </SelectTrigger>
