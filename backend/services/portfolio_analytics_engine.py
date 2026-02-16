@@ -603,6 +603,10 @@ class PortfolioAnalyticsEngine:
             scenario_value = base_value * (1 + adjustment)
             stranded_adj = int(base_analytics.stranding_analysis.stranded_assets_count * float(1 + adjustment * 2))
             
+            # Convert to proper types to avoid Decimal * float errors
+            var_multiplier = Decimal("1") + abs(adjustment) * Decimal("0.5")
+            risk_multiplier = Decimal("1") + adjustment * Decimal("0.3")
+            
             comparison_rows.append(ScenarioComparisonRow(
                 scenario_id=UUID(sid) if len(sid) == 36 else UUID(int=i+1),
                 scenario_name=scenario_names[i % len(scenario_names)],
@@ -611,8 +615,8 @@ class PortfolioAnalyticsEngine:
                 value_change_pct=(adjustment * 100).quantize(Decimal("0.01")),
                 stranded_count=max(0, stranded_adj),
                 stranded_value=base_analytics.stranding_analysis.stranded_assets_value * (1 + adjustment),
-                var_95=base_analytics.risk_metrics.value_at_risk_95 * (1 + abs(adjustment) * 0.5),
-                avg_risk_score=base_analytics.risk_metrics.weighted_avg_risk_score * (1 + adjustment * 0.3),
+                var_95=base_analytics.risk_metrics.value_at_risk_95 * var_multiplier,
+                avg_risk_score=base_analytics.risk_metrics.weighted_avg_risk_score * risk_multiplier,
             ))
         
         # Find best/worst
