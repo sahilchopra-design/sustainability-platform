@@ -8,7 +8,7 @@ import os
 from datetime import date
 
 # Use the public URL for API testing
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://climate-risk-hub-1.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://portfolio-analytics-12.preview.emergentagent.com')
 
 
 class TestValuationDashboard:
