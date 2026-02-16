@@ -126,13 +126,12 @@ def save_scenario(scenario_id: str, scenario_data: Dict) -> None:
         with engine.connect() as conn:
             # Prepare parameters as JSON
             parameters = {
-                "property_id": scenario_data.get("property_id"),
+                "base_property_id": scenario_data.get("base_property_id"),
                 "modifications": scenario_data.get("modifications", []),
                 "base_value": str(scenario_data.get("base_value", 0)),
-                "modified_value": str(scenario_data.get("modified_value", 0)),
-                "value_change_amount": str(scenario_data.get("value_change_amount", 0)),
-                "value_change_percent": str(scenario_data.get("value_change_percent", 0)),
-                "component_impacts": scenario_data.get("component_impacts", []),
+                "adjusted_value": str(scenario_data.get("adjusted_value", 0)),
+                "value_change_pct": str(scenario_data.get("value_change_pct", 0)),
+                "metrics": scenario_data.get("metrics", {}),
             }
             
             conn.execute(text("""
@@ -145,10 +144,10 @@ def save_scenario(scenario_id: str, scenario_data: Dict) -> None:
                     updated_at = EXCLUDED.updated_at
             """), {
                 "id": scenario_id,
-                "name": scenario_data.get("name", f"Scenario {scenario_id[:8]}"),
+                "name": scenario_data.get("scenario_name", f"Scenario {scenario_id[:8]}"),
                 "description": scenario_data.get("description"),
                 "parameters": json.dumps(parameters),
-                "created_at": scenario_data.get("created_at", datetime.now(timezone.utc)),
+                "created_at": datetime.now(timezone.utc),
                 "updated_at": datetime.now(timezone.utc),
             })
             conn.commit()
@@ -174,16 +173,14 @@ def get_scenario(scenario_id: str) -> Optional[Dict]:
                 params = row[3] if isinstance(row[3], dict) else json.loads(row[3]) if row[3] else {}
                 return {
                     "id": str(row[0]),
-                    "name": row[1],
+                    "scenario_name": row[1],
                     "description": row[2],
-                    "property_id": params.get("property_id"),
+                    "base_property_id": params.get("base_property_id"),
                     "modifications": params.get("modifications", []),
                     "base_value": Decimal(params.get("base_value", "0")),
-                    "modified_value": Decimal(params.get("modified_value", "0")),
-                    "value_change_amount": Decimal(params.get("value_change_amount", "0")),
-                    "value_change_percent": Decimal(params.get("value_change_percent", "0")),
-                    "component_impacts": params.get("component_impacts", []),
-                    "created_at": row[4],
+                    "adjusted_value": Decimal(params.get("adjusted_value", "0")),
+                    "value_change_pct": Decimal(params.get("value_change_pct", "0")),
+                    "created_at": row[4].isoformat() if row[4] else datetime.now(timezone.utc).isoformat(),
                     "updated_at": row[5],
                 }
     except Exception as e:
@@ -211,13 +208,14 @@ def list_scenarios() -> List[Dict]:
                 params = row[3] if isinstance(row[3], dict) else json.loads(row[3]) if row[3] else {}
                 scenarios.append({
                     "id": str(row[0]),
-                    "name": row[1],
+                    "scenario_name": row[1],
                     "description": row[2],
-                    "property_id": params.get("property_id"),
+                    "base_property_id": params.get("base_property_id"),
+                    "modifications": params.get("modifications", []),
                     "base_value": Decimal(params.get("base_value", "0")),
-                    "modified_value": Decimal(params.get("modified_value", "0")),
-                    "value_change_percent": Decimal(params.get("value_change_percent", "0")),
-                    "created_at": row[4],
+                    "adjusted_value": Decimal(params.get("adjusted_value", "0")),
+                    "value_change_pct": Decimal(params.get("value_change_pct", "0")),
+                    "created_at": row[4].isoformat() if row[4] else datetime.now(timezone.utc).isoformat(),
                     "updated_at": row[5],
                 })
             return scenarios
