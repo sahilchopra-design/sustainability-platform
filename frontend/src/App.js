@@ -29,6 +29,7 @@ import StrandedAssetsPage from './features/stranded-assets/pages/StrandedAssetsP
 import ValuationPage from './features/valuation/pages/ValuationPage';
 import SustainabilityPage from './features/sustainability/pages/SustainabilityPage';
 import ScenarioAnalysisPage from './features/scenarios/pages/ScenarioAnalysisPage';
+import PortfolioAnalyticsPage from './features/portfolio-analytics/pages/PortfolioAnalyticsPage';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
