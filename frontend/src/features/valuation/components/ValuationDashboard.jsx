@@ -9,7 +9,7 @@ import {
   Building2, DollarSign, TrendingUp, Calculator, 
   BarChart3, PieChart, Home, Factory
 } from 'lucide-react';
-import { useDashboardKPIs, useProperties } from '../../hooks/useValuation';
+import { useDashboardKPIs, useProperties } from '../hooks/useValuation';
 
 const formatCurrency = (value, compact = false) => {
   if (!value) return '$0';

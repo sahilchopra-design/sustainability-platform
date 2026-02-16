@@ -12,7 +12,7 @@ import {
   Calculator, DollarSign, TrendingUp, Building2,
   ArrowRight, RefreshCw, Info
 } from 'lucide-react';
-import { useDirectCapitalization } from '../../hooks/useValuation';
+import { useDirectCapitalization } from '../hooks/useValuation';
 
 const formatCurrency = (value) => {
   if (!value) return '$0';

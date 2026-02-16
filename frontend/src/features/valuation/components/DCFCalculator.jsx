@@ -12,7 +12,7 @@ import {
   Calculator, DollarSign, TrendingUp, LineChart,
   RefreshCw, Info, ChevronRight
 } from 'lucide-react';
-import { useDCF } from '../../hooks/useValuation';
+import { useDCF } from '../hooks/useValuation';
 
 const formatCurrency = (value, compact = false) => {
   if (!value) return '$0';

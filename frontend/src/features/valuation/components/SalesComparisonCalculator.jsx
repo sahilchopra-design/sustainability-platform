@@ -13,7 +13,7 @@ import {
   Calculator, DollarSign, Scale, Building2,
   RefreshCw, Info, Plus, Trash2, ArrowRight
 } from 'lucide-react';
-import { useSalesComparison } from '../../hooks/useValuation';
+import { useSalesComparison } from '../hooks/useValuation';
 
 const formatCurrency = (value, compact = false) => {
   if (!value) return '$0';
