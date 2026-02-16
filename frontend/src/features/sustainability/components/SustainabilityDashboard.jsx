@@ -3,8 +3,8 @@
  * Displays KPIs and certification overview
  */
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../../components/ui/card';
-import { Badge } from '../../../../components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../components/ui/card';
+import { Badge } from '../../../components/ui/badge';
 import { useSustainabilityDashboard, useCertifications } from '../hooks/useSustainability';
 import { Award, Building2, TrendingUp, AlertTriangle, Leaf, DollarSign, CheckCircle2 } from 'lucide-react';
 

@@ -3,8 +3,8 @@
  * Main page with tabs for different sustainability assessment tools
  */
 import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../../components/ui/tabs';
-import { Badge } from '../../../../components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
+import { Badge } from '../../../components/ui/badge';
 import {
   LayoutDashboard, Award, Leaf, Building2, DollarSign,
   Globe, BarChart3, CheckCircle
