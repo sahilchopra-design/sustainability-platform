@@ -110,6 +110,10 @@ export default function NatureRiskPage() {
             <NatureRiskDashboard />
           </TabsContent>
 
+          <TabsContent value="leap" data-testid="content-leap">
+            <LEAPAssessmentWizard />
+          </TabsContent>
+
           <TabsContent value="portfolio" data-testid="content-portfolio">
             <PortfolioNatureRisk />
           </TabsContent>
