@@ -186,11 +186,45 @@ export default function MethodologyCalculator() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingMethodologies, setLoadingMethodologies] = useState(false);
+  
+  // Save as project state
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [portfolios, setPortfolios] = useState([]);
+  const [loadingPortfolios, setLoadingPortfolios] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState(null);
+  const [saveFormData, setSaveFormData] = useState({
+    portfolio_id: '',
+    project_name: '',
+    country_code: 'US'
+  });
 
   // Fetch all methodologies on mount
   useEffect(() => {
     fetchMethodologiesBySector(selectedSector);
   }, [selectedSector]);
+  
+  // Fetch portfolios when save dialog opens
+  useEffect(() => {
+    if (showSaveDialog && portfolios.length === 0) {
+      loadPortfolios();
+    }
+  }, [showSaveDialog]);
+  
+  const loadPortfolios = async () => {
+    setLoadingPortfolios(true);
+    try {
+      const data = await fetchPortfolios();
+      setPortfolios(data || []);
+      if (data?.length > 0) {
+        setSaveFormData(prev => ({ ...prev, portfolio_id: data[0].id }));
+      }
+    } catch (error) {
+      console.error('Failed to fetch portfolios:', error);
+    }
+    setLoadingPortfolios(false);
+  };
 
   const fetchMethodologiesBySector = async (sector) => {
     setLoadingMethodologies(true);
