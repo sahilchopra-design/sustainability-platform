@@ -146,7 +146,7 @@ class ExportService:
         if 'key_findings' in data.get('executive_summary', {}):
             story.append(Paragraph("Key Findings", self.styles['SubHeader']))
             for finding in data['executive_summary']['key_findings']:
-                story.append(Paragraph(f"• {finding}", self.styles['BodyText']))
+                story.append(Paragraph(f"• {finding}", self.styles['ReportBodyText']))
             story.append(Spacer(1, 15))
         
         # Portfolio Overview
