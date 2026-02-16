@@ -1369,7 +1369,7 @@ METHODOLOGY_CALCULATORS = {
     "AMS-II.G": AMS_II_G_IndustrialEfficiency,
     "AMS-III.AU": AMS_III_AU_AgriculturalMethane,
     "AMS-III.B": AMS_III_B_WastewaterMethane,
-    "AMS-III.C": AMS_III_C_WasteComposting,
+    "AMS-III.C": AMS_III_C_LowEmissionVehicles,
     "AMS-III.D": AMS_III_D_SolidWasteMethane,
     
     # CDM AM (Sector-Specific)
@@ -1382,6 +1382,7 @@ METHODOLOGY_CALCULATORS = {
     # VCS
     "VM0008": VM0008_WastewaterMethane,
     "VM0022": VM0022_AgriculturalN2O,
+    "VM0032": VM0032_CoalMineMethane,
     "VM0033": VM0033_BlueCarbon,
     "VM0042": VM0042_AgriculturalLandManagement,
     "VM0044": VM0044_BiocharSoil,
