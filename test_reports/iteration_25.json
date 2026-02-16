@@ -1,0 +1,119 @@
+{
+  "summary": "Tested BREEAM Calculator with LEED comparison and PDF/Excel export functionality. All 20 backend API tests passed (100%). Frontend BREEAM Calculator tab working with live score preview, Calculate Assessment button, results display, BREEAM vs LEED comparison, and Export dropdown with PDF/Excel options.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Sustainability Dashboard",
+        "issues": ["Minor React hydration warning in console about <tr> inside <span> in table - cosmetic only, does not affect functionality"]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_breeam_exports.py",
+    "/app/test_reports/pytest/breeam_export_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "React hydration warning in SustainabilityDashboard.jsx - table structure has <span> wrapping <tr> elements which is invalid HTML"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_breeam_exports.py"
+  ],
+  "success_rate": {
+    "backend": "100% (20/20 tests passed)",
+    "frontend": "100% (all features verified)"
+  },
+  "test_credentials": {
+    "email": "newtestuser@test.com",
+    "password": "password"
+  },
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BREEAM Calculator and export functionality fully tested. Backend APIs: POST /api/v1/sustainability/breeam/assess returns weighted_score, rating, value premiums. POST /api/v1/exports/sustainability/assessment supports format=pdf and format=excel with assessment_type=breeam or leed. Frontend: BREEAM tab visible in Sustainability module with calculator form, live score preview, BREEAM vs LEED comparison tab, and Export dropdown.",
+  "passed_tests": [
+    "=== Backend API Tests (20/20 passed) ===",
+    "TestBREEAMAssessment::test_breeam_assess_returns_200",
+    "TestBREEAMAssessment::test_breeam_assess_returns_weighted_score",
+    "TestBREEAMAssessment::test_breeam_assess_returns_rating",
+    "TestBREEAMAssessment::test_breeam_assess_returns_value_impact",
+    "TestLEEDAssessment::test_leed_assess_returns_200",
+    "TestLEEDAssessment::test_leed_assess_returns_total_points",
+    "TestLEEDAssessment::test_leed_assess_returns_certification_level",
+    "TestSustainabilityExportPDF::test_export_breeam_pdf_returns_200",
+    "TestSustainabilityExportPDF::test_export_breeam_pdf_content_type",
+    "TestSustainabilityExportPDF::test_export_breeam_pdf_has_content",
+    "TestSustainabilityExportPDF::test_export_leed_pdf_returns_200",
+    "TestSustainabilityExportExcel::test_export_breeam_excel_returns_200",
+    "TestSustainabilityExportExcel::test_export_breeam_excel_content_type",
+    "TestSustainabilityExportExcel::test_export_breeam_excel_has_content",
+    "TestSustainabilityExportExcel::test_export_leed_excel_returns_200",
+    "TestBREEAMWeightsEndpoint::test_breeam_weights_returns_200",
+    "TestBREEAMWeightsEndpoint::test_breeam_weights_has_categories",
+    "TestBREEAMWeightsEndpoint::test_breeam_weights_has_rating_thresholds",
+    "TestLEEDThresholdsEndpoint::test_leed_thresholds_returns_200",
+    "TestLEEDThresholdsEndpoint::test_leed_thresholds_has_levels",
+    "",
+    "=== Frontend UI Tests (all verified) ===",
+    "Login successful with newtestuser@test.com / password",
+    "Sustainability page loads at /sustainability",
+    "BREEAM tab visible in Sustainability module (data-testid: tab-breeam)",
+    "BREEAM Calculator form accepts input with Property Name, Sector, Scheme, Region, Floor Area, Property Value, Year Built fields",
+    "Category Scores sliders (0-100) for all 10 BREEAM categories (Management, Health & Wellbeing, Energy, Transport, Water, Materials, Waste, Land Use & Ecology, Pollution, Innovation)",
+    "Live Score Preview shows real-time calculation (55.0% Very Good)",
+    "BREEAM Rating Scale displayed (Pass 30%, Good 45%, Very Good 55%, Excellent 70%, Outstanding 85%)",
+    "Calculate BREEAM Assessment button works (data-testid: breeam-calculate-btn)",
+    "Assessment Result section appears after calculation with Weighted Score and Rating Level",
+    "Export dropdown button visible (data-testid: export-breeam-btn)",
+    "Export as PDF option available in dropdown menu",
+    "Export as Excel option available in dropdown menu",
+    "BREEAM vs LEED comparison tab visible (data-testid: breeam-leed-comparison-tab)",
+    "Comparison tab shows BREEAM Categories (Score: 55.0%) and LEED Categories (Points: 53/110)",
+    "Compare Certifications button works (data-testid: compare-certifications-btn)",
+    "Side-by-Side Comparison section shows BREEAM (Very Good) vs LEED (Silver)",
+    "Rent Premium and Value Premium comparisons displayed for both certifications",
+    "Recommendation section shows 'BREEAM Recommended' for European markets with reasoning"
+  ],
+  "verified_features": {
+    "breeam_calculator": {
+      "endpoint": "POST /api/v1/sustainability/breeam/assess",
+      "status": "Working",
+      "returns": "weighted_score (string like '55.0'), rating (pass/good/very_good/excellent/outstanding), estimated_rent_premium_percent, estimated_value_premium_percent, points_to_next_level, improvement_priorities"
+    },
+    "leed_calculator": {
+      "endpoint": "POST /api/v1/sustainability/leed/assess",
+      "status": "Working",
+      "returns": "total_points, certification_level (certified/silver/gold/platinum)"
+    },
+    "export_pdf": {
+      "endpoint": "POST /api/v1/exports/sustainability/assessment?format=pdf&assessment_type=breeam",
+      "status": "Working",
+      "returns": "Valid PDF file (starts with %PDF header)"
+    },
+    "export_excel": {
+      "endpoint": "POST /api/v1/exports/sustainability/assessment?format=excel&assessment_type=breeam",
+      "status": "Working",
+      "returns": "Valid XLSX file (starts with PK header - ZIP format)"
+    },
+    "breeam_weights": {
+      "endpoint": "GET /api/v1/sustainability/breeam/weights",
+      "status": "Working",
+      "returns": "weights object with all 10 categories and rating_thresholds"
+    },
+    "leed_thresholds": {
+      "endpoint": "GET /api/v1/sustainability/leed/thresholds",
+      "status": "Working",
+      "returns": "levels (certified/silver/gold/platinum) with min/max points"
+    }
+  },
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": []
+  }
+}
