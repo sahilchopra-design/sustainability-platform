@@ -26,6 +26,7 @@ from api.v1.routes.scenario_builder_v2 import router as builder_v2_router
 from api.v1.routes.sub_parameter import router as sub_param_router
 from api.v1.routes.cbam import router as cbam_router
 from api.v1.routes.carbon import router as carbon_router
+from api.v1.routes.nature_risk import router as nature_risk_router
 from api.auth_pg import router as auth_router
 from api.v1.routes.portfolio_pg import router as portfolio_pg_router
 
@@ -69,6 +70,8 @@ app.include_router(sub_param_router)
 app.include_router(cbam_router)
 # Include Carbon Credits routes
 app.include_router(carbon_router)
+# Include Nature Risk routes
+app.include_router(nature_risk_router)
 
 # CORS
 app.add_middleware(
