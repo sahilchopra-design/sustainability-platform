@@ -687,12 +687,60 @@ stranded-assets/
 
 **Testing**: 20/20 backend tests passed (iteration_25), frontend verified
 
+## Latest Update: Portfolio Analytics DB Persistence & Universal Export Extension (Feb 16, 2026)
+
+### COMPLETED: Portfolio Analytics PostgreSQL Persistence
+
+**Backend Implementation**:
+1. **Database Tables Created**:
+   - `portfolio_analytics` - Portfolio metadata (id, name, description, type, strategy, AUM, currency)
+   - `portfolio_property_holdings` - Property holdings with valuations, certifications, risk scores
+   - `portfolio_reports` - Generated report storage
+
+2. **Storage Layer Refactored** (`/app/backend/services/portfolio_analytics_engine.py`):
+   - Replaced in-memory storage with PostgreSQL queries using SQLAlchemy
+   - Functions: `get_portfolio()`, `get_holdings()`, `save_portfolio()`, `save_holding()`, `remove_holding()`, `list_portfolios()`, `save_report()`, `get_report()`
+   - Auto-seeds sample data on module load via `init_sample_data()`
+   - 3 sample portfolios with 5 holdings each persisted
+
+### COMPLETED: Universal Export for All Modules
+
+**Frontend Implementation** - Added export buttons to ALL major dashboards:
+
+1. **Reusable Components Created**:
+   - `/app/frontend/src/components/shared/ExportButton.jsx` - Dropdown with PDF/Excel options
+   - `/app/frontend/src/lib/exportUtils.js` - Export utility functions for all modules
+
+2. **Export Buttons Added To**:
+   - Portfolio Analytics Dashboard (`PortfolioDashboard.jsx`)
+   - Carbon Credits Dashboard (`CarbonDashboard.jsx`)
+   - Stranded Assets Dashboard (`StrandedAssetDashboard.jsx`)
+   - Nature Risk Dashboard (`NatureRiskDashboard.jsx`)
+   - RE Valuation Dashboard (`ValuationDashboard.jsx`)
+   - Scenario Comparison (`ScenarioComparison.jsx`)
+
+**Export API Endpoints**:
+| Module | Endpoint | Methods |
+|--------|----------|---------|
+| Portfolio Analytics | `GET /api/v1/exports/portfolio-analytics/{id}` | PDF, Excel |
+| Sustainability | `POST /api/v1/exports/sustainability/assessment` | PDF, Excel |
+| Stranded Assets | `POST /api/v1/exports/stranded-assets/analysis` | PDF, Excel |
+| Nature Risk | `POST /api/v1/exports/nature-risk/assessment` | PDF, Excel |
+| RE Valuation | `POST /api/v1/exports/valuation/analysis` | PDF, Excel |
+| Carbon | `POST /api/v1/exports/carbon/calculation` | PDF, Excel |
+| Scenarios | `POST /api/v1/exports/scenario-analysis/comparison` | PDF, Excel |
+
+**Testing**: 26/26 backend tests passed, all export buttons verified in 5 dashboards (iteration_26)
+
 ## Upcoming / Future Tasks
-1. **Database Persistence for Portfolio Analytics (P1)**: Replace in-memory sample data with PostgreSQL storage
+1. **Carbon Sector Input Forms (P1)**: Create detailed input forms for remaining sectors (Transport, Buildings, Mining)
 2. **Refactor Mocked Backend Services (P1)**: Replace placeholder data in stranded_asset_calculator.py and real_estate_valuation_engine.py with real DB queries
-3. **Sector Input Forms (P2)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
-4. **Database Persistence for Scenarios (P2)**: Store scenarios in PostgreSQL instead of in-memory
-5. **LEAP Assessment Wizard (P3)**: Multi-step wizard for comprehensive LEAP assessments
-6. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
-7. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
+3. **Database Persistence for Scenarios (P2)**: Store scenarios in PostgreSQL instead of in-memory
+4. **LEAP Assessment Wizard (P3)**: Multi-step wizard for comprehensive LEAP assessments
+5. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
+6. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
+
+## Mocked Services (Demo Data)
+- `stranded_asset_calculator.py` - Uses sample asset data
+- `real_estate_valuation_engine.py` - Uses placeholder CostDataService and MarketDataService
 
