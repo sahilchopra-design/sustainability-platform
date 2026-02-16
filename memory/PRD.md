@@ -281,12 +281,56 @@ SELECT create_hypertable('technology_disruption_metric', 'time', chunk_time_inte
 - NPV discounting with configurable rates
 - Comprehensive recommendations engine
 
+### API Routes (Dec 2025)
+
+**File**: `backend/api/v1/routes/stranded_assets.py`
+
+**Endpoints Implemented**:
+
+**Dashboard**:
+- `GET /api/v1/stranded-assets/dashboard` - Dashboard KPIs (total assets, risk distribution, exposure)
+
+**Asset CRUD**:
+- `GET /api/v1/stranded-assets/reserves` - List reserves with filtering
+- `GET /api/v1/stranded-assets/reserves/{id}` - Get reserve by ID
+- `POST /api/v1/stranded-assets/reserves` - Create reserve
+- `GET /api/v1/stranded-assets/power-plants` - List power plants
+- `GET /api/v1/stranded-assets/power-plants/{id}` - Get plant by ID
+- `POST /api/v1/stranded-assets/power-plants` - Create plant
+- `GET /api/v1/stranded-assets/infrastructure` - List infrastructure
+- `GET /api/v1/stranded-assets/infrastructure/{id}` - Get asset by ID
+- `POST /api/v1/stranded-assets/infrastructure` - Create asset
+
+**Calculations**:
+- `POST /api/v1/stranded-assets/calculate/reserve-impairment` - Reserve NPV analysis
+- `POST /api/v1/stranded-assets/calculate/power-plant-valuation` - Plant valuation
+- `POST /api/v1/stranded-assets/calculate/infrastructure-valuation` - Infrastructure valuation
+
+**Technology Disruption**:
+- `GET /api/v1/stranded-assets/technology-disruption/{type}` - EV, hydrogen, battery metrics
+
+**Transition Pathways**:
+- `GET /api/v1/stranded-assets/transition-pathways` - List pathways
+- `GET /api/v1/stranded-assets/transition-pathways/{id}` - Get pathway
+
+**Analysis & Alerts**:
+- `POST /api/v1/stranded-assets/scenario-comparison` - Multi-scenario comparison
+- `GET /api/v1/stranded-assets/critical-assets` - Critical asset alerts
+- `POST /api/v1/stranded-assets/portfolio-analysis` - Portfolio stranding analysis
+- `GET /api/v1/stranded-assets/map-data` - Geographic data for mapping
+
+**Sample Data Included**:
+- 3 fossil fuel reserves (oil, gas, coal)
+- 3 power plants (coal, gas CCGT, gas OCGT)
+- 3 infrastructure assets (pipeline, LNG terminal, refinery)
+- 3 transition scenarios (IEA NZE, APS, STEPS)
+- 3 transition pathways (oil, gas, coal demand)
+
 ## Upcoming / Future Tasks
-1. **Stranded Asset API Routes (P0)**: Create FastAPI routes for CRUD and calculations
-2. **Stranded Asset Module Frontend (P1)**: Build dashboard, asset management, and calculation UI
-3. **Sector Input Forms (P2)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
-4. **Export Features (P2)**: PDF/Excel export of calculation results and nature risk reports
-5. **LEAP Assessment Wizard (P2)**: Multi-step wizard for comprehensive LEAP assessments
-6. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
-7. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
-8. **Comparison Tool (P3)**: Compare multiple methodologies for the same project scenario
+1. **Stranded Asset Module Frontend (P0)**: Build dashboard, asset management, and calculation UI
+2. **Sector Input Forms (P2)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
+3. **Export Features (P2)**: PDF/Excel export of calculation results and nature risk reports
+4. **LEAP Assessment Wizard (P2)**: Multi-step wizard for comprehensive LEAP assessments
+5. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
+6. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
+7. **Comparison Tool (P3)**: Compare multiple methodologies for the same project scenario
