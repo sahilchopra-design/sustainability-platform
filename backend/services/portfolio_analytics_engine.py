@@ -247,71 +247,394 @@ def get_sample_holdings() -> Dict[str, List[Dict]]:
     }
 
 
-# ============ Storage (In-Memory) ============
+# ============ Storage (PostgreSQL with In-Memory Fallback) ============
 
-_portfolios_store: Dict[str, Dict] = {}
-_holdings_store: Dict[str, List[Dict]] = {}
-_reports_store: Dict[str, Dict] = {}
+import os
+import json
+from sqlalchemy import create_engine, text
+from sqlalchemy.pool import NullPool
+
+# Database connection
+_db_engine = None
+
+def _get_db_engine():
+    """Get or create database engine."""
+    global _db_engine
+    if _db_engine is None:
+        DATABASE_URL = os.environ.get("DATABASE_URL")
+        if DATABASE_URL:
+            try:
+                _db_engine = create_engine(DATABASE_URL, poolclass=NullPool)
+                # Test connection
+                with _db_engine.connect() as conn:
+                    conn.execute(text("SELECT 1"))
+            except Exception as e:
+                print(f"Warning: Could not connect to PostgreSQL: {e}")
+                _db_engine = None
+    return _db_engine
 
 
 def init_sample_data():
-    """Initialize with sample data."""
-    global _portfolios_store, _holdings_store
-    _portfolios_store = {p["id"]: p for p in get_sample_portfolios().values()}
-    _holdings_store = get_sample_holdings()
-
-
-# Initialize on module load
-init_sample_data()
+    """Initialize with sample data in database."""
+    engine = _get_db_engine()
+    if not engine:
+        print("Warning: Database not available, sample data not seeded")
+        return
+    
+    try:
+        with engine.connect() as conn:
+            # Check if data already exists
+            result = conn.execute(text("SELECT COUNT(*) FROM portfolio_analytics"))
+            count = result.scalar()
+            
+            if count == 0:
+                # Insert sample portfolios
+                sample_portfolios = get_sample_portfolios()
+                for key, p in sample_portfolios.items():
+                    conn.execute(text("""
+                        INSERT INTO portfolio_analytics (id, name, description, portfolio_type, investment_strategy, 
+                            target_return, aum, currency, inception_date, owner_id, created_at, updated_at)
+                        VALUES (:id, :name, :description, :portfolio_type, :investment_strategy,
+                            :target_return, :aum, :currency, :inception_date, :owner_id, :created_at, :updated_at)
+                        ON CONFLICT (id) DO NOTHING
+                    """), {
+                        "id": p["id"],
+                        "name": p["name"],
+                        "description": p.get("description"),
+                        "portfolio_type": p.get("portfolio_type", "fund"),
+                        "investment_strategy": p.get("investment_strategy"),
+                        "target_return": float(p["target_return"]) if p.get("target_return") else None,
+                        "aum": float(p["aum"]) if p.get("aum") else 0,
+                        "currency": p.get("currency", "USD"),
+                        "inception_date": p.get("inception_date"),
+                        "owner_id": p.get("owner_id"),
+                        "created_at": p.get("created_at", datetime.now(timezone.utc)),
+                        "updated_at": p.get("updated_at", datetime.now(timezone.utc)),
+                    })
+                conn.commit()
+                
+                # Insert sample holdings
+                sample_holdings = get_sample_holdings()
+                for portfolio_id, holdings in sample_holdings.items():
+                    for h in holdings:
+                        conn.execute(text("""
+                            INSERT INTO portfolio_property_holdings (
+                                id, portfolio_id, property_id, property_name, property_type, property_location,
+                                acquisition_date, acquisition_cost, current_value, ownership_percentage,
+                                annual_income, unrealized_gain_loss, gresb_score, certifications, risk_score,
+                                is_stranded, years_to_stranding, created_at, updated_at
+                            ) VALUES (
+                                gen_random_uuid(), :portfolio_id, :property_id, :property_name, :property_type, :property_location,
+                                :acquisition_date, :acquisition_cost, :current_value, :ownership_percentage,
+                                :annual_income, :unrealized_gain_loss, :gresb_score, :certifications, :risk_score,
+                                :is_stranded, :years_to_stranding, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+                            )
+                        """), {
+                            "portfolio_id": portfolio_id,
+                            "property_id": h.get("property_id"),
+                            "property_name": h.get("property_name"),
+                            "property_type": h.get("property_type"),
+                            "property_location": h.get("property_location"),
+                            "acquisition_date": h.get("acquisition_date"),
+                            "acquisition_cost": float(h["acquisition_cost"]) if h.get("acquisition_cost") else None,
+                            "current_value": float(h["current_value"]) if h.get("current_value") else None,
+                            "ownership_percentage": float(h.get("ownership_percentage", 1)),
+                            "annual_income": float(h["annual_income"]) if h.get("annual_income") else None,
+                            "unrealized_gain_loss": float(h["unrealized_gain_loss"]) if h.get("unrealized_gain_loss") else None,
+                            "gresb_score": h.get("gresb_score"),
+                            "certifications": json.dumps(h.get("certifications", [])),
+                            "risk_score": h.get("risk_score"),
+                            "is_stranded": h.get("is_stranded", False),
+                            "years_to_stranding": h.get("years_to_stranding"),
+                        })
+                conn.commit()
+                print("✅ Sample portfolio data seeded to PostgreSQL")
+            else:
+                print(f"✅ Portfolio data already exists ({count} portfolios)")
+    except Exception as e:
+        print(f"Warning: Could not seed sample data: {e}")
 
 
 def get_portfolio(portfolio_id: str) -> Optional[Dict]:
-    """Get portfolio by ID."""
-    return _portfolios_store.get(portfolio_id)
+    """Get portfolio by ID from database."""
+    engine = _get_db_engine()
+    if not engine:
+        return None
+    
+    try:
+        with engine.connect() as conn:
+            result = conn.execute(text("""
+                SELECT id, name, description, portfolio_type, investment_strategy,
+                    target_return, aum, currency, inception_date, owner_id, created_at, updated_at
+                FROM portfolio_analytics WHERE id = :id
+            """), {"id": portfolio_id})
+            row = result.fetchone()
+            
+            if row:
+                return {
+                    "id": str(row[0]),
+                    "name": row[1],
+                    "description": row[2],
+                    "portfolio_type": row[3],
+                    "investment_strategy": row[4],
+                    "target_return": Decimal(str(row[5])) if row[5] else None,
+                    "aum": Decimal(str(row[6])) if row[6] else Decimal("0"),
+                    "currency": row[7] or "USD",
+                    "inception_date": row[8],
+                    "owner_id": str(row[9]) if row[9] else None,
+                    "created_at": row[10],
+                    "updated_at": row[11],
+                }
+    except Exception as e:
+        print(f"Error getting portfolio: {e}")
+    return None
 
 
 def get_holdings(portfolio_id: str) -> List[Dict]:
-    """Get holdings for a portfolio."""
-    return _holdings_store.get(portfolio_id, [])
+    """Get holdings for a portfolio from database."""
+    engine = _get_db_engine()
+    if not engine:
+        return []
+    
+    try:
+        with engine.connect() as conn:
+            result = conn.execute(text("""
+                SELECT id, portfolio_id, property_id, property_name, property_type, property_location,
+                    acquisition_date, acquisition_cost, current_value, ownership_percentage,
+                    annual_income, unrealized_gain_loss, gresb_score, certifications, risk_score,
+                    is_stranded, years_to_stranding
+                FROM portfolio_property_holdings WHERE portfolio_id = :portfolio_id
+            """), {"portfolio_id": portfolio_id})
+            
+            holdings = []
+            for row in result:
+                holdings.append({
+                    "id": str(row[0]),
+                    "portfolio_id": str(row[1]),
+                    "property_id": str(row[2]) if row[2] else None,
+                    "property_name": row[3],
+                    "property_type": row[4],
+                    "property_location": row[5],
+                    "acquisition_date": row[6],
+                    "acquisition_cost": Decimal(str(row[7])) if row[7] else None,
+                    "current_value": Decimal(str(row[8])) if row[8] else None,
+                    "ownership_percentage": Decimal(str(row[9])) if row[9] else Decimal("1"),
+                    "annual_income": Decimal(str(row[10])) if row[10] else None,
+                    "unrealized_gain_loss": Decimal(str(row[11])) if row[11] else None,
+                    "gresb_score": row[12],
+                    "certifications": row[13] if isinstance(row[13], list) else (json.loads(row[13]) if row[13] else []),
+                    "risk_score": row[14],
+                    "is_stranded": row[15] or False,
+                    "years_to_stranding": row[16],
+                })
+            return holdings
+    except Exception as e:
+        print(f"Error getting holdings: {e}")
+    return []
 
 
 def save_portfolio(portfolio_id: str, portfolio_data: Dict) -> None:
-    """Save portfolio to store."""
-    _portfolios_store[portfolio_id] = portfolio_data
+    """Save portfolio to database."""
+    engine = _get_db_engine()
+    if not engine:
+        return
+    
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("""
+                INSERT INTO portfolio_analytics (id, name, description, portfolio_type, investment_strategy,
+                    target_return, aum, currency, inception_date, owner_id, created_at, updated_at)
+                VALUES (:id, :name, :description, :portfolio_type, :investment_strategy,
+                    :target_return, :aum, :currency, :inception_date, :owner_id, :created_at, :updated_at)
+                ON CONFLICT (id) DO UPDATE SET
+                    name = EXCLUDED.name,
+                    description = EXCLUDED.description,
+                    portfolio_type = EXCLUDED.portfolio_type,
+                    investment_strategy = EXCLUDED.investment_strategy,
+                    target_return = EXCLUDED.target_return,
+                    aum = EXCLUDED.aum,
+                    currency = EXCLUDED.currency,
+                    inception_date = EXCLUDED.inception_date,
+                    updated_at = CURRENT_TIMESTAMP
+            """), {
+                "id": portfolio_id,
+                "name": portfolio_data.get("name"),
+                "description": portfolio_data.get("description"),
+                "portfolio_type": portfolio_data.get("portfolio_type", "fund"),
+                "investment_strategy": portfolio_data.get("investment_strategy"),
+                "target_return": float(portfolio_data["target_return"]) if portfolio_data.get("target_return") else None,
+                "aum": float(portfolio_data["aum"]) if portfolio_data.get("aum") else 0,
+                "currency": portfolio_data.get("currency", "USD"),
+                "inception_date": portfolio_data.get("inception_date"),
+                "owner_id": portfolio_data.get("owner_id"),
+                "created_at": portfolio_data.get("created_at", datetime.now(timezone.utc)),
+                "updated_at": datetime.now(timezone.utc),
+            })
+            conn.commit()
+    except Exception as e:
+        print(f"Error saving portfolio: {e}")
 
 
 def save_holding(portfolio_id: str, holding_data: Dict) -> None:
-    """Save holding to store."""
-    if portfolio_id not in _holdings_store:
-        _holdings_store[portfolio_id] = []
-    _holdings_store[portfolio_id].append(holding_data)
+    """Save holding to database."""
+    engine = _get_db_engine()
+    if not engine:
+        return
+    
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("""
+                INSERT INTO portfolio_property_holdings (
+                    portfolio_id, property_id, property_name, property_type, property_location,
+                    acquisition_date, acquisition_cost, current_value, ownership_percentage,
+                    annual_income, unrealized_gain_loss, gresb_score, certifications, risk_score,
+                    is_stranded, years_to_stranding, created_at, updated_at
+                ) VALUES (
+                    :portfolio_id, :property_id, :property_name, :property_type, :property_location,
+                    :acquisition_date, :acquisition_cost, :current_value, :ownership_percentage,
+                    :annual_income, :unrealized_gain_loss, :gresb_score, :certifications, :risk_score,
+                    :is_stranded, :years_to_stranding, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+                )
+            """), {
+                "portfolio_id": portfolio_id,
+                "property_id": holding_data.get("property_id"),
+                "property_name": holding_data.get("property_name"),
+                "property_type": holding_data.get("property_type"),
+                "property_location": holding_data.get("property_location"),
+                "acquisition_date": holding_data.get("acquisition_date"),
+                "acquisition_cost": float(holding_data["acquisition_cost"]) if holding_data.get("acquisition_cost") else None,
+                "current_value": float(holding_data["current_value"]) if holding_data.get("current_value") else None,
+                "ownership_percentage": float(holding_data.get("ownership_percentage", 1)),
+                "annual_income": float(holding_data["annual_income"]) if holding_data.get("annual_income") else None,
+                "unrealized_gain_loss": float(holding_data["unrealized_gain_loss"]) if holding_data.get("unrealized_gain_loss") else None,
+                "gresb_score": holding_data.get("gresb_score"),
+                "certifications": json.dumps(holding_data.get("certifications", [])),
+                "risk_score": holding_data.get("risk_score"),
+                "is_stranded": holding_data.get("is_stranded", False),
+                "years_to_stranding": holding_data.get("years_to_stranding"),
+            })
+            conn.commit()
+    except Exception as e:
+        print(f"Error saving holding: {e}")
 
 
 def remove_holding(portfolio_id: str, property_id: str) -> bool:
-    """Remove holding from store."""
-    if portfolio_id in _holdings_store:
-        original_len = len(_holdings_store[portfolio_id])
-        _holdings_store[portfolio_id] = [
-            h for h in _holdings_store[portfolio_id] 
-            if h.get("property_id") != property_id
-        ]
-        return len(_holdings_store[portfolio_id]) < original_len
+    """Remove holding from database."""
+    engine = _get_db_engine()
+    if not engine:
+        return False
+    
+    try:
+        with engine.connect() as conn:
+            result = conn.execute(text("""
+                DELETE FROM portfolio_property_holdings
+                WHERE portfolio_id = :portfolio_id AND property_id = :property_id
+            """), {"portfolio_id": portfolio_id, "property_id": property_id})
+            conn.commit()
+            return result.rowcount > 0
+    except Exception as e:
+        print(f"Error removing holding: {e}")
     return False
 
 
 def list_portfolios() -> List[Dict]:
-    """List all portfolios."""
-    return list(_portfolios_store.values())
+    """List all portfolios from database."""
+    engine = _get_db_engine()
+    if not engine:
+        return []
+    
+    try:
+        with engine.connect() as conn:
+            result = conn.execute(text("""
+                SELECT id, name, description, portfolio_type, investment_strategy,
+                    target_return, aum, currency, inception_date, owner_id, created_at, updated_at
+                FROM portfolio_analytics ORDER BY name
+            """))
+            
+            portfolios = []
+            for row in result:
+                portfolios.append({
+                    "id": str(row[0]),
+                    "name": row[1],
+                    "description": row[2],
+                    "portfolio_type": row[3],
+                    "investment_strategy": row[4],
+                    "target_return": Decimal(str(row[5])) if row[5] else None,
+                    "aum": Decimal(str(row[6])) if row[6] else Decimal("0"),
+                    "currency": row[7] or "USD",
+                    "inception_date": row[8],
+                    "owner_id": str(row[9]) if row[9] else None,
+                    "created_at": row[10],
+                    "updated_at": row[11],
+                })
+            return portfolios
+    except Exception as e:
+        print(f"Error listing portfolios: {e}")
+    return []
 
 
 def save_report(report_id: str, report_data: Dict) -> None:
-    """Save report to store."""
-    _reports_store[report_id] = report_data
+    """Save report to database."""
+    engine = _get_db_engine()
+    if not engine:
+        return
+    
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("""
+                INSERT INTO portfolio_reports (id, portfolio_id, report_type, report_format, status, content, created_at, completed_at)
+                VALUES (:id, :portfolio_id, :report_type, :report_format, :status, :content, :created_at, :completed_at)
+                ON CONFLICT (id) DO UPDATE SET
+                    status = EXCLUDED.status,
+                    content = EXCLUDED.content,
+                    completed_at = EXCLUDED.completed_at
+            """), {
+                "id": report_id,
+                "portfolio_id": report_data.get("portfolio_id"),
+                "report_type": report_data.get("report_type", "executive"),
+                "report_format": report_data.get("format", "json"),
+                "status": report_data.get("status", "completed"),
+                "content": json.dumps(report_data.get("content", {})),
+                "created_at": report_data.get("created_at", datetime.now(timezone.utc).isoformat()),
+                "completed_at": report_data.get("completed_at", datetime.now(timezone.utc).isoformat()),
+            })
+            conn.commit()
+    except Exception as e:
+        print(f"Error saving report: {e}")
 
 
 def get_report(report_id: str) -> Optional[Dict]:
-    """Get report by ID."""
-    return _reports_store.get(report_id)
+    """Get report by ID from database."""
+    engine = _get_db_engine()
+    if not engine:
+        return None
+    
+    try:
+        with engine.connect() as conn:
+            result = conn.execute(text("""
+                SELECT id, portfolio_id, report_type, report_format, status, content, created_at, completed_at
+                FROM portfolio_reports WHERE id = :id
+            """), {"id": report_id})
+            row = result.fetchone()
+            
+            if row:
+                return {
+                    "id": str(row[0]),
+                    "portfolio_id": str(row[1]),
+                    "report_type": row[2],
+                    "format": row[3],
+                    "status": row[4],
+                    "content": row[5] if isinstance(row[5], dict) else (json.loads(row[5]) if row[5] else {}),
+                    "created_at": row[6].isoformat() if row[6] else None,
+                    "completed_at": row[7].isoformat() if row[7] else None,
+                }
+    except Exception as e:
+        print(f"Error getting report: {e}")
+    return None
+
+
+# Initialize sample data on module load
+init_sample_data()
 
 
 # ============ Analytics Engine ============
