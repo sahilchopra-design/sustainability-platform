@@ -148,6 +148,7 @@ function AppRouter() {
             <SideLink to="/valuation" icon="building" label="RE Valuation" />
             <SideLink to="/sustainability" icon="award" label="Sustainability" />
             <SideLink to="/scenario-analysis" icon="calculator" label="Scenario Analysis" />
+            <SideLink to="/portfolio-analytics" icon="pie-chart" label="Portfolio Analytics" />
           </NavGroup>
           {/* Scenarios */}
           <NavGroup label="Scenarios">
