@@ -276,6 +276,11 @@ export function PortfolioDashboard({ dashboard, isLoading }) {
           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
             AUM: ${(parseFloat(dashboard.total_aum) / 1e9).toFixed(2)}B
           </Badge>
+          <ExportButton 
+            onExport={(format) => exportPortfolioAnalytics(dashboard.portfolio_id, format, 'executive')}
+            label="Export"
+            data-testid="portfolio-export-btn"
+          />
         </div>
       </div>
       
