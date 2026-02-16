@@ -3,8 +3,8 @@
  * Displays portfolio summary and key metrics
  */
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card';
-import { Badge } from '../../../../components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
+import { Badge } from '../../../components/ui/badge';
 import { 
   Building2, DollarSign, TrendingUp, Calculator, 
   BarChart3, PieChart, Home, Factory
