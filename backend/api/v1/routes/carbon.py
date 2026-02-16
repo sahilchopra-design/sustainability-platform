@@ -249,7 +249,7 @@ def get_portfolio_dashboard(portfolio_id: str, db: Session = Depends(get_db)):
     # Get default scenario if exists
     default_scenario = db.query(CarbonScenario)\
         .filter(CarbonScenario.portfolio_id == portfolio_id)\
-        .filter(CarbonScenario.is_default == True)\
+        .filter(CarbonScenario.is_default.is_(True))\
         .first()
     
     scenario_dict = None
