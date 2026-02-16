@@ -26,6 +26,13 @@ from schemas.carbon import (
     PortfolioDashboard, PortfolioDashboardSummary, RiskHeatMapItem
 )
 from services.carbon_calculator import CarbonCalculationEngine
+from services.methodology_engine import (
+    calculate_by_methodology,
+    get_methodologies_by_sector,
+    get_methodology_details,
+    get_all_methodologies,
+    METHODOLOGY_CALCULATORS
+)
 
 router = APIRouter(prefix="/api/v1/carbon", tags=["Carbon Credits"])
 
