@@ -191,6 +191,20 @@ export default function CarbonDashboard() {
     if (num >= 1000) return `$${(num / 1000).toFixed(0)}k`;
     return `$${num.toLocaleString()}`;
   };
+  
+  // Handle export
+  const handleExport = async (format) => {
+    const selectedPortfolio = portfolios.find(p => p.id === selectedPortfolioId);
+    await exportCarbonCalculation({
+      portfolio_name: selectedPortfolio?.name || 'Unknown Portfolio',
+      total_credits: dashboard?.total_credits || 0,
+      portfolio_value_usd: dashboard?.portfolio_value_usd || 0,
+      at_risk_credits: dashboard?.at_risk_credits || 0,
+      net_expected_value_usd: dashboard?.net_expected_value_usd || 0,
+      credits_by_type: dashboard?.credits_by_type || {},
+      projects: dashboard?.projects || [],
+    }, format);
+  };
 
   return (
     <div className="p-6 space-y-6" data-testid="carbon-dashboard">
