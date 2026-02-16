@@ -13,6 +13,8 @@ import { GitCompare, Trophy, AlertTriangle, TrendingUp, TrendingDown, BarChart3 
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend,
 } from 'recharts';
+import { ExportButton } from '../../../components/shared/ExportButton';
+import { exportScenarioAnalysis } from '../../../lib/exportUtils';
 
 const formatCurrency = (value) => {
   if (!value) return '$0';
