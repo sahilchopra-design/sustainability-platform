@@ -25,7 +25,26 @@
 | `/analysis` | Run Analysis |
 | `/alerts` | Alerts |
 
-## Latest Update: Methodology Engine Integration (Feb 2026)
+## Latest Update: Save Calculation as Project (Feb 16, 2026)
+### New Feature: Save Methodology Calculations as Projects
+
+**Backend** (`/app/backend/api/v1/routes/carbon.py`):
+- NEW endpoint: `POST /api/v1/carbon/projects/from-calculation`
+- Accepts: portfolio_id, project_name, methodology_code, annual_credits, country_code, calculation_inputs, calculation_result
+- Auto-maps methodologies to project types and standards (e.g., ACM0002 → RENEWABLE_ENERGY/CDM)
+- Calculates quality metrics and risk scores automatically
+- Sets default crediting period, vintage dates, and price per credit
+
+**Frontend** (`/app/frontend/src/features/carbon/components/calculator/MethodologyCalculator.jsx`):
+- NEW "Save as Project" button in Calculation Results card
+- Save dialog with Portfolio selector, Project Name input, Country selector
+- Pre-populates project name with methodology name
+- Shows calculation summary with tCO2e/year
+- Success confirmation with checkmark animation
+
+**Testing**: 9/9 backend tests + all frontend UI flows verified (iteration_18)
+
+## Previous: Methodology Engine Integration (Feb 2026)
 ### 40+ Carbon Credit Methodologies Implemented
 
 **Backend** (`/app/backend/services/methodology_engine.py`):
@@ -99,13 +118,13 @@
 - Testing: 34/34 BE + all FE (iteration_15)
 
 ## All Tests Summary
-- 17 iterations total
+- 18 iterations total
 - 400+ tests passed
 - 100% pass rate
 
 ## Upcoming / Future Tasks
 1. **Sector Input Forms (P1)**: Create detailed input forms for remaining sectors (Transport, Buildings, Mining)
 2. **Methodology Documentation (P2)**: Add detailed applicability criteria and step-by-step calculation guides
-3. **Project Integration (P2)**: Allow saving methodology calculations as new projects
+3. ~~**Project Integration (P2)**: Allow saving methodology calculations as new projects~~ ✅ COMPLETED
 4. **Export Features (P2)**: PDF/Excel export of calculation results
 5. **Comparison Tool (P3)**: Compare multiple methodologies for the same project scenario
