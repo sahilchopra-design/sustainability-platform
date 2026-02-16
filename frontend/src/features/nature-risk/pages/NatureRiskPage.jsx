@@ -47,7 +47,7 @@ export default function NatureRiskPage() {
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6 h-auto p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+          <TabsList className="grid w-full grid-cols-7 h-auto p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
             <TabsTrigger 
               value="dashboard" 
               className="flex items-center gap-2 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700"
@@ -55,6 +55,14 @@ export default function NatureRiskPage() {
             >
               <BarChart3 className="h-4 w-4" />
               <span className="hidden sm:inline">Dashboard</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="leap" 
+              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700"
+              data-testid="tab-leap"
+            >
+              <Compass className="h-4 w-4" />
+              <span className="hidden sm:inline">LEAP</span>
             </TabsTrigger>
             <TabsTrigger 
               value="portfolio" 
