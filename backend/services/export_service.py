@@ -293,7 +293,7 @@ class ExportService:
             recommendations = data.get('improvement_recommendations', []) or \
                              [p.get('category', '') for p in data.get('improvement_priorities', [])]
             for rec in recommendations[:5]:
-                story.append(Paragraph(f"• {rec}", self.styles['BodyText']))
+                story.append(Paragraph(f"• {rec}", self.styles['ReportBodyText']))
         
         # Build PDF
         doc.build(story)
@@ -349,14 +349,14 @@ class ExportService:
         if 'key_drivers' in data:
             story.append(Paragraph("Key Risk Drivers", self.styles['SectionHeader']))
             for driver in data['key_drivers']:
-                story.append(Paragraph(f"• {driver}", self.styles['BodyText']))
+                story.append(Paragraph(f"• {driver}", self.styles['ReportBodyText']))
             story.append(Spacer(1, 15))
         
         # Recommendations
         if 'recommendations' in data:
             story.append(Paragraph("Recommendations", self.styles['SectionHeader']))
             for rec in data['recommendations']:
-                story.append(Paragraph(f"• {rec}", self.styles['BodyText']))
+                story.append(Paragraph(f"• {rec}", self.styles['ReportBodyText']))
         
         # Build PDF
         doc.build(story)
@@ -441,7 +441,7 @@ class ExportService:
         if 'key_insights' in data:
             story.append(Paragraph("Key Insights", self.styles['SectionHeader']))
             for insight in data['key_insights']:
-                story.append(Paragraph(f"• {insight}", self.styles['BodyText']))
+                story.append(Paragraph(f"• {insight}", self.styles['ReportBodyText']))
         
         # Build PDF
         doc.build(story)
