@@ -189,9 +189,14 @@ class TestDirectCapitalization:
         payload = {
             "rentable_area_sf": 100000,
             "market_rent_per_sf": 35,
+            "other_income": 0,
+            "vacancy_rate": 0.05,
+            "collection_loss_rate": 0.02,
+            "operating_expense_ratio": 0.35,
             "cap_rate": 0.065
         }
         response = requests.post(f"{BASE_URL}/api/v1/valuation/income/direct-capitalization", json=payload)
+        assert response.status_code == 200, f"Expected 200, got {response.status_code}"
         data = response.json()
         
         required_fields = ["pgi", "egi", "noi", "property_value", "value_per_sf", 
