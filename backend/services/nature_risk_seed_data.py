@@ -399,21 +399,21 @@ def get_sample_water_risk_locations() -> List[Dict]:
     """Get sample water risk locations with Aqueduct data."""
     return [
         # High water stress regions
-        {"id": str(uuid4()), "location_name": "Gujarat Power Plant", "location_type": "power_plant",
+        {"id": "water-loc-001", "location_name": "Gujarat Power Plant", "location_type": "power_plant",
          "country_code": "IN", "latitude": 21.1702, "longitude": 72.8311, "basin_name": "Sabarmati",
          "baseline_water_stress": 4.5, "groundwater_table_decline": 3.8, "drought_risk": 4.2,
          "flood_risk": 2.0, "interannual_variability": 3.5, "seasonal_variability": 4.0,
          "projected_water_stress_2030": 4.7, "projected_water_stress_2040": 4.9, "projected_water_stress_2050": 5.0,
          "annual_water_withdrawal_m3": 50000000, "water_source_type": "groundwater", "linked_asset_type": "power_plant"},
         
-        {"id": str(uuid4()), "location_name": "Atacama Mining Complex", "location_type": "mine",
+        {"id": "water-loc-002", "location_name": "Atacama Mining Complex", "location_type": "mine",
          "country_code": "CL", "latitude": -23.6345, "longitude": -70.3947, "basin_name": "Atacama Desert",
          "baseline_water_stress": 5.0, "groundwater_table_decline": 4.5, "drought_risk": 4.8,
          "flood_risk": 1.0, "interannual_variability": 2.0, "seasonal_variability": 2.5,
          "projected_water_stress_2030": 5.0, "projected_water_stress_2040": 5.0, "projected_water_stress_2050": 5.0,
          "annual_water_withdrawal_m3": 30000000, "water_source_type": "desalinated", "linked_asset_type": "mine"},
         
-        {"id": str(uuid4()), "location_name": "Middle East Refinery", "location_type": "refinery",
+        {"id": "water-loc-003", "location_name": "Middle East Refinery", "location_type": "refinery",
          "country_code": "SA", "latitude": 26.4207, "longitude": 50.0888, "basin_name": "Persian Gulf",
          "baseline_water_stress": 5.0, "groundwater_table_decline": 4.0, "drought_risk": 4.5,
          "flood_risk": 1.5, "interannual_variability": 1.5, "seasonal_variability": 2.0,
@@ -421,21 +421,21 @@ def get_sample_water_risk_locations() -> List[Dict]:
          "annual_water_withdrawal_m3": 80000000, "water_source_type": "desalinated", "linked_asset_type": "refinery"},
         
         # Medium water stress regions
-        {"id": str(uuid4()), "location_name": "Texas Shale Operations", "location_type": "facility",
+        {"id": "water-loc-004", "location_name": "Texas Shale Operations", "location_type": "facility",
          "country_code": "US", "latitude": 31.9686, "longitude": -99.9018, "basin_name": "Colorado River",
          "baseline_water_stress": 3.5, "groundwater_table_decline": 3.0, "drought_risk": 3.8,
          "flood_risk": 2.5, "interannual_variability": 3.0, "seasonal_variability": 3.2,
          "projected_water_stress_2030": 3.8, "projected_water_stress_2040": 4.2, "projected_water_stress_2050": 4.5,
          "annual_water_withdrawal_m3": 25000000, "water_source_type": "groundwater", "linked_asset_type": "facility"},
         
-        {"id": str(uuid4()), "location_name": "Australian Coal Mine", "location_type": "mine",
+        {"id": "water-loc-005", "location_name": "Australian Coal Mine", "location_type": "mine",
          "country_code": "AU", "latitude": -23.7000, "longitude": 148.1500, "basin_name": "Fitzroy Basin",
          "baseline_water_stress": 2.8, "groundwater_table_decline": 2.5, "drought_risk": 3.5,
          "flood_risk": 3.0, "interannual_variability": 3.5, "seasonal_variability": 3.0,
          "projected_water_stress_2030": 3.2, "projected_water_stress_2040": 3.5, "projected_water_stress_2050": 3.8,
          "annual_water_withdrawal_m3": 20000000, "water_source_type": "surface", "linked_asset_type": "mine"},
         
-        {"id": str(uuid4()), "location_name": "South African Gold Mine", "location_type": "mine",
+        {"id": "water-loc-006", "location_name": "South African Gold Mine", "location_type": "mine",
          "country_code": "ZA", "latitude": -26.2041, "longitude": 28.0473, "basin_name": "Witwatersrand",
          "baseline_water_stress": 3.2, "groundwater_table_decline": 2.8, "drought_risk": 3.0,
          "flood_risk": 2.0, "interannual_variability": 2.5, "seasonal_variability": 3.0,
@@ -443,21 +443,21 @@ def get_sample_water_risk_locations() -> List[Dict]:
          "annual_water_withdrawal_m3": 35000000, "water_source_type": "surface", "linked_asset_type": "mine"},
         
         # Low water stress regions
-        {"id": str(uuid4()), "location_name": "Norwegian Hydro Plant", "location_type": "power_plant",
+        {"id": "water-loc-007", "location_name": "Norwegian Hydro Plant", "location_type": "power_plant",
          "country_code": "NO", "latitude": 60.3913, "longitude": 5.3221, "basin_name": "Western Norway",
          "baseline_water_stress": 0.5, "groundwater_table_decline": 0.3, "drought_risk": 0.5,
          "flood_risk": 2.5, "interannual_variability": 1.5, "seasonal_variability": 2.0,
          "projected_water_stress_2030": 0.6, "projected_water_stress_2040": 0.7, "projected_water_stress_2050": 0.8,
          "annual_water_withdrawal_m3": 100000000, "water_source_type": "surface", "linked_asset_type": "power_plant"},
         
-        {"id": str(uuid4()), "location_name": "Canadian Oil Sands", "location_type": "facility",
+        {"id": "water-loc-008", "location_name": "Canadian Oil Sands", "location_type": "facility",
          "country_code": "CA", "latitude": 56.7267, "longitude": -111.3790, "basin_name": "Athabasca",
          "baseline_water_stress": 1.2, "groundwater_table_decline": 1.0, "drought_risk": 1.5,
          "flood_risk": 2.0, "interannual_variability": 2.0, "seasonal_variability": 2.5,
          "projected_water_stress_2030": 1.4, "projected_water_stress_2040": 1.6, "projected_water_stress_2050": 1.8,
          "annual_water_withdrawal_m3": 150000000, "water_source_type": "surface", "linked_asset_type": "facility"},
         
-        {"id": str(uuid4()), "location_name": "Brazilian Sugar Mill", "location_type": "facility",
+        {"id": "water-loc-009", "location_name": "Brazilian Sugar Mill", "location_type": "facility",
          "country_code": "BR", "latitude": -21.1775, "longitude": -47.8103, "basin_name": "Paraná",
          "baseline_water_stress": 1.8, "groundwater_table_decline": 1.5, "drought_risk": 2.0,
          "flood_risk": 2.5, "interannual_variability": 2.5, "seasonal_variability": 3.0,
@@ -465,7 +465,7 @@ def get_sample_water_risk_locations() -> List[Dict]:
          "annual_water_withdrawal_m3": 40000000, "water_source_type": "surface", "linked_asset_type": "facility"},
         
         # Flood risk regions
-        {"id": str(uuid4()), "location_name": "Bangladesh Textile Factory", "location_type": "facility",
+        {"id": "water-loc-010", "location_name": "Bangladesh Textile Factory", "location_type": "facility",
          "country_code": "BD", "latitude": 23.8103, "longitude": 90.4125, "basin_name": "Ganges-Brahmaputra",
          "baseline_water_stress": 2.0, "groundwater_table_decline": 3.5, "drought_risk": 2.0,
          "flood_risk": 5.0, "interannual_variability": 4.0, "seasonal_variability": 4.5,
