@@ -4,17 +4,18 @@
 - Backend: FastAPI + PostgreSQL (Supabase) — unified single DB
 - Frontend: React + shadcn/ui + Recharts + Zustand + **Redux Toolkit**
 - Auth: Google OAuth + JWT — PostgreSQL
-- Data: IIASA (real) + 20 sources + 24 NGFS + CBAM + **Carbon Credits**
+- Data: IIASA (real) + 20 sources + 24 NGFS + CBAM + **Carbon Credits** + **Nature Risk (TNFD)**
 - Maps: Mapbox GL
 
-## Pages (17 routes)
+## Pages (18 routes)
 | Route | Page |
 |-------|------|
 | `/` | Dashboard |
 | `/impact` | Impact Calculator + Reports |
 | `/sub-analysis` | Sub-Parameter Analysis (7 methods) |
 | `/cbam` | CBAM Module |
-| `/carbon` | **Carbon Credits Module** |
+| `/carbon` | Carbon Credits Module |
+| `/nature-risk` | **Nature Risk Module (NEW)** |
 | `/browser` | Scenario Browser |
 | `/data-hub` | Data Hub (20 sources) |
 | `/ngfs` | NGFS Catalog (24 scenarios) |
@@ -25,106 +26,123 @@
 | `/analysis` | Run Analysis |
 | `/alerts` | Alerts |
 
-## Latest Update: Save Calculation as Project (Feb 16, 2026)
-### New Feature: Save Methodology Calculations as Projects
+## Latest Update: Nature Risk Module (Feb 16, 2026)
+
+### NEW Feature: Comprehensive Nature Risk Module (TNFD LEAP Methodology)
+
+**Backend Implementation** (`/app/backend/`):
+
+1. **Schemas** (`schemas/nature_risk.py`):
+   - 20+ Pydantic models for scenarios, LEAP assessments, ENCORE dependencies, water risk, biodiversity, GBF alignment
+   - Comprehensive enums for risk ratings, entity types, site types, etc.
+
+2. **Calculator Engine** (`services/nature_risk_calculator.py`):
+   - `LEAPAssessmentCalculator`: Full TNFD LEAP methodology (Locate, Evaluate, Assess, Prepare)
+   - `WaterRiskCalculator`: Water risk analysis using Aqueduct-style data
+   - `BiodiversityOverlapCalculator`: Spatial overlap analysis with protected areas
+   - `PortfolioNatureRiskCalculator`: Aggregated portfolio-level nature risk
+
+3. **Seed Data** (`services/nature_risk_seed_data.py`):
+   - Complete ENCORE database: 18 sectors, 60+ ecosystem dependencies
+   - 6 climate/nature scenarios (TNFD, NCORE, IPBES)
+   - 17 biodiversity sites (World Heritage, Ramsar, KBA, Protected Areas, IBAs)
+   - 10 water risk locations with Aqueduct-style indicators
+
+4. **API Routes** (`api/v1/routes/nature_risk.py`):
+   - `/scenarios` - Scenario CRUD (6 built-in scenarios)
+   - `/leap-assessments/calculate` - Run LEAP assessments
+   - `/encore/sectors`, `/encore/dependencies` - ENCORE explorer
+   - `/water-risk/locations`, `/water-risk/analyze`, `/risk-report` - Water risk analysis
+   - `/biodiversity/sites`, `/overlaps/calculate` - Biodiversity analysis
+   - `/portfolio/analyze`, `/nature-exposure` - Portfolio nature risk
+   - `/gbf-targets`, `/gbf-alignment` - GBF compliance tracking
+   - `/dashboard/summary` - Dashboard metrics
+   - `/reports/tnfd-disclosure` - TNFD report generation
+
+**Frontend Implementation** (`/app/frontend/src/features/nature-risk/`):
+
+1. **Main Page** (`pages/NatureRiskPage.jsx`):
+   - 6 tabs: Dashboard, Portfolio, Water Risk, Biodiversity, ENCORE, GBF
+   - TNFD Framework, ENCORE Database, GBF Aligned badges
+
+2. **Dashboard** (`components/dashboard/NatureRiskDashboard.jsx`):
+   - 4 KPI cards: Total Assessments, High Risk Entities, Water Stress Locations, Biodiversity Overlaps
+   - Sector Risk Distribution bar chart
+   - GBF Target Alignment pie chart
+   - Nature Risk Trend line chart
+
+3. **Portfolio Analysis** (`components/portfolio/PortfolioNatureRisk.jsx`):
+   - Scenario selection (6 scenarios with checkboxes)
+   - Collateral impact toggle
+   - Results: Holdings count, Avg LEAP Score, High Risk Count, Exposure at Risk
+   - LEAP Score Distribution chart
+   - Holdings table with risk ratings
+
+4. **Water Risk** (`components/water/WaterRiskAnalysis.jsx`):
+   - 10 locations with baseline water stress scores
+   - Location detail panel with projections
+   - Water Stress Projections chart (Baseline → 2050)
+   - Risk indicators bar chart
+   - Recommendations
+
+5. **Biodiversity** (`components/biodiversity/BiodiversityOverlaps.jsx`):
+   - 17 biodiversity sites browser
+   - Filter by country, site type, search
+   - Site detail panel with species, area, coordinates
+
+6. **ENCORE Explorer** (`components/dashboard/ENCOREExplorer.jsx`):
+   - 18 sector dropdown
+   - Dependency scores visualization
+   - Detailed dependency descriptions
+
+7. **GBF Alignment** (`components/dashboard/GBFAlignment.jsx`):
+   - 23 GBF targets
+   - Alignment status: Aligned, Partial, Not Aligned
+   - Overall Score progress
+
+**Testing**: 36/36 backend tests + all frontend UI flows verified (iteration_19)
+
+## Previous: Save Calculation as Project (Feb 16, 2026)
+### Feature: Save Methodology Calculations as Projects ✅ COMPLETED
 
 **Backend** (`/app/backend/api/v1/routes/carbon.py`):
 - NEW endpoint: `POST /api/v1/carbon/projects/from-calculation`
-- Accepts: portfolio_id, project_name, methodology_code, annual_credits, country_code, calculation_inputs, calculation_result
-- Auto-maps methodologies to project types and standards (e.g., ACM0002 → RENEWABLE_ENERGY/CDM)
-- Calculates quality metrics and risk scores automatically
-- Sets default crediting period, vintage dates, and price per credit
+- Auto-maps methodologies to project types and standards
 
 **Frontend** (`/app/frontend/src/features/carbon/components/calculator/MethodologyCalculator.jsx`):
-- NEW "Save as Project" button in Calculation Results card
-- Save dialog with Portfolio selector, Project Name input, Country selector
-- Pre-populates project name with methodology name
-- Shows calculation summary with tCO2e/year
-- Success confirmation with checkmark animation
+- "Save as Project" button in Calculation Results card
+- Save dialog with Portfolio selector
 
 **Testing**: 9/9 backend tests + all frontend UI flows verified (iteration_18)
 
 ## Previous: Methodology Engine Integration (Feb 2026)
 ### 40+ Carbon Credit Methodologies Implemented
 
-**Backend** (`/app/backend/services/methodology_engine.py`):
-- 40+ certified methodologies from 6 standards: CDM (ACM, AMS, AM, AR), VCS, Gold Standard, CAR, ACR, GCC
-- Real calculation formulas based on official methodology documents
+- 40+ certified methodologies from 6 standards: CDM, VCS, Gold Standard, CAR, ACR, GCC
 - Covers 10 sectors: Energy, Forestry, Waste, Agriculture, Industrial, Transport, Buildings, Household, Mining, Blue Carbon
-
-**API Endpoints** (`/api/v1/carbon/`):
-- `GET /methodology-list` - All 40+ methodologies with metadata
-- `GET /methodology-list/{sector}` - Filter by sector
-- `POST /calculate/methodology` - Single methodology calculation
-- `POST /calculate/batch` - Batch calculations
-- `GET /data/grid-emission-factor` - Country emission factors (20+ countries)
-- `GET /methodology-details/{code}` - Methodology documentation
-- `GET /methodology-inputs/{code}` - Required inputs with defaults
-
-**Frontend** (`/app/frontend/src/features/carbon/`):
-- Methodology Calculator component with sector tabs and input forms
-- Real-time calculation results display
-- Yearly projections for forestry methodologies
-- Integrated in Carbon Dashboard as "Calculator" tab
-
-**Testing**: 63/63 backend tests + all frontend tests passed (iteration_17)
-
-### Key Methodologies by Sector
-
-**Energy (10)**:
-- ACM0002: Grid-Connected Renewable Energy
-- ACM0006: Biomass Electricity & Heat
-- ACM0009: Coal to Gas Switch
-- AMS-I.A/C/D: Small-scale Renewables
-
-**Forestry (5)**:
-- AR-ACM0003: Afforestation/Reforestation
-- VM0047: ARR (VCS)
-- VM0048: REDD+
-- CAR-Forest, ACR-IFM
-
-**Waste (7)**:
-- ACM0001: Landfill Gas Capture
-- ACM0022: Composting
-- AMS-III.B/C/D: Wastewater & Solid Waste
-
-**Agriculture (5)**:
-- ACM0010: Manure Methane
-- VM0022: Agricultural N2O
-- VM0042: Agricultural Land Management
-- VM0044: Biochar
-
-**Household (2)**:
-- TPDDTEC: Clean Cookstoves
-- TPDDTEC-SWH: Solar Water Heaters
+- Testing: 63/63 backend tests + all frontend tests passed (iteration_17)
 
 ## Previous: Carbon Credits Module Base (Dec 2025)
-- 7 PostgreSQL tables: CarbonMethodology, CarbonEmissionFactor, CarbonPortfolio, CarbonProject, CarbonScenario, CarbonCalculation, CarbonReport
+- 7 PostgreSQL tables
 - Full CRUD API for portfolios, projects, scenarios
-- Calculation engine with risk-adjusted credits, NPV, Monte Carlo simulation
-- Dashboard with 4 KPI cards, credits projection chart, risk heat map
-- Interactive Mapbox map showing global project distribution
-- Scenario builder with risk sliders (permanence, delivery, regulatory, market)
-- Redux Toolkit state management for complex scenario state
+- Dashboard with 4 KPI cards, Mapbox map
 - Testing: 32/32 BE + all FE verified (iteration_16)
 
 ## Previous: CBAM Module
-- 8 PostgreSQL tables for product categories, suppliers, emissions, projections, compliance, country risk, certificate prices, verifiers
-- 15 EU CBAM product categories (Cement, Iron & Steel, Aluminium, Fertilizers, Electricity, Hydrogen) with default emission factors
-- 20 country risk profiles with carbon pricing data
-- Cost projection engine: EU ETS price × emissions - domestic credit - free allocation
-- 3 ETS price scenarios (Current Trend, Ambitious, Conservative) with 2025-2050 projections
-- Free allocation phase-out schedule (97.5% in 2026 → 0% in 2034)
+- 8 PostgreSQL tables
+- 15 EU CBAM product categories
+- Cost projection engine
 - Testing: 34/34 BE + all FE (iteration_15)
 
 ## All Tests Summary
-- 18 iterations total
-- 400+ tests passed
+- 19 iterations total
+- 450+ tests passed
 - 100% pass rate
 
 ## Upcoming / Future Tasks
-1. **Sector Input Forms (P1)**: Create detailed input forms for remaining sectors (Transport, Buildings, Mining)
-2. **Methodology Documentation (P2)**: Add detailed applicability criteria and step-by-step calculation guides
-3. ~~**Project Integration (P2)**: Allow saving methodology calculations as new projects~~ ✅ COMPLETED
-4. **Export Features (P2)**: PDF/Excel export of calculation results
-5. **Comparison Tool (P3)**: Compare multiple methodologies for the same project scenario
+1. **Sector Input Forms (P1)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
+2. **Export Features (P2)**: PDF/Excel export of calculation results and nature risk reports
+3. **LEAP Assessment Wizard (P2)**: Multi-step wizard for comprehensive LEAP assessments
+4. **Biodiversity Overlap Calculator (P2)**: Spatial analysis with asset coordinates
+5. **Water Risk Map (P2)**: Mapbox integration for water risk visualization
+6. **Comparison Tool (P3)**: Compare multiple methodologies for the same project scenario
