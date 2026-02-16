@@ -73,6 +73,8 @@ app.include_router(cbam_router)
 app.include_router(carbon_router)
 # Include Nature Risk routes
 app.include_router(nature_risk_router)
+# Include Stranded Assets routes
+app.include_router(stranded_assets_router)
 
 # CORS
 app.add_middleware(
