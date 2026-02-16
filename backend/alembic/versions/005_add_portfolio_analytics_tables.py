@@ -1,6 +1,10 @@
 """
 Add Portfolio Analytics Tables
 
+Revision ID: 005_add_portfolio_analytics_tables
+Revises: 004_add_real_estate_valuation_tables
+Create Date: 2025-01-15
+
 This migration adds tables for the Portfolio Aggregation and Reporting Module:
 - portfolio_analytics: Main portfolio entity
 - portfolio_property_holdings: Properties held in portfolios
@@ -9,6 +13,11 @@ This migration adds tables for the Portfolio Aggregation and Reporting Module:
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import UUID, JSONB
+
+revision = '005_add_portfolio_analytics_tables'
+down_revision = '004_add_real_estate_valuation_tables'
+branch_labels = None
+depends_on = None
 
 
 def upgrade():
