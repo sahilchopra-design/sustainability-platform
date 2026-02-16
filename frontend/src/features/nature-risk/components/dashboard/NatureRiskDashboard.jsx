@@ -68,9 +68,31 @@ export function NatureRiskDashboard() {
     { name: 'Partial', value: gbfData.partial_targets, color: '#f59e0b' },
     { name: 'Not Aligned', value: gbfData.not_aligned_targets, color: '#ef4444' }
   ];
+  
+  const handleExport = async (format) => {
+    await exportNatureRisk({
+      total_assessments: summary?.total_assessments || 0,
+      high_risk_entities: summary?.high_risk_entities || 0,
+      average_risk_score: summary?.average_risk_score || 0,
+      biodiversity_risk_index: summary?.biodiversity_risk_index || 0,
+      sector_breakdown: summary?.sector_breakdown || {},
+      gbf_alignment: gbfData,
+    }, format);
+  };
 
   return (
     <div className="space-y-6" data-testid="nature-risk-dashboard">
+      {/* Header with Export */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-slate-800">Nature Risk Overview</h2>
+        <ExportButton 
+          onExport={handleExport}
+          label="Export Assessment"
+          disabled={loading}
+          data-testid="nature-risk-export-btn"
+        />
+      </div>
+      
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="bg-white dark:bg-slate-800 border-l-4 border-l-emerald-500">
