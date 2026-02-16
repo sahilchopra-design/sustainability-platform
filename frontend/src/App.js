@@ -25,6 +25,7 @@ import SubAnalysisPage from './pages/SubAnalysisPage';
 import CBAMPage from './pages/CBAMPage';
 import CarbonDashboard from './features/carbon/pages/CarbonDashboard';
 import NatureRiskPage from './features/nature-risk/pages/NatureRiskPage';
+import StrandedAssetsPage from './features/stranded-assets/pages/StrandedAssetsPage';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
