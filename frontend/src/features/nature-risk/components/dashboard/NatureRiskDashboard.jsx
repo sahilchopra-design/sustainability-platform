@@ -11,6 +11,8 @@ import {
   Building2, Target, Shield, CheckCircle 
 } from 'lucide-react';
 import { natureRiskApi } from '../../api/natureRiskApi';
+import { ExportButton } from '../../../../components/shared/ExportButton';
+import { exportNatureRisk } from '../../../../lib/exportUtils';
 
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'];
 
