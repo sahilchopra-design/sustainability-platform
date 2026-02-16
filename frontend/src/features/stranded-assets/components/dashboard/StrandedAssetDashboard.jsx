@@ -38,9 +38,31 @@ export function StrandedAssetDashboard() {
   }
 
   const riskDistribution = kpis?.assets_by_risk_category || {};
+  
+  const handleExport = async (format) => {
+    await exportStrandedAssets({
+      total_exposure_usd: kpis?.total_exposure_usd || 0,
+      stranded_value_at_risk_usd: kpis?.stranded_value_at_risk_usd || 0,
+      assets_by_risk_category: riskDistribution,
+      total_assets: kpis?.total_assets || 0,
+      avg_stranding_year: kpis?.avg_stranding_year || 0,
+      critical_assets: criticalData?.assets || [],
+    }, format);
+  };
 
   return (
     <div className="space-y-6" data-testid="stranded-asset-dashboard">
+      {/* Header with Export Button */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-slate-800">Stranded Asset Overview</h2>
+        <ExportButton 
+          onExport={handleExport}
+          label="Export Analysis"
+          disabled={kpisLoading}
+          data-testid="stranded-asset-export-btn"
+        />
+      </div>
+      
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Exposure */}
