@@ -24,6 +24,7 @@ import CustomBuilderPage from './pages/CustomBuilderPage';
 import SubAnalysisPage from './pages/SubAnalysisPage';
 import CBAMPage from './pages/CBAMPage';
 import CarbonDashboard from './features/carbon/pages/CarbonDashboard';
+import NatureRiskPage from './features/nature-risk/pages/NatureRiskPage';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -137,6 +138,7 @@ function AppRouter() {
             <SideLink to="/sub-analysis" icon="microscope" label="Sub-Parameter" />
             <SideLink to="/cbam" icon="globe" label="CBAM" />
             <SideLink to="/carbon" icon="leaf" label="Carbon Credits" />
+            <SideLink to="/nature-risk" icon="tree" label="Nature Risk" />
           </NavGroup>
           {/* Scenarios */}
           <NavGroup label="Scenarios">
@@ -204,6 +206,7 @@ function AppRouter() {
           <Route path="/sub-analysis" element={<SubAnalysisPage />} />
           <Route path="/cbam" element={<CBAMPage />} />
           <Route path="/carbon" element={<CarbonDashboard />} />
+          <Route path="/nature-risk" element={<NatureRiskPage />} />
         </Routes>
       </main>
     </div>
@@ -248,6 +251,7 @@ const ICON_MAP = {
   layers: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
   archive: 'M21 8v13H3V8M1 3h22v5H1zM10 12h4',
   leaf: 'M11 20A7 7 0 019.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10zM2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12',
+  tree: 'M12 22v-7m0 0c-3.5 0-6-2.5-6-6 0-2 1-4 3-5.5C10 2.5 11 2 12 2s2 .5 3 1.5c2 1.5 3 3.5 3 5.5 0 3.5-2.5 6-6 6z',
 };
 
 function SideLink({ to, icon, label, end }) {
