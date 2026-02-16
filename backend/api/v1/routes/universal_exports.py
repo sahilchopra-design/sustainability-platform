@@ -361,8 +361,6 @@ async def export_carbon_calculation(
 ):
     """Export carbon credit calculation results."""
     try:
-        export_data = _serialize_data(calculation_data)
-        
         # Format for sustainability template
         formatted_data = {
             'assessment_type': 'carbon_credits',
