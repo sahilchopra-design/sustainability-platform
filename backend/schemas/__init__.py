@@ -119,6 +119,60 @@ from .analysis import (
 )
 
 __all__ = [
+    # Stranded Assets - Enums
+    "ReserveType",
+    "ReserveCategory",
+    "PlantTechnology",
+    "InfrastructureType",
+    "StrandedRiskCategory",
+    "OfftakeType",
+    "RepurposingType",
+    "StrandedAssetType",
+    # Stranded Assets - Fossil Fuel Reserve
+    "FossilFuelReserveCreate",
+    "FossilFuelReserveUpdate",
+    "FossilFuelReserveResponse",
+    "FossilFuelReserveListResponse",
+    # Stranded Assets - Power Plant
+    "PowerPlantCreate",
+    "PowerPlantUpdate",
+    "PowerPlantResponse",
+    "PowerPlantListResponse",
+    # Stranded Assets - Infrastructure
+    "InfrastructureAssetCreate",
+    "InfrastructureAssetUpdate",
+    "InfrastructureAssetResponse",
+    "InfrastructureAssetListResponse",
+    # Stranded Assets - Calculations
+    "ReserveImpairmentRequest",
+    "ReserveImpairmentResult",
+    "ReserveImpairmentResponse",
+    "PowerPlantValuationRequest",
+    "PowerPlantValuationResult",
+    "PowerPlantValuationResponse",
+    "InfrastructureValuationRequest",
+    "InfrastructureValuationResult",
+    "InfrastructureValuationResponse",
+    "StrandedAssetCalculationCreate",
+    "StrandedAssetCalculationResponse",
+    # Stranded Assets - Technology & Pathways
+    "TechnologyDisruptionMetricCreate",
+    "TechnologyDisruptionMetricResponse",
+    "TechnologyDisruptionSummary",
+    "EnergyTransitionPathwayCreate",
+    "EnergyTransitionPathwayUpdate",
+    "EnergyTransitionPathwayResponse",
+    "EnergyTransitionPathwayListResponse",
+    # Stranded Assets - Alerts & Comparison
+    "CriticalAssetAlert",
+    "CriticalAssetAlertList",
+    "StrandedScenarioComparisonRequest",
+    "StrandedScenarioComparisonResult",
+    "StrandedScenarioComparisonResponse",
+    # Stranded Assets - Dashboard
+    "StrandedAssetDashboardKPIs",
+    "PortfolioStrandingAnalysisRequest",
+    "PortfolioStrandingAnalysisResponse",
     # Common
     "Sector",
     "AssetType",
