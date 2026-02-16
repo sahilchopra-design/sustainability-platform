@@ -888,7 +888,6 @@ class InfrastructureValuator:
         
         utilization_rate = Decimal(str(asset_data.get("utilization_rate_percent", 80) or 80))
         book_value = Decimal(str(asset_data.get("remaining_book_value_usd", 0) or 0))
-        replacement_cost = Decimal(str(asset_data.get("replacement_cost_usd", 0) or 0))
         take_or_pay = Decimal(str(asset_data.get("take_or_pay_exposure_usd", 0) or 0))
         
         hydrogen_ready = asset_data.get("hydrogen_ready", False)
