@@ -996,7 +996,6 @@ async def run_scenario_comparison(request: StrandedScenarioComparisonRequest):
     
     reserves = get_sample_reserves()
     plants = get_sample_power_plants()
-    infrastructure = get_sample_infrastructure()
     scenarios = get_sample_scenarios()
     
     results = []
