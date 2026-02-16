@@ -317,6 +317,10 @@ export default function CarbonDashboard() {
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="mb-4">
               <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="calculator" data-testid="calculator-tab">
+                <Calculator className="w-4 h-4 mr-1" />
+                Calculator
+              </TabsTrigger>
               <TabsTrigger value="projects">Projects</TabsTrigger>
               <TabsTrigger value="scenarios">Scenarios</TabsTrigger>
               <TabsTrigger value="map">Map</TabsTrigger>
@@ -360,6 +364,11 @@ export default function CarbonDashboard() {
                   onDelete={(p) => console.log('Delete project:', p)}
                 />
               </div>
+            </TabsContent>
+
+            {/* Calculator Tab */}
+            <TabsContent value="calculator" className="space-y-6">
+              <MethodologyCalculator />
             </TabsContent>
 
             {/* Projects Tab */}
