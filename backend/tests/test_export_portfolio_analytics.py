@@ -44,7 +44,7 @@ class TestPortfolioAnalyticsDBPersistence:
     def test_list_portfolios_returns_200(self, auth_headers):
         """Test listing portfolios from database."""
         response = requests.get(
-            f"{BASE_URL}/api/v1/portfolio/analytics/portfolios",
+            f"{BASE_URL}/api/v1/portfolio-analytics/portfolios",
             headers=auth_headers
         )
         assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
@@ -52,33 +52,57 @@ class TestPortfolioAnalyticsDBPersistence:
     def test_list_portfolios_returns_data(self, auth_headers):
         """Test portfolios list contains sample data."""
         response = requests.get(
-            f"{BASE_URL}/api/v1/portfolio/analytics/portfolios",
+            f"{BASE_URL}/api/v1/portfolio-analytics/portfolios",
             headers=auth_headers
         )
         assert response.status_code == 200
         data = response.json()
-        assert isinstance(data, list), "Expected list of portfolios"
+        # Response is paginated with items array
+        assert "items" in data, "Expected paginated response with 'items'"
+        assert isinstance(data["items"], list)
         # Sample data should be seeded
-        if len(data) > 0:
-            assert "id" in data[0]
-            assert "name" in data[0]
+        if len(data["items"]) > 0:
+            assert "id" in data["items"][0]
+            assert "name" in data["items"][0]
+
+    def test_list_portfolios_has_total_count(self, auth_headers):
+        """Test portfolios list has total count for pagination."""
+        response = requests.get(
+            f"{BASE_URL}/api/v1/portfolio-analytics/portfolios",
+            headers=auth_headers
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "total" in data, "Expected 'total' count in response"
+        assert data["total"] >= 0
 
     def test_get_portfolio_by_id(self, auth_headers):
         """Test getting single portfolio by ID."""
         response = requests.get(
-            f"{BASE_URL}/api/v1/portfolio/analytics/{SAMPLE_PORTFOLIO_ID}",
+            f"{BASE_URL}/api/v1/portfolio-analytics/portfolios/{SAMPLE_PORTFOLIO_ID}",
             headers=auth_headers
         )
-        # May return 200 if data exists or 404 if not
-        assert response.status_code in [200, 404]
-        if response.status_code == 200:
-            data = response.json()
-            assert "portfolio_id" in data or "id" in data
+        # Should return 200 with data from PostgreSQL
+        assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
+        data = response.json()
+        assert "id" in data
+        assert data["id"] == SAMPLE_PORTFOLIO_ID
+
+    def test_get_portfolio_has_name_and_type(self, auth_headers):
+        """Test portfolio response includes name and type."""
+        response = requests.get(
+            f"{BASE_URL}/api/v1/portfolio-analytics/portfolios/{SAMPLE_PORTFOLIO_ID}",
+            headers=auth_headers
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "name" in data
+        assert "portfolio_type" in data
 
     def test_portfolio_dashboard_returns_200(self, auth_headers):
         """Test portfolio dashboard endpoint returns data from DB."""
         response = requests.get(
-            f"{BASE_URL}/api/v1/portfolio/analytics/{SAMPLE_PORTFOLIO_ID}/dashboard",
+            f"{BASE_URL}/api/v1/portfolio-analytics/portfolios/{SAMPLE_PORTFOLIO_ID}/dashboard",
             headers=auth_headers
         )
         assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
@@ -86,18 +110,19 @@ class TestPortfolioAnalyticsDBPersistence:
     def test_portfolio_dashboard_has_kpi_cards(self, auth_headers):
         """Test dashboard contains KPI cards."""
         response = requests.get(
-            f"{BASE_URL}/api/v1/portfolio/analytics/{SAMPLE_PORTFOLIO_ID}/dashboard",
+            f"{BASE_URL}/api/v1/portfolio-analytics/portfolios/{SAMPLE_PORTFOLIO_ID}/dashboard",
             headers=auth_headers
         )
         assert response.status_code == 200
         data = response.json()
         assert "kpi_cards" in data, "Dashboard should have kpi_cards"
         assert isinstance(data["kpi_cards"], list)
+        assert len(data["kpi_cards"]) > 0, "Should have at least one KPI card"
 
     def test_portfolio_dashboard_has_charts(self, auth_headers):
         """Test dashboard contains chart data."""
         response = requests.get(
-            f"{BASE_URL}/api/v1/portfolio/analytics/{SAMPLE_PORTFOLIO_ID}/dashboard",
+            f"{BASE_URL}/api/v1/portfolio-analytics/portfolios/{SAMPLE_PORTFOLIO_ID}/dashboard",
             headers=auth_headers
         )
         assert response.status_code == 200
@@ -107,11 +132,24 @@ class TestPortfolioAnalyticsDBPersistence:
     def test_portfolio_analytics_calculation(self, auth_headers):
         """Test portfolio analytics calculation endpoint."""
         response = requests.get(
-            f"{BASE_URL}/api/v1/portfolio/analytics/{SAMPLE_PORTFOLIO_ID}",
+            f"{BASE_URL}/api/v1/portfolio-analytics/portfolios/{SAMPLE_PORTFOLIO_ID}/analytics",
             headers=auth_headers
         )
-        # This endpoint calculates analytics
-        assert response.status_code in [200, 404]
+        assert response.status_code == 200
+        data = response.json()
+        assert "portfolio_summary" in data
+        assert "risk_metrics" in data
+
+    def test_portfolio_holdings_returns_200(self, auth_headers):
+        """Test portfolio holdings endpoint."""
+        response = requests.get(
+            f"{BASE_URL}/api/v1/portfolio-analytics/portfolios/{SAMPLE_PORTFOLIO_ID}/holdings",
+            headers=auth_headers
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "items" in data
+        assert "total" in data
 
 
 class TestPortfolioAnalyticsExportPDF:
