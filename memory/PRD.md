@@ -197,6 +197,42 @@
 SELECT create_hypertable('technology_disruption_metric', 'time', chunk_time_interval => INTERVAL '1 year');
 ```
 
+### Pydantic Schemas (Dec 2025)
+
+**File**: `backend/schemas/stranded_assets.py`
+
+**8 Enums Defined**:
+- `ReserveType`: oil, gas, coal
+- `ReserveCategory`: 1P, 2P, 3P
+- `PlantTechnology`: coal, gas_ccgt, gas_ocgt, nuclear, hydro, wind, solar, etc. (13 types)
+- `InfrastructureType`: pipeline_oil, pipeline_gas, lng_terminal, refinery, etc. (6 types)
+- `RiskCategory`: low, medium, high, critical
+- `OfftakeType`: merchant, ppa, regulated
+- `RepurposingType`: ccs, hydrogen, storage, retirement
+- `AssetType`: reserve, power_plant, infrastructure
+
+**Core Asset Schemas**:
+- `FossilFuelReserve[Base/Create/Update/Response/ListResponse]`
+- `PowerPlant[Base/Create/Update/Response/ListResponse]`
+- `InfrastructureAsset[Base/Create/Update/Response/ListResponse]`
+
+**Calculation Schemas**:
+- `ReserveImpairmentRequest/Result/Response` - Reserve valuation with yearly impairments
+- `PowerPlantValuationRequest/Result/Response` - Plant NPV with repurposing options
+- `InfrastructureValuationRequest/Result/Response` - Infrastructure stranding analysis
+- `StrandedAssetCalculationCreate/Response` - DB record for calculations
+- `YearlyImpairment`, `YearlyValuation`, `RepurposingOption` - Supporting models
+
+**Technology & Pathway Schemas**:
+- `TechnologyDisruptionMetric[Create/Response/Summary]` - EV, hydrogen, etc. metrics
+- `EnergyTransitionPathway[Base/Create/Update/Response/ListResponse]` - Sector trajectories
+
+**Dashboard & Analysis Schemas**:
+- `StrandedAssetDashboardKPIs` - Total assets, risk counts, exposure
+- `PortfolioStrandingAnalysis[Request/Response]` - Portfolio-level stranding analysis
+- `CriticalAssetAlert`, `CriticalAssetAlertList` - Risk alerts
+- `ScenarioComparison[Request/Result/Response]` - Multi-scenario comparison
+
 ## Upcoming / Future Tasks
 1. **Stranded Asset Module Backend (P0)**: Create Pydantic models, services, and API routes for the Stranded Asset Module
 2. **Stranded Asset Module Frontend (P1)**: Build dashboard, asset management, and calculation UI
