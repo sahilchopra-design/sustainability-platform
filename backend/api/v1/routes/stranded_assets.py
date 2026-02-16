@@ -721,7 +721,7 @@ async def calculate_reserve_impairment(request: ReserveImpairmentRequest):
                 carbon_price_forecast=request.carbon_price_forecast
             )
             results.append(result)
-        except Exception as e:
+        except Exception:
             continue
     
     return ReserveImpairmentResponse(
@@ -774,7 +774,7 @@ async def calculate_power_plant_valuation(request: PowerPlantValuationRequest):
                 carbon_price_forecast=request.carbon_price_forecast
             )
             results.append(result)
-        except Exception as e:
+        except Exception:
             continue
     
     return PowerPlantValuationResponse(
@@ -824,7 +824,7 @@ async def calculate_infrastructure_valuation(request: InfrastructureValuationReq
                 demand_forecast=request.demand_forecast
             )
             results.append(result)
-        except Exception as e:
+        except Exception:
             continue
     
     return InfrastructureValuationResponse(
