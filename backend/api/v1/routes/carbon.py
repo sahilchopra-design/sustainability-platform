@@ -868,3 +868,271 @@ def _seed_default_emission_factors(db: Session):
         db.add(factor)
     
     db.commit()
+
+
+# ============ Methodology Calculation Endpoints ============
+
+@router.get("/methodology-list")
+def list_all_methodologies():
+    """Get all available carbon credit methodologies."""
+    return {
+        "methodologies": get_all_methodologies(),
+        "total_count": len(METHODOLOGY_CALCULATORS),
+        "sectors": [
+            "ENERGY", "WASTE", "FORESTRY", "AGRICULTURE", 
+            "INDUSTRIAL", "TRANSPORT", "BUILDINGS", "HOUSEHOLD", 
+            "MINING", "BLUE_CARBON"
+        ]
+    }
+
+
+@router.get("/methodology-list/{sector}")
+def list_methodologies_by_sector(sector: str):
+    """Get methodologies filtered by sector."""
+    methodologies = get_methodologies_by_sector(sector)
+    if not methodologies:
+        return {
+            "sector": sector.upper(),
+            "methodologies": [],
+            "message": f"No methodologies found for sector '{sector}'. Valid sectors: ENERGY, WASTE, FORESTRY, AGRICULTURE, INDUSTRIAL, TRANSPORT, BUILDINGS, HOUSEHOLD, MINING, BLUE_CARBON"
+        }
+    return {
+        "sector": sector.upper(),
+        "methodologies": methodologies,
+        "count": len(methodologies)
+    }
+
+
+@router.get("/methodology-details/{methodology_code}")
+def get_methodology_info(methodology_code: str):
+    """Get detailed information about a specific methodology."""
+    details = get_methodology_details(methodology_code)
+    if not details:
+        # Check if the methodology exists but doesn't have full details
+        if methodology_code in METHODOLOGY_CALCULATORS:
+            return {
+                "code": methodology_code,
+                "status": "available",
+                "message": "Methodology is implemented but detailed documentation is not yet available."
+            }
+        raise HTTPException(
+            status_code=404, 
+            detail=f"Methodology '{methodology_code}' not found. Use /methodology-list to see available methodologies."
+        )
+    return details
+
+
+@router.post("/calculate/methodology")
+def calculate_methodology(
+    methodology_code: str,
+    inputs: Dict[str, Any] = {}
+):
+    """
+    Calculate carbon credits using a specific methodology.
+    
+    Example methodologies:
+    - ACM0002: Grid-connected Renewable Energy
+    - ACM0001: Landfill Gas Capture
+    - VM0048: REDD+
+    - TPDDTEC: Clean Cookstoves
+    
+    The inputs vary by methodology. Use /methodology-details/{code} to see required inputs.
+    """
+    result = calculate_by_methodology(methodology_code, inputs)
+    
+    if "error" in result and "available_methodologies" in result:
+        raise HTTPException(
+            status_code=400,
+            detail=result
+        )
+    
+    return result
+
+
+@router.post("/calculate/batch")
+def calculate_batch(calculations: List[Dict[str, Any]]):
+    """
+    Run batch calculations for multiple projects/methodologies.
+    
+    Request body example:
+    [
+        {"methodology_code": "ACM0002", "inputs": {"installed_capacity_mw": 100}},
+        {"methodology_code": "ACM0001", "inputs": {"waste_quantity": 500000}}
+    ]
+    """
+    results = []
+    total_reductions = 0
+    
+    for calc in calculations:
+        methodology_code = calc.get("methodology_code")
+        inputs = calc.get("inputs", {})
+        
+        if not methodology_code:
+            results.append({"error": "methodology_code is required"})
+            continue
+        
+        result = calculate_by_methodology(methodology_code, inputs)
+        results.append(result)
+        
+        if "emission_reductions" in result:
+            total_reductions += result["emission_reductions"]
+    
+    return {
+        "results": results,
+        "total_emission_reductions": round(total_reductions),
+        "calculation_count": len(results),
+        "unit": "tCO2e"
+    }
+
+
+@router.get("/data/grid-emission-factor")
+def get_grid_emission_factor(
+    country_code: str,
+    year: Optional[int] = 2024,
+    db: Session = Depends(get_db)
+):
+    """
+    Get grid emission factor for a specific country.
+    Used as input for renewable energy calculations (ACM0002, AMS-I.A, etc.)
+    """
+    # Try to get from database first
+    factor = db.query(CarbonEmissionFactor).filter(
+        CarbonEmissionFactor.country_code == country_code.upper(),
+        CarbonEmissionFactor.year == year
+    ).first()
+    
+    if factor:
+        return {
+            "country_code": factor.country_code,
+            "country_name": factor.country_name,
+            "year": factor.year,
+            "grid_emission_factor": factor.grid_emission_factor,
+            "unit": "tCO2/MWh",
+            "source": factor.source
+        }
+    
+    # Default values for countries not in DB
+    default_factors = {
+        "US": {"name": "United States", "ef": 0.417},
+        "CN": {"name": "China", "ef": 0.581},
+        "IN": {"name": "India", "ef": 0.708},
+        "DE": {"name": "Germany", "ef": 0.366},
+        "BR": {"name": "Brazil", "ef": 0.074},
+        "GB": {"name": "United Kingdom", "ef": 0.233},
+        "JP": {"name": "Japan", "ef": 0.470},
+        "AU": {"name": "Australia", "ef": 0.656},
+        "FR": {"name": "France", "ef": 0.052},
+        "CA": {"name": "Canada", "ef": 0.120},
+        "MX": {"name": "Mexico", "ef": 0.431},
+        "ZA": {"name": "South Africa", "ef": 0.928},
+        "ID": {"name": "Indonesia", "ef": 0.761},
+        "KR": {"name": "South Korea", "ef": 0.459},
+        "SA": {"name": "Saudi Arabia", "ef": 0.732},
+        "AE": {"name": "United Arab Emirates", "ef": 0.533},
+        "TH": {"name": "Thailand", "ef": 0.505},
+        "VN": {"name": "Vietnam", "ef": 0.560},
+        "PH": {"name": "Philippines", "ef": 0.603},
+        "MY": {"name": "Malaysia", "ef": 0.638},
+    }
+    
+    country = country_code.upper()
+    if country in default_factors:
+        return {
+            "country_code": country,
+            "country_name": default_factors[country]["name"],
+            "year": year,
+            "grid_emission_factor": default_factors[country]["ef"],
+            "unit": "tCO2/MWh",
+            "source": "IEA (default)"
+        }
+    
+    raise HTTPException(
+        status_code=404,
+        detail=f"Grid emission factor not found for country '{country_code}'. Contact support to add this country."
+    )
+
+
+@router.get("/methodology-inputs/{methodology_code}")
+def get_methodology_inputs(methodology_code: str):
+    """
+    Get the default/example inputs for a specific methodology.
+    Helps users understand what inputs are required for calculation.
+    """
+    example_inputs = {
+        "ACM0002": {
+            "description": "Grid-connected Renewable Energy",
+            "inputs": {
+                "installed_capacity_mw": {"value": 150, "description": "Installed capacity in megawatts", "required": True},
+                "capacity_factor": {"value": 0.28, "description": "Capacity factor (0-1)", "required": True},
+                "grid_emission_factor": {"value": 0.45, "description": "Grid emission factor in tCO2/MWh", "required": True},
+                "operating_margin_weight": {"value": 0.75, "description": "Operating margin weight (0-1)", "required": False},
+                "build_margin_weight": {"value": 0.25, "description": "Build margin weight (0-1)", "required": False},
+                "uncertainty_factor": {"value": 0.05, "description": "Uncertainty factor (0-1)", "required": False}
+            }
+        },
+        "ACM0001": {
+            "description": "Landfill Gas Capture",
+            "inputs": {
+                "waste_quantity": {"value": 500000, "description": "Annual waste quantity in tonnes", "required": True},
+                "methane_generation_potential": {"value": 100, "description": "Methane generation potential m3 CH4/tonne", "required": True},
+                "capture_efficiency": {"value": 0.75, "description": "Gas capture efficiency (0-1)", "required": True},
+                "destruction_efficiency": {"value": 0.995, "description": "Destruction efficiency (0-1)", "required": True},
+                "methane_gwp": {"value": 28, "description": "Methane GWP (IPCC AR5)", "required": False},
+                "n2o_gwp": {"value": 265, "description": "N2O GWP (IPCC AR5)", "required": False}
+            }
+        },
+        "AR-ACM0003": {
+            "description": "Afforestation/Reforestation",
+            "inputs": {
+                "start_year": {"value": 2024, "description": "Project start year", "required": True},
+                "crediting_period_years": {"value": 30, "description": "Crediting period in years", "required": True},
+                "risk_buffer_percentage": {"value": 0.20, "description": "Risk buffer percentage (0-1)", "required": True},
+                "species": {"value": [
+                    {"name": "Mahogany", "area_hectares": 400, "max_biomass_per_hectare": 300, "growth_rate": 0.15}
+                ], "description": "List of species with area and growth parameters", "required": True}
+            }
+        },
+        "VM0048": {
+            "description": "REDD+",
+            "inputs": {
+                "forest_area": {"value": 10000, "description": "Forest area in hectares", "required": True},
+                "baseline_deforestation_rate": {"value": 0.02, "description": "Annual baseline deforestation rate", "required": True},
+                "project_deforestation_rate": {"value": 0.005, "description": "Annual project deforestation rate", "required": True},
+                "carbon_stock_per_hectare": {"value": 150, "description": "Carbon stock in tC/ha", "required": True},
+                "buffer_percentage": {"value": 0.25, "description": "Buffer percentage (0-1)", "required": False}
+            }
+        },
+        "TPDDTEC": {
+            "description": "Clean Cookstoves",
+            "inputs": {
+                "stove_count": {"value": 10000, "description": "Number of cookstoves distributed", "required": True},
+                "baseline_fuel_consumption": {"value": 2.5, "description": "Baseline fuel consumption tonnes/stove/year", "required": True},
+                "project_fuel_consumption": {"value": 1.5, "description": "Project fuel consumption tonnes/stove/year", "required": True},
+                "fuel_ncv": {"value": 15.0, "description": "Fuel net calorific value GJ/tonne", "required": False},
+                "fuel_emission_factor": {"value": 112.0, "description": "Fuel emission factor kgCO2/GJ", "required": False}
+            }
+        },
+        "AMS-II.D": {
+            "description": "Building Energy Efficiency",
+            "inputs": {
+                "building_area": {"value": 10000, "description": "Building area in m2", "required": True},
+                "baseline_energy_intensity": {"value": 150, "description": "Baseline energy intensity kWh/m2/year", "required": True},
+                "project_energy_intensity": {"value": 100, "description": "Project energy intensity kWh/m2/year", "required": True},
+                "grid_emission_factor": {"value": 0.45, "description": "Grid emission factor tCO2/MWh", "required": True}
+            }
+        }
+    }
+    
+    if methodology_code not in example_inputs:
+        if methodology_code in METHODOLOGY_CALCULATORS:
+            return {
+                "methodology_code": methodology_code,
+                "message": "Example inputs not yet documented. Try running the calculation with default values.",
+                "default_calculation": calculate_by_methodology(methodology_code, {})
+            }
+        raise HTTPException(status_code=404, detail=f"Methodology '{methodology_code}' not found")
+    
+    return {
+        "methodology_code": methodology_code,
+        **example_inputs[methodology_code]
+    }
