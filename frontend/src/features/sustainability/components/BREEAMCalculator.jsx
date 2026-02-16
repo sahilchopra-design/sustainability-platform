@@ -520,12 +520,12 @@ export function BREEAMCalculator() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-blue-50 p-4 rounded-lg text-center">
                       <div className="text-3xl font-bold text-blue-700">
-                        {breeamResult.weighted_score?.toFixed(1) || previewScore.toFixed(1)}%
+                        {parseFloat(breeamResult.weighted_score || previewScore).toFixed(1)}%
                       </div>
                       <div className="text-sm text-slate-600">Weighted Score</div>
                     </div>
                     <div className="bg-emerald-50 p-4 rounded-lg text-center">
-                      <Badge className={`${getRatingFromScore(breeamResult.weighted_score || previewScore).bg} text-white`}>
+                      <Badge className={`${getRatingFromScore(parseFloat(breeamResult.weighted_score) || previewScore).bg} text-white`}>
                         {breeamResult.rating?.replace('_', ' ').toUpperCase() || previewRating.label}
                       </Badge>
                       <div className="text-sm text-slate-600 mt-2">Rating Level</div>
@@ -537,7 +537,7 @@ export function BREEAMCalculator() {
                       <div className="flex items-center gap-2 text-amber-700">
                         <TrendingUp className="h-4 w-4" />
                         <span className="text-sm font-medium">
-                          {breeamResult.points_to_next_level.toFixed(1)} points to next level
+                          {parseFloat(breeamResult.points_to_next_level).toFixed(1)} points to next level
                         </span>
                       </div>
                     </div>
@@ -547,13 +547,13 @@ export function BREEAMCalculator() {
                     <div>
                       <div className="text-sm text-slate-500">Rent Premium</div>
                       <div className="text-lg font-semibold text-emerald-600">
-                        +{breeamResult.estimated_rent_premium_percent?.toFixed(1) || '7.5'}%
+                        +{parseFloat(breeamResult.estimated_rent_premium_percent || 7.5).toFixed(1)}%
                       </div>
                     </div>
                     <div>
                       <div className="text-sm text-slate-500">Value Premium</div>
                       <div className="text-lg font-semibold text-emerald-600">
-                        +{breeamResult.estimated_value_premium_percent?.toFixed(1) || '12.8'}%
+                        +{parseFloat(breeamResult.estimated_value_premium_percent || 12.8).toFixed(1)}%
                       </div>
                     </div>
                     {breeamResult.estimated_value_impact && (
