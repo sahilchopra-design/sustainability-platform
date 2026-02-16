@@ -627,12 +627,13 @@ stranded-assets/
 **Note**: Uses IN-MEMORY SAMPLE data (3 portfolios with holdings). Data not persisted to PostgreSQL - this is by design for demonstration.
 
 ## Upcoming / Future Tasks
-1. **Refactor Mocked Backend Services (P1)**: Replace placeholder data in stranded_asset_calculator.py and real_estate_valuation_engine.py with real DB queries
-2. **Sector Input Forms (P2)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
+1. **Database Persistence for Portfolio Analytics (P1)**: Replace in-memory sample data with PostgreSQL storage
+2. **Refactor Mocked Backend Services (P1)**: Replace placeholder data in stranded_asset_calculator.py and real_estate_valuation_engine.py with real DB queries
 3. **Export Features (P2)**: PDF/Excel export of calculation results and nature risk reports
-4. **BREEAM Calculator Frontend (P2)**: Add BREEAM tab to Sustainability module
-5. **Database Persistence for Scenarios (P2)**: Store scenarios in PostgreSQL instead of in-memory
-6. **LEAP Assessment Wizard (P3)**: Multi-step wizard for comprehensive LEAP assessments
-7. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
-8. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
+4. **Sector Input Forms (P2)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
+5. **BREEAM Calculator Frontend (P2)**: Add BREEAM tab to Sustainability module
+6. **Database Persistence for Scenarios (P2)**: Store scenarios in PostgreSQL instead of in-memory
+7. **LEAP Assessment Wizard (P3)**: Multi-step wizard for comprehensive LEAP assessments
+8. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
+9. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
 
