@@ -21,6 +21,16 @@ export const natureRiskApi = {
   },
 
   // LEAP Assessments
+  createLEAPAssessment: async (data) => {
+    const response = await fetch(`${API_URL}/api/v1/nature-risk/leap-assessments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to create LEAP assessment');
+    return response.json();
+  },
+
   calculateLEAPAssessment: async (data) => {
     const response = await fetch(`${API_URL}/api/v1/nature-risk/leap-assessments/calculate`, {
       method: 'POST',
