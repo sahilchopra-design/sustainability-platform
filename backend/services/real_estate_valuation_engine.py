@@ -407,8 +407,8 @@ class RealEstateValuationEngine:
         physical_depreciation_pct = (physical_depreciation / rcn) if rcn > 0 else Decimal("0")
         
         # Calculate Functional Obsolescence
-        deficiencies_total = sum(d.cost_to_cure for d in inputs.functional_deficiencies)
-        superadequacies_total = sum(s.excess_cost for s in inputs.superadequacies)
+        deficiencies_total = sum((d.cost_to_cure for d in inputs.functional_deficiencies), Decimal("0"))
+        superadequacies_total = sum((s.excess_cost for s in inputs.superadequacies), Decimal("0"))
         functional_obsolescence = deficiencies_total + superadequacies_total
         
         # Calculate External Obsolescence
