@@ -449,6 +449,59 @@ stranded-assets/
 
 **Note**: Uses SAMPLE/HARDCODED data for properties and comparables. Calculations are real.
 
+## Latest Update: Sustainability Frameworks Integration Module (Feb 16, 2026)
+
+### NEW Module: Sustainability Frameworks Integration ✅ COMPLETED
+
+**Implementation**:
+- Full-stack module for analyzing green certification value impact
+- Backend: FastAPI routes + Pydantic schemas + Calculation engines
+- Frontend: React with 4 tabs (Dashboard, GRESB, LEED, Value Impact)
+- Data sources: Academic research (Eichholtz, Fuerst & McAllister), Industry reports (JLL, CBRE, RICS)
+
+**Backend Components**:
+- `/app/backend/api/v1/routes/sustainability.py` - 15+ API endpoints
+- `/app/backend/services/sustainability_calculator.py` - GRESB, LEED, BREEAM, Value Impact calculators
+- `/app/backend/schemas/sustainability.py` - 50+ Pydantic models and enums
+
+**Frontend Components** (`/app/frontend/src/features/sustainability/`):
+- `pages/SustainabilityPage.jsx` - Main page with tabbed interface
+- `components/SustainabilityDashboard.jsx` - KPIs, certification charts, properties table
+- `components/GRESBCalculator.jsx` - Portfolio-level ESG assessment
+- `components/LEEDCalculator.jsx` - Property-level certification calculator
+- `components/ValueImpactCalculator.jsx` - Financial impact analysis
+
+**Certification Frameworks Supported**:
+- **GRESB**: 1-5 Star ratings, 5 component scores, benchmark comparison
+- **LEED**: Certified/Silver/Gold/Platinum, 9 category scores
+- **BREEAM**: Pass to Outstanding, 10 category scores
+- **Energy Star**: Score-based certification
+- **WELL**: Health-focused certification
+
+**API Endpoints**:
+- `GET /api/v1/sustainability/dashboard` - Portfolio sustainability KPIs
+- `GET /api/v1/sustainability/certifications` - List certified properties
+- `POST /api/v1/sustainability/gresb/assess` - GRESB assessment calculation
+- `POST /api/v1/sustainability/leed/assess` - LEED certification analysis
+- `POST /api/v1/sustainability/breeam/assess` - BREEAM assessment
+- `POST /api/v1/sustainability/value-impact` - Value/rent premium calculation
+- `POST /api/v1/sustainability/portfolio/analyze` - Portfolio sustainability analysis
+- `POST /api/v1/sustainability/compare` - Certification comparison tool
+- `GET /api/v1/sustainability/benchmarks` - Research benchmark data
+- `GET /api/v1/sustainability/enums` - Available enum values
+
+**Value Impact Analysis**:
+- Rent premiums: 2-20% based on certification type/level
+- Value premiums: 1.7x rent premiums (cap rate compression effect)
+- Operating cost savings: 3-12% depending on certification
+- Cap rate compression: 10-70 bps by certification level
+- Regional adjustments: Europe +10%, Asia Pacific -10%
+- Sector adjustments: Office baseline, Industrial -30%, Retail -15%
+
+**Testing**: 32/32 backend tests passed, all frontend UI verified (iteration_22)
+
+**Note**: Uses SAMPLE/HARDCODED data for certifications. Calculation engines are real based on academic research.
+
 ## Upcoming / Future Tasks
 1. **Sector Input Forms (P1)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
 2. **Export Features (P2)**: PDF/Excel export of calculation results and nature risk reports
