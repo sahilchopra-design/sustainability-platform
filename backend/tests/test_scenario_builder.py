@@ -12,7 +12,7 @@ BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 
 if not BASE_URL:
     # Fallback for direct execution
-    BASE_URL = "https://sector-input-forms.preview.emergentagent.com"
+    BASE_URL = "https://climate-asset-mapper.preview.emergentagent.com"
 
 
 class TestHealthCheck:

@@ -9,7 +9,7 @@ import requests
 import os
 
 # API URL from environment
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://sector-input-forms.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://climate-asset-mapper.preview.emergentagent.com').rstrip('/')
 
 
 class TestExpandedDataHubStats:
