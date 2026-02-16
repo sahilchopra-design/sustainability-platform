@@ -134,6 +134,24 @@ export function BREEAMCalculator() {
   
   const { mutate: calculateBREEAM, data: breeamResult, isPending: isBreeamLoading } = useBREEAMCalculator();
   const { mutate: calculateLEED, data: leedResult, isPending: isLeedLoading } = useLEEDCalculator();
+  const { mutate: exportAssessment, isPending: isExporting } = useExportAssessment();
+  
+  // Export handler
+  const handleExport = (format) => {
+    if (!breeamResult) return;
+    
+    exportAssessment({
+      data: {
+        ...breeamResult,
+        property_name: propertyName || 'BREEAM Assessment',
+        property_sector: propertySector,
+        region: region,
+        breeam_scheme: breeamScheme,
+      },
+      format,
+      assessmentType: 'breeam',
+    });
+  };
   
   // Calculate weighted score locally for preview
   const calculateWeightedScore = () => {
