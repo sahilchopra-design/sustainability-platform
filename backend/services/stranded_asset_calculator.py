@@ -429,22 +429,10 @@ class PowerPlantValuator:
         retirement_year = plant_data.get("original_retirement_year", 2050)
         technical_lifetime = plant_data.get("technical_lifetime_years", 40)
         
-        capacity_factor_baseline = Decimal(str(
-            plant_data.get("capacity_factor_baseline") or 
-            self.DEFAULT_CAPACITY_FACTORS.get(technology_type, Decimal("0.5"))
-        ))
-        
         co2_intensity = Decimal(str(
             plant_data.get("co2_intensity_tco2_mwh") or
             self.DEFAULT_CO2_INTENSITY.get(technology_type, Decimal("0.5"))
         ))
-        
-        fixed_om = Decimal(str(plant_data.get("fixed_om_cost_usd_kw_year", 25) or 25))
-        variable_om = Decimal(str(plant_data.get("variable_om_cost_usd_mwh", 3) or 3))
-        fuel_cost_mmbtu = Decimal(str(plant_data.get("fuel_cost_usd_mmbtu", 4) or 0))
-        heat_rate = Decimal(str(plant_data.get("heat_rate_btu_kwh", 7000) or 7000))
-        
-        has_ccs = plant_data.get("has_ccs", False)
         
         current_year = date.today().year
         remaining_life = self._calculate_remaining_life(
