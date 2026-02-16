@@ -79,6 +79,8 @@ app.include_router(nature_risk_router)
 app.include_router(stranded_assets_router)
 # Include Real Estate Valuation routes
 app.include_router(valuation_router)
+# Include Sustainability Frameworks routes
+app.include_router(sustainability_router)
 
 # CORS
 app.add_middleware(
