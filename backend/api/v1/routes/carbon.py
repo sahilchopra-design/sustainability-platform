@@ -23,7 +23,8 @@ from schemas.carbon import (
     CalculationRequest, CalculationResponse, ProjectCalculationResult,
     YearlyProjection, RiskBreakdown,
     ReportGenerateRequest, ReportResponse,
-    PortfolioDashboard, PortfolioDashboardSummary, RiskHeatMapItem
+    PortfolioDashboard, PortfolioDashboardSummary, RiskHeatMapItem,
+    SaveCalculationAsProjectRequest
 )
 from services.carbon_calculator import CarbonCalculationEngine
 from services.methodology_engine import (
