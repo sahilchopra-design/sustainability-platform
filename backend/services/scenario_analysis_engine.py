@@ -437,7 +437,7 @@ class ScenarioBuilderEngine:
         differentiators = []
         if len(comparison_rows) > 1:
             value_spread = max(r.value for r in comparison_rows) - min(r.value for r in comparison_rows)
-            differentiators.append(f"Value spread: ${float(value_spread/1e6):,.1f}M")
+            differentiators.append(f"Value spread: ${float(value_spread)/1e6:,.1f}M")
             
             cap_rates = [r.cap_rate for r in comparison_rows if r.cap_rate]
             if cap_rates:
