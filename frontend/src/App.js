@@ -212,6 +212,7 @@ function AppRouter() {
           <Route path="/carbon" element={<CarbonDashboard />} />
           <Route path="/nature-risk" element={<NatureRiskPage />} />
           <Route path="/stranded-assets" element={<StrandedAssetsPage />} />
+          <Route path="/valuation" element={<ValuationPage />} />
         </Routes>
       </main>
     </div>
