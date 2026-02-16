@@ -63,6 +63,20 @@ export function useBREEAMAssessment() {
   });
 }
 
+// Alias for BREEAMCalculator component
+export function useBREEAMCalculator() {
+  return useMutation({
+    mutationFn: (data) => api.calculateBREEAM(data).then((r) => r.data),
+  });
+}
+
+// Alias for LEED calculator in comparison
+export function useLEEDCalculator() {
+  return useMutation({
+    mutationFn: (data) => api.calculateLEED(data).then((r) => r.data),
+  });
+}
+
 export function useBREEAMWeights() {
   return useQuery({
     queryKey: ['sustainability', 'breeam', 'weights'],
