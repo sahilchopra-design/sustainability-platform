@@ -1,5 +1,63 @@
 """Pydantic v2 schemas for Portfolio Scenario Analysis API"""
 
+# Stranded Assets
+from .stranded_assets import (
+    # Enums
+    ReserveType,
+    ReserveCategory,
+    PlantTechnology,
+    InfrastructureType,
+    RiskCategory as StrandedRiskCategory,
+    OfftakeType,
+    RepurposingType,
+    AssetType as StrandedAssetType,
+    # Fossil Fuel Reserve
+    FossilFuelReserveCreate,
+    FossilFuelReserveUpdate,
+    FossilFuelReserveResponse,
+    FossilFuelReserveListResponse,
+    # Power Plant
+    PowerPlantCreate,
+    PowerPlantUpdate,
+    PowerPlantResponse,
+    PowerPlantListResponse,
+    # Infrastructure
+    InfrastructureAssetCreate,
+    InfrastructureAssetUpdate,
+    InfrastructureAssetResponse,
+    InfrastructureAssetListResponse,
+    # Calculations
+    ReserveImpairmentRequest,
+    ReserveImpairmentResult,
+    ReserveImpairmentResponse,
+    PowerPlantValuationRequest,
+    PowerPlantValuationResult,
+    PowerPlantValuationResponse,
+    InfrastructureValuationRequest,
+    InfrastructureValuationResult,
+    InfrastructureValuationResponse,
+    StrandedAssetCalculationCreate,
+    StrandedAssetCalculationResponse,
+    # Technology & Pathways
+    TechnologyDisruptionMetricCreate,
+    TechnologyDisruptionMetricResponse,
+    TechnologyDisruptionSummary,
+    EnergyTransitionPathwayCreate,
+    EnergyTransitionPathwayUpdate,
+    EnergyTransitionPathwayResponse,
+    EnergyTransitionPathwayListResponse,
+    # Alerts & Comparison
+    CriticalAssetAlert,
+    CriticalAssetAlertList,
+    ScenarioComparisonRequest as StrandedScenarioComparisonRequest,
+    ScenarioComparisonResult as StrandedScenarioComparisonResult,
+    ScenarioComparisonResponse as StrandedScenarioComparisonResponse,
+    # Dashboard
+    StrandedAssetDashboardKPIs,
+    PortfolioStrandingAnalysisRequest,
+    PortfolioStrandingAnalysisResponse,
+)
+
 # Common
 from .common import (
     Sector,
