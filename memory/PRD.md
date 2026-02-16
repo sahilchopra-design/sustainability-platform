@@ -562,6 +562,70 @@ stranded-assets/
 
 **Note**: Uses SAMPLE/HARDCODED property data (3 sample properties). Calculation engines are real.
 
+## Latest Update: Portfolio Aggregation and Reporting Module (Feb 16, 2026)
+
+### NEW Module: Portfolio Analytics Dashboard & Reporting ✅ COMPLETED
+
+**Implementation**:
+- Full-stack module consolidating property valuations into portfolio-level analytics
+- Backend: FastAPI routes + Pydantic schemas + Analytics engine with sample data
+- Frontend: React with 4 tabs (Dashboard, Holdings, Scenarios, Reports)
+
+**Backend Components**:
+- `/app/backend/api/v1/routes/portfolio_analytics.py` - 15+ API endpoints
+- `/app/backend/services/portfolio_analytics_engine.py` - Analytics, Dashboard, Report engines
+- `/app/backend/schemas/portfolio_analytics.py` - Comprehensive Pydantic models (50+ classes)
+
+**Frontend Components** (`/app/frontend/src/features/portfolio-analytics/`):
+- `pages/PortfolioAnalyticsPage.jsx` - Main page with 4-tab interface
+- `components/PortfolioDashboard.jsx` - KPI cards, charts (Sector, Geographic, Risk distribution)
+- `components/PortfolioSelector.jsx` - Portfolio dropdown with details panel
+- `components/HoldingsTable.jsx` - Property holdings table with search/sort
+- `components/ScenarioComparison.jsx` - Multi-scenario comparison with charts
+- `components/ReportGenerator.jsx` - Report type selection and generation
+
+**Features**:
+1. **Executive Dashboard**:
+   - 8 KPI cards (Total Value, Properties, Risk Score, VaR 95%, Stranded Assets, GRESB Score, Certified %, Yield)
+   - Sector Allocation pie chart
+   - Geographic Distribution bar chart
+   - Risk Distribution bar chart
+   - Alerts & Notifications panel
+
+2. **Holdings Table**:
+   - Property list with Type, Value, Income, Ownership, Gain/Loss
+   - Search by name, location, type
+   - Sortable columns (value, income, gain/loss)
+
+3. **Scenario Comparison**:
+   - Select multiple scenarios (Optimistic, Recession, Climate, Green Premium, Rising Rates)
+   - Best/Worst scenario identification
+   - Value spread analysis
+   - Comparison bar chart
+   - Key insights
+
+4. **Report Generator**:
+   - 6 report types: Valuation, Climate Risk, Sustainability, TCFD, Investor, Executive
+   - Configurable time horizon (1-30 years)
+   - Include charts and property details options
+   - Executive summary with key findings
+
+**API Endpoints**:
+- `GET /api/v1/portfolio-analytics/portfolios` - List portfolios with metrics
+- `GET /api/v1/portfolio-analytics/portfolios/{id}` - Portfolio details
+- `POST /api/v1/portfolio-analytics/portfolios` - Create portfolio
+- `PATCH /api/v1/portfolio-analytics/portfolios/{id}` - Update portfolio
+- `GET /api/v1/portfolio-analytics/portfolios/{id}/holdings` - List holdings
+- `GET /api/v1/portfolio-analytics/portfolios/{id}/analytics` - Full analytics
+- `GET /api/v1/portfolio-analytics/portfolios/{id}/dashboard` - Dashboard data
+- `POST /api/v1/portfolio-analytics/portfolios/{id}/scenarios/compare` - Compare scenarios
+- `POST /api/v1/portfolio-analytics/portfolios/{id}/reports/generate` - Generate report
+- `GET /api/v1/portfolio-analytics/enums` - Available enum values
+
+**Testing**: 36/36 backend tests passed, all 4 frontend tabs verified (iteration_24)
+
+**Note**: Uses IN-MEMORY SAMPLE data (3 portfolios with holdings). Data not persisted to PostgreSQL - this is by design for demonstration.
+
 ## Upcoming / Future Tasks
 1. **Refactor Mocked Backend Services (P1)**: Replace placeholder data in stranded_asset_calculator.py and real_estate_valuation_engine.py with real DB queries
 2. **Sector Input Forms (P2)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
