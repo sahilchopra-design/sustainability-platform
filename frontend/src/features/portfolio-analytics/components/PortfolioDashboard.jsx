@@ -2,7 +2,7 @@
  * Portfolio Analytics Dashboard Component
  * Displays KPI cards, charts, and alerts for a selected portfolio
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Badge } from '../../../components/ui/badge';
 import { Skeleton } from '../../../components/ui/skeleton';
@@ -14,6 +14,8 @@ import {
   DollarSign, Building2, AlertTriangle, TrendingDown, AlertCircle,
   Leaf, Award, Percent, ArrowUp, ArrowDown
 } from 'lucide-react';
+import { ExportButton } from '../../../components/shared/ExportButton';
+import { exportPortfolioAnalytics } from '../../../lib/exportUtils';
 
 const COLORS = ['#0ea5e9', '#8b5cf6', '#22c55e', '#f59e0b', '#ef4444', '#06b6d4'];
 
