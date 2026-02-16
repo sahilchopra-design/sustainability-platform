@@ -135,8 +135,8 @@ def save_scenario(scenario_id: str, scenario_data: Dict) -> None:
             }
             
             conn.execute(text("""
-                INSERT INTO scenarios (id, name, description, source, parameters, created_at, updated_at)
-                VALUES (:id, :name, :description, 'CUSTOM', :parameters, :created_at, :updated_at)
+                INSERT INTO scenarios (id, name, description, source, approval_status, current_version, is_published, parameters, created_at, updated_at)
+                VALUES (:id, :name, :description, 'CUSTOM', 'draft', 1, false, :parameters, :created_at, :updated_at)
                 ON CONFLICT (id) DO UPDATE SET
                     name = EXCLUDED.name,
                     description = EXCLUDED.description,
