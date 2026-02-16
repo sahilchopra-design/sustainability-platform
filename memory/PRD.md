@@ -139,10 +139,70 @@
 - 450+ tests passed
 - 100% pass rate
 
+## Latest Update: Stranded Asset Module - Database Migration (Dec 2025)
+
+### NEW Feature: Stranded Asset Module Database Schema
+
+**Migration File**: `backend/alembic/versions/002_add_stranded_asset_tables.py`
+
+**6 New Tables Created**:
+
+1. **fossil_fuel_reserve** - Oil, gas, coal reserves
+   - Tracks proven/probable/possible reserves (1P/2P/3P categories)
+   - Breakeven prices, lifting costs, remaining CapEx
+   - Carbon intensity, methane leakage rate
+   - Production timeline (start, depletion, license expiry)
+   - Geolocation (lat/long)
+
+2. **power_plant** - Generation assets
+   - Technology types: coal, gas_ccgt, gas_ocgt, nuclear, wind, solar
+   - Capacity (MW), efficiency, heat rate
+   - Emissions: CO2, NOx, SO2 intensity
+   - CCS capability and capacity
+   - Operating costs (fixed O&M, variable O&M, fuel)
+   - Offtake: merchant, PPA, regulated
+   - Repurposing options: CCS, hydrogen, storage, retirement
+
+3. **infrastructure_asset** - Pipelines, LNG terminals, refineries
+   - Asset types: pipeline_oil, pipeline_gas, lng_terminal, refinery
+   - Capacity utilization, book value, replacement cost
+   - Contract maturity profile (JSONB), take-or-pay exposure
+   - Future-ready flags: hydrogen, ammonia, CCS compatible
+   - Environmental permits (JSONB)
+
+4. **stranded_asset_calculation** - Calculation results
+   - Links to scenarios for scenario-based analysis
+   - Stranding metrics: volume %, value USD, NPV impact
+   - Risk scoring: stranding_risk_score (0-1), risk_category
+   - Optimal retirement analysis
+   - Key assumptions & sensitivity analysis (JSONB)
+
+5. **technology_disruption_metric** - TimescaleDB time-series
+   - Metric types: EV sales/stock share, heat pump adoption, green hydrogen
+   - Regional breakdown, scenario alignment (IEA_NZE, STEPS, NGFS)
+   - Data source tracking (IEA, BloombergNEF, IRENA)
+   - Projection vs actual data distinction
+
+6. **energy_transition_pathway** - Sector trajectories
+   - Sectors: oil, gas, coal, power
+   - Demand/price/capacity trajectories (JSONB)
+   - Peak demand year, net zero year
+   - Carbon price trajectories
+   - Policy and technology assumptions
+
+**Indexes**: Optimized for counterparty lookups, asset type filtering, geospatial queries, risk scoring, and time-series analysis.
+
+**Note**: After migration, manually run for TimescaleDB:
+```sql
+SELECT create_hypertable('technology_disruption_metric', 'time', chunk_time_interval => INTERVAL '1 year');
+```
+
 ## Upcoming / Future Tasks
-1. **Sector Input Forms (P1)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
-2. **Export Features (P2)**: PDF/Excel export of calculation results and nature risk reports
-3. **LEAP Assessment Wizard (P2)**: Multi-step wizard for comprehensive LEAP assessments
-4. **Biodiversity Overlap Calculator (P2)**: Spatial analysis with asset coordinates
-5. **Water Risk Map (P2)**: Mapbox integration for water risk visualization
-6. **Comparison Tool (P3)**: Compare multiple methodologies for the same project scenario
+1. **Stranded Asset Module Backend (P0)**: Create Pydantic models, services, and API routes for the Stranded Asset Module
+2. **Stranded Asset Module Frontend (P1)**: Build dashboard, asset management, and calculation UI
+3. **Sector Input Forms (P2)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
+4. **Export Features (P2)**: PDF/Excel export of calculation results and nature risk reports
+5. **LEAP Assessment Wizard (P2)**: Multi-step wizard for comprehensive LEAP assessments
+6. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
+7. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
+8. **Comparison Tool (P3)**: Compare multiple methodologies for the same project scenario
