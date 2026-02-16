@@ -470,13 +470,27 @@ export default function MethodologyCalculator() {
       {result && (
         <Card className="bg-white border-slate-200" data-testid="calculation-result">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-emerald-700">
-              <Leaf className="w-5 h-5" />
-              Calculation Results
-            </CardTitle>
-            <CardDescription>
-              {result.methodology} v{result.version} - {result.sector || selectedSector}
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2 text-emerald-700">
+                  <Leaf className="w-5 h-5" />
+                  Calculation Results
+                </CardTitle>
+                <CardDescription>
+                  {result.methodology} v{result.version} - {result.sector || selectedSector}
+                </CardDescription>
+              </div>
+              {!result.error && (
+                <Button
+                  onClick={openSaveDialog}
+                  className="bg-blue-600 hover:bg-blue-700"
+                  data-testid="save-as-project-btn"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  Save as Project
+                </Button>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             {result.error ? (
@@ -581,6 +595,146 @@ export default function MethodologyCalculator() {
           </CardContent>
         </Card>
       )}
+
+      {/* Save as Project Dialog */}
+      <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Save Calculation as Project</DialogTitle>
+            <DialogDescription>
+              Add this calculation result to your carbon credits portfolio as a new project.
+            </DialogDescription>
+          </DialogHeader>
+          
+          {saveSuccess ? (
+            <div className="py-8 text-center">
+              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check className="w-8 h-8 text-emerald-600" />
+              </div>
+              <p className="text-lg font-semibold text-slate-900">Project Saved!</p>
+              <p className="text-sm text-slate-500 mt-1">
+                Your calculation has been added to the portfolio.
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="space-y-4 py-4">
+                {/* Portfolio Selection */}
+                <div className="space-y-2">
+                  <Label htmlFor="portfolio">Portfolio *</Label>
+                  {loadingPortfolios ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : portfolios.length === 0 ? (
+                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                      <p className="text-sm text-amber-700">
+                        No portfolios found. Please create a portfolio first.
+                      </p>
+                    </div>
+                  ) : (
+                    <Select
+                      value={saveFormData.portfolio_id}
+                      onValueChange={(v) => setSaveFormData(prev => ({ ...prev, portfolio_id: v }))}
+                    >
+                      <SelectTrigger data-testid="save-portfolio-select">
+                        <SelectValue placeholder="Select portfolio" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {portfolios.map((p) => (
+                          <SelectItem key={p.id} value={p.id}>
+                            {p.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </div>
+
+                {/* Project Name */}
+                <div className="space-y-2">
+                  <Label htmlFor="project-name">Project Name *</Label>
+                  <Input
+                    id="project-name"
+                    value={saveFormData.project_name}
+                    onChange={(e) => setSaveFormData(prev => ({ ...prev, project_name: e.target.value }))}
+                    placeholder="e.g., Solar Farm Brazil"
+                    data-testid="save-project-name-input"
+                  />
+                </div>
+
+                {/* Country */}
+                <div className="space-y-2">
+                  <Label htmlFor="country">Country</Label>
+                  <Select
+                    value={saveFormData.country_code}
+                    onValueChange={(v) => setSaveFormData(prev => ({ ...prev, country_code: v }))}
+                  >
+                    <SelectTrigger data-testid="save-country-select">
+                      <SelectValue placeholder="Select country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="US">United States</SelectItem>
+                      <SelectItem value="BR">Brazil</SelectItem>
+                      <SelectItem value="IN">India</SelectItem>
+                      <SelectItem value="CN">China</SelectItem>
+                      <SelectItem value="ID">Indonesia</SelectItem>
+                      <SelectItem value="KE">Kenya</SelectItem>
+                      <SelectItem value="DE">Germany</SelectItem>
+                      <SelectItem value="AU">Australia</SelectItem>
+                      <SelectItem value="GB">United Kingdom</SelectItem>
+                      <SelectItem value="FR">France</SelectItem>
+                      <SelectItem value="JP">Japan</SelectItem>
+                      <SelectItem value="MX">Mexico</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Calculation Summary */}
+                <div className="p-3 bg-slate-50 rounded-lg">
+                  <p className="text-xs text-slate-500 mb-1">Calculation Summary</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-slate-700">{selectedMethodology}</span>
+                    <span className="text-sm font-bold text-emerald-600">
+                      {formatNumber(result?.emission_reductions)} tCO2e/year
+                    </span>
+                  </div>
+                </div>
+
+                {/* Error Message */}
+                {saveError && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
+                    <X className="w-4 h-4 text-red-500" />
+                    <p className="text-sm text-red-700">{saveError}</p>
+                  </div>
+                )}
+              </div>
+
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowSaveDialog(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSaveAsProject}
+                  disabled={saving || !saveFormData.portfolio_id || !saveFormData.project_name.trim()}
+                  className="bg-emerald-600 hover:bg-emerald-700"
+                  data-testid="save-project-submit-btn"
+                >
+                  {saving ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Project
+                    </>
+                  )}
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
