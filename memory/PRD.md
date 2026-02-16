@@ -733,16 +733,48 @@ stranded-assets/
 **Testing**: 26/26 backend tests passed, all export buttons verified in 5 dashboards (iteration_26)
 
 ## Upcoming / Future Tasks
-1. **Refactor Mocked Backend Services (P2)**: Replace placeholder data in stranded_asset_calculator.py and real_estate_valuation_engine.py with PostgreSQL queries - Currently using sensible defaults which work for demo purposes
-2. **Database Persistence for Scenarios (P2)**: Store scenarios in PostgreSQL instead of in-memory
-3. **LEAP Assessment Wizard (P3)**: Multi-step wizard for comprehensive LEAP assessments
-4. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
-5. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
-6. **Scheduled Report Export (P3)**: Automatic weekly/monthly PDF exports to email
+1. **Water Risk Map (P3)**: Mapbox integration for water risk visualization with interactive markers
+2. **Scheduled Report Export (P3)**: Automatic weekly/monthly PDF exports to email
+3. **Enhanced LEAP Visualization**: Charts and graphs for LEAP assessment results
+4. **Full end-to-end regression testing**
 
 ## Mocked Services (Demo Data)
 - `stranded_asset_calculator.py` - Uses sample asset data for reserves, power plants, infrastructure
 - `real_estate_valuation_engine.py` - Uses reference data for construction costs and cap rates (this is appropriate for static reference data)
+- LEAP calculation - Falls back to demo scores if API fails
+
+## Latest Update: Scenario Persistence & LEAP Wizard (Feb 16, 2026)
+
+### COMPLETED: Scenario Persistence to PostgreSQL (P2)
+
+**Backend Implementation** (`/app/backend/services/scenario_analysis_engine.py`):
+1. **Database Functions Added**:
+   - `save_scenario()` - Saves scenarios to PostgreSQL with source='CUSTOM', approval_status='DRAFT'
+   - `get_scenario()` - Retrieves scenario by ID with full parameters
+   - `list_scenarios()` - Lists all custom scenarios ordered by updated_at
+   - `delete_scenario()` - Removes scenario from database
+
+2. **API Endpoints Working**:
+   - `POST /api/v1/scenarios/build` - Creates scenario and persists to DB
+   - `GET /api/v1/scenarios/list` - Lists all custom scenarios
+   - `GET /api/v1/scenarios/{id}` - Retrieves specific scenario
+
+### COMPLETED: LEAP Assessment Wizard (P3)
+
+**Frontend Implementation** (`/app/frontend/src/features/nature-risk/components/leap/LEAPAssessmentWizard.jsx`):
+1. **4-Step Wizard**:
+   - **Locate**: Entity name, sector, site information, coordinates
+   - **Evaluate**: Ecosystem service dependencies, ENCORE dependencies
+   - **Assess**: Climate/Nature scenario selection, risk exposure sliders
+   - **Prepare**: Mitigation strategies, notes, TNFD disclosure readiness
+
+2. **Features**:
+   - Progress indicator and step navigation
+   - Form validation across steps
+   - Integration with LEAP calculation API
+   - Fallback to demo results if API fails
+
+**Testing**: 30/30 backend tests passed, LEAP wizard UI verified (iteration_27)
 
 ## Implemented Carbon Sector Calculator Forms
 All sector input forms are implemented in `/app/frontend/src/features/carbon/components/calculator/MethodologyCalculator.jsx`:
