@@ -516,16 +516,34 @@ export default function MethodologyCalculator() {
                           <span className="text-slate-400 text-xs">({config.unit})</span>
                         )}
                       </Label>
-                      <Input
-                        type={config.type}
-                        step={config.step}
-                        min={config.min}
-                        max={config.max}
-                        value={inputs[config.key] ?? ''}
-                        onChange={(e) => handleInputChange(config.key, e.target.value)}
-                        className="text-sm"
-                        data-testid={`input-${config.key}`}
-                      />
+                      {config.type === 'select' ? (
+                        <Select 
+                          value={inputs[config.key] || ''} 
+                          onValueChange={(value) => handleInputChange(config.key, value)}
+                        >
+                          <SelectTrigger className="text-sm" data-testid={`input-${config.key}`}>
+                            <SelectValue placeholder={`Select ${config.label}`} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {config.options?.map((option) => (
+                              <SelectItem key={option} value={option}>
+                                {option.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <Input
+                          type={config.type}
+                          step={config.step}
+                          min={config.min}
+                          max={config.max}
+                          value={inputs[config.key] ?? ''}
+                          onChange={(e) => handleInputChange(config.key, e.target.value)}
+                          className="text-sm"
+                          data-testid={`input-${config.key}`}
+                        />
+                      )}
                     </div>
                   ))}
                 </div>
