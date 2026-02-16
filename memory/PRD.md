@@ -503,10 +503,12 @@ stranded-assets/
 **Note**: Uses SAMPLE/HARDCODED data for certifications. Calculation engines are real based on academic research.
 
 ## Upcoming / Future Tasks
-1. **Sector Input Forms (P1)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
-2. **Export Features (P2)**: PDF/Excel export of calculation results and nature risk reports
-3. **LEAP Assessment Wizard (P2)**: Multi-step wizard for comprehensive LEAP assessments
-4. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
-5. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
-6. **Comparison Tool (P3)**: Compare multiple methodologies for the same project scenario
+1. **Refactor Mocked Backend Services (P1)**: Replace placeholder data in stranded_asset_calculator.py and real_estate_valuation_engine.py with real DB queries
+2. **Sector Input Forms (P1)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
+3. **Export Features (P2)**: PDF/Excel export of calculation results and nature risk reports
+4. **BREEAM Calculator Frontend (P2)**: Add BREEAM tab to Sustainability module
+5. **LEAP Assessment Wizard (P2)**: Multi-step wizard for comprehensive LEAP assessments
+6. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
+7. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
+8. **Comparison Tool (P3)**: Compare multiple methodologies for the same project scenario
 
