@@ -502,13 +502,73 @@ stranded-assets/
 
 **Note**: Uses SAMPLE/HARDCODED data for certifications. Calculation engines are real based on academic research.
 
+## Latest Update: Scenario Analysis Module (Feb 16, 2026)
+
+### NEW Module: Interactive Scenario Builder & Sensitivity Analysis ✅ COMPLETED
+
+**Implementation**:
+- Full-stack module for real-time what-if analysis, scenario comparison, and sensitivity testing
+- Backend: FastAPI routes + Pydantic schemas + Calculation engines
+- Frontend: React with 5 tabs (Dashboard, Builder, Sensitivity, What-If, Compare)
+
+**Backend Components**:
+- `/app/backend/api/v1/routes/scenario_analysis.py` - 15+ API endpoints
+- `/app/backend/services/scenario_analysis_engine.py` - Scenario, Sensitivity, What-If engines
+- `/app/backend/schemas/scenario_analysis.py` - Comprehensive Pydantic models
+
+**Frontend Components** (`/app/frontend/src/features/scenarios/`):
+- `pages/ScenarioAnalysisPage.jsx` - Main page with 5-tab interface
+- `components/ScenarioBuilder.jsx` - Custom scenario creation with modifications
+- `components/SensitivityAnalysis.jsx` - Tornado & Spider chart visualizations
+- `components/WhatIfAnalysis.jsx` - Real-time parameter changes with cascading effects
+- `components/ScenarioComparison.jsx` - Multi-scenario comparison with charts
+
+**Features**:
+1. **Scenario Builder**:
+   - Select base property and add multiple modifications
+   - Modification types: rent_growth, vacancy, expenses, cap_rate, exit_cap_rate, discount_rate, certification, retrofit, climate
+   - Quick templates: Optimistic Growth, Recession Stress Test, Green Building Upgrade, Rising Interest Rates
+   - Returns: base_value, adjusted_value, value_change_pct, component_impacts
+
+2. **Sensitivity Analysis**:
+   - Configurable variable ranges (cap_rate, rent_growth, vacancy, expense_ratio, etc.)
+   - Tornado Chart (sorted by impact swing)
+   - Spider/Radar Chart (Base vs Optimistic vs Pessimistic)
+   - Presets: Standard Analysis, DCF Focus, Operating Performance
+
+3. **What-If Analysis**:
+   - Real-time parameter changes (absolute or percentage)
+   - Cascading effects (e.g., higher vacancy → increased collection loss)
+   - Detailed change breakdown with direct and cascading impacts
+
+4. **Scenario Comparison**:
+   - Compare multiple scenarios side-by-side
+   - Value comparison bar chart
+   - Best/worst scenario identification
+   - Key differentiators
+
+**API Endpoints**:
+- `GET /api/v1/scenarios/dashboard` - Analysis KPIs and recent scenarios
+- `POST /api/v1/scenarios/build` - Build custom scenario with modifications
+- `GET /api/v1/scenarios/list` - List saved scenarios
+- `POST /api/v1/scenarios/compare` - Compare multiple scenarios
+- `GET /api/v1/scenarios/templates/list` - Get predefined templates
+- `POST /api/v1/sensitivity/analyze` - Run sensitivity analysis
+- `POST /api/v1/sensitivity/tornado` - Generate tornado chart data
+- `POST /api/v1/sensitivity/spider` - Generate spider chart data
+- `POST /api/v1/what-if/analyze` - What-if analysis with cascading effects
+
+**Testing**: 30/30 backend tests passed, all 5 frontend tabs verified (iteration_23)
+
+**Note**: Uses SAMPLE/HARDCODED property data (3 sample properties). Calculation engines are real.
+
 ## Upcoming / Future Tasks
 1. **Refactor Mocked Backend Services (P1)**: Replace placeholder data in stranded_asset_calculator.py and real_estate_valuation_engine.py with real DB queries
-2. **Sector Input Forms (P1)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
+2. **Sector Input Forms (P2)**: Create detailed input forms for remaining Carbon sectors (Transport, Buildings, Mining)
 3. **Export Features (P2)**: PDF/Excel export of calculation results and nature risk reports
 4. **BREEAM Calculator Frontend (P2)**: Add BREEAM tab to Sustainability module
-5. **LEAP Assessment Wizard (P2)**: Multi-step wizard for comprehensive LEAP assessments
-6. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
-7. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
-8. **Comparison Tool (P3)**: Compare multiple methodologies for the same project scenario
+5. **Database Persistence for Scenarios (P2)**: Store scenarios in PostgreSQL instead of in-memory
+6. **LEAP Assessment Wizard (P3)**: Multi-step wizard for comprehensive LEAP assessments
+7. **Biodiversity Overlap Calculator (P3)**: Spatial analysis with asset coordinates
+8. **Water Risk Map (P3)**: Mapbox integration for water risk visualization
 
