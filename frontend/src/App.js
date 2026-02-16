@@ -28,6 +28,7 @@ import NatureRiskPage from './features/nature-risk/pages/NatureRiskPage';
 import StrandedAssetsPage from './features/stranded-assets/pages/StrandedAssetsPage';
 import ValuationPage from './features/valuation/pages/ValuationPage';
 import SustainabilityPage from './features/sustainability/pages/SustainabilityPage';
+import ScenarioAnalysisPage from './features/scenarios/pages/ScenarioAnalysisPage';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
