@@ -140,6 +140,7 @@ function AppRouter() {
             <SideLink to="/cbam" icon="globe" label="CBAM" />
             <SideLink to="/carbon" icon="leaf" label="Carbon Credits" />
             <SideLink to="/nature-risk" icon="tree" label="Nature Risk" />
+            <SideLink to="/stranded-assets" icon="trending-down" label="Stranded Assets" />
           </NavGroup>
           {/* Scenarios */}
           <NavGroup label="Scenarios">
