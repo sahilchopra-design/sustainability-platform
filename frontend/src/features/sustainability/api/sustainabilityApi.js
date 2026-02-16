@@ -44,6 +44,31 @@ export const compareCertifications = (data) => api.post('/compare', data);
 // Enums
 export const getEnums = () => api.get('/enums');
 
+// Export API (uses different base URL)
+const exportApi = axios.create({
+  baseURL: `${API_URL}/api/v1/exports`,
+  headers: { 'Content-Type': 'application/json' },
+  responseType: 'blob',
+});
+
+export const exportSustainabilityAssessment = (data, format = 'pdf', assessmentType = 'breeam') => 
+  exportApi.post(`/sustainability/assessment?format=${format}&assessment_type=${assessmentType}`, data);
+
+export const exportCertifications = (format = 'excel') => 
+  exportApi.get(`/sustainability/certifications?format=${format}`);
+
+// Helper function to trigger download
+export const downloadFile = (blob, filename) => {
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  link.parentNode.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};
+
 export default {
   getDashboard,
   getCertifications,
@@ -60,4 +85,7 @@ export default {
   analyzePortfolio,
   compareCertifications,
   getEnums,
+  exportSustainabilityAssessment,
+  exportCertifications,
+  downloadFile,
 };
