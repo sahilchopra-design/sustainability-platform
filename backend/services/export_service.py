@@ -463,8 +463,6 @@ class ExportService:
         label_format = workbook.add_format({
             'bold': True, 'bg_color': '#f8fafc', 'border': 1
         })
-        value_format = workbook.add_format({'border': 1, 'num_format': '#,##0'})
-        percent_format = workbook.add_format({'border': 1, 'num_format': '0.0%'})
         currency_format = workbook.add_format({'border': 1, 'num_format': '$#,##0'})
         title_format = workbook.add_format({
             'bold': True, 'font_size': 16, 'font_color': '#1e3a5f'
