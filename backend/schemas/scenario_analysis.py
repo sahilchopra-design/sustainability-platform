@@ -32,7 +32,7 @@ class ChangeType(str, Enum):
     PERCENTAGE = "percentage"
 
 
-class SensitivityVariable(str, Enum):
+class SensitivityVariableEnum(str, Enum):
     CAP_RATE = "cap_rate"
     RENT_GROWTH = "rent_growth"
     VACANCY_RATE = "vacancy_rate"
