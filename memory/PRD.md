@@ -1,6 +1,47 @@
 # A2 Intelligence by AA Impact Inc.
 
-## Latest Update: User Documentation (Feb 17, 2026)
+## Latest Update: Full Database Refactor (Feb 17, 2026)
+
+### COMPLETED: P2 - Refactored Mocked Backend Services
+
+Both previously mocked backend services now use PostgreSQL database instead of hardcoded data:
+
+**1. Stranded Assets Module** (`stranded_asset_db_service.py`):
+- Created `fossil_fuel_reserve` table - stores 3 reserves (North Sea Oil, Permian Gas, Queensland Coal)
+- Created `power_plant` table - stores 3 plants (Drax Coal, Pembroke CCGT, Ratcliffe-on-Soar)
+- Created `infrastructure_asset` table - stores 3 assets (Trans-Alaska Pipeline, Nord Stream 1, Sabine Pass LNG)
+- Created `energy_transition_pathway` table - stores IEA NZE, APS, STEPS scenarios
+- Updated all routes to use database service
+
+**2. Real Estate Valuation Module** (`real_estate_db_service.py`):
+- Created `properties` table - stores 4 properties ($830M portfolio)
+- Created `comparable_sales` table - stores 5 comparable sale records
+- Created `valuations` table - for storing valuation results
+- Updated all routes to use database service
+
+**Database Tables Created**:
+| Table | Records | Description |
+|-------|---------|-------------|
+| fossil_fuel_reserve | 3 | Oil, Gas, Coal reserves |
+| power_plant | 3 | Coal, CCGT, OCGT plants |
+| infrastructure_asset | 3 | Pipelines, Terminals |
+| energy_transition_pathway | 3 | IEA scenarios |
+| properties | 4 | Office, Retail, Industrial, Multifamily |
+| comparable_sales | 5 | Recent market transactions |
+
+**API Endpoints Verified**:
+- `/api/v1/stranded-assets/dashboard` - Returns 9 assets from DB
+- `/api/v1/stranded-assets/reserves` - Returns 3 reserves from DB  
+- `/api/v1/stranded-assets/power-plants` - Returns 3 plants from DB
+- `/api/v1/stranded-assets/infrastructure` - Returns 3 assets from DB
+- `/api/v1/stranded-assets/map-data` - Returns geo data from DB
+- `/api/v1/valuation/dashboard` - Returns $830M portfolio from DB
+- `/api/v1/valuation/properties` - Returns 4 properties from DB
+- `/api/v1/valuation/comparables` - Returns 5 comparables from DB
+
+---
+
+## Previous Update: User Documentation (Feb 17, 2026)
 
 ### COMPLETED: Comprehensive User Documentation
 
