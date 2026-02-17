@@ -96,6 +96,8 @@ app.include_router(sustainability_router)
 app.include_router(portfolio_analytics_router)
 # Include Universal Export routes
 app.include_router(exports_router)
+# Include Scheduled Reports routes
+app.include_router(scheduled_reports_router)
 
 # CORS
 app.add_middleware(
