@@ -1151,54 +1151,54 @@ async def get_assets_map_data(
     asset_type: Optional[str] = Query(None, description="Filter by type: reserve, power_plant, infrastructure")
 ):
     """
-    Get geographic data for mapping stranded assets.
+    Get geographic data for mapping stranded assets from database.
     
     Returns asset locations with risk scores for visualization on interactive map.
     """
     assets = []
     
-    # Get reserves
+    # Get reserves from database
     if asset_type is None or asset_type == "reserve":
-        for r in get_sample_reserves():
+        for r in get_reserves_from_db():
             assets.append({
                 "id": r["id"],
                 "name": r["asset_name"],
                 "type": "reserve",
                 "sub_type": r["reserve_type"],
-                "latitude": float(r.get("latitude", 0)),
-                "longitude": float(r.get("longitude", 0)),
+                "latitude": float(r.get("latitude") or 0),
+                "longitude": float(r.get("longitude") or 0),
                 "location": r.get("asset_location"),
                 "counterparty": r.get("counterparty_name"),
                 "capacity": f"{r.get('proven_reserves_mmBOE', 0)} mmBOE",
                 "risk_score": 0.65  # Calculated
             })
     
-    # Get power plants
+    # Get power plants from database
     if asset_type is None or asset_type == "power_plant":
-        for p in get_sample_power_plants():
+        for p in get_plants_from_db():
             assets.append({
                 "id": p["id"],
                 "name": p["plant_name"],
                 "type": "power_plant",
                 "sub_type": p["technology_type"],
-                "latitude": float(p.get("latitude", 0)),
-                "longitude": float(p.get("longitude", 0)),
+                "latitude": float(p.get("latitude") or 0),
+                "longitude": float(p.get("longitude") or 0),
                 "location": p.get("plant_location"),
                 "counterparty": p.get("counterparty_name"),
                 "capacity": f"{p.get('capacity_mw', 0)} MW",
                 "risk_score": 0.72  # Calculated
             })
     
-    # Get infrastructure
+    # Get infrastructure from database
     if asset_type is None or asset_type == "infrastructure":
-        for i in get_sample_infrastructure():
+        for i in get_infrastructure_from_db():
             assets.append({
                 "id": i["id"],
                 "name": i["asset_name"],
                 "type": "infrastructure",
                 "sub_type": i["asset_type"],
-                "latitude": float(i.get("latitude", 0)),
-                "longitude": float(i.get("longitude", 0)),
+                "latitude": float(i.get("latitude") or 0),
+                "longitude": float(i.get("longitude") or 0),
                 "location": i.get("asset_location"),
                 "counterparty": i.get("counterparty_name"),
                 "capacity": f"{i.get('design_capacity', 0)} {i.get('design_capacity_unit', '')}",
