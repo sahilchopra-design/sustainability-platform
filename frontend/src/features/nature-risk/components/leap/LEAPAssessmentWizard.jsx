@@ -574,27 +574,11 @@ function PrepareStep({ formData, updateForm, toggleArrayItem, result, isCalculat
       {/* Results Display */}
       {result && (
         <div className="border-t pt-4 mt-4">
-          <h4 className="font-medium mb-4 text-emerald-700">Assessment Results</h4>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="bg-slate-50 p-4 rounded">
-              <p className="text-sm text-slate-500">Overall Risk Score</p>
-              <p className="text-2xl font-bold text-slate-800">
-                {result.overall_risk_score?.toFixed(1) || 'N/A'}
-              </p>
-            </div>
-            <div className="bg-slate-50 p-4 rounded">
-              <p className="text-sm text-slate-500">Dependency Score</p>
-              <p className="text-2xl font-bold text-blue-600">
-                {result.dependency_score?.toFixed(1) || 'N/A'}
-              </p>
-            </div>
-            <div className="bg-slate-50 p-4 rounded">
-              <p className="text-sm text-slate-500">Impact Score</p>
-              <p className="text-2xl font-bold text-amber-600">
-                {result.impact_score?.toFixed(1) || 'N/A'}
-              </p>
-            </div>
-          </div>
+          <h4 className="font-medium mb-4 text-emerald-700 flex items-center gap-2">
+            <CheckCircle className="h-5 w-5" />
+            Assessment Results
+          </h4>
+          <LEAPResultsVisualization result={result} />
         </div>
       )}
     </div>
