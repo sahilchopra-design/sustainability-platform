@@ -558,13 +558,17 @@ async def list_comparable_sales(
     min_price: Optional[float] = Query(None),
     max_price: Optional[float] = Query(None),
 ):
-    """List comparable sales with optional filtering."""
-    comparables = get_sample_comparables()
+    """List comparable sales from PostgreSQL database with optional filtering."""
+    result = db_service.get_all_comparables(
+        property_type=property_type,
+        city=city,
+        page=1,
+        page_size=100
+    )
     
-    if property_type:
-        comparables = [c for c in comparables if c.get("property_type") == property_type]
-    if city:
-        comparables = [c for c in comparables if c.get("city", "").lower() == city.lower()]
+    comparables = result["items"]
+    
+    # Apply price filters (not in DB query)
     if min_price:
         comparables = [c for c in comparables if float(c.get("sale_price", 0)) >= min_price]
     if max_price:
@@ -578,9 +582,11 @@ async def list_comparable_sales(
 
 @router.get("/comparables/{comparable_id}", response_model=ComparableSaleResponse)
 async def get_comparable_sale(comparable_id: str):
-    """Get a specific comparable sale by ID."""
-    comparables = get_sample_comparables()
-    comp = next((c for c in comparables if c.get("id") == comparable_id), None)
+    """Get a specific comparable sale by ID from database."""
+    try:
+        comp = db_service.get_comparable_by_id(UUID(comparable_id))
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid comparable ID format")
     
     if not comp:
         raise HTTPException(status_code=404, detail="Comparable sale not found")
@@ -590,18 +596,11 @@ async def get_comparable_sale(comparable_id: str):
 
 @router.post("/comparables", response_model=ComparableSaleResponse, status_code=201)
 async def create_comparable_sale(comparable: ComparableSaleCreate):
-    """Create a new comparable sale record."""
-    comp_id = str(uuid4())
-    now = datetime.now(timezone.utc)
-    
-    price_per_sf = comparable.sale_price / comparable.size_sf
-    
-    return ComparableSaleResponse(
-        id=UUID(comp_id),
-        **comparable.model_dump(),
-        price_per_sf=price_per_sf.quantize(Decimal("0.01")),
-        created_at=now,
-    )
+    """Create a new comparable sale record in database."""
+    data = comparable.model_dump()
+    data["price_per_sf"] = comparable.sale_price / comparable.size_sf
+    result = db_service.create_comparable(data)
+    return ComparableSaleResponse(**result)
 
 
 # ============ Comprehensive Valuation ============
