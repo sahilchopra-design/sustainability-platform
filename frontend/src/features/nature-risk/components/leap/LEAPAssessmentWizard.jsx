@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { natureRiskApi } from '../../api/natureRiskApi';
+import { LEAPResultsVisualization } from './LEAPResultsVisualization';
 
 const STEPS = [
   { id: 'locate', name: 'Locate', icon: MapPin, description: 'Identify interface with nature' },
