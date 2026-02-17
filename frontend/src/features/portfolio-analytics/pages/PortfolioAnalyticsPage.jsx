@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
 import { Badge } from '../../../components/ui/badge';
 import {
-  LayoutDashboard, Building2, FileText, GitCompare, PieChart, Briefcase
+  LayoutDashboard, Building2, FileText, GitCompare, PieChart, Briefcase, Calendar
 } from 'lucide-react';
 
 import { PortfolioSelector } from '../components/PortfolioSelector';
@@ -14,6 +14,7 @@ import { PortfolioDashboard } from '../components/PortfolioDashboard';
 import { HoldingsTable } from '../components/HoldingsTable';
 import { ReportGenerator } from '../components/ReportGenerator';
 import { ScenarioComparison } from '../components/ScenarioComparison';
+import { ScheduledReportsManager } from '../../../components/shared/ScheduledReportsManager';
 import { 
   usePortfolios, 
   useDashboard, 
