@@ -559,10 +559,10 @@ def seed_stranded_asset_data():
                 "region": "global",
                 "base_year": 2025,
                 "target_year": 2050,
-                "demand_trajectory": '{"2025": 100, "2030": 88, "2035": 72, "2040": 55, "2045": 35, "2050": 24}',
+                "demand_trajectory": {"2025": 100, "2030": 88, "2035": 72, "2040": 55, "2045": 35, "2050": 24},
                 "peak_demand_year": 2023,
                 "net_zero_year": 2050,
-                "carbon_price_trajectory": '{"2025": 85, "2030": 130, "2035": 180, "2040": 230, "2045": 280, "2050": 250}',
+                "carbon_price_trajectory": {"2025": 85, "2030": 130, "2035": 180, "2040": 230, "2045": 280, "2050": 250},
             },
             {
                 "pathway_name": "IEA Announced Pledges",
@@ -570,10 +570,10 @@ def seed_stranded_asset_data():
                 "region": "global",
                 "base_year": 2025,
                 "target_year": 2050,
-                "demand_trajectory": '{"2025": 100, "2030": 102, "2035": 98, "2040": 90, "2045": 80, "2050": 70}',
+                "demand_trajectory": {"2025": 100, "2030": 102, "2035": 98, "2040": 90, "2045": 80, "2050": 70},
                 "peak_demand_year": 2030,
                 "net_zero_year": None,
-                "carbon_price_trajectory": '{"2025": 85, "2030": 100, "2035": 120, "2040": 145, "2045": 170, "2050": 200}',
+                "carbon_price_trajectory": {"2025": 85, "2030": 100, "2035": 120, "2040": 145, "2045": 170, "2050": 200},
             },
             {
                 "pathway_name": "IEA STEPS",
@@ -581,13 +581,14 @@ def seed_stranded_asset_data():
                 "region": "global",
                 "base_year": 2025,
                 "target_year": 2050,
-                "demand_trajectory": '{"2025": 100, "2030": 95, "2035": 85, "2040": 75, "2045": 65, "2050": 55}',
+                "demand_trajectory": {"2025": 100, "2030": 95, "2035": 85, "2040": 75, "2045": 65, "2050": 55},
                 "peak_demand_year": 2023,
                 "net_zero_year": None,
-                "carbon_price_trajectory": '{"2025": 50, "2030": 60, "2035": 75, "2040": 90, "2045": 105, "2050": 120}',
+                "carbon_price_trajectory": {"2025": 50, "2030": 60, "2035": 75, "2040": 90, "2045": 105, "2050": 120},
             },
         ]
         
+        import json
         for pw in pathways:
             conn.execute(text("""
                 INSERT INTO energy_transition_pathway (
@@ -595,9 +596,13 @@ def seed_stranded_asset_data():
                     demand_trajectory, peak_demand_year, net_zero_year, carbon_price_trajectory
                 ) VALUES (
                     :pathway_name, :sector, :region, :base_year, :target_year,
-                    :demand_trajectory::jsonb, :peak_demand_year, :net_zero_year, :carbon_price_trajectory::jsonb
+                    :demand_trajectory, :peak_demand_year, :net_zero_year, :carbon_price_trajectory
                 )
-            """), pw)
+            """), {
+                **pw,
+                "demand_trajectory": json.dumps(pw["demand_trajectory"]),
+                "carbon_price_trajectory": json.dumps(pw["carbon_price_trajectory"]),
+            })
         
         conn.commit()
         print("✅ Stranded asset data seeded successfully")
