@@ -914,16 +914,11 @@ async def list_transition_pathways(
     region: Optional[str] = Query(None, description="Filter by region")
 ):
     """
-    List energy transition pathways.
+    List energy transition pathways from database.
     
     Returns demand, price, and capacity trajectories for energy sectors.
     """
-    pathways = get_sample_transition_pathways()
-    
-    if sector:
-        pathways = [p for p in pathways if p.get("sector") == sector]
-    if region:
-        pathways = [p for p in pathways if p.get("region") == region]
+    pathways = db_service.get_all_pathways(sector=sector, region=region)
     
     return EnergyTransitionPathwayListResponse(
         items=[EnergyTransitionPathwayResponse(**p) for p in pathways],
@@ -933,9 +928,11 @@ async def list_transition_pathways(
 
 @router.get("/transition-pathways/{pathway_id}", response_model=EnergyTransitionPathwayResponse)
 async def get_transition_pathway(pathway_id: str):
-    """Get a specific transition pathway by ID."""
-    pathways = get_sample_transition_pathways()
-    pathway = next((p for p in pathways if p.get("id") == pathway_id), None)
+    """Get a specific transition pathway by ID from database."""
+    try:
+        pathway = db_service.get_pathway_by_id(UUID(pathway_id))
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid pathway ID format")
     
     if not pathway:
         raise HTTPException(status_code=404, detail="Pathway not found")
