@@ -38,6 +38,7 @@ from services.real_estate_valuation_engine import (
     CostDataService,
     MarketDataService,
 )
+from services.real_estate_db_service import get_real_estate_db_service
 
 router = APIRouter(prefix="/api/v1/valuation", tags=["Real Estate Valuation"])
 
@@ -45,6 +46,23 @@ router = APIRouter(prefix="/api/v1/valuation", tags=["Real Estate Valuation"])
 valuation_engine = RealEstateValuationEngine()
 cost_service = CostDataService()
 market_service = MarketDataService()
+
+# Get database service
+db_service = get_real_estate_db_service()
+
+
+# ============ Helper functions for DB data ============
+
+def get_properties_from_db() -> List[Dict]:
+    """Get properties from PostgreSQL database."""
+    result = db_service.get_all_properties(page=1, page_size=100)
+    return result.get("items", [])
+
+
+def get_comparables_from_db() -> List[Dict]:
+    """Get comparable sales from PostgreSQL database."""
+    result = db_service.get_all_comparables(page=1, page_size=100)
+    return result.get("items", [])
 
 
 # ============ Sample Data ============
