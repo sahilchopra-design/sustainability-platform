@@ -671,12 +671,15 @@ async def run_comprehensive_valuation(request: ComprehensiveValuationRequest):
     comparables = None
     if request.include_sales:
         if request.comparable_ids:
-            all_comps = get_sample_comparables()
+            all_comps = get_comparables_from_db()
             comparables = [c for c in all_comps if c.get("id") in [str(cid) for cid in request.comparable_ids]]
         else:
-            # Auto-select comparables by property type
-            all_comps = get_sample_comparables()
-            comparables = [c for c in all_comps if c.get("property_type") == property_data.get("property_type")][:5]
+            # Auto-select comparables by property type from database
+            comparables = db_service.get_comparables_for_property(
+                property_type=property_data.get("property_type"),
+                city=property_data.get("city"),
+                limit=5
+            )
     
     # Run comprehensive valuation
     result = valuation_engine.comprehensive_valuation(
