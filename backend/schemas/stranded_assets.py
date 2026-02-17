@@ -99,7 +99,7 @@ class FossilFuelReserveBase(BaseModel):
 
 
 class FossilFuelReserveCreate(FossilFuelReserveBase):
-    counterparty_id: UUID
+    counterparty_id: Optional[UUID] = None
 
 
 class FossilFuelReserveUpdate(BaseModel):
@@ -127,7 +127,7 @@ class FossilFuelReserveResponse(FossilFuelReserveBase):
     model_config = ConfigDict(from_attributes=True)
     
     id: UUID
-    counterparty_id: UUID
+    counterparty_id: Optional[UUID] = None
     is_operating: bool
     created_at: datetime
     updated_at: datetime
@@ -176,7 +176,7 @@ class PowerPlantBase(BaseModel):
 
 
 class PowerPlantCreate(PowerPlantBase):
-    counterparty_id: UUID
+    counterparty_id: Optional[UUID] = None
 
 
 class PowerPlantUpdate(BaseModel):
@@ -217,7 +217,7 @@ class PowerPlantResponse(PowerPlantBase):
     model_config = ConfigDict(from_attributes=True)
     
     id: UUID
-    counterparty_id: UUID
+    counterparty_id: Optional[UUID] = None
     is_operating: bool
     created_at: datetime
     updated_at: datetime
@@ -258,7 +258,7 @@ class InfrastructureAssetBase(BaseModel):
 
 
 class InfrastructureAssetCreate(InfrastructureAssetBase):
-    counterparty_id: UUID
+    counterparty_id: Optional[UUID] = None
 
 
 class InfrastructureAssetUpdate(BaseModel):
@@ -291,7 +291,7 @@ class InfrastructureAssetResponse(InfrastructureAssetBase):
     model_config = ConfigDict(from_attributes=True)
     
     id: UUID
-    counterparty_id: UUID
+    counterparty_id: Optional[UUID] = None
     is_operating: bool
     created_at: datetime
     updated_at: datetime
