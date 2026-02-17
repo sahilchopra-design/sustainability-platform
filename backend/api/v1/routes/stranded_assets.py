@@ -661,7 +661,7 @@ async def calculate_reserve_impairment(request: ReserveImpairmentRequest):
     - Risk scoring and recommended actions
     """
     calculator = ReserveImpairmentCalculator()
-    reserves = get_sample_reserves()
+    reserves = get_reserves_from_db()
     scenarios = get_sample_scenarios()
     
     # Get scenario data
@@ -713,7 +713,7 @@ async def calculate_power_plant_valuation(request: PowerPlantValuationRequest):
     - Recommended actions
     """
     valuator = PowerPlantValuator()
-    plants = get_sample_power_plants()
+    plants = get_plants_from_db()
     scenarios = get_sample_scenarios()
     
     # Get scenario data
@@ -765,7 +765,7 @@ async def calculate_infrastructure_valuation(request: InfrastructureValuationReq
     - Transition readiness assessment
     """
     valuator = InfrastructureValuator()
-    infrastructure = get_sample_infrastructure()
+    infrastructure = get_infrastructure_from_db()
     scenarios = get_sample_scenarios()
     
     # Get scenario data
