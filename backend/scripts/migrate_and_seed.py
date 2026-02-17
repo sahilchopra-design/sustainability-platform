@@ -491,6 +491,7 @@ def seed_stranded_asset_data():
                 "replacement_cost_usd": 12000000000.0,
                 "take_or_pay_exposure_usd": 500000000.0,
                 "hydrogen_ready": False,
+                "ammonia_ready": False,
                 "ccs_compatible": False,
             },
             {
@@ -509,6 +510,7 @@ def seed_stranded_asset_data():
                 "replacement_cost_usd": 8000000000.0,
                 "take_or_pay_exposure_usd": 1200000000.0,
                 "hydrogen_ready": True,
+                "ammonia_ready": False,
                 "ccs_compatible": False,
             },
             {
@@ -545,7 +547,7 @@ def seed_stranded_asset_data():
                     :country_code, :design_capacity, :design_capacity_unit, :utilization_rate_percent,
                     :commissioning_year, :expected_retirement_year, :remaining_book_value_usd,
                     :replacement_cost_usd, :take_or_pay_exposure_usd, :hydrogen_ready,
-                    COALESCE(:ammonia_ready, FALSE), COALESCE(:ccs_compatible, FALSE)
+                    :ammonia_ready, :ccs_compatible
                 )
             """), i)
         
