@@ -733,10 +733,66 @@ stranded-assets/
 **Testing**: 26/26 backend tests passed, all export buttons verified in 5 dashboards (iteration_26)
 
 ## Upcoming / Future Tasks
-1. **Water Risk Map (P3)**: Mapbox integration for water risk visualization with interactive markers
-2. **Scheduled Report Export (P3)**: Automatic weekly/monthly PDF exports to email
-3. **Enhanced LEAP Visualization**: Charts and graphs for LEAP assessment results
+1. **Report Template Customization**: Allow users to customize report layouts and branding
+2. **Email Integration**: Connect scheduled reports to email delivery service (e.g., SendGrid)
+3. **Advanced Map Features**: Add heatmap layer, polygon overlays for watersheds
 4. **Full end-to-end regression testing**
+
+## Latest Update: P3 Features Complete (Feb 16, 2026)
+
+### COMPLETED: Water Risk Map with Mapbox (P3)
+
+**Frontend Implementation** (`/app/frontend/src/features/nature-risk/components/water/WaterRiskMap.jsx`):
+1. **Features**:
+   - Interactive Mapbox GL map with risk-colored markers
+   - Popup details on marker click (location name, water stress score, country)
+   - Legend showing risk level color coding
+   - Map controls: zoom, layer toggle (light/dark), reset view
+   - Pulse animation for high-risk locations
+
+2. **Integration**:
+   - Added to Water Risk tab with Map/List toggle view
+   - 10 sample locations with demo coordinates
+
+### COMPLETED: Scheduled Reports System (P3)
+
+**Backend Implementation**:
+- Service: `/app/backend/services/scheduled_reports_service.py`
+- API Routes: `/app/backend/api/v1/routes/scheduled_reports.py`
+
+**Features**:
+- Full CRUD operations for scheduled reports
+- 4 frequencies: daily, weekly, monthly, quarterly
+- 7 report types: portfolio_analytics, carbon_credits, stranded_assets, nature_risk, sustainability, valuation, scenario_analysis
+- Automatic next_run calculation based on frequency
+- Toggle active/paused status
+
+**Endpoints**:
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/scheduled-reports` | Create scheduled report |
+| GET | `/api/v1/scheduled-reports` | List all reports |
+| GET | `/api/v1/scheduled-reports/{id}` | Get report by ID |
+| PATCH | `/api/v1/scheduled-reports/{id}` | Update report |
+| DELETE | `/api/v1/scheduled-reports/{id}` | Delete report |
+| POST | `/api/v1/scheduled-reports/{id}/toggle` | Toggle active status |
+
+**Frontend**: Added "Scheduled" tab to Portfolio Analytics page with full CRUD UI
+
+### COMPLETED: Enhanced LEAP Visualization (P3)
+
+**Frontend Implementation** (`/app/frontend/src/features/nature-risk/components/leap/LEAPResultsVisualization.jsx`):
+1. **Charts**:
+   - Radar chart: LEAP score profile across 4 steps
+   - Pie chart: Risk distribution (Low/Medium/High/Critical)
+   - Bar chart: Scenario comparison (stacked by LEAP step)
+
+2. **Summary Cards**:
+   - Overall risk score with rating badge
+   - Individual step scores with progress bars
+   - Recommendations section
+
+**Testing**: 21/21 backend tests passed, all frontend features verified (iteration_28)
 
 ## Mocked Services (Demo Data)
 - `stranded_asset_calculator.py` - Uses sample asset data for reserves, power plants, infrastructure
