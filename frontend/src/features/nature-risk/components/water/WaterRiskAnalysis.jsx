@@ -148,39 +148,71 @@ export function WaterRiskAnalysis() {
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Locations List */}
+        {/* Left Panel - Map/List Toggle */}
         <Card className="bg-white dark:bg-slate-800 lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="text-lg">Locations</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2 max-h-[500px] overflow-y-auto">
-              {filteredLocations.map(location => (
-                <div
-                  key={location.id}
-                  className={`p-3 rounded-lg cursor-pointer transition-all ${
-                    selectedLocation?.id === location.id
-                      ? 'bg-blue-50 dark:bg-blue-900/30 border-2 border-blue-500'
-                      : 'bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700'
-                  }`}
-                  onClick={() => analyzeLocation(location.id)}
-                  data-testid={`location-${location.id}`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-slate-400" />
-                      <span className="font-medium text-sm">{location.location_name}</span>
-                    </div>
-                    <Badge className={getRiskColor(location.baseline_water_stress)}>
-                      {location.baseline_water_stress?.toFixed(1)}
-                    </Badge>
-                  </div>
-                  <div className="text-xs text-slate-500 mt-1 ml-6">
-                    {location.country_code} • {location.basin_name}
-                  </div>
-                </div>
-              ))}
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">Locations</CardTitle>
+              <Tabs defaultValue="map" className="w-auto">
+                <TabsList className="h-8">
+                  <TabsTrigger value="map" className="px-2 py-1 text-xs">
+                    <Map className="h-3 w-3 mr-1" />
+                    Map
+                  </TabsTrigger>
+                  <TabsTrigger value="list" className="px-2 py-1 text-xs">
+                    <List className="h-3 w-3 mr-1" />
+                    List
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
             </div>
+          </CardHeader>
+          <CardContent className="pt-2">
+            <Tabs defaultValue="map">
+              <TabsContent value="map" className="mt-0">
+                <WaterRiskMap 
+                  locations={filteredLocations.map(l => ({
+                    id: l.id,
+                    name: l.location_name,
+                    latitude: l.latitude,
+                    longitude: l.longitude,
+                    water_stress: l.baseline_water_stress,
+                    country_code: l.country_code,
+                  }))}
+                  selectedLocationId={selectedLocation?.id}
+                  onLocationSelect={(id) => analyzeLocation(id)}
+                />
+              </TabsContent>
+              <TabsContent value="list" className="mt-0">
+                <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                  {filteredLocations.map(location => (
+                    <div
+                      key={location.id}
+                      className={`p-3 rounded-lg cursor-pointer transition-all ${
+                        selectedLocation?.id === location.id
+                          ? 'bg-blue-50 dark:bg-blue-900/30 border-2 border-blue-500'
+                          : 'bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700'
+                      }`}
+                      onClick={() => analyzeLocation(location.id)}
+                      data-testid={`location-${location.id}`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-slate-400" />
+                          <span className="font-medium text-sm">{location.location_name}</span>
+                        </div>
+                        <Badge className={getRiskColor(location.baseline_water_stress)}>
+                          {location.baseline_water_stress?.toFixed(1)}
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-slate-500 mt-1 ml-6">
+                        {location.country_code} • {location.basin_name}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
 
