@@ -1,5 +1,52 @@
 # A2 Intelligence by AA Impact Inc.
 
+## Latest Update: User Documentation (Feb 17, 2026)
+
+### COMPLETED: Comprehensive User Documentation
+
+**Documentation Created** (`/app/docs/`):
+
+1. **USER_GUIDE.md** - Complete user guide covering:
+   - Getting Started & Login
+   - Dashboard Overview
+   - All 11 Analytics Modules with detailed instructions
+   - Scenarios Section guide
+   - Portfolio Management
+   - Exporting Data
+   - Scheduled Reports
+   - Glossary of terms
+
+2. **HELP_GUIDE.md** - Troubleshooting & FAQs covering:
+   - Quick Start Checklist
+   - Common Issues & Solutions
+   - Feature-Specific Help for all modules
+   - Data & Calculations reference
+   - API Reference endpoints
+   - Keyboard Shortcuts
+   - Browser Compatibility
+   - Contact Support
+
+3. **QUICK_REFERENCE.md** - One-page quick reference card:
+   - Module Overview table
+   - Navigation Quick Guide
+   - Key Actions summary
+   - Risk Level Colors
+   - Certification Ratings
+   - Valuation Approaches
+   - Climate Scenarios
+   - Keyboard Shortcuts
+
+**Feature Verification Status**: All modules verified working via screenshots:
+- ✅ Login/Authentication
+- ✅ Dashboard
+- ✅ Carbon Credits (Overview, Calculator, Projects, Scenarios, Map)
+- ✅ Nature Risk (Dashboard, LEAP Wizard, Portfolio, Water Risk Map, Biodiversity, ENCORE, GBF)
+- ✅ Stranded Assets (Dashboard, Reserves, Power Plants, Tech Disruption, Alerts)
+- ✅ RE Valuation (Dashboard, Direct Cap, DCF, Cost, Sales Comp)
+- ✅ Sustainability (Dashboard, GRESB, LEED, BREEAM, Value Impact)
+- ✅ Scenario Analysis (Dashboard, Builder, Sensitivity, What-If, Compare)
+- ✅ Portfolio Analytics (Dashboard, Holdings, Scenarios, Reports, Scheduled)
+
 ## Architecture
 - Backend: FastAPI + PostgreSQL (Supabase) — unified single DB
 - Frontend: React + shadcn/ui + Recharts + Zustand + **Redux Toolkit**
