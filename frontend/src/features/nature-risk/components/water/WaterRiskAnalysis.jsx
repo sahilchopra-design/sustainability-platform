@@ -3,15 +3,17 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../..
 import { Button } from '../../../../components/ui/button';
 import { Badge } from '../../../../components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../../components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../../components/ui/tabs';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
   ResponsiveContainer, BarChart, Bar 
 } from 'recharts';
 import { 
   Droplets, MapPin, AlertTriangle, TrendingUp, 
-  ThermometerSun, CloudRain, Filter 
+  ThermometerSun, CloudRain, Filter, Map, List 
 } from 'lucide-react';
 import { natureRiskApi } from '../../api/natureRiskApi';
+import { WaterRiskMap } from './WaterRiskMap';
 
 const getRiskColor = (value) => {
   if (value >= 4) return 'text-red-600 bg-red-50';
