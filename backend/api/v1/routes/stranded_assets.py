@@ -49,8 +49,32 @@ from services.stranded_asset_calculator import (
     TechnologyDisruptionTracker,
     PortfolioStrandingAnalyzer
 )
+from services.stranded_asset_db_service import get_stranded_asset_db_service
 
 router = APIRouter(prefix="/api/v1/stranded-assets", tags=["Stranded Asset Analysis"])
+
+# Get database service
+db_service = get_stranded_asset_db_service()
+
+
+# ============ Helper functions for DB data ============
+
+def get_reserves_from_db() -> List[Dict]:
+    """Get reserves from PostgreSQL database."""
+    result = db_service.get_all_reserves(is_operating=True, page=1, page_size=100)
+    return result.get("items", [])
+
+
+def get_plants_from_db() -> List[Dict]:
+    """Get power plants from PostgreSQL database."""
+    result = db_service.get_all_plants(is_operating=True, page=1, page_size=100)
+    return result.get("items", [])
+
+
+def get_infrastructure_from_db() -> List[Dict]:
+    """Get infrastructure from PostgreSQL database."""
+    result = db_service.get_all_infrastructure(is_operating=True, page=1, page_size=100)
+    return result.get("items", [])
 
 
 # ============ Sample Data for Demo ============
