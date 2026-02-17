@@ -955,8 +955,8 @@ async def run_scenario_comparison(request: StrandedScenarioComparisonRequest):
     calculator = ReserveImpairmentCalculator()
     valuator = PowerPlantValuator()
     
-    reserves = get_sample_reserves()
-    plants = get_sample_power_plants()
+    reserves = get_reserves_from_db()
+    plants = get_plants_from_db()
     scenarios = get_sample_scenarios()
     
     results = []
