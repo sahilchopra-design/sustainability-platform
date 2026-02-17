@@ -1224,9 +1224,9 @@ async def analyze_portfolio_stranding(request: PortfolioStrandingAnalysisRequest
     """
     analyzer = PortfolioStrandingAnalyzer()
     
-    reserves = get_sample_reserves() if request.include_reserves else []
-    plants = get_sample_power_plants() if request.include_plants else []
-    infrastructure = get_sample_infrastructure() if request.include_infrastructure else []
+    reserves = get_reserves_from_db() if request.include_reserves else []
+    plants = get_plants_from_db() if request.include_plants else []
+    infrastructure = get_infrastructure_from_db() if request.include_infrastructure else []
     
     scenarios = get_sample_scenarios()
     scenario = next((s for s in scenarios if s.get("id") == str(request.scenario_id)), scenarios[0])
