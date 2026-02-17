@@ -361,29 +361,25 @@ def get_sample_comparables() -> List[Dict]:
 
 @router.get("/dashboard", response_model=ValuationDashboardKPIs)
 async def get_dashboard_kpis():
-    """Get dashboard KPIs for real estate valuations."""
-    properties = get_sample_properties()
+    """Get dashboard KPIs for real estate valuations - data from PostgreSQL database."""
+    metrics = db_service.get_dashboard_metrics()
+    properties = get_properties_from_db()
     
-    total_value = sum(float(p.get("market_value", 0) or 0) for p in properties)
     cap_rates = [float(p.get("cap_rate", 0) or 0) for p in properties if p.get("cap_rate")]
     values_per_sf = []
     for p in properties:
         if p.get("market_value") and p.get("rentable_area_sf"):
-            values_per_sf.append(float(p["market_value"]) / float(p["rentable_area_sf"]))
-    
-    # Count by type
-    by_type = {}
-    for p in properties:
-        pt = p.get("property_type", "unknown")
-        by_type[pt] = by_type.get(pt, 0) + 1
+            sf = float(p["rentable_area_sf"])
+            if sf > 0:
+                values_per_sf.append(float(p["market_value"]) / sf)
     
     return ValuationDashboardKPIs(
-        total_properties=len(properties),
-        total_valuations=len(properties) * 2,  # Simulate multiple valuations
-        total_portfolio_value=Decimal(str(total_value)),
+        total_properties=metrics["total_properties"],
+        total_valuations=metrics["total_valuations"] or len(properties) * 2,
+        total_portfolio_value=metrics["total_portfolio_value"],
         avg_cap_rate=Decimal(str(sum(cap_rates) / len(cap_rates))) if cap_rates else Decimal("0"),
         avg_value_per_sf=Decimal(str(sum(values_per_sf) / len(values_per_sf))) if values_per_sf else Decimal("0"),
-        properties_by_type=by_type,
+        properties_by_type=metrics["properties_by_type"],
         valuations_by_method={"direct_capitalization": 4, "dcf": 2, "cost": 4, "sales_comparison": 3},
         recent_valuations=[],
     )
@@ -399,34 +395,35 @@ async def list_properties(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
 ):
-    """List properties with optional filtering."""
-    properties = get_sample_properties()
+    """List properties from PostgreSQL database with optional filtering."""
+    result = db_service.get_all_properties(
+        property_type=property_type,
+        city=city,
+        page=page,
+        page_size=page_size
+    )
     
-    if property_type:
-        properties = [p for p in properties if p.get("property_type") == property_type]
-    if city:
-        properties = [p for p in properties if p.get("city", "").lower() == city.lower()]
+    properties = result["items"]
+    
+    # Apply additional filters not in DB query
     if quality_rating:
         properties = [p for p in properties if p.get("quality_rating") == quality_rating]
     
-    total = len(properties)
-    start = (page - 1) * page_size
-    end = start + page_size
-    paginated = properties[start:end]
-    
     return PropertyListResponse(
-        items=[PropertyResponse(**p) for p in paginated],
-        total=total,
-        page=page,
-        page_size=page_size,
+        items=[PropertyResponse(**p) for p in properties],
+        total=result["total"],
+        page=result["page"],
+        page_size=result["page_size"],
     )
 
 
 @router.get("/properties/{property_id}", response_model=PropertyResponse)
 async def get_property(property_id: str):
-    """Get a specific property by ID."""
-    properties = get_sample_properties()
-    prop = next((p for p in properties if p.get("id") == property_id), None)
+    """Get a specific property by ID from database."""
+    try:
+        prop = db_service.get_property_by_id(UUID(property_id))
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid property ID format")
     
     if not prop:
         raise HTTPException(status_code=404, detail="Property not found")
@@ -436,16 +433,9 @@ async def get_property(property_id: str):
 
 @router.post("/properties", response_model=PropertyResponse, status_code=201)
 async def create_property(property_data: PropertyCreate):
-    """Create a new property."""
-    property_id = str(uuid4())
-    now = datetime.now(timezone.utc)
-    
-    return PropertyResponse(
-        id=UUID(property_id),
-        **property_data.model_dump(),
-        created_at=now,
-        updated_at=now,
-    )
+    """Create a new property in database."""
+    result = db_service.create_property(property_data.model_dump())
+    return PropertyResponse(**result)
 
 
 # ============ Income Approach ============
