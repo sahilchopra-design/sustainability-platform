@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 
 class ClimateRiskAPITester:
-    def __init__(self, base_url="https://asset-analytics-pro.preview.emergentagent.com"):
+    def __init__(self, base_url="https://risk-assessment-hub-1.preview.emergentagent.com"):
         self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0
