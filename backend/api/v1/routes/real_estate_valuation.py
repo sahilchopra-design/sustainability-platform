@@ -730,8 +730,8 @@ async def get_market_cap_rates(
 async def get_properties_map_data(
     property_type: Optional[str] = Query(None),
 ):
-    """Get geographic data for mapping properties."""
-    properties = get_sample_properties()
+    """Get geographic data for mapping properties from database."""
+    properties = get_properties_from_db()
     
     if property_type:
         properties = [p for p in properties if p.get("property_type") == property_type]
@@ -739,7 +739,7 @@ async def get_properties_map_data(
     assets = []
     for p in properties:
         # Calculate a simplified risk score based on cap rate vs market
-        cap_rate = float(p.get("cap_rate", 0.06))
+        cap_rate = float(p.get("cap_rate", 0.06) or 0.06)
         risk_score = min(1.0, cap_rate / 0.10)  # Higher cap rate = higher risk
         
         assets.append({
