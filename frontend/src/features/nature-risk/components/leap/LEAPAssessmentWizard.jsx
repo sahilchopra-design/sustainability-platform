@@ -87,7 +87,7 @@ export function LEAPAssessmentWizard({ onComplete }) {
     try {
       const [scenariosData, encoreResponse] = await Promise.all([
         natureRiskApi.getScenarios(),
-        natureRiskApi.getEncoreDependencies(),
+        natureRiskApi.getENCOREDependencies(),
       ]);
       setScenarios(scenariosData);
       setEncoreData(encoreResponse?.items || []);
