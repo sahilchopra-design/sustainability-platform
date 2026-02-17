@@ -125,6 +125,14 @@ export default function PortfolioAnalyticsPage() {
                   <FileText className="h-4 w-4" />
                   <span className="hidden md:inline">Reports</span>
                 </TabsTrigger>
+                <TabsTrigger
+                  value="scheduled"
+                  className="flex items-center gap-2 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700"
+                  data-testid="tab-scheduled"
+                >
+                  <Calendar className="h-4 w-4" />
+                  <span className="hidden md:inline">Scheduled</span>
+                </TabsTrigger>
               </TabsList>
               
               <TabsContent value="dashboard" className="mt-0">
@@ -150,6 +158,10 @@ export default function PortfolioAnalyticsPage() {
                   portfolioId={selectedPortfolioId}
                   portfolioName={selectedPortfolio?.name}
                 />
+              </TabsContent>
+              
+              <TabsContent value="scheduled" className="mt-0">
+                <ScheduledReportsManager />
               </TabsContent>
             </Tabs>
           </div>
