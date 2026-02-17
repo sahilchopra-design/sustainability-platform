@@ -478,41 +478,20 @@ async def get_dashboard_kpis():
     - Risk distribution
     - Total exposure and stranded value at risk
     """
-    reserves = get_sample_reserves()
-    plants = get_sample_power_plants()
-    infrastructure = get_sample_infrastructure()
-    
-    # Calculate aggregate metrics
-    total_assets = len(reserves) + len(plants) + len(infrastructure)
-    
-    # Simulate risk calculations
-    high_risk = 2
-    critical_risk = 1
-    
-    # Calculate total exposure (book value + NPV estimates)
-    total_exposure = sum(float(r.get("proven_reserves_mmBOE", 0) or 0) * 50 * 1000000 for r in reserves)
-    total_exposure += sum(float(p.get("capacity_mw", 0)) * 500000 for p in plants)  # ~$500k/MW
-    total_exposure += sum(float(i.get("remaining_book_value_usd", 0) or 0) for i in infrastructure)
-    
-    # Estimate stranded value (30% of high/critical risk assets)
-    stranded_value = total_exposure * 0.15
+    # Get metrics from database
+    metrics = db_service.get_dashboard_metrics()
     
     return StrandedAssetDashboardKPIs(
-        total_assets=total_assets,
-        total_reserves_count=len(reserves),
-        total_plants_count=len(plants),
-        total_infrastructure_count=len(infrastructure),
-        high_risk_assets=high_risk,
-        critical_risk_assets=critical_risk,
-        total_exposure_usd=Decimal(str(round(total_exposure, 2))),
-        stranded_value_at_risk_usd=Decimal(str(round(stranded_value, 2))),
-        avg_stranding_risk_score=Decimal("0.52"),
-        assets_by_risk_category={
-            "low": 3,
-            "medium": 3,
-            "high": 2,
-            "critical": 1
-        }
+        total_assets=metrics["total_assets"],
+        total_reserves_count=metrics["total_reserves_count"],
+        total_plants_count=metrics["total_plants_count"],
+        total_infrastructure_count=metrics["total_infrastructure_count"],
+        high_risk_assets=metrics["high_risk_assets"],
+        critical_risk_assets=metrics["critical_risk_assets"],
+        total_exposure_usd=metrics["total_exposure_usd"],
+        stranded_value_at_risk_usd=metrics["stranded_value_at_risk_usd"],
+        avg_stranding_risk_score=metrics["avg_stranding_risk_score"],
+        assets_by_risk_category=metrics["assets_by_risk_category"]
     )
 
 
@@ -528,36 +507,31 @@ async def list_reserves(
 ):
     """
     List fossil fuel reserves with optional filtering.
+    Data retrieved from PostgreSQL database.
     """
-    reserves = get_sample_reserves()
-    
-    # Apply filters
-    if reserve_type:
-        reserves = [r for r in reserves if r.get("reserve_type") == reserve_type]
-    if reserve_category:
-        reserves = [r for r in reserves if r.get("reserve_category") == reserve_category]
-    if is_operating is not None:
-        reserves = [r for r in reserves if r.get("is_operating") == is_operating]
-    
-    # Pagination
-    total = len(reserves)
-    start = (page - 1) * page_size
-    end = start + page_size
-    paginated = reserves[start:end]
-    
-    return FossilFuelReserveListResponse(
-        items=[FossilFuelReserveResponse(**r) for r in paginated],
-        total=total,
+    result = db_service.get_all_reserves(
+        reserve_type=reserve_type,
+        reserve_category=reserve_category,
+        is_operating=is_operating,
         page=page,
         page_size=page_size
+    )
+    
+    return FossilFuelReserveListResponse(
+        items=[FossilFuelReserveResponse(**r) for r in result["items"]],
+        total=result["total"],
+        page=result["page"],
+        page_size=result["page_size"]
     )
 
 
 @router.get("/reserves/{reserve_id}", response_model=FossilFuelReserveResponse)
 async def get_reserve(reserve_id: str):
-    """Get a specific fossil fuel reserve by ID."""
-    reserves = get_sample_reserves()
-    reserve = next((r for r in reserves if r.get("id") == reserve_id), None)
+    """Get a specific fossil fuel reserve by ID from database."""
+    try:
+        reserve = db_service.get_reserve_by_id(UUID(reserve_id))
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid reserve ID format")
     
     if not reserve:
         raise HTTPException(status_code=404, detail="Reserve not found")
@@ -567,17 +541,9 @@ async def get_reserve(reserve_id: str):
 
 @router.post("/reserves", response_model=FossilFuelReserveResponse, status_code=201)
 async def create_reserve(reserve: FossilFuelReserveCreate):
-    """Create a new fossil fuel reserve."""
-    reserve_id = str(uuid4())
-    now = datetime.now(timezone.utc)
-    
-    return FossilFuelReserveResponse(
-        id=UUID(reserve_id),
-        **reserve.model_dump(),
-        is_operating=True,
-        created_at=now,
-        updated_at=now
-    )
+    """Create a new fossil fuel reserve in database."""
+    result = db_service.create_reserve(reserve.model_dump())
+    return FossilFuelReserveResponse(**result)
 
 
 # ============ Power Plant Routes ============
@@ -592,36 +558,31 @@ async def list_power_plants(
 ):
     """
     List power plants with optional filtering.
+    Data retrieved from PostgreSQL database.
     """
-    plants = get_sample_power_plants()
-    
-    # Apply filters
-    if technology_type:
-        plants = [p for p in plants if p.get("technology_type") == technology_type]
-    if country_code:
-        plants = [p for p in plants if p.get("country_code") == country_code]
-    if is_operating is not None:
-        plants = [p for p in plants if p.get("is_operating") == is_operating]
-    
-    # Pagination
-    total = len(plants)
-    start = (page - 1) * page_size
-    end = start + page_size
-    paginated = plants[start:end]
-    
-    return PowerPlantListResponse(
-        items=[PowerPlantResponse(**p) for p in paginated],
-        total=total,
+    result = db_service.get_all_plants(
+        technology_type=technology_type,
+        country_code=country_code,
+        is_operating=is_operating,
         page=page,
         page_size=page_size
+    )
+    
+    return PowerPlantListResponse(
+        items=[PowerPlantResponse(**p) for p in result["items"]],
+        total=result["total"],
+        page=result["page"],
+        page_size=result["page_size"]
     )
 
 
 @router.get("/power-plants/{plant_id}", response_model=PowerPlantResponse)
 async def get_power_plant(plant_id: str):
-    """Get a specific power plant by ID."""
-    plants = get_sample_power_plants()
-    plant = next((p for p in plants if p.get("id") == plant_id), None)
+    """Get a specific power plant by ID from database."""
+    try:
+        plant = db_service.get_plant_by_id(UUID(plant_id))
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid plant ID format")
     
     if not plant:
         raise HTTPException(status_code=404, detail="Power plant not found")
@@ -631,17 +592,9 @@ async def get_power_plant(plant_id: str):
 
 @router.post("/power-plants", response_model=PowerPlantResponse, status_code=201)
 async def create_power_plant(plant: PowerPlantCreate):
-    """Create a new power plant."""
-    plant_id = str(uuid4())
-    now = datetime.now(timezone.utc)
-    
-    return PowerPlantResponse(
-        id=UUID(plant_id),
-        **plant.model_dump(),
-        is_operating=True,
-        created_at=now,
-        updated_at=now
-    )
+    """Create a new power plant in database."""
+    result = db_service.create_plant(plant.model_dump())
+    return PowerPlantResponse(**result)
 
 
 # ============ Infrastructure Routes ============
@@ -656,36 +609,31 @@ async def list_infrastructure(
 ):
     """
     List infrastructure assets with optional filtering.
+    Data retrieved from PostgreSQL database.
     """
-    assets = get_sample_infrastructure()
-    
-    # Apply filters
-    if asset_type:
-        assets = [a for a in assets if a.get("asset_type") == asset_type]
-    if country_code:
-        assets = [a for a in assets if a.get("country_code") == country_code]
-    if is_operating is not None:
-        assets = [a for a in assets if a.get("is_operating") == is_operating]
-    
-    # Pagination
-    total = len(assets)
-    start = (page - 1) * page_size
-    end = start + page_size
-    paginated = assets[start:end]
-    
-    return InfrastructureAssetListResponse(
-        items=[InfrastructureAssetResponse(**a) for a in paginated],
-        total=total,
+    result = db_service.get_all_infrastructure(
+        asset_type=asset_type,
+        country_code=country_code,
+        is_operating=is_operating,
         page=page,
         page_size=page_size
+    )
+    
+    return InfrastructureAssetListResponse(
+        items=[InfrastructureAssetResponse(**a) for a in result["items"]],
+        total=result["total"],
+        page=result["page"],
+        page_size=result["page_size"]
     )
 
 
 @router.get("/infrastructure/{asset_id}", response_model=InfrastructureAssetResponse)
 async def get_infrastructure(asset_id: str):
-    """Get a specific infrastructure asset by ID."""
-    assets = get_sample_infrastructure()
-    asset = next((a for a in assets if a.get("id") == asset_id), None)
+    """Get a specific infrastructure asset by ID from database."""
+    try:
+        asset = db_service.get_infrastructure_by_id(UUID(asset_id))
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid asset ID format")
     
     if not asset:
         raise HTTPException(status_code=404, detail="Infrastructure asset not found")
@@ -695,17 +643,9 @@ async def get_infrastructure(asset_id: str):
 
 @router.post("/infrastructure", response_model=InfrastructureAssetResponse, status_code=201)
 async def create_infrastructure(asset: InfrastructureAssetCreate):
-    """Create a new infrastructure asset."""
-    asset_id = str(uuid4())
-    now = datetime.now(timezone.utc)
-    
-    return InfrastructureAssetResponse(
-        id=UUID(asset_id),
-        **asset.model_dump(),
-        is_operating=True,
-        created_at=now,
-        updated_at=now
-    )
+    """Create a new infrastructure asset in database."""
+    result = db_service.create_infrastructure(asset.model_dump())
+    return InfrastructureAssetResponse(**result)
 
 
 # ============ Calculation Routes ============
