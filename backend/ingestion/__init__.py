@@ -20,6 +20,8 @@ def register_all_ingesters():
     from ingestion.owid_ingester import OwidIngester
     from ingestion.ngfs_ingester import NgfsIngester
     from ingestion.sbti_ingester import SbtiIngester
+    from ingestion.sec_edgar_ingester import SecEdgarIngester
+    from ingestion.yfinance_ingester import YfinanceIngester
 
     ingestion_manager.register(GleifIngester)
     ingestion_manager.register(SanctionsIngester)
@@ -27,3 +29,5 @@ def register_all_ingesters():
     ingestion_manager.register(OwidIngester)
     ingestion_manager.register(NgfsIngester)
     ingestion_manager.register(SbtiIngester)
+    ingestion_manager.register(SecEdgarIngester)
+    ingestion_manager.register(YfinanceIngester)
