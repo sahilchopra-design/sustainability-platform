@@ -55,6 +55,7 @@ import ScenarioBuilderPage from './features/scenario-builder/pages/ScenarioBuild
 import ScenarioGalleryPage from './features/scenario-builder/pages/ScenarioGalleryPage';
 import AsiaRegulatoryPage from './pages/AsiaRegulatoryPage';
 import ChinaTradePage from './pages/ChinaTradePage';
+import DataMappingPage from './pages/DataMappingPage';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -122,6 +123,7 @@ const NAV_GROUPS = [
       { to: '/scenario-builder-v2',  icon: 'wrench',       label: 'Scenario Builder v2', badge: 'NEW' },
       { to: '/browser',       icon: 'search',       label: 'Scenario Browser' },
       { to: '/data-hub',      icon: 'database',     label: 'Data Hub' },
+      { to: '/data-mapping',  icon: 'link',         label: 'Data Mapping',        badge: 'NEW' },
       { to: '/ngfs',          icon: 'globe',        label: 'NGFS Catalog' },
       { to: '/comparison',    icon: 'git-compare',  label: 'Comparison' },
       { to: '/custom-builder',icon: 'wrench',       label: 'Custom Builder' },
@@ -237,6 +239,7 @@ const ROUTE_TITLES = {
   '/scenario-gallery':     'Scenario Gallery',
   '/asia-regulatory':      'Asia-Pacific Regulatory Frameworks',
   '/china-trade':          'China Trade & Sustainability Platform',
+  '/data-mapping':         'Data Mapping — Source to KPI to Module',
 };
 
 // ─── Backend health hook ──────────────────────────────────────────────────────
@@ -561,6 +564,8 @@ function AppRouter() {
             <Route path="/scenario-gallery"           element={<ScenarioGalleryPage />} />
             {/* Asia Regulatory — BRSR / HKMA / BoJ / ASEAN / PBoC / CBI */}
             <Route path="/asia-regulatory"            element={<AsiaRegulatoryPage />} />
+            {/* Data Mapping — source to KPI to module */}
+            <Route path="/data-mapping"               element={<DataMappingPage />} />
             {/* China Trade Platform — standalone module */}
             <Route path="/china-trade"                element={<ChinaTradePage />} />
           </Routes>
@@ -615,6 +620,7 @@ const ICON_MAP = {
   server:        'M2 2h20v8H2V2zm0 12h20v8H2v-8zm5 4h.01M5 6h.01',
   'file-text':   'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zM14 2v6h6M16 13H8M16 17H8M10 9H8',
   users:         'M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zm8 4a3 3 0 100-6 3 3 0 000 6zm3 2v-1a3 3 0 00-3-3h-1',
+  link:          'M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71',
 };
 
 export default App;
