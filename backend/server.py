@@ -73,6 +73,7 @@ from api.v1.routes.china_trade import router as china_trade_router
 from api.v1.routes.audit_log import router as audit_log_router
 from api.v1.routes.organisations import router as organisations_router
 from api.v1.routes.ingestion import router as ingestion_router
+from api.v1.routes.entity_resolution import router as entity_resolution_router
 
 
 @asynccontextmanager
@@ -83,6 +84,14 @@ async def lifespan(app: FastAPI):
         init_postgres_db()
     except Exception as e:
         print(f"[WARN] PostgreSQL init failed: {e}")
+
+    # Startup: register concrete ingesters (GLEIF, Sanctions, etc.)
+    try:
+        from ingestion import register_all_ingesters
+        register_all_ingesters()
+        print("[OK] Ingesters registered")
+    except Exception as e:
+        print(f"[WARN] Ingester registration failed: {e}")
 
     # Startup: start ingestion scheduler (APScheduler)
     _scheduler = None
@@ -198,6 +207,7 @@ app.include_router(china_trade_router)            # China Trade Platform — Exp
 app.include_router(audit_log_router)              # Audit Log — admin read-only query endpoints
 app.include_router(organisations_router)          # Organisations — multi-tenant CRUD + member management
 app.include_router(ingestion_router)              # Ingestion — data source sync, job history, scheduler
+app.include_router(entity_resolution_router)      # Entity Resolution — LEI lookup, sanctions screening
 
 # Audit middleware — append-only log for all mutating requests (POST/PUT/PATCH/DELETE)
 from middleware.audit_middleware import AuditMiddleware

@@ -9,3 +9,13 @@ from ingestion.base_ingester import BaseIngester
 from ingestion.manager import IngestionManager
 
 __all__ = ["BaseIngester", "IngestionManager"]
+
+
+def register_all_ingesters():
+    """Register all concrete ingesters with the global manager."""
+    from ingestion.manager import ingestion_manager
+    from ingestion.gleif_ingester import GleifIngester
+    from ingestion.sanctions_ingester import SanctionsIngester
+
+    ingestion_manager.register(GleifIngester)
+    ingestion_manager.register(SanctionsIngester)
