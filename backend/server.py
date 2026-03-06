@@ -72,6 +72,7 @@ from api.v1.routes.asia_regulatory import router as asia_regulatory_router
 from api.v1.routes.china_trade import router as china_trade_router
 from api.v1.routes.audit_log import router as audit_log_router
 from api.v1.routes.organisations import router as organisations_router
+from api.v1.routes.ingestion import router as ingestion_router
 
 
 @asynccontextmanager
@@ -82,7 +83,26 @@ async def lifespan(app: FastAPI):
         init_postgres_db()
     except Exception as e:
         print(f"[WARN] PostgreSQL init failed: {e}")
+
+    # Startup: start ingestion scheduler (APScheduler)
+    _scheduler = None
+    try:
+        from ingestion.scheduler import get_scheduler
+        _scheduler = get_scheduler()
+        _scheduler.start()
+        print("[OK] Ingestion scheduler started")
+    except Exception as e:
+        print(f"[WARN] Ingestion scheduler not started: {e}")
+
     yield
+
+    # Shutdown: stop ingestion scheduler
+    if _scheduler:
+        try:
+            _scheduler.stop()
+            print("[OK] Ingestion scheduler stopped")
+        except Exception:
+            pass
 
 
 app = FastAPI(
@@ -177,6 +197,7 @@ app.include_router(asia_regulatory_router)        # Asia Regulatory — BRSR / H
 app.include_router(china_trade_router)            # China Trade Platform — Exporter / CBAM / Supplier / ESG / ETS / Corridors / Marketplace
 app.include_router(audit_log_router)              # Audit Log — admin read-only query endpoints
 app.include_router(organisations_router)          # Organisations — multi-tenant CRUD + member management
+app.include_router(ingestion_router)              # Ingestion — data source sync, job history, scheduler
 
 # Audit middleware — append-only log for all mutating requests (POST/PUT/PATCH/DELETE)
 from middleware.audit_middleware import AuditMiddleware
