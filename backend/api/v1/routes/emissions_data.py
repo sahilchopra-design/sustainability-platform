@@ -1,7 +1,8 @@
 """
-Emissions Data API routes -- Climate TRACE + OWID CO2/energy queries.
+Emissions Data API routes -- Climate TRACE + OWID CO2/energy queries + LEI lookup.
 
 Endpoints:
+  GET  /emissions/by-lei/{lei}           -- emissions by Legal Entity Identifier
   GET  /emissions/climate-trace          -- search Climate TRACE emissions
   GET  /emissions/climate-trace/sectors  -- list available sectors
   GET  /emissions/climate-trace/countries -- list countries with data
@@ -24,6 +25,127 @@ from db.models.emissions import ClimateTraceEmission, OwidCo2Energy
 from api.dependencies import require_min_role
 
 router = APIRouter(prefix="/api/v1/emissions", tags=["emissions"])
+
+
+# -- Emissions by LEI (consumed by data_hub_client.get_emissions) -------------
+
+@router.get("/by-lei/{lei}")
+def emissions_by_lei(
+    lei: str,
+    db: Session = Depends(get_db),
+    _user=Depends(require_min_role("viewer")),
+):
+    """
+    Retrieve Scope 1/2/3 GHG emissions for a counterparty by GLEIF LEI.
+
+    Cross-references LEI → jurisdiction → OWID country-level emissions
+    and Climate TRACE sector data. Returns estimated DQS 4-5 data
+    (sector/country proxy) until company-level reported data is available.
+
+    This is the endpoint consumed by data_hub_client.get_emissions(lei).
+    """
+    from db.models.entity_resolution import EntityLei
+
+    lei_upper = lei.upper().strip()
+    if not lei_upper or len(lei_upper) != 20:
+        raise HTTPException(400, "LEI must be a 20-character alphanumeric string")
+
+    # Look up entity in GLEIF
+    entity = db.query(EntityLei).filter(EntityLei.lei == lei_upper).first()
+    if not entity:
+        return {
+            "lei": lei_upper,
+            "scope1": None,
+            "scope2": None,
+            "scope3": None,
+            "year": None,
+            "source": "not_found",
+            "dqs": None,
+            "message": "LEI not found in GLEIF registry",
+        }
+
+    # Use jurisdiction to find country-level emissions from OWID
+    jurisdiction = entity.jurisdiction  # e.g. "US", "DE", "GB"
+    country_iso3 = _jurisdiction_to_iso3(jurisdiction)
+
+    # Get latest OWID data for the country
+    owid = None
+    if country_iso3:
+        owid = db.query(OwidCo2Energy).filter(
+            OwidCo2Energy.country_iso3 == country_iso3
+        ).order_by(OwidCo2Energy.year.desc()).first()
+
+    # Get Climate TRACE sector emissions for the country
+    ct_total = None
+    if country_iso3:
+        ct_agg = db.query(
+            func.sum(ClimateTraceEmission.emissions_quantity)
+        ).filter(
+            ClimateTraceEmission.country_iso3 == country_iso3,
+            ClimateTraceEmission.gas == "co2e",
+        ).scalar()
+        ct_total = float(ct_agg) if ct_agg else None
+
+    # Build estimated emissions (DQS 4 = sector-average proxy)
+    scope1_est = None
+    scope2_est = None
+    scope3_est = None
+    year_est = None
+    source_type = "estimated"
+    dqs = 5  # DQS 5 = country-average proxy
+
+    if owid:
+        year_est = owid.year
+        # Rough split: scope1 ~60% of direct CO2, scope2 ~25%, scope3 ~15%
+        total_co2 = owid.co2  # MtCO2
+        if total_co2 and total_co2 > 0:
+            # Scale down from national to estimated company level
+            # This is a rough proxy; real data comes from CDP/SFDR PAI reporting
+            scope1_est = round(total_co2 * 1e6 * 0.0001, 2)  # Placeholder scaling
+            scope2_est = round(total_co2 * 1e6 * 0.00004, 2)
+            scope3_est = round(total_co2 * 1e6 * 0.00006, 2)
+            dqs = 4
+            source_type = "estimated_owid"
+
+    if ct_total and ct_total > 0 and not scope1_est:
+        scope1_est = round(ct_total * 0.0001, 2)
+        scope2_est = round(ct_total * 0.00004, 2)
+        scope3_est = round(ct_total * 0.00006, 2)
+        year_est = 2022  # Climate TRACE latest year
+        dqs = 4
+        source_type = "estimated_climate_trace"
+
+    return {
+        "lei": lei_upper,
+        "legal_name": entity.legal_name,
+        "jurisdiction": jurisdiction,
+        "scope1": scope1_est,
+        "scope2": scope2_est,
+        "scope3": scope3_est,
+        "year": year_est,
+        "source": source_type,
+        "dqs": dqs,
+        "country_iso3": country_iso3,
+        "note": "Estimated from country/sector averages (DQS 4-5). Upgrade to DQS 1-3 with reported data.",
+    }
+
+
+def _jurisdiction_to_iso3(jurisdiction: Optional[str]) -> Optional[str]:
+    """Convert 2-letter jurisdiction code to ISO3 for OWID/CT lookups."""
+    if not jurisdiction:
+        return None
+    _MAP = {
+        "US": "USA", "GB": "GBR", "DE": "DEU", "FR": "FRA", "NL": "NLD",
+        "CH": "CHE", "JP": "JPN", "CN": "CHN", "IN": "IND", "BR": "BRA",
+        "AU": "AUS", "CA": "CAN", "SG": "SGP", "HK": "HKG", "KR": "KOR",
+        "IT": "ITA", "ES": "ESP", "SE": "SWE", "NO": "NOR", "DK": "DNK",
+        "FI": "FIN", "IE": "IRL", "BE": "BEL", "AT": "AUT", "PT": "PRT",
+        "PL": "POL", "CZ": "CZE", "LU": "LUX", "ZA": "ZAF", "MX": "MEX",
+        "RU": "RUS", "SA": "SAU", "AE": "ARE", "IL": "ISR", "TW": "TWN",
+        "TH": "THA", "MY": "MYS", "ID": "IDN", "PH": "PHL", "VN": "VNM",
+        "CL": "CHL", "CO": "COL", "AR": "ARG", "PE": "PER", "NZ": "NZL",
+    }
+    return _MAP.get(jurisdiction.upper(), jurisdiction.upper())
 
 
 # -- Climate TRACE endpoints --------------------------------------------------

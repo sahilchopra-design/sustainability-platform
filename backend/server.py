@@ -77,6 +77,10 @@ from api.v1.routes.entity_resolution import router as entity_resolution_router
 from api.v1.routes.emissions_data import router as emissions_data_router
 from api.v1.routes.scenario_data import router as scenario_data_router
 from api.v1.routes.financial_data import router as financial_data_router
+from api.v1.routes.data_hub_catalog import router as data_hub_catalog_router
+from api.v1.routes.glidepath_serve import router as glidepath_serve_router
+from api.v1.routes.carbon_prices import router as carbon_prices_router
+from api.v1.routes.benchmarks import router as benchmarks_router
 
 
 @asynccontextmanager
@@ -214,6 +218,10 @@ app.include_router(entity_resolution_router)      # Entity Resolution -- LEI loo
 app.include_router(emissions_data_router)          # Emissions Data -- Climate TRACE + OWID CO2/energy queries
 app.include_router(scenario_data_router)           # Scenario Data -- NGFS scenarios + SBTi targets
 app.include_router(financial_data_router)          # Financial Data -- SEC EDGAR + yfinance/FMP
+app.include_router(data_hub_catalog_router)        # Data Hub Catalog -- cross-source search, entity 360, coverage
+app.include_router(glidepath_serve_router)         # Glidepaths -- NZBA + CRREM pathway serve
+app.include_router(carbon_prices_router)           # Carbon Prices -- NGFS carbon price projections
+app.include_router(benchmarks_router)              # Benchmarks -- sector WACI + financial benchmarks
 
 # Audit middleware — append-only log for all mutating requests (POST/PUT/PATCH/DELETE)
 from middleware.audit_middleware import AuditMiddleware
