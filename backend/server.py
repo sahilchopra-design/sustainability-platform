@@ -70,6 +70,8 @@ from api.v1.routes.parameter_governance import router as parameter_governance_ro
 from api.v1.routes.monte_carlo import router as monte_carlo_router
 from api.v1.routes.asia_regulatory import router as asia_regulatory_router
 from api.v1.routes.china_trade import router as china_trade_router
+from api.v1.routes.audit_log import router as audit_log_router
+from api.v1.routes.organisations import router as organisations_router
 
 
 @asynccontextmanager
@@ -173,6 +175,8 @@ app.include_router(parameter_governance_router)   # P2 — Parameter Governance 
 app.include_router(monte_carlo_router)            # P2 — Monte Carlo Simulation (P5/P25/P50/P75/P95 portfolio risk distribution)
 app.include_router(asia_regulatory_router)        # Asia Regulatory — BRSR / HKMA / BoJ / ASEAN Taxonomy v3 / PBoC / CBI
 app.include_router(china_trade_router)            # China Trade Platform — Exporter / CBAM / Supplier / ESG / ETS / Corridors / Marketplace
+app.include_router(audit_log_router)              # Audit Log — admin read-only query endpoints
+app.include_router(organisations_router)          # Organisations — multi-tenant CRUD + member management
 
 # Audit middleware — append-only log for all mutating requests (POST/PUT/PATCH/DELETE)
 from middleware.audit_middleware import AuditMiddleware

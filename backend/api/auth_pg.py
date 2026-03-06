@@ -68,7 +68,19 @@ def _validate_session(db: Session, token: str):
     if expires < datetime.now(timezone.utc):
         return None
     user = db.get(UserPG, sess.user_id)
+    # Block deactivated users
+    if user and not getattr(user, "is_active", True):
+        return None
     return user
+
+
+def _update_last_login(db: Session, user: UserPG):
+    """Best-effort update of last_login timestamp."""
+    try:
+        user.last_login = datetime.now(timezone.utc)
+        db.commit()
+    except Exception:
+        db.rollback()
 
 
 class RegisterReq(BaseModel):
@@ -99,16 +111,24 @@ async def exchange_google(body: GoogleSessionReq, response: Response, db: Sessio
     if user:
         user.name = data["name"]
         user.picture = data.get("picture", "")
+        if not getattr(user, "is_active", True):
+            raise HTTPException(403, "Account deactivated")
     else:
         user = UserPG(user_id=f"user_{uuid.uuid4().hex[:12]}", email=data["email"],
                       name=data["name"], picture=data.get("picture", ""))
         db.add(user)
     db.commit()
 
+    _update_last_login(db, user)
     token = _create_session(db, user.user_id)
     _set_cookie(response, token)
-    return {"user_id": user.user_id, "email": user.email, "name": user.name,
-            "picture": user.picture or "", "session_token": token}
+    return {
+        "user_id": user.user_id, "email": user.email, "name": user.name,
+        "picture": user.picture or "",
+        "role": getattr(user, "role", "viewer"),
+        "org_id": str(getattr(user, "org_id", None) or ""),
+        "session_token": token,
+    }
 
 
 @router.post("/register")
@@ -121,9 +141,13 @@ def register(body: RegisterReq, response: Response, db: Session = Depends(get_db
     db.add(user)
     db.commit()
 
+    _update_last_login(db, user)
     token = _create_session(db, user.user_id)
     _set_cookie(response, token)
-    return {"user_id": user.user_id, "email": body.email, "name": body.name, "session_token": token}
+    return {
+        "user_id": user.user_id, "email": body.email, "name": body.name,
+        "role": "viewer", "org_id": "", "session_token": token,
+    }
 
 
 @router.post("/login")
@@ -133,10 +157,18 @@ def login(body: LoginReq, response: Response, db: Session = Depends(get_db)):
         raise HTTPException(401, "Invalid credentials")
     if not _verify_pw(body.password, user.password_hash):
         raise HTTPException(401, "Invalid credentials")
+    if not getattr(user, "is_active", True):
+        raise HTTPException(403, "Account deactivated")
 
+    _update_last_login(db, user)
     token = _create_session(db, user.user_id)
     _set_cookie(response, token)
-    return {"user_id": user.user_id, "email": user.email, "name": user.name, "session_token": token}
+    return {
+        "user_id": user.user_id, "email": user.email, "name": user.name,
+        "role": getattr(user, "role", "viewer"),
+        "org_id": str(getattr(user, "org_id", None) or ""),
+        "session_token": token,
+    }
 
 
 @router.get("/me")
@@ -147,7 +179,28 @@ def get_me(request: Request, db: Session = Depends(get_db)):
     user = _validate_session(db, token)
     if not user:
         raise HTTPException(401, "Invalid or expired session")
-    return {"user_id": user.user_id, "email": user.email, "name": user.name, "picture": user.picture or ""}
+
+    # Resolve org name if user belongs to an organisation
+    org_name = None
+    org_id = getattr(user, "org_id", None)
+    if org_id:
+        try:
+            from db.models.portfolio_pg import OrganisationPG
+            org = db.get(OrganisationPG, org_id)
+            org_name = org.name if org else None
+        except Exception:
+            pass
+
+    return {
+        "user_id": user.user_id,
+        "email": user.email,
+        "name": user.name,
+        "picture": user.picture or "",
+        "role": getattr(user, "role", "viewer"),
+        "org_id": str(org_id) if org_id else None,
+        "org_name": org_name,
+        "is_active": getattr(user, "is_active", True),
+    }
 
 
 @router.post("/logout")
