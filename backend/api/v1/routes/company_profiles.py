@@ -246,7 +246,7 @@ def list_profiles(
 # ─── Single profile (full detail) ─────────────────────────────────────────────
 
 @router.get("/{profile_id}", summary="Full company profile by ID")
-def get_profile(profile_id: str, db: Session = Depends(get_db)):
+def get_profile(profile_id: uuid.UUID, db: Session = Depends(get_db)):
     """Return all columns for a single company profile."""
     try:
         row = db.execute(
@@ -556,7 +556,7 @@ def seed_from_engine(db: Session = Depends(get_db)):
 
 @router.put("/{profile_id}", summary="Update specific fields on a company profile")
 def update_profile(
-    profile_id: str,
+    profile_id: uuid.UUID,
     updates: dict,
     db: Session = Depends(get_db),
 ):
