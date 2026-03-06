@@ -137,7 +137,7 @@ export function SensitivityAnalysis() {
             <div className="space-y-3">
               {variables.map((v) => (
                 <div key={v.name} className={`flex items-center gap-3 p-3 rounded-lg ${
-                  v.selected ? 'bg-violet-50 border border-violet-200' : 'bg-slate-50'
+                  v.selected ? 'bg-violet-50 border border-violet-200' : 'bg-white/[0.02]'
                 }`}>
                   <Checkbox
                     checked={v.selected}
@@ -153,7 +153,7 @@ export function SensitivityAnalysis() {
                       onChange={(e) => updateVariable(v.name, 'min', e.target.value)}
                       disabled={!v.selected}
                     />
-                    <span className="text-slate-400">to</span>
+                    <span className="text-white/30">to</span>
                     <Input
                       type="number"
                       step="0.001"
@@ -162,7 +162,7 @@ export function SensitivityAnalysis() {
                       onChange={(e) => updateVariable(v.name, 'max', e.target.value)}
                       disabled={!v.selected}
                     />
-                    <span className="text-xs text-slate-500">(base: {v.base})</span>
+                    <span className="text-xs text-white/40">(base: {v.base})</span>
                   </div>
                 </div>
               ))}
@@ -210,7 +210,7 @@ export function SensitivityAnalysis() {
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
-                <BarChart3 className="h-4 w-4 text-blue-600" />
+                <BarChart3 className="h-4 w-4 text-blue-300" />
                 Tornado Chart
               </CardTitle>
               <CardDescription>
@@ -251,7 +251,7 @@ export function SensitivityAnalysis() {
               <div className="mt-4 space-y-2">
                 {tornadoData.slice(0, 3).map((t, idx) => (
                   <div key={idx} className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600">{t.variable}</span>
+                    <span className="text-white/60">{t.variable}</span>
                     <Badge variant="outline" className="bg-violet-50 text-violet-700">
                       Swing: {t.swing.toFixed(1)}%
                     </Badge>
@@ -265,7 +265,7 @@ export function SensitivityAnalysis() {
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
-                <Activity className="h-4 w-4 text-emerald-600" />
+                <Activity className="h-4 w-4 text-emerald-400" />
                 Spider Chart (Scenario Comparison)
               </CardTitle>
               <CardDescription>
@@ -313,21 +313,21 @@ export function SensitivityAnalysis() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm text-slate-500">Base Valuation</div>
-                  <div className="text-2xl font-bold text-slate-800">
+                  <div className="text-sm text-white/40">Base Valuation</div>
+                  <div className="text-2xl font-bold text-white/90">
                     {formatCurrency(result.base_valuation)}
                   </div>
                 </div>
                 <div className="flex gap-4">
                   {result.tornado_data?.slice(0, 2).map((t, idx) => (
                     <div key={idx} className="text-center">
-                      <div className="text-xs text-slate-500 mb-1">{t.variable} Impact</div>
+                      <div className="text-xs text-white/40 mb-1">{t.variable} Impact</div>
                       <div className="flex gap-2">
-                        <Badge className="bg-red-100 text-red-700">
+                        <Badge className="bg-red-100 text-red-400">
                           <TrendingDown className="h-3 w-3 mr-1" />
                           {parseFloat(t.low_impact).toFixed(1)}%
                         </Badge>
-                        <Badge className="bg-emerald-100 text-emerald-700">
+                        <Badge className="bg-emerald-100 text-emerald-400">
                           <TrendingUp className="h-3 w-3 mr-1" />
                           +{parseFloat(t.high_impact).toFixed(1)}%
                         </Badge>
@@ -343,8 +343,8 @@ export function SensitivityAnalysis() {
 
       {!result && (
         <Card className="border-dashed">
-          <CardContent className="py-12 text-center text-slate-500">
-            <BarChart3 className="h-12 w-12 mx-auto mb-4 text-slate-300" />
+          <CardContent className="py-12 text-center text-white/40">
+            <BarChart3 className="h-12 w-12 mx-auto mb-4 text-white/20" />
             <p>Select a property and variables to run sensitivity analysis</p>
           </CardContent>
         </Card>

@@ -104,13 +104,13 @@ export const RiskSliders = ({
       <div key={param.key} className="space-y-2" data-testid={`slider-${param.key}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <Label className="text-sm font-medium text-slate-700">
+            <Label className="text-sm font-medium text-white/70">
               {param.label}
             </Label>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Info className="w-3.5 h-3.5 text-slate-400 cursor-help" />
+                  <Info className="w-3.5 h-3.5 text-white/30 cursor-help" />
                 </TooltipTrigger>
                 <TooltipContent className="max-w-[200px]">
                   <p className="text-xs">{param.description}</p>
@@ -118,7 +118,7 @@ export const RiskSliders = ({
               </Tooltip>
             </TooltipProvider>
           </div>
-          <span className="text-sm font-semibold text-slate-900 tabular-nums">
+          <span className="text-sm font-semibold text-white tabular-nums">
             {value} {param.unit}
           </span>
         </div>
@@ -131,7 +131,7 @@ export const RiskSliders = ({
           disabled={disabled}
           className="w-full"
         />
-        <div className="flex justify-between text-xs text-slate-400">
+        <div className="flex justify-between text-xs text-white/30">
           <span>{param.min}{param.unit}</span>
           <span>{param.max}{param.unit}</span>
         </div>
@@ -140,31 +140,31 @@ export const RiskSliders = ({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-6" data-testid="risk-sliders">
+    <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6 space-y-6" data-testid="risk-sliders">
       {/* Risk Parameters */}
       <div>
-        <h4 className="text-sm font-semibold text-slate-900 mb-4">Risk Parameters</h4>
+        <h4 className="text-sm font-semibold text-white mb-4">Risk Parameters</h4>
         <div className="space-y-6">
           {RISK_PARAMS.map(renderSlider)}
         </div>
       </div>
 
       {/* Divider */}
-      <div className="border-t border-slate-100" />
+      <div className="border-t border-white/[0.04]" />
 
       {/* Price & Financial Parameters */}
       <div>
-        <h4 className="text-sm font-semibold text-slate-900 mb-4">Price & Financial</h4>
+        <h4 className="text-sm font-semibold text-white mb-4">Price & Financial</h4>
         <div className="space-y-6">
           {PRICE_PARAMS.map(renderSlider)}
         </div>
       </div>
 
       {/* Total Risk Summary */}
-      <div className="border-t border-slate-100 pt-4">
+      <div className="border-t border-white/[0.04] pt-4">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-slate-600">Total Risk Adjustment</span>
-          <span className="text-lg font-bold text-slate-900 tabular-nums">
+          <span className="text-sm font-medium text-white/60">Total Risk Adjustment</span>
+          <span className="text-lg font-bold text-white tabular-nums">
             {(
               (values.permanence_risk_pct || 0) +
               (values.delivery_risk_pct || 0) +
@@ -173,7 +173,7 @@ export const RiskSliders = ({
             ).toFixed(1)}%
           </span>
         </div>
-        <div className="mt-2 h-2 bg-slate-100 rounded-full overflow-hidden">
+        <div className="mt-2 h-2 bg-white/[0.06] rounded-full overflow-hidden">
           <div
             className="h-full bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-500 transition-all duration-300"
             style={{

@@ -78,7 +78,7 @@ export function WhatIfAnalysis() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Zap className="h-4 w-4 text-amber-600" />
+            <Zap className="h-4 w-4 text-amber-400" />
             What-If Analysis
           </CardTitle>
           <CardDescription>
@@ -103,12 +103,12 @@ export function WhatIfAnalysis() {
           </div>
 
           {/* Cascade Toggle */}
-          <div className="flex items-center justify-between p-3 bg-amber-50 rounded-lg">
+          <div className="flex items-center justify-between p-3 bg-amber-500/10 rounded-lg">
             <div className="flex items-center gap-2">
-              <RefreshCw className="h-4 w-4 text-amber-600" />
+              <RefreshCw className="h-4 w-4 text-amber-400" />
               <div>
                 <div className="text-sm font-medium">Cascade Effects</div>
-                <div className="text-xs text-slate-500">Include secondary impacts</div>
+                <div className="text-xs text-white/40">Include secondary impacts</div>
               </div>
             </div>
             <Switch
@@ -132,7 +132,7 @@ export function WhatIfAnalysis() {
             </div>
 
             {changes.map((change, idx) => (
-              <div key={idx} className="p-3 bg-slate-50 rounded-lg space-y-2">
+              <div key={idx} className="p-3 bg-white/[0.02] rounded-lg space-y-2">
                 <div className="flex items-center gap-2">
                   <Select 
                     value={change.parameter} 
@@ -171,7 +171,7 @@ export function WhatIfAnalysis() {
                     placeholder="0.1"
                   />
 
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-white/40">
                     {change.change_type === 'percentage' ? '(e.g., 0.1 = +10%)' : '(absolute)'}
                   </span>
 
@@ -208,9 +208,9 @@ export function WhatIfAnalysis() {
               <CardHeader className="pb-2">
                 <CardTitle className="text-base flex items-center gap-2">
                   {parseFloat(result.total_change_pct) > 0 ? (
-                    <TrendingUp className="h-4 w-4 text-emerald-600" />
+                    <TrendingUp className="h-4 w-4 text-emerald-400" />
                   ) : (
-                    <TrendingDown className="h-4 w-4 text-red-600" />
+                    <TrendingDown className="h-4 w-4 text-red-400" />
                   )}
                   Valuation Impact
                 </CardTitle>
@@ -218,18 +218,18 @@ export function WhatIfAnalysis() {
               <CardContent>
                 <div className="flex items-center justify-center gap-6 py-4">
                   <div className="text-center">
-                    <div className="text-xs text-slate-500 mb-1">Base Value</div>
-                    <div className="text-xl font-bold text-slate-700">
+                    <div className="text-xs text-white/40 mb-1">Base Value</div>
+                    <div className="text-xl font-bold text-white/70">
                       {formatCurrency(result.base_valuation)}
                     </div>
                   </div>
                   
-                  <ArrowRight className="h-6 w-6 text-slate-400" />
+                  <ArrowRight className="h-6 w-6 text-white/30" />
                   
                   <div className="text-center">
-                    <div className="text-xs text-slate-500 mb-1">Adjusted Value</div>
+                    <div className="text-xs text-white/40 mb-1">Adjusted Value</div>
                     <div className={`text-xl font-bold ${
-                      parseFloat(result.total_change_pct) > 0 ? 'text-emerald-600' : 'text-red-600'
+                      parseFloat(result.total_change_pct) > 0 ? 'text-emerald-400' : 'text-red-400'
                     }`}>
                       {formatCurrency(result.adjusted_valuation)}
                     </div>
@@ -239,8 +239,8 @@ export function WhatIfAnalysis() {
                 <div className="flex justify-center">
                   <Badge className={`text-lg px-4 py-2 ${
                     parseFloat(result.total_change_pct) > 0 
-                      ? 'bg-emerald-100 text-emerald-700' 
-                      : 'bg-red-100 text-red-700'
+                      ? 'bg-emerald-100 text-emerald-400' 
+                      : 'bg-red-100 text-red-400'
                   }`}>
                     {parseFloat(result.total_change_pct) > 0 ? '+' : ''}
                     {parseFloat(result.total_change_pct).toFixed(2)}%
@@ -249,7 +249,7 @@ export function WhatIfAnalysis() {
                 </div>
 
                 {result.cascade_effects_applied && (
-                  <div className="mt-4 p-2 bg-amber-50 rounded text-center text-xs text-amber-700">
+                  <div className="mt-4 p-2 bg-amber-500/10 rounded text-center text-xs text-amber-400">
                     <RefreshCw className="h-3 w-3 inline mr-1" />
                     Cascade effects included in calculation
                   </div>
@@ -265,27 +265,27 @@ export function WhatIfAnalysis() {
               <CardContent>
                 <div className="space-y-3">
                   {result.change_breakdown?.map((cb, idx) => (
-                    <div key={idx} className="p-3 bg-slate-50 rounded-lg">
+                    <div key={idx} className="p-3 bg-white/[0.02] rounded-lg">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-medium text-sm">
                           {getParameterLabel(cb.parameter)}
                         </span>
                         <Badge className={
                           parseFloat(cb.total_impact) > 0 
-                            ? 'bg-emerald-100 text-emerald-700' 
-                            : 'bg-red-100 text-red-700'
+                            ? 'bg-emerald-100 text-emerald-400' 
+                            : 'bg-red-100 text-red-400'
                         }>
                           {parseFloat(cb.total_impact) > 0 ? '+' : ''}
                           {formatCurrency(cb.total_impact)}
                         </Badge>
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                      <div className="flex items-center gap-2 text-xs text-white/40">
                         <span>{cb.old_value?.toFixed(4)}</span>
                         <ArrowRight className="h-3 w-3" />
-                        <span className="font-medium text-slate-700">{cb.new_value?.toFixed(4)}</span>
+                        <span className="font-medium text-white/70">{cb.new_value?.toFixed(4)}</span>
                       </div>
                       {parseFloat(cb.cascading_impacts) !== 0 && (
-                        <div className="mt-2 text-xs text-amber-600">
+                        <div className="mt-2 text-xs text-amber-400">
                           <RefreshCw className="h-3 w-3 inline mr-1" />
                           Cascading impact: {formatCurrency(cb.cascading_impacts)}
                         </div>
@@ -300,8 +300,8 @@ export function WhatIfAnalysis() {
 
         {!result && (
           <Card className="border-dashed">
-            <CardContent className="py-12 text-center text-slate-500">
-              <Zap className="h-12 w-12 mx-auto mb-4 text-slate-300" />
+            <CardContent className="py-12 text-center text-white/40">
+              <Zap className="h-12 w-12 mx-auto mb-4 text-white/20" />
               <p>Add parameter changes to see their impact on valuation</p>
               <div className="mt-4 flex items-center justify-center gap-2 text-xs">
                 <HelpCircle className="h-3 w-3" />

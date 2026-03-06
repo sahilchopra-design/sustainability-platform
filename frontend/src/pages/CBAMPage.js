@@ -17,6 +17,7 @@ import {
 } from 'recharts';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
+const CT_BASE = `${API_URL}/api/v1/china-trade`;
 const COLORS = ['#1e40af', '#dc2626', '#059669', '#d97706'];
 const RISK_COLORS = { Low: 'bg-emerald-100 text-emerald-800', Medium: 'bg-amber-100 text-amber-800',
   High: 'bg-orange-100 text-orange-800', 'Very High': 'bg-red-100 text-red-800' };
@@ -41,6 +42,12 @@ export default function CBAMPage() {
   const [projScenario, setProjScenario] = useState('current_trend');
   const [projYears, setProjYears] = useState('10');
   const [projLoading, setProjLoading] = useState(false);
+
+  // China Trade auto-fill state
+  const [ctEntityName, setCtEntityName] = useState('');
+  const [ctHsCode, setCtHsCode] = useState('');
+  const [ctData, setCtData] = useState(null);
+  const [ctLoading, setCtLoading] = useState(false);
 
   const load = async () => {
     const [d, p, s, c, cp, fa] = await Promise.all([
@@ -93,6 +100,22 @@ export default function CBAMPage() {
       toast.success('Emissions calculated');
     } catch { toast.error('Calculation failed'); }
     finally { setCalcLoading(false); }
+  };
+
+  const fetchFromChinaTrade = async () => {
+    if (!ctEntityName && !ctHsCode) return;
+    setCtLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (ctEntityName) params.set('entity_name', ctEntityName);
+      if (ctHsCode) params.set('hs_code', ctHsCode);
+      const r = await fetch(`${CT_BASE}/cbam/supplier-lookup?${params}`);
+      if (!r.ok) throw new Error('Lookup failed');
+      const d = await r.json();
+      setCtData(d);
+      toast.success('China Trade data loaded');
+    } catch { toast.error('China Trade lookup failed'); }
+    finally { setCtLoading(false); }
   };
 
   // Chart data
@@ -178,7 +201,7 @@ export default function CBAMPage() {
         </TabsContent>
 
         {/* Calculator */}
-        <TabsContent value="calculator" className="mt-4">
+        <TabsContent value="calculator" className="mt-4 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Input Form */}
             <Card>
@@ -241,11 +264,11 @@ export default function CBAMPage() {
                   <div className="space-y-4">
                     {/* Emission cards */}
                     <div className="grid grid-cols-3 gap-3">
-                      <div className="bg-blue-50 p-3 rounded-lg text-center">
+                      <div className="bg-blue-500/10 p-3 rounded-lg text-center">
                         <p className="text-xl font-bold text-blue-700">{calcResult.specific_direct_emissions?.toFixed(4)}</p>
                         <p className="text-[10px] text-blue-600">Direct (tCO2/t)</p>
                       </div>
-                      <div className="bg-emerald-50 p-3 rounded-lg text-center">
+                      <div className="bg-emerald-500/10 p-3 rounded-lg text-center">
                         <p className="text-xl font-bold text-emerald-700">{calcResult.specific_indirect_emissions?.toFixed(4)}</p>
                         <p className="text-[10px] text-emerald-600">Indirect (tCO2/t)</p>
                       </div>
@@ -269,7 +292,7 @@ export default function CBAMPage() {
 
                     {/* Warnings */}
                     {calcResult.uses_default_values && (
-                      <div className="flex items-start gap-2 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                      <div className="flex items-start gap-2 p-3 bg-amber-500/10 rounded-lg border border-amber-200">
                         <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />
                         <div>
                           <p className="text-xs font-medium text-amber-800">Default values used</p>
@@ -279,7 +302,7 @@ export default function CBAMPage() {
                     )}
 
                     {!calcResult.uses_default_values && (
-                      <div className="flex items-start gap-2 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+                      <div className="flex items-start gap-2 p-3 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
                         <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
                         <p className="text-xs text-emerald-800">Actual emissions data used — no markup applied</p>
                       </div>
@@ -294,6 +317,89 @@ export default function CBAMPage() {
               </CardContent>
             </Card>
           </div>
+
+          {/* ── China Trade Auto-fill ───────────────────────────────────── */}
+          <Card className="border-blue-200 bg-blue-50/40">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Globe className="h-4 w-4 text-blue-600" />
+                China Trade Auto-fill
+                <Badge className="bg-blue-100 text-blue-800 text-[10px] ml-auto">CROSS-MODULE</Badge>
+              </CardTitle>
+              <p className="text-[11px] text-muted-foreground mt-0.5">
+                Look up a Chinese exporter to pre-fill embedded carbon, EU benchmark, and CETS Art.9 deduction data.
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground block mb-1">Chinese Exporter Name</label>
+                  <Input value={ctEntityName} onChange={e => setCtEntityName(e.target.value)}
+                    placeholder="e.g., China Baowu Steel" className="text-sm" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground block mb-1">HS Code (optional)</label>
+                  <Input value={ctHsCode} onChange={e => setCtHsCode(e.target.value)}
+                    placeholder="e.g., 720810" className="text-sm" />
+                </div>
+                <Button onClick={fetchFromChinaTrade} disabled={ctLoading || (!ctEntityName && !ctHsCode)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white">
+                  {ctLoading ? <><RefreshCw className="h-3 w-3 animate-spin mr-1" />Looking up...</> : 'Look Up from China Trade'}
+                </Button>
+              </div>
+
+              {ctData && !ctData.error && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-1">
+                  <div className="bg-white rounded-lg p-3 border border-blue-100">
+                    <p className="text-[10px] text-muted-foreground">Embedded Carbon</p>
+                    <p className="text-lg font-bold text-blue-700">{ctData.embedded_carbon_tco2_per_tonne?.toFixed(2)}</p>
+                    <p className="text-[10px] text-blue-600">tCO2/tonne</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-3 border border-blue-100">
+                    <p className="text-[10px] text-muted-foreground">EU Benchmark</p>
+                    <p className="text-lg font-bold text-emerald-700">{ctData.eu_benchmark_tco2_per_tonne?.toFixed(2)}</p>
+                    <p className="text-[10px] text-emerald-600">tCO2/tonne (Annex III)</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-3 border border-blue-100">
+                    <p className="text-[10px] text-muted-foreground">vs EU Benchmark</p>
+                    <p className={`text-lg font-bold ${(ctData.vs_eu_benchmark_pct || 0) > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                      {ctData.vs_eu_benchmark_pct > 0 ? '+' : ''}{ctData.vs_eu_benchmark_pct?.toFixed(1)}%
+                    </p>
+                    <p className="text-[10px] text-muted-foreground">above/below benchmark</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-3 border border-blue-100">
+                    <p className="text-[10px] text-muted-foreground">CETS Price (Art.9)</p>
+                    <p className="text-lg font-bold text-violet-700">€{ctData.cets_price_eur_per_tco2?.toFixed(2)}</p>
+                    <p className="text-[10px] text-violet-600">deductible / tCO2</p>
+                  </div>
+                </div>
+              )}
+
+              {ctData && !ctData.error && ctData.cbam_auto_fill && (
+                <div className="bg-white rounded-lg border border-blue-100 p-3 space-y-2">
+                  <p className="text-xs font-semibold text-blue-800">Auto-fill Values (CBAM Regulation Art.9)</p>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+                    {Object.entries(ctData.cbam_auto_fill).map(([k, v]) => (
+                      <div key={k} className="flex justify-between bg-blue-50/60 rounded px-2 py-1">
+                        <span className="text-muted-foreground capitalize">{k.replace(/_/g, ' ')}</span>
+                        <span className="font-medium">{typeof v === 'number' ? v.toFixed(3) : String(v)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-[10px] text-muted-foreground pt-1">
+                    Production process: <strong>{ctData.production_process}</strong> — source: China Trade Platform (/china-trade)
+                  </p>
+                </div>
+              )}
+
+              {ctData?.error && (
+                <div className="flex items-center gap-2 p-3 bg-amber-50 rounded-lg border border-amber-200 text-sm">
+                  <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
+                  <span className="text-amber-800">{ctData.error}</span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
 

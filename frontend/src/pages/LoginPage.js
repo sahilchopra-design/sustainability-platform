@@ -6,7 +6,9 @@ import { Label } from '../components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Separator } from '../components/ui/separator';
 import { toast } from 'sonner';
-import { LogIn, UserPlus, Globe, Shield } from 'lucide-react';
+import { LogIn, UserPlus, Globe, Shield, Code } from 'lucide-react';
+
+const IS_DEV = process.env.NODE_ENV === 'development';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -17,6 +19,14 @@ export default function LoginPage({ onAuth }) {
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Dev bypass — only available in development builds, never in production
+  const handleDevBypass = () => {
+    const devUser = { name: 'Developer', email: 'dev@local', role: 'admin', picture: null };
+    localStorage.setItem('session_token', 'dev-bypass-local');
+    onAuth(devUser);
+    toast.success('Entered dev mode — no auth required');
+  };
 
   // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
   const handleGoogleLogin = () => {
@@ -76,6 +86,20 @@ export default function LoginPage({ onAuth }) {
             <Globe className="h-4 w-4 mr-2" />
             Continue with Google
           </Button>
+
+          {/* Dev bypass — development builds only */}
+          {IS_DEV && (
+            <Button
+              variant="outline"
+              className="w-full h-9 border-dashed text-xs"
+              style={{ borderColor: 'rgba(56,189,248,0.35)', color: 'rgba(56,189,248,0.7)' }}
+              onClick={handleDevBypass}
+              data-testid="dev-bypass-btn"
+            >
+              <Code className="h-3 w-3 mr-2" />
+              Continue in Dev Mode (local only)
+            </Button>
+          )}
 
           <div className="relative">
             <Separator />

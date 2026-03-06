@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import Optional, List
-from beanie import Document
 from pydantic import BaseModel, Field
 from enum import Enum
 
@@ -46,21 +45,19 @@ class Asset(BaseModel):
     maturity_years: int
 
 
-class Portfolio(Document):
-    """Portfolio containing multiple assets"""
+class Portfolio(BaseModel):
+    """Portfolio schema (PostgreSQL-backed via db/models_sql.py)"""
+    id: Optional[str] = None
     name: str
     description: Optional[str] = None
     assets: List[Asset] = Field(default_factory=list)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
-    class Settings:
-        name = "portfolios"
-        indexes = ["name", "created_at"]
 
-
-class ScenarioSeries(Document):
-    """Climate scenario time-series data"""
+class ScenarioSeries(BaseModel):
+    """Climate scenario time-series schema (PostgreSQL-backed via db/models_sql.py)"""
+    id: Optional[int] = None
     year: int
     scenario: str
     model: str
@@ -69,15 +66,6 @@ class ScenarioSeries(Document):
     unit: str
     value: float
     source_version: str
-
-    class Settings:
-        name = "scenario_series"
-        indexes = [
-            "scenario",
-            "variable",
-            "year",
-            ("scenario", "variable", "region", "year"),
-        ]
 
 
 class RatingMigration(BaseModel):
@@ -100,8 +88,9 @@ class ScenarioResult(BaseModel):
     total_exposure: float
 
 
-class AnalysisRun(Document):
-    """Scenario analysis run and results"""
+class AnalysisRun(BaseModel):
+    """Analysis run schema (PostgreSQL-backed via db/models_sql.py)"""
+    id: Optional[str] = None
     portfolio_id: str
     portfolio_name: str
     scenarios: List[str]
@@ -111,7 +100,3 @@ class AnalysisRun(Document):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     completed_at: Optional[datetime] = None
     error_message: Optional[str] = None
-
-    class Settings:
-        name = "analysis_runs"
-        indexes = ["portfolio_id", "created_at", "status"]

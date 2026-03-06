@@ -373,7 +373,7 @@ function GapAnalysisView({ gaps }) {
 /* ---- ConsistencyView ---- */
 function ConsistencyView({ checks }) {
   const statusIcon = { pass: <CheckCircle className="h-5 w-5 text-emerald-600" />, warning: <AlertTriangle className="h-5 w-5 text-amber-500" />, fail: <XCircle className="h-5 w-5 text-red-600" /> };
-  const statusColor = { pass: 'bg-emerald-50 border-emerald-200', warning: 'bg-amber-50 border-amber-200', fail: 'bg-red-50 border-red-200' };
+  const statusColor = { pass: 'bg-emerald-500/10 border-emerald-500/20', warning: 'bg-amber-500/10 border-amber-200', fail: 'bg-red-500/10 border-red-500/20' };
 
   const overallScore = checks.length > 0
     ? (checks.reduce((a, c) => a + (c.score || 0), 0) / checks.length * 100).toFixed(0)

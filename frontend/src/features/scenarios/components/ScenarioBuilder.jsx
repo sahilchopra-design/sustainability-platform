@@ -106,7 +106,7 @@ export function ScenarioBuilder() {
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Calculator className="h-4 w-4 text-blue-600" />
+              <Calculator className="h-4 w-4 text-blue-300" />
               Build Custom Scenario
             </CardTitle>
             <CardDescription>
@@ -156,7 +156,7 @@ export function ScenarioBuilder() {
               </div>
 
               {modifications.map((mod, idx) => (
-                <div key={idx} className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg">
+                <div key={idx} className="flex items-center gap-2 p-3 bg-white/[0.02] rounded-lg">
                   <Select 
                     value={mod.type} 
                     onValueChange={(v) => updateModification(idx, 'type', v)}
@@ -179,7 +179,7 @@ export function ScenarioBuilder() {
                     onChange={(e) => updateModification(idx, 'new_value', parseFloat(e.target.value))}
                   />
                   
-                  <span className="text-sm text-slate-500">
+                  <span className="text-sm text-white/40">
                     {modificationTypes.find(t => t.value === mod.type)?.unit}
                   </span>
                   
@@ -249,35 +249,35 @@ export function ScenarioBuilder() {
               <CardHeader className="pb-2">
                 <CardTitle className="text-base flex items-center gap-2">
                   {result.value_change_pct > 0 ? (
-                    <TrendingUp className="h-4 w-4 text-emerald-600" />
+                    <TrendingUp className="h-4 w-4 text-emerald-400" />
                   ) : (
-                    <TrendingDown className="h-4 w-4 text-red-600" />
+                    <TrendingDown className="h-4 w-4 text-red-400" />
                   )}
                   Scenario Result: {result.scenario_name}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div className="p-3 bg-slate-50 rounded-lg text-center">
-                    <div className="text-xs text-slate-500 mb-1">Base Value</div>
-                    <div className="text-lg font-bold text-slate-700">
+                  <div className="p-3 bg-white/[0.02] rounded-lg text-center">
+                    <div className="text-xs text-white/40 mb-1">Base Value</div>
+                    <div className="text-lg font-bold text-white/70">
                       {formatCurrency(result.base_value)}
                     </div>
                   </div>
-                  <div className="p-3 bg-blue-50 rounded-lg text-center">
-                    <div className="text-xs text-blue-600 mb-1">Adjusted Value</div>
-                    <div className="text-lg font-bold text-blue-700">
+                  <div className="p-3 bg-blue-500/10 rounded-lg text-center">
+                    <div className="text-xs text-blue-300 mb-1">Adjusted Value</div>
+                    <div className="text-lg font-bold text-blue-300">
                       {formatCurrency(result.adjusted_value)}
                     </div>
                   </div>
                   <div className={`p-3 rounded-lg text-center ${
-                    result.value_change_pct > 0 ? 'bg-emerald-50' : 'bg-red-50'
+                    result.value_change_pct > 0 ? 'bg-emerald-500/10' : 'bg-red-500/10'
                   }`}>
                     <div className={`text-xs mb-1 ${
-                      result.value_change_pct > 0 ? 'text-emerald-600' : 'text-red-600'
+                      result.value_change_pct > 0 ? 'text-emerald-400' : 'text-red-400'
                     }`}>Change</div>
                     <div className={`text-lg font-bold ${
-                      result.value_change_pct > 0 ? 'text-emerald-700' : 'text-red-700'
+                      result.value_change_pct > 0 ? 'text-emerald-400' : 'text-red-400'
                     }`}>
                       {result.value_change_pct > 0 ? '+' : ''}{parseFloat(result.value_change_pct).toFixed(2)}%
                     </div>
@@ -286,19 +286,19 @@ export function ScenarioBuilder() {
 
                 {/* Component Impacts */}
                 <div className="space-y-2">
-                  <div className="text-sm font-medium text-slate-600">Impact Breakdown</div>
+                  <div className="text-sm font-medium text-white/60">Impact Breakdown</div>
                   {result.component_impacts?.map((impact, idx) => (
-                    <div key={idx} className="flex items-center justify-between py-2 border-b border-slate-100">
+                    <div key={idx} className="flex items-center justify-between py-2 border-b border-white/[0.04]">
                       <div>
-                        <div className="text-sm text-slate-700">{impact.modification}</div>
-                        <div className="text-xs text-slate-500">
+                        <div className="text-sm text-white/70">{impact.modification}</div>
+                        <div className="text-xs text-white/40">
                           {impact.old_value?.toFixed(4)} → {impact.new_value?.toFixed(4)}
                         </div>
                       </div>
                       <Badge className={
                         impact.impact_pct > 0 
-                          ? 'bg-emerald-100 text-emerald-700' 
-                          : 'bg-red-100 text-red-700'
+                          ? 'bg-emerald-100 text-emerald-400' 
+                          : 'bg-red-100 text-red-400'
                       }>
                         {impact.impact_pct > 0 ? '+' : ''}{parseFloat(impact.impact_pct).toFixed(2)}%
                       </Badge>
@@ -312,8 +312,8 @@ export function ScenarioBuilder() {
 
         {!result && (
           <Card className="border-dashed">
-            <CardContent className="py-12 text-center text-slate-500">
-              <Calculator className="h-12 w-12 mx-auto mb-4 text-slate-300" />
+            <CardContent className="py-12 text-center text-white/40">
+              <Calculator className="h-12 w-12 mx-auto mb-4 text-white/20" />
               <p>Select a property and add modifications to build a scenario</p>
             </CardContent>
           </Card>

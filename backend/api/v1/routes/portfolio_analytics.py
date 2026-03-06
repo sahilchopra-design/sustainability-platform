@@ -6,7 +6,7 @@ Consolidates property valuations into portfolio-level analytics
 from fastapi import APIRouter, HTTPException, Query
 from typing import Optional, List
 from datetime import date
-from uuid import UUID, uuid4
+from uuid import UUID, uuid4, uuid5, NAMESPACE_DNS
 from decimal import Decimal
 
 from schemas.portfolio_analytics import (
@@ -18,7 +18,7 @@ from schemas.portfolio_analytics import (
     ReportGenerateRequest, ReportResponse, ReportContent,
     DashboardRequest, DashboardResponse,
 )
-from services.portfolio_analytics_engine import (
+from services.portfolio_analytics_engine_v2 import (
     PortfolioAggregationEngine,
     get_portfolio, get_holdings, save_portfolio, save_holding,
     remove_holding, list_portfolios, get_report, init_sample_data
@@ -64,19 +64,24 @@ async def list_all_portfolios(
         total_value = sum(Decimal(str(h.get("current_value", 0))) for h in holdings)
         total_income = sum(Decimal(str(h.get("annual_income", 0))) for h in holdings)
         
+        # portfolios_pg uses string IDs (e.g. "demo-eu-banking-sfdr") — normalise to UUID
+        try:
+            p_uuid = UUID(p["id"])
+        except (ValueError, AttributeError):
+            p_uuid = uuid5(NAMESPACE_DNS, p["id"])
         items.append(PortfolioResponse(
-            id=UUID(p["id"]),
+            id=p_uuid,
             name=p["name"],
             description=p.get("description"),
             portfolio_type=PortfolioType(p.get("portfolio_type", "fund")),
             investment_strategy=InvestmentStrategy(p.get("investment_strategy", "core")) if p.get("investment_strategy") else None,
             target_return=Decimal(str(p.get("target_return", 0))) if p.get("target_return") else None,
             aum=Decimal(str(p.get("aum", 0))),
-            currency=p.get("currency", "USD"),
+            currency=p.get("currency", "EUR"),
             inception_date=p.get("inception_date"),
-            owner_id=UUID(p["owner_id"]) if p.get("owner_id") else None,
-            created_at=p["created_at"],
-            updated_at=p["updated_at"],
+            owner_id=None,
+            created_at=p.get("created_at"),
+            updated_at=p.get("updated_at"),
             total_properties=len(holdings),
             total_value=total_value,
             total_income=total_income,
@@ -451,13 +456,105 @@ async def get_enum_values():
 async def seed_sample_data():
     """
     Initialize sample portfolios for demonstration.
-    
+
     Creates 3 sample portfolios with holdings.
+    Any assets created receive DQS-5 badge (demo data — no primary emissions).
     """
     init_sample_data()
     portfolios = list_portfolios()
     return {
         "message": "Sample data initialized",
         "portfolio_count": len(portfolios),
-        "portfolios": [{"id": p["id"], "name": p["name"]} for p in portfolios]
+        "portfolios": [{"id": p["id"], "name": p["name"]} for p in portfolios],
+        "data_quality_note": "Demo data uses DQS-5 sector-average estimates. "
+                             "Upload primary emissions data to improve quality.",
+    }
+
+
+# ============ PCAF / WACI — Real Financed Emissions ============
+
+@router.post("/{portfolio_id}/pcaf-run")
+async def run_pcaf_for_portfolio(portfolio_id: str):
+    """
+    Execute a full PCAF Standard v2.0 financed emissions calculation for
+    a portfolio stored in assets_pg.
+
+    - Loads assets and resolves DQS hierarchy (primary data / Data Hub / sector avg)
+    - Computes WACI, carbon footprint, ITR, attribution factors
+    - Writes results to pcaf_time_series
+    - Fires alert engine (glidepath deviation, DQS thresholds)
+    - Returns full result including investee breakdown and PAI indicators
+
+    Safe to call repeatedly — each call overwrites pcaf_time_series for
+    the current reporting year.
+    """
+    from services.portfolio_analytics_engine import run_pcaf_calculation
+
+    try:
+        result = run_pcaf_calculation(portfolio_id)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"PCAF calculation failed: {str(exc)}",
+        )
+
+    if result.get("error") and not result.get("data_available"):
+        raise HTTPException(status_code=404, detail=result["error"])
+
+    return result
+
+
+@router.get("/{portfolio_id}/pcaf-results")
+async def get_pcaf_results(portfolio_id: str):
+    """
+    Return the latest PCAF metrics for a portfolio.
+
+    Uses cached pcaf_time_series records if available.
+    Runs the engine on-demand if no cached data exists (first call).
+
+    Response includes:
+      portfolio_summary  — WACI, ITR, coverage, DQS
+      dqs_distribution   — count of assets per DQS tier (1-5)
+      sector_breakdown   — per-sector WACI contribution
+      from_cache         — true if data came from pcaf_time_series
+    """
+    from services.portfolio_analytics_engine import get_latest_pcaf_results
+
+    try:
+        result = get_latest_pcaf_results(portfolio_id)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"PCAF results fetch failed: {str(exc)}",
+        )
+
+    return result
+
+
+@router.get("/{portfolio_id}/waci-history")
+async def get_waci_history(
+    portfolio_id: str,
+    years: int = Query(10, ge=1, le=20, description="Number of reporting years to return"),
+):
+    """
+    Return year-by-year WACI vs. glidepath for the portfolio.
+
+    Used by sparklines on Portfolio Analytics page and Glidepath Tracker.
+    Data comes from pcaf_time_series.  Returns empty list if no calculations
+    have been run yet.
+    """
+    from services.portfolio_analytics_engine import get_waci_history as _waci_history
+
+    try:
+        history = _waci_history(portfolio_id, years=years)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"WACI history fetch failed: {str(exc)}",
+        )
+
+    return {
+        "portfolio_id": portfolio_id,
+        "history":      history,
+        "periods":      len(history),
     }

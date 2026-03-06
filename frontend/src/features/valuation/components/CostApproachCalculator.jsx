@@ -161,7 +161,7 @@ export function CostApproachCalculator() {
           <CardContent className="space-y-6">
             {/* Land Value */}
             <div className="space-y-4">
-              <h4 className="text-sm font-semibold text-slate-700 border-b pb-2">
+              <h4 className="text-sm font-semibold text-white/70 border-b pb-2">
                 Land Value
               </h4>
               <div className="grid grid-cols-2 gap-4">
@@ -189,7 +189,7 @@ export function CostApproachCalculator() {
 
             {/* Building Characteristics */}
             <div className="space-y-4">
-              <h4 className="text-sm font-semibold text-slate-700 border-b pb-2">
+              <h4 className="text-sm font-semibold text-white/70 border-b pb-2">
                 Building Characteristics
               </h4>
               <div className="space-y-2">
@@ -244,13 +244,13 @@ export function CostApproachCalculator() {
                   onChange={(e) => handleChange('location_factor', e.target.value)}
                   data-testid="input-location-factor"
                 />
-                <p className="text-xs text-slate-500">1.0 = National Average</p>
+                <p className="text-xs text-white/40">1.0 = National Average</p>
               </div>
             </div>
 
             {/* Depreciation Parameters */}
             <div className="space-y-4">
-              <h4 className="text-sm font-semibold text-slate-700 border-b pb-2">
+              <h4 className="text-sm font-semibold text-white/70 border-b pb-2">
                 Depreciation Parameters
               </h4>
               <div className="grid grid-cols-2 gap-4">
@@ -337,7 +337,7 @@ export function CostApproachCalculator() {
           </CardHeader>
           <CardContent className="space-y-2">
             {deficiencies.length === 0 ? (
-              <p className="text-sm text-slate-500 text-center py-2">No deficiencies added</p>
+              <p className="text-sm text-white/40 text-center py-2">No deficiencies added</p>
             ) : (
               deficiencies.map((d, idx) => (
                 <div key={idx} className="flex gap-2 items-center">
@@ -380,22 +380,22 @@ export function CostApproachCalculator() {
             <div className="space-y-6">
               {/* Final Value */}
               <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg p-6 text-center">
-                <p className="text-sm text-amber-600 font-medium mb-1">Property Value</p>
+                <p className="text-sm text-amber-400 font-medium mb-1">Property Value</p>
                 <p className="text-4xl font-bold text-amber-900">
                   {formatCurrency(result.property_value)}
                 </p>
-                <p className="text-sm text-amber-700 mt-2">
+                <p className="text-sm text-amber-400 mt-2">
                   {formatCurrency(result.value_per_sf)} / SF
                 </p>
               </div>
 
               {/* Breakdown */}
               <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                <h4 className="text-sm font-semibold text-white/70 flex items-center gap-2">
                   <Building className="h-4 w-4" />
                   Value Breakdown
                 </h4>
-                <div className="bg-slate-50 rounded-lg p-4 space-y-2">
+                <div className="bg-white/[0.02] rounded-lg p-4 space-y-2">
                   {/* Land */}
                   <div className="flex justify-between text-sm font-medium border-b pb-2">
                     <span>Land Value</span>
@@ -412,29 +412,29 @@ export function CostApproachCalculator() {
                       <span>Location Factor ({result.location_factor}x)</span>
                       <span className="font-medium">{formatCurrency(result.rcn)}</span>
                     </div>
-                    <p className="text-xs text-slate-500 mt-1">Replacement Cost New (RCN)</p>
+                    <p className="text-xs text-white/40 mt-1">Replacement Cost New (RCN)</p>
                   </div>
 
                   {/* Depreciation */}
                   <div className="border-t pt-2 mt-2">
-                    <p className="text-xs text-slate-600 mb-2">Less: Depreciation</p>
-                    <div className="flex justify-between text-sm text-red-600">
+                    <p className="text-xs text-white/60 mb-2">Less: Depreciation</p>
+                    <div className="flex justify-between text-sm text-red-400">
                       <span>Physical ({formatPercent(result.physical_depreciation_percent)})</span>
                       <span>({formatCurrency(result.physical_depreciation)})</span>
                     </div>
                     {parseFloat(result.functional_obsolescence) > 0 && (
-                      <div className="flex justify-between text-sm text-red-600">
+                      <div className="flex justify-between text-sm text-red-400">
                         <span>Functional</span>
                         <span>({formatCurrency(result.functional_obsolescence)})</span>
                       </div>
                     )}
                     {parseFloat(result.external_obsolescence) > 0 && (
-                      <div className="flex justify-between text-sm text-red-600">
+                      <div className="flex justify-between text-sm text-red-400">
                         <span>External ({formatPercent(result.external_obsolescence_percent)})</span>
                         <span>({formatCurrency(result.external_obsolescence)})</span>
                       </div>
                     )}
-                    <div className="flex justify-between text-sm font-medium text-red-700 border-t pt-1 mt-1">
+                    <div className="flex justify-between text-sm font-medium text-red-400 border-t pt-1 mt-1">
                       <span>Total Depreciation ({formatPercent(result.total_depreciation_percent)})</span>
                       <span>({formatCurrency(result.total_depreciation)})</span>
                     </div>
@@ -446,7 +446,7 @@ export function CostApproachCalculator() {
                       <span>Depreciated Improvements</span>
                       <span>{formatCurrency(result.depreciated_improvements)}</span>
                     </div>
-                    <div className="flex justify-between text-sm font-bold text-emerald-700 mt-2">
+                    <div className="flex justify-between text-sm font-bold text-emerald-400 mt-2">
                       <span>Total Property Value</span>
                       <span>{formatCurrency(result.property_value)}</span>
                     </div>
@@ -455,18 +455,18 @@ export function CostApproachCalculator() {
               </div>
 
               {/* Formula */}
-              <div className="bg-amber-50 rounded-lg p-4">
-                <div className="flex items-center gap-2 text-amber-700 text-sm mb-2">
+              <div className="bg-amber-500/10 rounded-lg p-4">
+                <div className="flex items-center gap-2 text-amber-400 text-sm mb-2">
                   <Info className="h-4 w-4" />
                   <span className="font-medium">Cost Approach Formula</span>
                 </div>
-                <p className="text-sm text-amber-600">
+                <p className="text-sm text-amber-400">
                   Value = Land + (RCN - Depreciation) = {formatCurrency(result.land_value)} + {formatCurrency(result.depreciated_improvements)}
                 </p>
               </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-slate-400">
+            <div className="flex flex-col items-center justify-center py-12 text-white/30">
               <Hammer className="h-16 w-16 mb-4 opacity-50" />
               <p className="text-sm">Enter inputs and click Calculate</p>
             </div>

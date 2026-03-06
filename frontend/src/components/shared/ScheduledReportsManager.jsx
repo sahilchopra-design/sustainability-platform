@@ -168,7 +168,7 @@ export function ScheduledReportsManager() {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-blue-600" />
+              <Calendar className="h-5 w-5 text-blue-300" />
               Scheduled Reports
             </CardTitle>
             <CardDescription>
@@ -267,7 +267,7 @@ export function ScheduledReportsManager() {
                     onChange={e => setFormData({...formData, recipients: e.target.value})}
                     data-testid="schedule-recipients-input"
                   />
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-white/40">
                     Enter email addresses separated by commas
                   </p>
                 </div>
@@ -288,12 +288,12 @@ export function ScheduledReportsManager() {
       
       <CardContent>
         {loading ? (
-          <div className="text-center py-8 text-slate-500">Loading...</div>
+          <div className="text-center py-8 text-white/40">Loading...</div>
         ) : reports.length === 0 ? (
-          <div className="text-center py-12 bg-slate-50 rounded-lg">
-            <Calendar className="h-12 w-12 mx-auto text-slate-300 mb-4" />
-            <p className="text-slate-600 font-medium">No scheduled reports yet</p>
-            <p className="text-sm text-slate-500 mt-1">
+          <div className="text-center py-12 bg-white/[0.02] rounded-lg">
+            <Calendar className="h-12 w-12 mx-auto text-white/20 mb-4" />
+            <p className="text-white/60 font-medium">No scheduled reports yet</p>
+            <p className="text-sm text-white/40 mt-1">
               Create your first automated report schedule
             </p>
           </div>
@@ -318,7 +318,7 @@ export function ScheduledReportsManager() {
                       {report.format === 'pdf' ? (
                         <FileText className="h-4 w-4 text-red-500" />
                       ) : (
-                        <FileSpreadsheet className="h-4 w-4 text-green-600" />
+                        <FileSpreadsheet className="h-4 w-4 text-green-400" />
                       )}
                       {report.name}
                     </div>
@@ -328,23 +328,23 @@ export function ScheduledReportsManager() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1 text-sm">
-                      <Clock className="h-3 w-3 text-slate-400" />
+                      <Clock className="h-3 w-3 text-white/30" />
                       {getFrequencyLabel(report.frequency)}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1 text-sm">
-                      <Mail className="h-3 w-3 text-slate-400" />
+                      <Mail className="h-3 w-3 text-white/30" />
                       {report.recipients.length} recipient(s)
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm text-slate-600">
+                  <TableCell className="text-sm text-white/60">
                     {report.next_run 
                       ? new Date(report.next_run).toLocaleDateString()
                       : '-'}
                   </TableCell>
                   <TableCell>
-                    <Badge className={report.is_active ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-600'}>
+                    <Badge className={report.is_active ? 'bg-green-100 text-green-300' : 'bg-white/[0.06] text-white/60'}>
                       {report.is_active ? 'Active' : 'Paused'}
                     </Badge>
                   </TableCell>

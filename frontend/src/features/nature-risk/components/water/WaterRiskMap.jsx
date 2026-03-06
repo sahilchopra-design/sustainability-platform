@@ -9,9 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../..
 import { Badge } from '../../../../components/ui/badge';
 import { Button } from '../../../../components/ui/button';
 import { Droplets, Layers, ZoomIn, ZoomOut, Locate, AlertTriangle } from 'lucide-react';
-
-const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
-mapboxgl.accessToken = MAPBOX_TOKEN;
+import { MapboxTokenGate } from '../../../../components/shared/MapboxTokenGate';
 
 // Risk level colors
 const getRiskColor = (riskLevel) => {
@@ -30,7 +28,8 @@ const getRiskLabel = (riskLevel) => {
   return 'Low';
 };
 
-export function WaterRiskMap({ locations = [], onLocationSelect, selectedLocationId }) {
+function WaterRiskMapInner({ locations = [], onLocationSelect, selectedLocationId, accessToken }) {
+  if (accessToken) mapboxgl.accessToken = accessToken;
   const mapContainer = useRef(null);
   const map = useRef(null);
   const markersRef = useRef([]);
@@ -234,7 +233,7 @@ export function WaterRiskMap({ locations = [], onLocationSelect, selectedLocatio
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2 text-base">
-              <Droplets className="h-4 w-4 text-blue-600" />
+              <Droplets className="h-4 w-4 text-blue-300" />
               Water Risk Map
             </CardTitle>
             <CardDescription className="text-xs">
@@ -270,7 +269,7 @@ export function WaterRiskMap({ locations = [], onLocationSelect, selectedLocatio
         />
         
         {/* Legend */}
-        <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-slate-800/90 p-3 rounded-lg shadow-lg text-xs">
+        <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-[#0d1424]/60 p-3 rounded-lg shadow-lg text-xs">
           <div className="font-medium mb-2">Water Stress Level</div>
           <div className="space-y-1">
             <div className="flex items-center gap-2">
@@ -293,7 +292,7 @@ export function WaterRiskMap({ locations = [], onLocationSelect, selectedLocatio
         </div>
 
         {/* Stats Badge */}
-        <div className="absolute top-4 left-4 bg-white/90 dark:bg-slate-800/90 p-2 rounded-lg shadow text-xs">
+        <div className="absolute top-4 left-4 bg-white/90 dark:bg-[#0d1424]/60 p-2 rounded-lg shadow text-xs">
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-amber-500" />
             <span>
@@ -311,6 +310,14 @@ export function WaterRiskMap({ locations = [], onLocationSelect, selectedLocatio
         }
       `}</style>
     </Card>
+  );
+}
+
+export function WaterRiskMap(props) {
+  return (
+    <MapboxTokenGate height="460px">
+      {(token) => <WaterRiskMapInner {...props} accessToken={token} />}
+    </MapboxTokenGate>
   );
 }
 

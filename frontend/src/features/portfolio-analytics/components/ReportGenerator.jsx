@@ -23,28 +23,28 @@ const REPORT_TYPES = [
     label: 'Valuation Report',
     description: 'Detailed property valuations and methodology',
     icon: TrendingUp,
-    color: 'bg-blue-100 text-blue-700',
+    color: 'bg-blue-100 text-blue-300',
   },
   { 
     value: 'climate_risk', 
     label: 'Climate Risk Report',
     description: 'Physical and transition risk assessment',
     icon: AlertTriangle,
-    color: 'bg-amber-100 text-amber-700',
+    color: 'bg-amber-100 text-amber-400',
   },
   { 
     value: 'sustainability', 
     label: 'Sustainability Report',
     description: 'ESG metrics, certifications, improvement roadmap',
     icon: Leaf,
-    color: 'bg-emerald-100 text-emerald-700',
+    color: 'bg-emerald-100 text-emerald-400',
   },
   { 
     value: 'tcfd', 
     label: 'TCFD Report',
     description: 'TCFD-aligned disclosure report',
     icon: FileText,
-    color: 'bg-purple-100 text-purple-700',
+    color: 'bg-purple-100 text-purple-300',
   },
   { 
     value: 'investor', 
@@ -58,7 +58,7 @@ const REPORT_TYPES = [
     label: 'Executive Summary',
     description: 'High-level dashboard for executives',
     icon: BarChart2,
-    color: 'bg-slate-100 text-slate-700',
+    color: 'bg-white/[0.06] text-white/70',
   },
 ];
 
@@ -97,9 +97,9 @@ export function ReportGenerator({ portfolioId, portfolioName }) {
   
   if (!portfolioId) {
     return (
-      <Card className="bg-white" data-testid="report-generator-disabled">
-        <CardContent className="py-12 text-center text-slate-500">
-          <FileText className="h-12 w-12 mx-auto mb-4 text-slate-300" />
+      <Card className="bg-[#0d1424]" data-testid="report-generator-disabled">
+        <CardContent className="py-12 text-center text-white/40">
+          <FileText className="h-12 w-12 mx-auto mb-4 text-white/20" />
           <p>Select a portfolio to generate reports</p>
         </CardContent>
       </Card>
@@ -107,9 +107,9 @@ export function ReportGenerator({ portfolioId, portfolioName }) {
   }
   
   return (
-    <Card className="bg-white" data-testid="report-generator">
+    <Card className="bg-[#0d1424]" data-testid="report-generator">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+        <CardTitle className="text-sm font-semibold text-white/70 flex items-center gap-2">
           <FileText className="h-4 w-4 text-blue-500" />
           Generate Report
         </CardTitle>
@@ -117,7 +117,7 @@ export function ReportGenerator({ portfolioId, portfolioName }) {
       <CardContent className="space-y-4">
         {/* Report Type Selection */}
         <div>
-          <Label className="text-xs text-slate-600 mb-2 block">Report Type</Label>
+          <Label className="text-xs text-white/60 mb-2 block">Report Type</Label>
           <Select value={reportType} onValueChange={setReportType}>
             <SelectTrigger data-testid="report-type-select">
               <SelectValue />
@@ -138,26 +138,26 @@ export function ReportGenerator({ portfolioId, portfolioName }) {
           </Select>
           
           {selectedReportType && (
-            <p className="text-xs text-slate-500 mt-2">{selectedReportType.description}</p>
+            <p className="text-xs text-white/40 mt-2">{selectedReportType.description}</p>
           )}
         </div>
         
         {/* Advanced Options Toggle */}
         <button
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700"
+          className="flex items-center gap-1 text-xs text-white/40 hover:text-white/70"
         >
           {showAdvanced ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
           Advanced Options
         </button>
         
         {showAdvanced && (
-          <div className="space-y-4 p-3 bg-slate-50 rounded-lg">
+          <div className="space-y-4 p-3 bg-white/[0.02] rounded-lg">
             {/* Time Horizon */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <Label className="text-xs text-slate-600">Time Horizon</Label>
-                <span className="text-xs font-medium text-slate-700">{timeHorizon} years</span>
+                <Label className="text-xs text-white/60">Time Horizon</Label>
+                <span className="text-xs font-medium text-white/70">{timeHorizon} years</span>
               </div>
               <Slider
                 value={[timeHorizon]}
@@ -171,7 +171,7 @@ export function ReportGenerator({ portfolioId, portfolioName }) {
             
             {/* Include Charts */}
             <div className="flex items-center justify-between">
-              <Label className="text-xs text-slate-600">Include Charts</Label>
+              <Label className="text-xs text-white/60">Include Charts</Label>
               <Switch
                 checked={includeCharts}
                 onCheckedChange={setIncludeCharts}
@@ -180,7 +180,7 @@ export function ReportGenerator({ portfolioId, portfolioName }) {
             
             {/* Include Property Details */}
             <div className="flex items-center justify-between">
-              <Label className="text-xs text-slate-600">Include Property Details</Label>
+              <Label className="text-xs text-white/60">Include Property Details</Label>
               <Switch
                 checked={includeDetails}
                 onCheckedChange={setIncludeDetails}
@@ -211,33 +211,33 @@ export function ReportGenerator({ portfolioId, portfolioName }) {
         
         {/* Generated Report Preview */}
         {generatedReport && (
-          <div className="mt-4 p-4 bg-emerald-50 rounded-lg border border-emerald-200" data-testid="report-generated">
+          <div className="mt-4 p-4 bg-emerald-500/10 rounded-lg border border-emerald-500/20" data-testid="report-generated">
             <div className="flex items-center gap-2 mb-3">
-              <CheckCircle className="h-5 w-5 text-emerald-600" />
-              <span className="font-medium text-emerald-800">Report Generated</span>
+              <CheckCircle className="h-5 w-5 text-emerald-400" />
+              <span className="font-medium text-emerald-300">Report Generated</span>
             </div>
             
             {/* Executive Summary */}
             {generatedReport.executive_summary && (
               <div className="space-y-2 text-sm">
-                <p className="font-medium text-slate-700">Executive Summary</p>
+                <p className="font-medium text-white/70">Executive Summary</p>
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="bg-white p-2 rounded">
-                    <p className="text-xs text-slate-500">Portfolio</p>
+                  <div className="bg-[#0d1424] p-2 rounded">
+                    <p className="text-xs text-white/40">Portfolio</p>
                     <p className="font-medium">{generatedReport.executive_summary.portfolio_name}</p>
                   </div>
-                  <div className="bg-white p-2 rounded">
-                    <p className="text-xs text-slate-500">Properties</p>
+                  <div className="bg-[#0d1424] p-2 rounded">
+                    <p className="text-xs text-white/40">Properties</p>
                     <p className="font-medium">{generatedReport.executive_summary.property_count}</p>
                   </div>
-                  <div className="bg-white p-2 rounded">
-                    <p className="text-xs text-slate-500">Total Value</p>
+                  <div className="bg-[#0d1424] p-2 rounded">
+                    <p className="text-xs text-white/40">Total Value</p>
                     <p className="font-medium">
                       ${(generatedReport.executive_summary.total_value / 1e6).toFixed(1)}M
                     </p>
                   </div>
-                  <div className="bg-white p-2 rounded">
-                    <p className="text-xs text-slate-500">Avg Risk Score</p>
+                  <div className="bg-[#0d1424] p-2 rounded">
+                    <p className="text-xs text-white/40">Avg Risk Score</p>
                     <p className="font-medium">{generatedReport.executive_summary.avg_risk_score?.toFixed(1)}</p>
                   </div>
                 </div>
@@ -245,10 +245,10 @@ export function ReportGenerator({ portfolioId, portfolioName }) {
                 {/* Key Findings */}
                 {generatedReport.executive_summary.key_findings?.length > 0 && (
                   <div className="mt-2">
-                    <p className="text-xs text-slate-500 mb-1">Key Findings</p>
+                    <p className="text-xs text-white/40 mb-1">Key Findings</p>
                     <ul className="space-y-1">
                       {generatedReport.executive_summary.key_findings.map((finding, i) => (
-                        <li key={i} className="text-xs text-slate-600 flex items-start gap-1">
+                        <li key={i} className="text-xs text-white/60 flex items-start gap-1">
                           <span className="text-emerald-500 mt-0.5">•</span>
                           {finding}
                         </li>

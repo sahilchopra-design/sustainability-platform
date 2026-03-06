@@ -90,6 +90,8 @@ pandera==0.29.0
 passlib==1.7.4
 pathspec==1.0.4
 pillow==12.1.0
+pdfplumber>=0.10.0
+pdfminer.six>=20221105
 Pint==0.25.2
 platformdirs==4.5.1
 pluggy==1.6.0

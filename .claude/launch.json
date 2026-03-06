@@ -1,0 +1,24 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "backend",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8001", "--reload"],
+      "port": 8001,
+      "cwd": "backend"
+    },
+    {
+      "name": "frontend",
+      "runtimeExecutable": "C:/Program Files/nodejs/node.exe",
+      "runtimeArgs": ["node_modules/react-scripts/bin/react-scripts.js", "start"],
+      "port": 4000,
+      "cwd": "frontend",
+      "env": {
+        "PORT": "4000",
+        "BROWSER": "none",
+        "REACT_APP_BACKEND_URL": "http://localhost:8001"
+      }
+    }
+  ]
+}

@@ -29,16 +29,16 @@ export const CreditsChart = ({
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3">
-          <p className="font-semibold text-slate-900 mb-2">{label}</p>
+        <div className="bg-[#0d1424] border border-white/[0.06] rounded-lg shadow-lg p-3">
+          <p className="font-semibold text-white mb-2">{label}</p>
           {payload.map((entry, index) => (
             <div key={index} className="flex items-center gap-2 text-sm">
               <div
                 className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: entry.color }}
               />
-              <span className="text-slate-600">{entry.name}:</span>
-              <span className="font-medium text-slate-900">
+              <span className="text-white/60">{entry.name}:</span>
+              <span className="font-medium text-white">
                 {entry.value?.toLocaleString()} tCO2e
               </span>
             </div>
@@ -50,13 +50,13 @@ export const CreditsChart = ({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6" data-testid="credits-chart">
-      <h3 className="text-lg font-semibold text-slate-900 mb-4">
+    <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6" data-testid="credits-chart">
+      <h3 className="text-lg font-semibold text-white mb-4">
         {title}
       </h3>
       
       {data.length === 0 ? (
-        <div className="flex items-center justify-center h-[300px] text-slate-400">
+        <div className="flex items-center justify-center h-[300px] text-white/30">
           No projection data available
         </div>
       ) : (

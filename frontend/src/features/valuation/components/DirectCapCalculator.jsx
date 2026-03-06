@@ -87,7 +87,7 @@ export function DirectCapCalculator() {
         <CardContent className="space-y-6">
           {/* Property Size & Rent */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-slate-700 border-b pb-2">
+            <h4 className="text-sm font-semibold text-white/70 border-b pb-2">
               Gross Income
             </h4>
             <div className="grid grid-cols-2 gap-4">
@@ -122,13 +122,13 @@ export function DirectCapCalculator() {
                 onChange={(e) => handleChange('other_income', e.target.value)}
                 data-testid="input-other-income"
               />
-              <p className="text-xs text-slate-500">Parking, storage, laundry, etc.</p>
+              <p className="text-xs text-white/40">Parking, storage, laundry, etc.</p>
             </div>
           </div>
 
           {/* Vacancy & Collection Loss */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-slate-700 border-b pb-2">
+            <h4 className="text-sm font-semibold text-white/70 border-b pb-2">
               Vacancy & Losses
             </h4>
             <div className="grid grid-cols-2 gap-4">
@@ -159,7 +159,7 @@ export function DirectCapCalculator() {
 
           {/* Operating Expenses */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-slate-700 border-b pb-2">
+            <h4 className="text-sm font-semibold text-white/70 border-b pb-2">
               Operating Expenses
             </h4>
             <div className="space-y-2">
@@ -172,7 +172,7 @@ export function DirectCapCalculator() {
                 onChange={(e) => handleChange('operating_expense_ratio', e.target.value)}
                 data-testid="input-expense-ratio"
               />
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-white/40">
                 Includes taxes, insurance, maintenance, management
               </p>
             </div>
@@ -180,7 +180,7 @@ export function DirectCapCalculator() {
 
           {/* Cap Rate */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-slate-700 border-b pb-2">
+            <h4 className="text-sm font-semibold text-white/70 border-b pb-2">
               Capitalization Rate
             </h4>
             <div className="space-y-2">
@@ -238,31 +238,31 @@ export function DirectCapCalculator() {
             <div className="space-y-6">
               {/* Final Value */}
               <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-6 text-center">
-                <p className="text-sm text-emerald-600 font-medium mb-1">Property Value</p>
+                <p className="text-sm text-emerald-400 font-medium mb-1">Property Value</p>
                 <p className="text-4xl font-bold text-emerald-900">
                   {formatCurrency(result.property_value)}
                 </p>
-                <p className="text-sm text-emerald-700 mt-2">
+                <p className="text-sm text-emerald-400 mt-2">
                   {formatCurrency(result.value_per_sf)} / SF
                 </p>
               </div>
 
               {/* Income Breakdown */}
               <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                <h4 className="text-sm font-semibold text-white/70 flex items-center gap-2">
                   <TrendingUp className="h-4 w-4" />
                   Income Statement
                 </h4>
-                <div className="bg-slate-50 rounded-lg p-4 space-y-2">
+                <div className="bg-white/[0.02] rounded-lg p-4 space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Potential Gross Income (PGI)</span>
                     <span className="font-medium">{formatCurrency(result.pgi)}</span>
                   </div>
-                  <div className="flex justify-between text-sm text-red-600">
+                  <div className="flex justify-between text-sm text-red-400">
                     <span>Less: Vacancy Loss</span>
                     <span>({formatCurrency(result.vacancy_loss)})</span>
                   </div>
-                  <div className="flex justify-between text-sm text-red-600">
+                  <div className="flex justify-between text-sm text-red-400">
                     <span>Less: Collection Loss</span>
                     <span>({formatCurrency(result.collection_loss)})</span>
                   </div>
@@ -270,11 +270,11 @@ export function DirectCapCalculator() {
                     <span>Effective Gross Income (EGI)</span>
                     <span>{formatCurrency(result.egi)}</span>
                   </div>
-                  <div className="flex justify-between text-sm text-red-600">
+                  <div className="flex justify-between text-sm text-red-400">
                     <span>Less: Operating Expenses</span>
                     <span>({formatCurrency(result.operating_expenses)})</span>
                   </div>
-                  <div className="flex justify-between text-sm font-bold border-t pt-2 text-emerald-700">
+                  <div className="flex justify-between text-sm font-bold border-t pt-2 text-emerald-400">
                     <span>Net Operating Income (NOI)</span>
                     <span>{formatCurrency(result.noi)}</span>
                   </div>
@@ -283,33 +283,33 @@ export function DirectCapCalculator() {
 
               {/* Key Metrics */}
               <div className="grid grid-cols-3 gap-3">
-                <div className="bg-slate-50 rounded-lg p-3 text-center">
-                  <p className="text-xs text-slate-500">Expense Ratio</p>
+                <div className="bg-white/[0.02] rounded-lg p-3 text-center">
+                  <p className="text-xs text-white/40">Expense Ratio</p>
                   <p className="text-lg font-semibold">{formatPercent(result.expense_ratio)}</p>
                 </div>
-                <div className="bg-slate-50 rounded-lg p-3 text-center">
-                  <p className="text-xs text-slate-500">GIM</p>
+                <div className="bg-white/[0.02] rounded-lg p-3 text-center">
+                  <p className="text-xs text-white/40">GIM</p>
                   <p className="text-lg font-semibold">{parseFloat(result.gross_income_multiplier).toFixed(2)}x</p>
                 </div>
-                <div className="bg-slate-50 rounded-lg p-3 text-center">
-                  <p className="text-xs text-slate-500">NIM</p>
+                <div className="bg-white/[0.02] rounded-lg p-3 text-center">
+                  <p className="text-xs text-white/40">NIM</p>
                   <p className="text-lg font-semibold">{parseFloat(result.net_income_multiplier).toFixed(2)}x</p>
                 </div>
               </div>
 
               {/* Formula */}
-              <div className="bg-blue-50 rounded-lg p-4">
-                <div className="flex items-center gap-2 text-blue-700 text-sm mb-2">
+              <div className="bg-blue-500/10 rounded-lg p-4">
+                <div className="flex items-center gap-2 text-blue-300 text-sm mb-2">
                   <Info className="h-4 w-4" />
                   <span className="font-medium">Direct Capitalization Formula</span>
                 </div>
-                <p className="text-sm text-blue-600">
+                <p className="text-sm text-blue-300">
                   Value = NOI / Cap Rate = {formatCurrency(result.noi)} / {formatPercent(result.cap_rate)} = {formatCurrency(result.property_value)}
                 </p>
               </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-slate-400">
+            <div className="flex flex-col items-center justify-center py-12 text-white/30">
               <Building2 className="h-16 w-16 mb-4 opacity-50" />
               <p className="text-sm">Enter inputs and click Calculate</p>
               <p className="text-xs mt-1">Results will appear here</p>

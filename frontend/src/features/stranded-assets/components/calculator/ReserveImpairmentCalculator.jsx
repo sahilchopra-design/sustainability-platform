@@ -13,10 +13,10 @@ import {
 } from '../../hooks/useStrandedAssets';
 
 const RISK_BADGE_COLORS = {
-  low: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-  medium: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-  high: 'bg-orange-100 text-orange-700 border-orange-200',
-  critical: 'bg-red-100 text-red-700 border-red-200',
+  low: 'bg-emerald-100 text-emerald-400 border-emerald-500/20',
+  medium: 'bg-yellow-100 text-yellow-400 border-yellow-500/20',
+  high: 'bg-orange-100 text-orange-400 border-orange-500/20',
+  critical: 'bg-red-100 text-red-400 border-red-500/20',
 };
 
 const formatCurrency = (value) => {
@@ -95,19 +95,19 @@ export function ReserveImpairmentCalculator() {
                     key={reserve.id}
                     className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${
                       selectedReserves.includes(reserve.id)
-                        ? 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200'
-                        : 'hover:bg-slate-50 dark:hover:bg-slate-800'
+                        ? 'bg-amber-500/10 dark:bg-amber-900/20 border border-amber-500/20'
+                        : 'hover:bg-white/[0.02] dark:hover:bg-[#111827]'
                     }`}
                   >
                     <input
                       type="checkbox"
                       checked={selectedReserves.includes(reserve.id)}
                       onChange={() => handleReserveToggle(reserve.id)}
-                      className="rounded border-slate-300"
+                      className="rounded border-white/[0.08]"
                     />
                     <div className="flex-1">
                       <p className="font-medium text-sm">{reserve.asset_name}</p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-white/40">
                         {reserve.reserve_type.toUpperCase()} • {reserve.proven_reserves_mmBOE} mmBOE
                       </p>
                     </div>
@@ -127,7 +127,7 @@ export function ReserveImpairmentCalculator() {
               <select
                 value={selectedScenario}
                 onChange={(e) => setSelectedScenario(e.target.value)}
-                className="w-full border rounded-lg px-3 py-2 bg-white dark:bg-slate-800"
+                className="w-full border rounded-lg px-3 py-2 bg-[#0d1424] dark:bg-[#111827]"
                 data-testid="scenario-select"
               >
                 <option value="">Select a scenario...</option>
@@ -154,7 +154,7 @@ export function ReserveImpairmentCalculator() {
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       targetYears.includes(year)
                         ? 'bg-amber-500 text-white'
-                        : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200'
+                        : 'bg-white/[0.06] dark:bg-[#111827] hover:bg-white/[0.08]'
                     }`}
                   >
                     {year}
@@ -175,9 +175,9 @@ export function ReserveImpairmentCalculator() {
                 step="0.5"
                 value={discountRate}
                 onChange={(e) => setDiscountRate(parseFloat(e.target.value))}
-                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                className="w-full h-2 bg-white/[0.08] rounded-lg appearance-none cursor-pointer"
               />
-              <div className="flex justify-between text-xs text-slate-500 mt-1">
+              <div className="flex justify-between text-xs text-white/40 mt-1">
                 <span>0%</span>
                 <span>20%</span>
               </div>
@@ -203,7 +203,7 @@ export function ReserveImpairmentCalculator() {
             </Button>
 
             {error && (
-              <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 rounded-lg text-red-600 text-sm">
+              <div className="p-3 bg-red-500/10 dark:bg-red-900/20 border border-red-500/20 rounded-lg text-red-400 text-sm">
                 {error}
               </div>
             )}
@@ -222,22 +222,22 @@ export function ReserveImpairmentCalculator() {
             {calculating ? (
               <div className="flex flex-col items-center justify-center h-64">
                 <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-500 mb-4"></div>
-                <p className="text-slate-500">Analyzing reserves...</p>
+                <p className="text-white/40">Analyzing reserves...</p>
               </div>
             ) : results?.results?.length > 0 ? (
               <div className="space-y-6">
                 {/* Summary */}
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
-                  <p className="text-sm text-slate-500 mb-1">Scenario: {results.scenario_name}</p>
+                <div className="p-4 bg-white/[0.02] dark:bg-[#111827] rounded-lg">
+                  <p className="text-sm text-white/40 mb-1">Scenario: {results.scenario_name}</p>
                   <div className="grid grid-cols-2 gap-4 mt-3">
                     <div>
-                      <p className="text-xs text-slate-500">Total Stranded Value</p>
-                      <p className="text-xl font-bold text-red-600">
+                      <p className="text-xs text-white/40">Total Stranded Value</p>
+                      <p className="text-xl font-bold text-red-400">
                         {formatCurrency(results.portfolio_summary?.total_stranded_value_usd || 0)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-slate-500">Avg Risk Score</p>
+                      <p className="text-xs text-white/40">Avg Risk Score</p>
                       <p className="text-xl font-bold">
                         {((results.portfolio_summary?.avg_risk_score || 0) * 100).toFixed(0)}%
                       </p>
@@ -256,7 +256,7 @@ export function ReserveImpairmentCalculator() {
                       <div className="flex items-start justify-between mb-4">
                         <div>
                           <h4 className="font-medium">{result.asset_name}</h4>
-                          <p className="text-xs text-slate-500 uppercase">
+                          <p className="text-xs text-white/40 uppercase">
                             {result.reserve_type} • {result.total_reserves_mmBOE} mmBOE
                           </p>
                         </div>
@@ -299,23 +299,23 @@ export function ReserveImpairmentCalculator() {
                           </div>
                         </div>
                         <div className="flex-1 grid grid-cols-2 gap-2">
-                          <div className="bg-red-50 dark:bg-red-900/20 p-2 rounded">
-                            <p className="text-xs text-slate-500">Stranded</p>
-                            <p className="font-bold text-red-600">{result.total_stranded_percent}%</p>
+                          <div className="bg-red-500/10 dark:bg-red-900/20 p-2 rounded">
+                            <p className="text-xs text-white/40">Stranded</p>
+                            <p className="font-bold text-red-400">{result.total_stranded_percent}%</p>
                           </div>
-                          <div className="bg-orange-50 dark:bg-orange-900/20 p-2 rounded">
-                            <p className="text-xs text-slate-500">NPV Impact</p>
-                            <p className="font-bold text-orange-600">{result.npv_impact_percent}%</p>
+                          <div className="bg-orange-500/10 dark:bg-orange-900/20 p-2 rounded">
+                            <p className="text-xs text-white/40">NPV Impact</p>
+                            <p className="font-bold text-orange-400">{result.npv_impact_percent}%</p>
                           </div>
                         </div>
                       </div>
 
                       {/* Stranded Value */}
-                      <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg mb-4">
+                      <div className="flex items-center gap-2 p-3 bg-red-500/10 dark:bg-red-900/20 rounded-lg mb-4">
                         <TrendingDown className="h-5 w-5 text-red-500" />
                         <div className="flex-1">
-                          <p className="text-xs text-slate-500">Stranded Value</p>
-                          <p className="font-bold text-red-600">
+                          <p className="text-xs text-white/40">Stranded Value</p>
+                          <p className="font-bold text-red-400">
                             {formatCurrency(result.total_stranded_value_usd)}
                           </p>
                         </div>
@@ -323,7 +323,7 @@ export function ReserveImpairmentCalculator() {
 
                       {/* Recommendations */}
                       <div>
-                        <p className="text-xs font-medium text-slate-500 mb-2">Recommendations</p>
+                        <p className="text-xs font-medium text-white/40 mb-2">Recommendations</p>
                         <ul className="space-y-1">
                           {result.recommendations.map((rec, i) => (
                             <li key={i} className="flex items-start gap-2 text-xs">
@@ -338,7 +338,7 @@ export function ReserveImpairmentCalculator() {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-64 text-slate-400">
+              <div className="flex flex-col items-center justify-center h-64 text-white/30">
                 <Target className="h-12 w-12 mb-4" />
                 <p className="text-center">
                   Select reserves and a scenario, then click Calculate to analyze impairment

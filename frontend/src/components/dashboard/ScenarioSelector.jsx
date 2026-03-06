@@ -51,8 +51,8 @@ export function ScenarioSelector({
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/v1/scenarios/templates`);
-      const data = await res.json();
-      setScenarios(data || []);
+      const data = res.ok ? await res.json() : [];
+      setScenarios(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to fetch scenarios:', error);
     } finally {

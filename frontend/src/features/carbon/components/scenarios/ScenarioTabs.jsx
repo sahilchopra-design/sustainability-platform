@@ -15,7 +15,7 @@ export const ScenarioTabs = ({
   onDelete
 }) => {
   return (
-    <div className="border-b border-slate-200" data-testid="scenario-tabs">
+    <div className="border-b border-white/[0.06]" data-testid="scenario-tabs">
       <div className="flex items-center gap-1 overflow-x-auto">
         {scenarios.map((scenario) => (
           <div
@@ -24,8 +24,8 @@ export const ScenarioTabs = ({
               group relative flex items-center gap-2 px-4 py-3 text-sm font-medium
               cursor-pointer whitespace-nowrap transition-colors
               ${activeScenarioId === scenario.id
-                ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50'
+                ? 'text-blue-300 border-b-2 border-blue-600 bg-blue-500/10'
+                : 'text-white/60 hover:text-white/90 hover:bg-white/[0.02]'
               }
             `}
             onClick={() => onSelect?.(scenario.id)}
@@ -33,7 +33,7 @@ export const ScenarioTabs = ({
           >
             <span>{scenario.name}</span>
             {scenario.is_default && (
-              <span className="text-xs text-slate-400">(Default)</span>
+              <span className="text-xs text-white/30">(Default)</span>
             )}
             
             {/* Hover Actions */}
@@ -43,7 +43,7 @@ export const ScenarioTabs = ({
                   e.stopPropagation();
                   onDuplicate?.(scenario.id);
                 }}
-                className="p-1 rounded hover:bg-slate-200 transition-colors"
+                className="p-1 rounded hover:bg-white/[0.08] transition-colors"
                 title="Duplicate scenario"
               >
                 <Copy className="w-3 h-3" />
@@ -54,7 +54,7 @@ export const ScenarioTabs = ({
                     e.stopPropagation();
                     onDelete?.(scenario.id);
                   }}
-                  className="p-1 rounded hover:bg-rose-100 hover:text-rose-600 transition-colors"
+                  className="p-1 rounded hover:bg-rose-100 hover:text-rose-400 transition-colors"
                   title="Delete scenario"
                 >
                   <X className="w-3 h-3" />
@@ -66,7 +66,7 @@ export const ScenarioTabs = ({
         
         <button
           onClick={onCreate}
-          className="flex items-center gap-1 px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors"
+          className="flex items-center gap-1 px-4 py-3 text-sm font-medium text-white/40 hover:text-white/70 hover:bg-white/[0.02] transition-colors"
           data-testid="create-scenario-btn"
         >
           <Plus className="w-4 h-4" />

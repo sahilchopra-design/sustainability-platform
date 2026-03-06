@@ -74,9 +74,9 @@ export function ScenarioComparison({ portfolioId }) {
   
   if (!portfolioId) {
     return (
-      <Card className="bg-white" data-testid="scenario-comparison-disabled">
-        <CardContent className="py-12 text-center text-slate-500">
-          <GitCompare className="h-12 w-12 mx-auto mb-4 text-slate-300" />
+      <Card className="bg-[#0d1424]" data-testid="scenario-comparison-disabled">
+        <CardContent className="py-12 text-center text-white/40">
+          <GitCompare className="h-12 w-12 mx-auto mb-4 text-white/20" />
           <p>Select a portfolio to compare scenarios</p>
         </CardContent>
       </Card>
@@ -84,9 +84,9 @@ export function ScenarioComparison({ portfolioId }) {
   }
   
   return (
-    <Card className="bg-white" data-testid="scenario-comparison">
+    <Card className="bg-[#0d1424]" data-testid="scenario-comparison">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+        <CardTitle className="text-sm font-semibold text-white/70 flex items-center gap-2">
           <GitCompare className="h-4 w-4 text-violet-500" />
           Scenario Comparison
         </CardTitle>
@@ -94,7 +94,7 @@ export function ScenarioComparison({ portfolioId }) {
       <CardContent className="space-y-4">
         {/* Scenario Selection */}
         <div>
-          <Label className="text-xs text-slate-600 mb-2 block">Select Scenarios to Compare</Label>
+          <Label className="text-xs text-white/60 mb-2 block">Select Scenarios to Compare</Label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {AVAILABLE_SCENARIOS.map((scenario) => (
               <label
@@ -102,7 +102,7 @@ export function ScenarioComparison({ portfolioId }) {
                 className={`flex items-start gap-2 p-2 rounded-lg border cursor-pointer transition-colors ${
                   selectedScenarios.includes(scenario.id)
                     ? 'bg-violet-50 border-violet-300'
-                    : 'bg-white border-slate-200 hover:bg-slate-50'
+                    : 'bg-[#0d1424] border-white/[0.06] hover:bg-white/[0.02]'
                 }`}
               >
                 <Checkbox
@@ -111,8 +111,8 @@ export function ScenarioComparison({ portfolioId }) {
                   className="mt-0.5"
                 />
                 <div>
-                  <p className="text-sm font-medium text-slate-700">{scenario.name}</p>
-                  <p className="text-xs text-slate-500">{scenario.description}</p>
+                  <p className="text-sm font-medium text-white/70">{scenario.name}</p>
+                  <p className="text-xs text-white/40">{scenario.description}</p>
                 </div>
               </label>
             ))}
@@ -144,31 +144,31 @@ export function ScenarioComparison({ portfolioId }) {
           <div className="space-y-4" data-testid="comparison-results">
             {/* Summary */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+              <div className="p-3 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
                 <div className="flex items-center gap-2 mb-1">
-                  <CheckCircle className="h-4 w-4 text-emerald-600" />
-                  <span className="text-xs text-emerald-600 font-medium">Best Scenario</span>
+                  <CheckCircle className="h-4 w-4 text-emerald-400" />
+                  <span className="text-xs text-emerald-400 font-medium">Best Scenario</span>
                 </div>
-                <p className="font-semibold text-emerald-800">{comparisonResult.best_scenario}</p>
+                <p className="font-semibold text-emerald-300">{comparisonResult.best_scenario}</p>
               </div>
-              <div className="p-3 bg-red-50 rounded-lg border border-red-200">
+              <div className="p-3 bg-red-500/10 rounded-lg border border-red-500/20">
                 <div className="flex items-center gap-2 mb-1">
-                  <XCircle className="h-4 w-4 text-red-600" />
-                  <span className="text-xs text-red-600 font-medium">Worst Scenario</span>
+                  <XCircle className="h-4 w-4 text-red-400" />
+                  <span className="text-xs text-red-400 font-medium">Worst Scenario</span>
                 </div>
-                <p className="font-semibold text-red-800">{comparisonResult.worst_scenario}</p>
+                <p className="font-semibold text-red-300">{comparisonResult.worst_scenario}</p>
               </div>
             </div>
             
             {/* Value Spread */}
-            <div className="p-3 bg-slate-50 rounded-lg">
+            <div className="p-3 bg-white/[0.02] rounded-lg">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-slate-600">Value Spread</span>
-                <span className="font-semibold text-slate-800">
+                <span className="text-xs text-white/60">Value Spread</span>
+                <span className="font-semibold text-white/90">
                   {formatCurrency(comparisonResult.value_spread)}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-white/40 mt-1">
                 Base Value: {formatCurrency(comparisonResult.base_value)}
               </p>
             </div>
@@ -214,7 +214,7 @@ export function ScenarioComparison({ portfolioId }) {
             <div className="border rounded-lg overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-slate-50">
+                  <TableRow className="bg-white/[0.02]">
                     <TableHead className="text-xs">Scenario</TableHead>
                     <TableHead className="text-xs text-right">Value</TableHead>
                     <TableHead className="text-xs text-right">Change</TableHead>
@@ -234,16 +234,16 @@ export function ScenarioComparison({ portfolioId }) {
                           {formatCurrency(row.total_value)}
                         </TableCell>
                         <TableCell className="text-right">
-                          <span className={`text-sm ${isPositive ? 'text-emerald-600' : 'text-red-600'}`}>
+                          <span className={`text-sm ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
                             {isPositive ? '+' : ''}{changePct.toFixed(1)}%
                           </span>
                         </TableCell>
                         <TableCell className="text-right">
-                          <Badge variant="outline" className={row.stranded_count > 0 ? 'bg-red-50 text-red-700' : ''}>
+                          <Badge variant="outline" className={row.stranded_count > 0 ? 'bg-red-500/10 text-red-400' : ''}>
                             {row.stranded_count}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-right text-sm text-slate-600">
+                        <TableCell className="text-right text-sm text-white/60">
                           {formatCurrency(row.var_95)}
                         </TableCell>
                       </TableRow>
@@ -255,14 +255,14 @@ export function ScenarioComparison({ portfolioId }) {
             
             {/* Key Insights */}
             {comparisonResult.key_insights?.length > 0 && (
-              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
                 <div className="flex items-center gap-2 mb-2">
-                  <Info className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm font-medium text-blue-800">Key Insights</span>
+                  <Info className="h-4 w-4 text-blue-300" />
+                  <span className="text-sm font-medium text-blue-300">Key Insights</span>
                 </div>
                 <ul className="space-y-1">
                   {comparisonResult.key_insights.map((insight, i) => (
-                    <li key={i} className="text-xs text-blue-700 flex items-start gap-1">
+                    <li key={i} className="text-xs text-blue-300 flex items-start gap-1">
                       <span className="mt-0.5">•</span>
                       {insight}
                     </li>

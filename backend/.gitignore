@@ -1,0 +1,5 @@
+nul
+uvicorn.log
+reports_output/csrd_pdfs/
+*.pdf
+frontend/package-lock.json

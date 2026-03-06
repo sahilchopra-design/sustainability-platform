@@ -10,10 +10,10 @@ import {
 import { natureRiskApi } from '../../api/natureRiskApi';
 
 const ALIGNMENT_COLORS = {
-  'aligned': 'text-green-600 bg-green-100',
-  'partial': 'text-yellow-600 bg-yellow-100',
-  'not_aligned': 'text-red-600 bg-red-100',
-  'not_applicable': 'text-slate-500 bg-slate-100'
+  'aligned': 'text-green-400 bg-green-100',
+  'partial': 'text-yellow-400 bg-yellow-100',
+  'not_aligned': 'text-red-400 bg-red-100',
+  'not_applicable': 'text-white/40 bg-white/[0.06]'
 };
 
 const ALIGNMENT_ICONS = {
@@ -83,10 +83,10 @@ export function GBFAlignment() {
   return (
     <div className="space-y-6" data-testid="gbf-alignment">
       {/* Header */}
-      <Card className="bg-white dark:bg-slate-800">
+      <Card className="bg-[#0d1424] dark:bg-[#111827]">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5 text-purple-600" />
+            <Target className="h-5 w-5 text-purple-300" />
             Global Biodiversity Framework Alignment
           </CardTitle>
           <CardDescription>
@@ -95,49 +95,49 @@ export function GBFAlignment() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="bg-green-50 dark:bg-green-900/20 border-green-200">
+            <Card className="bg-green-500/10 dark:bg-green-900/20 border-green-500/20">
               <CardContent className="pt-4">
                 <div className="flex items-center gap-2 mb-1">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                  <span className="text-sm text-green-700">Aligned</span>
+                  <CheckCircle className="h-4 w-4 text-green-400" />
+                  <span className="text-sm text-green-400">Aligned</span>
                 </div>
-                <p className="text-2xl font-bold text-green-700" data-testid="aligned-count">
+                <p className="text-2xl font-bold text-green-400" data-testid="aligned-count">
                   {alignmentSummary.aligned}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200">
+            <Card className="bg-yellow-500/10 dark:bg-yellow-900/20 border-yellow-500/20">
               <CardContent className="pt-4">
                 <div className="flex items-center gap-2 mb-1">
-                  <AlertCircle className="h-4 w-4 text-yellow-600" />
-                  <span className="text-sm text-yellow-700">Partial</span>
+                  <AlertCircle className="h-4 w-4 text-yellow-400" />
+                  <span className="text-sm text-yellow-400">Partial</span>
                 </div>
-                <p className="text-2xl font-bold text-yellow-700" data-testid="partial-count">
+                <p className="text-2xl font-bold text-yellow-400" data-testid="partial-count">
                   {alignmentSummary.partial}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-red-50 dark:bg-red-900/20 border-red-200">
+            <Card className="bg-red-500/10 dark:bg-red-900/20 border-red-500/20">
               <CardContent className="pt-4">
                 <div className="flex items-center gap-2 mb-1">
-                  <XCircle className="h-4 w-4 text-red-600" />
-                  <span className="text-sm text-red-700">Not Aligned</span>
+                  <XCircle className="h-4 w-4 text-red-400" />
+                  <span className="text-sm text-red-400">Not Aligned</span>
                 </div>
-                <p className="text-2xl font-bold text-red-700" data-testid="not-aligned-count">
+                <p className="text-2xl font-bold text-red-400" data-testid="not-aligned-count">
                   {alignmentSummary.not_aligned}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-purple-50 dark:bg-purple-900/20 border-purple-200">
+            <Card className="bg-purple-500/10 dark:bg-purple-900/20 border-purple-500/20">
               <CardContent className="pt-4">
                 <div className="flex items-center gap-2 mb-1">
-                  <Target className="h-4 w-4 text-purple-600" />
-                  <span className="text-sm text-purple-700">Overall Score</span>
+                  <Target className="h-4 w-4 text-purple-300" />
+                  <span className="text-sm text-purple-300">Overall Score</span>
                 </div>
-                <p className="text-2xl font-bold text-purple-700" data-testid="overall-score">
+                <p className="text-2xl font-bold text-purple-300" data-testid="overall-score">
                   {overallScore.toFixed(0)}%
                 </p>
               </CardContent>
@@ -166,12 +166,12 @@ export function GBFAlignment() {
                 : Shield;
               const colorClass = alignment 
                 ? ALIGNMENT_COLORS[alignment.alignment_status] 
-                : 'text-slate-500 bg-slate-100';
+                : 'text-white/40 bg-white/[0.06]';
 
               return (
                 <Card 
                   key={target.number}
-                  className="bg-white dark:bg-slate-800 hover:shadow-lg transition-shadow"
+                  className="bg-[#0d1424] dark:bg-[#111827] hover:shadow-lg transition-shadow"
                 >
                   <CardContent className="pt-6">
                     <div className="flex items-start justify-between gap-4">
@@ -184,14 +184,14 @@ export function GBFAlignment() {
                             {target.category}
                           </Badge>
                         </div>
-                        <p className="text-sm text-slate-700 dark:text-slate-300">
+                        <p className="text-sm text-white/70 dark:text-white/20">
                           {target.description}
                         </p>
                         
                         {alignment && (
                           <div className="mt-3">
                             <div className="flex items-center justify-between mb-1">
-                              <span className="text-xs text-slate-500">Alignment Score</span>
+                              <span className="text-xs text-white/40">Alignment Score</span>
                               <span className="text-xs font-medium">{alignment.alignment_score}%</span>
                             </div>
                             <Progress value={alignment.alignment_score} className="h-2" />
@@ -211,15 +211,15 @@ export function GBFAlignment() {
       </Tabs>
 
       {/* Information Panel */}
-      <Card className="bg-purple-50 dark:bg-purple-900/20 border-purple-200">
+      <Card className="bg-purple-500/10 dark:bg-purple-900/20 border-purple-500/20">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
-            <Globe className="h-5 w-5 text-purple-600 mt-0.5" />
+            <Globe className="h-5 w-5 text-purple-300 mt-0.5" />
             <div>
-              <p className="font-medium text-purple-800 dark:text-purple-200">
+              <p className="font-medium text-purple-300 dark:text-purple-200">
                 Kunming-Montreal Global Biodiversity Framework
               </p>
-              <p className="text-sm text-purple-700 dark:text-purple-300 mt-1">
+              <p className="text-sm text-purple-300 dark:text-purple-300 mt-1">
                 The GBF was adopted in December 2022 and sets out 23 action-oriented global targets 
                 for urgent action over the decade to 2030. Target 15 specifically requires businesses 
                 to regularly monitor, assess, and transparently disclose their risks, dependencies, 
@@ -232,7 +232,7 @@ export function GBFAlignment() {
 
       {/* Alignment Details */}
       {alignmentData.length > 0 && (
-        <Card className="bg-white dark:bg-slate-800">
+        <Card className="bg-[#0d1424] dark:bg-[#111827]">
           <CardHeader>
             <CardTitle className="text-lg">Your Alignment Progress</CardTitle>
             <CardDescription>
@@ -243,12 +243,12 @@ export function GBFAlignment() {
             <div className="space-y-3">
               {alignmentData.map((item, index) => {
                 const Icon = ALIGNMENT_ICONS[item.alignment_status] || Shield;
-                const colorClass = ALIGNMENT_COLORS[item.alignment_status] || 'text-slate-500 bg-slate-100';
+                const colorClass = ALIGNMENT_COLORS[item.alignment_status] || 'text-white/40 bg-white/[0.06]';
 
                 return (
                   <div 
                     key={index}
-                    className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg"
+                    className="flex items-center justify-between p-4 bg-white/[0.02] dark:bg-[#0d1424]/50 rounded-lg"
                   >
                     <div className="flex items-center gap-3">
                       <div className={`p-2 rounded-full ${colorClass}`}>
@@ -256,7 +256,7 @@ export function GBFAlignment() {
                       </div>
                       <div>
                         <p className="font-medium text-sm">{item.target_number}</p>
-                        <p className="text-xs text-slate-500">{item.target_description}</p>
+                        <p className="text-xs text-white/40">{item.target_description}</p>
                       </div>
                     </div>
                     <div className="text-right">

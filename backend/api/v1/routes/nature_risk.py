@@ -10,6 +10,8 @@ from uuid import uuid4
 import json
 
 from db.base import get_db
+from sqlalchemy.orm import Session
+from sqlalchemy import text
 from schemas.nature_risk import (
     # Scenarios
     NatureRiskScenarioCreate, NatureRiskScenarioUpdate, NatureRiskScenarioResponse,
@@ -617,43 +619,117 @@ async def list_gbf_targets():
 
 @router.get("/dashboard/summary", response_model=NatureRiskDashboardSummary)
 async def get_nature_risk_dashboard(
-    portfolio_id: Optional[str] = Query(None)
+    portfolio_id: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
 ):
-    """Get high-level summary for nature risk dashboard."""
+    """Get high-level nature risk dashboard summary — driven by real CSRD data when available."""
+    try:
+        bio_rows = db.execute(text("""
+            SELECT
+                cer.primary_sector,
+                b.sites_in_near_protected_or_kba_count,
+                b.biodiversity_financial_effects_risk_eur,
+                b.tnfd_locate_complete, b.tnfd_evaluate_complete,
+                b.tnfd_assess_complete, b.tnfd_prepare_complete
+            FROM esrs_e4_biodiversity b
+            JOIN csrd_entity_registry cer ON cer.id = b.entity_registry_id
+            WHERE b.reporting_year = 2024
+        """)).fetchall()
+
+        water_rows = db.execute(text("""
+            SELECT
+                cer.primary_sector,
+                w.total_water_consumption_m3,
+                w.withdrawal_high_stress_areas_m3,
+                w.withdrawal_high_stress_areas_pct,
+                w.water_financial_effects_risk_eur
+            FROM esrs_e3_water w
+            JOIN csrd_entity_registry cer ON cer.id = w.entity_registry_id
+            WHERE w.reporting_year = 2024
+        """)).fetchall()
+    except Exception:
+        bio_rows, water_rows = [], []
+
+    if bio_rows or water_rows:
+        total_entities = max(len(bio_rows), len(water_rows))
+
+        # Water risk exposure
+        high_stress = sum(
+            1 for r in water_rows
+            if r[3] is not None and float(r[3]) >= 50
+        )
+        total_w = sum(float(r[2]) if r[2] else 0 for r in water_rows)
+        water_exp = {
+            "high_stress_entities": high_stress,
+            "total_entities": len(water_rows),
+            "total_consumption_m3": round(total_w, 0),
+        }
+
+        # Biodiversity overlaps
+        kba_exposed = sum(1 for r in bio_rows if r[1] and int(r[1]) > 0)
+        bio_exp = {
+            "entities_with_kba_exposure": kba_exposed,
+            "total_entities": len(bio_rows),
+        }
+
+        # TNFD progress → proxy for GBF
+        complete = sum(
+            1 for r in bio_rows
+            if all([r[3], r[4], r[5], r[6]])
+        )
+        partial = sum(
+            1 for r in bio_rows
+            if any([r[3], r[4], r[5], r[6]]) and not all([r[3], r[4], r[5], r[6]])
+        )
+        gbf_al = {
+            "fully_leap_complete": complete,
+            "partially_leap_complete": partial,
+            "not_started": len(bio_rows) - complete - partial,
+            "total_entities": len(bio_rows),
+        }
+
+        # Sector breakdown from water rows
+        from collections import defaultdict
+        sector_counts: dict = defaultdict(int)
+        for r in water_rows:
+            sector_counts[r[0] or "Other"] += 1
+        sector_bd = {s: {"count": c} for s, c in sector_counts.items()}
+
+        high_risk = sum(
+            1 for r in water_rows
+            if r[3] is not None and float(r[3]) >= 50
+        )
+
+        return NatureRiskDashboardSummary(
+            total_assessments=total_entities,
+            high_risk_entities=high_risk,
+            critical_risk_entities=sum(1 for r in water_rows if r[3] and float(r[3]) >= 75),
+            water_risk_exposure=water_exp,
+            biodiversity_overlaps=bio_exp,
+            gbf_alignment=gbf_al,
+            sector_breakdown=sector_bd,
+            trend_data=[],
+        )
+
+    # Fallback when no CSRD data available
     return NatureRiskDashboardSummary(
         total_assessments=15,
         high_risk_entities=4,
         critical_risk_entities=1,
-        water_risk_exposure={
-            "high_stress_locations": 8,
-            "total_locations": 25,
-            "avg_water_stress": 2.8
-        },
-        biodiversity_overlaps={
-            "direct_overlaps": 3,
-            "buffer_overlaps": 12,
-            "critical_sites_affected": 2
-        },
-        gbf_alignment={
-            "aligned_targets": 8,
-            "partial_targets": 10,
-            "not_aligned_targets": 5,
-            "total_targets": 23
-        },
+        water_risk_exposure={"high_stress_locations": 8, "total_locations": 25, "avg_water_stress": 2.8},
+        biodiversity_overlaps={"direct_overlaps": 3, "buffer_overlaps": 12, "critical_sites_affected": 2},
+        gbf_alignment={"aligned_targets": 8, "partial_targets": 10, "not_aligned_targets": 5, "total_targets": 23},
         sector_breakdown={
             "ENERGY": {"count": 5, "avg_risk": 3.2},
             "MINING": {"count": 3, "avg_risk": 4.1},
             "AGRICULTURE": {"count": 4, "avg_risk": 2.5},
-            "FINANCE": {"count": 3, "avg_risk": 2.8}
+            "FINANCE": {"count": 3, "avg_risk": 2.8},
         },
         trend_data=[
-            {"month": "Jan", "risk_score": 2.8},
-            {"month": "Feb", "risk_score": 2.9},
-            {"month": "Mar", "risk_score": 3.1},
-            {"month": "Apr", "risk_score": 3.0},
-            {"month": "May", "risk_score": 2.9},
-            {"month": "Jun", "risk_score": 2.8}
-        ]
+            {"month": "Jan", "risk_score": 2.8}, {"month": "Feb", "risk_score": 2.9},
+            {"month": "Mar", "risk_score": 3.1}, {"month": "Apr", "risk_score": 3.0},
+            {"month": "May", "risk_score": 2.9}, {"month": "Jun", "risk_score": 2.8},
+        ],
     )
 
 
@@ -723,10 +799,172 @@ async def import_encore_data():
 async def import_biodiversity_sites():
     """Import biodiversity site data from WDPA/KBA."""
     sites = get_sample_biodiversity_sites()
-    
+
     return {
         "status": "success",
         "message": "Biodiversity sites loaded",
         "sites_imported": len(sites),
         "site_types": list(set(s.get('site_type') for s in sites))
+    }
+
+
+# ============ CSRD Entity-Level Nature Data (Real DB) ============
+
+@router.get("/csrd-entities/biodiversity")
+async def get_csrd_biodiversity_data(
+    reporting_year: int = Query(default=2024, description="ESRS reporting year"),
+    db: Session = Depends(get_db),
+):
+    """Real CSRD entity biodiversity data from esrs_e4_biodiversity table."""
+    try:
+        rows = db.execute(text("""
+            SELECT
+                cer.id                                          AS entity_id,
+                cer.legal_name,
+                cer.primary_sector,
+                cer.country_iso,
+                b.reporting_year,
+                b.sites_in_near_protected_or_kba_count,
+                b.sites_in_near_protected_or_kba_area_ha,
+                b.total_land_use_area_ha,
+                b.threatened_species_affected_count,
+                b.tnfd_locate_complete,
+                b.tnfd_evaluate_complete,
+                b.tnfd_assess_complete,
+                b.tnfd_prepare_complete,
+                b.biodiversity_financial_effects_risk_eur,
+                b.biodiversity_net_gain_score
+            FROM esrs_e4_biodiversity b
+            JOIN csrd_entity_registry cer ON cer.id = b.entity_registry_id
+            WHERE b.reporting_year = :yr
+            ORDER BY cer.legal_name
+        """), {"yr": reporting_year}).fetchall()
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"DB query failed: {exc}")
+
+    if not rows:
+        return {"reporting_year": reporting_year, "entities": [], "summary": {}}
+
+    entities = []
+    for r in rows:
+        tnfd_steps = sum([
+            1 if r[9] else 0,
+            1 if r[10] else 0,
+            1 if r[11] else 0,
+            1 if r[12] else 0,
+        ])
+        entities.append({
+            "entity_id": str(r[0]),
+            "legal_name": r[1],
+            "sector": r[2],
+            "country": r[3],
+            "reporting_year": r[4],
+            "kba_sites_count": r[5] or 0,
+            "kba_sites_area_ha": float(r[6]) if r[6] else None,
+            "total_land_use_ha": float(r[7]) if r[7] else None,
+            "threatened_species_count": r[8] or 0,
+            "tnfd_leap_progress": {
+                "locate": bool(r[9]),
+                "evaluate": bool(r[10]),
+                "assess": bool(r[11]),
+                "prepare": bool(r[12]),
+                "steps_complete": tnfd_steps,
+                "pct_complete": round(tnfd_steps / 4 * 100),
+            },
+            "financial_risk_eur": float(r[13]) if r[13] else None,
+            "biodiversity_net_gain_score": float(r[14]) if r[14] else None,
+        })
+
+    total_financial_risk = sum(e["financial_risk_eur"] for e in entities if e["financial_risk_eur"])
+    avg_tnfd_pct = round(sum(e["tnfd_leap_progress"]["pct_complete"] for e in entities) / len(entities))
+
+    return {
+        "reporting_year": reporting_year,
+        "entities": entities,
+        "summary": {
+            "total_entities": len(entities),
+            "entities_with_kba_exposure": sum(1 for e in entities if e["kba_sites_count"] > 0),
+            "total_financial_risk_eur": round(total_financial_risk, 0),
+            "avg_tnfd_leap_completion_pct": avg_tnfd_pct,
+            "source": "ESRS E4 — CSRD entity disclosures",
+        },
+    }
+
+
+@router.get("/csrd-entities/water")
+async def get_csrd_water_data(
+    reporting_year: int = Query(default=2024, description="ESRS reporting year"),
+    db: Session = Depends(get_db),
+):
+    """Real CSRD entity water risk data from esrs_e3_water table."""
+    try:
+        rows = db.execute(text("""
+            SELECT
+                cer.id                                          AS entity_id,
+                cer.legal_name,
+                cer.primary_sector,
+                cer.country_iso,
+                w.reporting_year,
+                w.total_water_consumption_m3,
+                w.withdrawal_high_stress_areas_m3,
+                w.withdrawal_high_stress_areas_pct,
+                w.discharge_high_stress_areas_m3,
+                w.water_recycled_m3,
+                w.water_intensity_revenue,
+                w.water_financial_effects_risk_eur,
+                w.water_financial_effects_opp_eur
+            FROM esrs_e3_water w
+            JOIN csrd_entity_registry cer ON cer.id = w.entity_registry_id
+            WHERE w.reporting_year = :yr
+            ORDER BY cer.legal_name
+        """), {"yr": reporting_year}).fetchall()
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"DB query failed: {exc}")
+
+    if not rows:
+        return {"reporting_year": reporting_year, "entities": [], "summary": {}}
+
+    entities = []
+    for r in rows:
+        total_w = float(r[5]) if r[5] else 0
+        high_stress_w = float(r[6]) if r[6] else 0
+        high_stress_pct = float(r[7]) if r[7] else (
+            round(high_stress_w / total_w * 100, 1) if total_w > 0 else 0
+        )
+        risk_level = (
+            "critical" if high_stress_pct >= 75 else
+            "high"     if high_stress_pct >= 50 else
+            "medium"   if high_stress_pct >= 25 else
+            "low"
+        )
+        entities.append({
+            "entity_id": str(r[0]),
+            "legal_name": r[1],
+            "sector": r[2],
+            "country": r[3],
+            "reporting_year": r[4],
+            "total_water_consumption_m3": total_w,
+            "withdrawal_high_stress_m3": high_stress_w,
+            "withdrawal_high_stress_pct": high_stress_pct,
+            "discharge_high_stress_m3": float(r[8]) if r[8] else None,
+            "water_recycled_m3": float(r[9]) if r[9] else None,
+            "water_intensity_revenue": float(r[10]) if r[10] else None,
+            "financial_risk_eur": float(r[11]) if r[11] else None,
+            "financial_opportunity_eur": float(r[12]) if r[12] else None,
+            "risk_level": risk_level,
+        })
+
+    total_risk_eur = sum(e["financial_risk_eur"] for e in entities if e["financial_risk_eur"])
+    high_stress_entities = sum(1 for e in entities if e["risk_level"] in ("high", "critical"))
+
+    return {
+        "reporting_year": reporting_year,
+        "entities": entities,
+        "summary": {
+            "total_entities": len(entities),
+            "high_stress_entities": high_stress_entities,
+            "total_financial_risk_eur": round(total_risk_eur, 0),
+            "total_consumption_m3": round(sum(e["total_water_consumption_m3"] for e in entities), 0),
+            "source": "ESRS E3 — CSRD entity disclosures",
+        },
     }

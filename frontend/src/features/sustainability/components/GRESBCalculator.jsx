@@ -25,7 +25,7 @@ const starRatingColors = {
   '4_star': 'bg-blue-500',
   '3_star': 'bg-emerald-500',
   '2_star': 'bg-amber-500',
-  '1_star': 'bg-slate-400',
+  '1_star': 'bg-white/[0.08]',
 };
 
 const formatCurrency = (value) => {
@@ -166,7 +166,7 @@ export function GRESBCalculator() {
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between text-sm mb-2">
-                    <span className="text-slate-600">Management (max 30)</span>
+                    <span className="text-white/60">Management (max 30)</span>
                     <span className="font-medium">{formData.component_scores.management}</span>
                   </div>
                   <Slider
@@ -180,7 +180,7 @@ export function GRESBCalculator() {
 
                 <div>
                   <div className="flex justify-between text-sm mb-2">
-                    <span className="text-slate-600">Policy (max 12)</span>
+                    <span className="text-white/60">Policy (max 12)</span>
                     <span className="font-medium">{formData.component_scores.policy}</span>
                   </div>
                   <Slider
@@ -193,7 +193,7 @@ export function GRESBCalculator() {
 
                 <div>
                   <div className="flex justify-between text-sm mb-2">
-                    <span className="text-slate-600">Risk Management (max 14)</span>
+                    <span className="text-white/60">Risk Management (max 14)</span>
                     <span className="font-medium">{formData.component_scores.risk_management}</span>
                   </div>
                   <Slider
@@ -206,7 +206,7 @@ export function GRESBCalculator() {
 
                 <div>
                   <div className="flex justify-between text-sm mb-2">
-                    <span className="text-slate-600">Stakeholder Engagement (max 14)</span>
+                    <span className="text-white/60">Stakeholder Engagement (max 14)</span>
                     <span className="font-medium">{formData.component_scores.stakeholder_engagement}</span>
                   </div>
                   <Slider
@@ -219,7 +219,7 @@ export function GRESBCalculator() {
 
                 <div>
                   <div className="flex justify-between text-sm mb-2">
-                    <span className="text-slate-600">Performance Indicators (max 30)</span>
+                    <span className="text-white/60">Performance Indicators (max 30)</span>
                     <span className="font-medium">{formData.component_scores.performance_indicators}</span>
                   </div>
                   <Slider
@@ -266,18 +266,18 @@ export function GRESBCalculator() {
                           className={`h-8 w-8 ${
                             parseInt(result.star_rating?.charAt(0)) >= star
                               ? 'fill-amber-400 text-amber-400'
-                              : 'text-slate-200'
+                              : 'text-white/15'
                           }`}
                         />
                       ))}
                     </div>
-                    <Badge className={`${starRatingColors[result.star_rating] || 'bg-slate-400'} text-white`}>
+                    <Badge className={`${starRatingColors[result.star_rating] || 'bg-white/[0.08]'} text-white`}>
                       {result.star_rating?.replace('_', ' ').toUpperCase()}
                     </Badge>
                   </div>
                   <div className="flex-1">
-                    <div className="text-4xl font-bold text-slate-800">{result.total_score}</div>
-                    <div className="text-sm text-slate-500">out of 100 points</div>
+                    <div className="text-4xl font-bold text-white/90">{result.total_score}</div>
+                    <div className="text-sm text-white/40">out of 100 points</div>
                     {result.score_to_next_star && (
                       <div className="text-xs text-violet-600 mt-1">
                         {result.score_to_next_star} points to next star
@@ -292,27 +292,27 @@ export function GRESBCalculator() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <BarChart3 className="h-4 w-4 text-blue-600" />
+                  <BarChart3 className="h-4 w-4 text-blue-300" />
                   Benchmark Comparison
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-slate-600">Percentile Rank</span>
-                    <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                    <span className="text-sm text-white/60">Percentile Rank</span>
+                    <Badge variant="outline" className="bg-blue-500/10 text-blue-300">
                       {result.percentile_rank}th percentile
                     </Badge>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-slate-600">Peer Group Average</span>
+                    <span className="text-sm text-white/60">Peer Group Average</span>
                     <span className="font-medium">{result.benchmark?.peer_avg_score}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-slate-600">Top Quartile Threshold</span>
-                    <span className="font-medium text-emerald-600">{result.benchmark?.top_quartile_threshold}</span>
+                    <span className="text-sm text-white/60">Top Quartile Threshold</span>
+                    <span className="font-medium text-emerald-400">{result.benchmark?.top_quartile_threshold}</span>
                   </div>
-                  <div className="w-full h-2 bg-slate-100 rounded-full mt-2 relative">
+                  <div className="w-full h-2 bg-white/[0.06] rounded-full mt-2 relative">
                     <div
                       className="absolute h-full bg-violet-500 rounded-full"
                       style={{ width: `${result.total_score}%` }}
@@ -330,21 +330,21 @@ export function GRESBCalculator() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-emerald-600" />
+                  <TrendingUp className="h-4 w-4 text-emerald-400" />
                   Estimated Value Impact
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 bg-emerald-50 rounded-lg">
-                    <div className="text-xs text-emerald-600 mb-1">Value Premium</div>
-                    <div className="text-xl font-bold text-emerald-700">
+                  <div className="p-3 bg-emerald-500/10 rounded-lg">
+                    <div className="text-xs text-emerald-400 mb-1">Value Premium</div>
+                    <div className="text-xl font-bold text-emerald-400">
                       +{result.estimated_value_premium_percent}%
                     </div>
                   </div>
-                  <div className="p-3 bg-blue-50 rounded-lg">
-                    <div className="text-xs text-blue-600 mb-1">Rent Premium</div>
-                    <div className="text-xl font-bold text-blue-700">
+                  <div className="p-3 bg-blue-500/10 rounded-lg">
+                    <div className="text-xs text-blue-300 mb-1">Rent Premium</div>
+                    <div className="text-xl font-bold text-blue-300">
                       +{result.estimated_rent_premium_percent}%
                     </div>
                   </div>
@@ -354,7 +354,7 @@ export function GRESBCalculator() {
                       {formatCurrency(result.estimated_value_impact)}
                     </div>
                   </div>
-                  <div className="col-span-2 text-xs text-slate-500">
+                  <div className="col-span-2 text-xs text-white/40">
                     Cap rate compression: {result.cap_rate_compression_bps} bps
                   </div>
                 </div>
@@ -366,7 +366,7 @@ export function GRESBCalculator() {
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm flex items-center gap-2">
-                    <Target className="h-4 w-4 text-amber-600" />
+                    <Target className="h-4 w-4 text-amber-400" />
                     Improvement Recommendations
                   </CardTitle>
                 </CardHeader>
@@ -375,7 +375,7 @@ export function GRESBCalculator() {
                     {result.improvement_recommendations.map((rec, idx) => (
                       <li key={idx} className="flex items-start gap-2 text-sm">
                         <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />
-                        <span className="text-slate-700">{rec}</span>
+                        <span className="text-white/70">{rec}</span>
                       </li>
                     ))}
                   </ul>
@@ -387,8 +387,8 @@ export function GRESBCalculator() {
 
         {!result && (
           <Card className="border-dashed">
-            <CardContent className="py-12 text-center text-slate-500">
-              <Award className="h-12 w-12 mx-auto mb-4 text-slate-300" />
+            <CardContent className="py-12 text-center text-white/40">
+              <Award className="h-12 w-12 mx-auto mb-4 text-white/20" />
               <p>Enter portfolio details and component scores to calculate GRESB assessment</p>
             </CardContent>
           </Card>

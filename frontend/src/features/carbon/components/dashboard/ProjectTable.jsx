@@ -49,26 +49,26 @@ export const ProjectTable = ({
     switch (rating) {
       case 'AAA':
       case 'AA':
-        return 'bg-emerald-100 text-emerald-800';
+        return 'bg-emerald-100 text-emerald-300';
       case 'A':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-300';
       case 'BBB':
-        return 'bg-amber-100 text-amber-800';
+        return 'bg-amber-100 text-amber-300';
       default:
-        return 'bg-slate-100 text-slate-800';
+        return 'bg-white/[0.06] text-white/90';
     }
   };
 
   const getRiskBadgeColor = (level) => {
     switch (level?.toLowerCase()) {
       case 'low':
-        return 'bg-emerald-100 text-emerald-800';
+        return 'bg-emerald-100 text-emerald-300';
       case 'medium':
-        return 'bg-amber-100 text-amber-800';
+        return 'bg-amber-100 text-amber-300';
       case 'high':
         return 'bg-rose-100 text-rose-800';
       default:
-        return 'bg-slate-100 text-slate-800';
+        return 'bg-white/[0.06] text-white/90';
     }
   };
 
@@ -82,15 +82,15 @@ export const ProjectTable = ({
   ];
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden" data-testid="project-table">
+    <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] overflow-hidden" data-testid="project-table">
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="bg-white/[0.02] border-b border-white/[0.06]">
             <tr>
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100 transition-colors"
+                  className="px-6 py-3 text-left text-xs font-semibold text-white/40 uppercase tracking-wider cursor-pointer hover:bg-white/[0.06] transition-colors"
                   onClick={() => handleSort(column.key)}
                 >
                   <div className="flex items-center gap-1">
@@ -99,7 +99,7 @@ export const ProjectTable = ({
                   </div>
                 </th>
               ))}
-              <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-semibold text-white/40 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -108,32 +108,32 @@ export const ProjectTable = ({
             {sortedProjects.map((project) => (
               <tr
                 key={project.id}
-                className="hover:bg-slate-50 transition-colors"
+                className="hover:bg-white/[0.02] transition-colors"
                 data-testid={`project-row-${project.id}`}
               >
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-slate-900">
+                  <div className="text-sm font-medium text-white">
                     {project.name}
                   </div>
-                  <div className="text-xs text-slate-500">
+                  <div className="text-xs text-white/40">
                     {project.country_code}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-sm text-slate-700">
+                  <span className="text-sm text-white/70">
                     {project.project_type?.replace(/_/g, ' ')}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-300">
                     {project.standard}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-slate-900 tabular-nums">
+                  <div className="text-sm text-white tabular-nums">
                     {project.annual_credits?.toLocaleString()}
                   </div>
-                  <div className="text-xs text-slate-500">tCO2e/yr</div>
+                  <div className="text-xs text-white/40">tCO2e/yr</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getQualityBadgeColor(project.quality_rating)}`}>
@@ -163,7 +163,7 @@ export const ProjectTable = ({
                       </DropdownMenuItem>
                       <DropdownMenuItem 
                         onClick={() => onDelete?.(project)}
-                        className="text-rose-600"
+                        className="text-rose-400"
                       >
                         <Trash2 className="w-4 h-4 mr-2" />
                         Delete
@@ -179,8 +179,8 @@ export const ProjectTable = ({
       
       {projects.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-slate-500">No projects found</p>
-          <button className="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium">
+          <p className="text-white/40">No projects found</p>
+          <button className="mt-2 text-blue-300 hover:text-blue-300 text-sm font-medium">
             Add your first project
           </button>
         </div>

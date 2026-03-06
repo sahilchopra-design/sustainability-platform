@@ -9,7 +9,7 @@ const isDevServer = process.env.NODE_ENV !== "production";
 // Environment variable overrides
 const config = {
   enableHealthCheck: process.env.ENABLE_HEALTH_CHECK === "true",
-  enableVisualEdits: isDevServer, // Only enable during dev server
+  enableVisualEdits: false, // Disabled — babel-metadata-plugin crashes on Node 24 with newer @babel/traverse
 };
 
 // Conditionally load visual edits modules only in dev mode
@@ -99,6 +99,17 @@ webpackConfig.devServer = (devServerConfig) => {
       return middlewares;
     };
   }
+
+  // Proxy /api requests to the FastAPI backend (port 8001)
+  // This allows relative-URL API calls from the browser, bypassing Emergent's fetch wrapper.
+  devServerConfig.proxy = [
+    {
+      context: ['/api'],
+      target: 'http://localhost:8001',
+      changeOrigin: true,
+      secure: false,
+    },
+  ];
 
   return devServerConfig;
 };

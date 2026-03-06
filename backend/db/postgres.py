@@ -45,7 +45,7 @@ def init_db():
     """Initialize database - create all tables"""
     from db.models_sql import Portfolio, Asset, ScenarioSeries, AnalysisRun, ScenarioResult
     Base.metadata.create_all(bind=engine)
-    print("✅ PostgreSQL database initialized")
+    print("[OK] PostgreSQL database initialized")
 
 
 def test_connection():
@@ -55,9 +55,9 @@ def test_connection():
         with engine.connect() as conn:
             result = conn.execute(text("SELECT version()"))
             version = result.fetchone()[0]
-            print(f"✅ PostgreSQL connection successful")
+            print(f"[OK] PostgreSQL connection successful")
             print(f"   Version: {version}")
             return True
     except Exception as e:
-        print(f"❌ PostgreSQL connection failed: {e}")
+        print(f"[ERROR] PostgreSQL connection failed: {e}")
         return False

@@ -50,43 +50,46 @@
 }
 
 .dark {
-  --background: 222 35% 7%;
-  --foreground: 210 40% 98%;
-  --card: 222 30% 10%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222 30% 10%;
-  --popover-foreground: 210 40% 98%;
+  /* Fintech dark theme — deep navy/charcoal with cyan accents */
+  --background:        220 40% 5%;      /* #070d1a */
+  --foreground:        210 30% 92%;     /* near-white text */
+  --card:              220 35% 8%;      /* #0d1424 card surface */
+  --card-foreground:   210 25% 88%;
+  --popover:           220 38% 7%;
+  --popover-foreground:210 25% 88%;
 
-  --primary: 199 89% 56%;
-  --primary-foreground: 222 47% 11%;
+  --primary:           192 95% 48%;     /* cyan-400 #08d4f8 */
+  --primary-foreground:220 47% 8%;
 
-  --secondary: 222 22% 16%;
-  --secondary-foreground: 210 40% 98%;
+  --secondary:         220 28% 12%;     /* subtle elevated surface */
+  --secondary-foreground:210 20% 80%;
 
-  --muted: 222 22% 16%;
-  --muted-foreground: 215 18% 70%;
+  --muted:             220 28% 11%;
+  --muted-foreground:  215 15% 52%;
 
-  --accent: 189 64% 38%;
-  --accent-foreground: 222 47% 11%;
+  --accent:            192 80% 40%;
+  --accent-foreground: 220 47% 8%;
 
-  --destructive: 0 72% 55%;
+  --destructive:       0 72% 55%;
   --destructive-foreground: 210 40% 98%;
 
-  --border: 222 25% 18%;
-  --input: 222 25% 18%;
-  --ring: 199 89% 56%;
+  --border:            220 25% 13%;     /* #141e30 */
+  --input:             220 28% 12%;
+  --ring:              192 95% 48%;
 
-  --success: 158 64% 38%;
-  --warning: 30 90% 62%;
-  --info: 199 89% 58%;
+  --radius:            0.5rem;
 
-  --scenario-orderly: 158 64% 38%;
-  --scenario-disorderly: 30 90% 62%;
-  --scenario-hot-house: 0 72% 65%;
+  --success:           158 70% 38%;
+  --warning:           38  92% 52%;
+  --info:              199 89% 52%;
 
-  --heat-low: 203 40% 25%;
-  --heat-mid: 199 89% 58%;
-  --heat-high: 14 90% 73%;
+  --scenario-orderly:  158 70% 40%;
+  --scenario-disorderly:38 90% 56%;
+  --scenario-hot-house: 0 80% 60%;
+
+  --heat-low:          220 40% 16%;
+  --heat-mid:          192 89% 40%;
+  --heat-high:         14  90% 65%;
 }
 
 @layer base {
@@ -110,6 +113,19 @@
   }
 }
 
+@layer base {
+  /* Fintech scrollbar — thin, dark */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .scrollbar-none { scrollbar-width: none; }
+
+  /* Selection */
+  ::selection { background: rgba(8,212,248,0.2); }
+}
+
 @layer utilities {
   .scenario-orderly {
     @apply text-[hsl(var(--scenario-orderly))];
@@ -119,5 +135,26 @@
   }
   .scenario-hot-house {
     @apply text-[hsl(var(--scenario-hot-house))];
+  }
+
+  /* Fintech card — dark glassy surface */
+  .fin-card {
+    @apply bg-[#0d1424] border border-white/[0.06] rounded-lg;
+  }
+  /* Stat chip — tiny metric badge */
+  .fin-badge-up   { @apply text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold; }
+  .fin-badge-down { @apply text-red-400 bg-red-400/10 px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold; }
+  .fin-badge-flat { @apply text-white/40 bg-white/5 px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold; }
+
+  /* Divider */
+  .fin-divider { @apply border-t border-white/[0.05]; }
+
+  /* Glow accent line */
+  .fin-accent-line { @apply h-0.5 w-10 bg-gradient-to-r from-cyan-400 to-transparent rounded-full; }
+
+  /* Monospace numbers */
+  .mono-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-variant-numeric: tabular-nums;
   }
 }

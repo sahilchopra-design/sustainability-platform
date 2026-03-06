@@ -27,19 +27,19 @@ const certTypeLabels = {
 
 const certLevelColors = {
   platinum: 'bg-violet-100 text-violet-700',
-  gold: 'bg-amber-100 text-amber-700',
-  silver: 'bg-slate-100 text-slate-600',
-  certified: 'bg-green-100 text-green-700',
+  gold: 'bg-amber-100 text-amber-400',
+  silver: 'bg-white/[0.06] text-white/60',
+  certified: 'bg-green-100 text-green-400',
   outstanding: 'bg-violet-100 text-violet-700',
-  excellent: 'bg-blue-100 text-blue-700',
-  very_good: 'bg-emerald-100 text-emerald-700',
-  good: 'bg-green-100 text-green-700',
-  pass: 'bg-slate-100 text-slate-600',
+  excellent: 'bg-blue-100 text-blue-300',
+  very_good: 'bg-emerald-100 text-emerald-400',
+  good: 'bg-green-100 text-green-400',
+  pass: 'bg-white/[0.06] text-white/60',
   '5_star': 'bg-violet-100 text-violet-700',
-  '4_star': 'bg-blue-100 text-blue-700',
-  '3_star': 'bg-emerald-100 text-emerald-700',
-  '2_star': 'bg-amber-100 text-amber-700',
-  '1_star': 'bg-slate-100 text-slate-600',
+  '4_star': 'bg-blue-100 text-blue-300',
+  '3_star': 'bg-emerald-100 text-emerald-400',
+  '2_star': 'bg-amber-100 text-amber-400',
+  '1_star': 'bg-white/[0.06] text-white/60',
 };
 
 export function SustainabilityDashboard() {
@@ -48,7 +48,7 @@ export function SustainabilityDashboard() {
 
   if (dashLoading || certLoading) {
     return (
-      <div className="p-6 text-center text-slate-500">Loading dashboard...</div>
+      <div className="p-6 text-center text-white/40">Loading dashboard...</div>
     );
   }
 
@@ -63,14 +63,14 @@ export function SustainabilityDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Certified Properties</p>
-                <p className="text-2xl font-bold text-slate-900">{kpis.total_certified_properties || 0}</p>
-                <p className="text-xs text-emerald-600 mt-1">
+                <p className="text-sm text-white/40">Certified Properties</p>
+                <p className="text-2xl font-bold text-white">{kpis.total_certified_properties || 0}</p>
+                <p className="text-xs text-emerald-400 mt-1">
                   {kpis.certification_coverage_percent || 0}% coverage
                 </p>
               </div>
               <div className="p-3 bg-emerald-100 rounded-lg">
-                <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+                <CheckCircle2 className="h-6 w-6 text-emerald-400" />
               </div>
             </div>
           </CardContent>
@@ -80,16 +80,16 @@ export function SustainabilityDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Certified AUM</p>
-                <p className="text-2xl font-bold text-slate-900">
+                <p className="text-sm text-white/40">Certified AUM</p>
+                <p className="text-2xl font-bold text-white">
                   {formatCurrency(kpis.total_certified_value)}
                 </p>
-                <p className="text-xs text-blue-600 mt-1">
+                <p className="text-xs text-blue-300 mt-1">
                   +{kpis.avg_value_premium_captured || 0}% premium captured
                 </p>
               </div>
               <div className="p-3 bg-blue-100 rounded-lg">
-                <DollarSign className="h-6 w-6 text-blue-600" />
+                <DollarSign className="h-6 w-6 text-blue-300" />
               </div>
             </div>
           </CardContent>
@@ -99,16 +99,16 @@ export function SustainabilityDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Potential Uplift</p>
-                <p className="text-2xl font-bold text-slate-900">
+                <p className="text-sm text-white/40">Potential Uplift</p>
+                <p className="text-2xl font-bold text-white">
                   {formatCurrency(kpis.potential_value_uplift)}
                 </p>
-                <p className="text-xs text-amber-600 mt-1">
+                <p className="text-xs text-amber-400 mt-1">
                   {kpis.total_uncertified_properties || 0} uncertified assets
                 </p>
               </div>
               <div className="p-3 bg-amber-100 rounded-lg">
-                <TrendingUp className="h-6 w-6 text-amber-600" />
+                <TrendingUp className="h-6 w-6 text-amber-400" />
               </div>
             </div>
           </CardContent>
@@ -118,13 +118,13 @@ export function SustainabilityDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Avg GRESB Score</p>
-                <p className="text-2xl font-bold text-slate-900">
+                <p className="text-sm text-white/40">Avg GRESB Score</p>
+                <p className="text-2xl font-bold text-white">
                   {kpis.avg_gresb_score || '-'}
                 </p>
                 <div className="flex gap-2 mt-1">
                   {kpis.avg_leed_points && (
-                    <span className="text-xs text-slate-500">LEED: {kpis.avg_leed_points}pts</span>
+                    <span className="text-xs text-white/40">LEED: {kpis.avg_leed_points}pts</span>
                   )}
                 </div>
               </div>
@@ -141,7 +141,7 @@ export function SustainabilityDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Leaf className="h-4 w-4 text-emerald-600" />
+              <Leaf className="h-4 w-4 text-emerald-400" />
               Certifications by Type
             </CardTitle>
             <CardDescription>Distribution of certification frameworks</CardDescription>
@@ -151,12 +151,12 @@ export function SustainabilityDashboard() {
               {Object.entries(kpis.by_certification_type || {}).map(([type, count]) => (
                 <div key={type} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="bg-slate-50">
+                    <Badge variant="outline" className="bg-white/[0.02]">
                       {certTypeLabels[type] || type.toUpperCase()}
                     </Badge>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="w-32 h-2 bg-white/[0.06] rounded-full overflow-hidden">
                       <div
                         className="h-full bg-emerald-500 rounded-full"
                         style={{
@@ -164,7 +164,7 @@ export function SustainabilityDashboard() {
                         }}
                       />
                     </div>
-                    <span className="text-sm font-medium text-slate-700 w-8 text-right">{count}</span>
+                    <span className="text-sm font-medium text-white/70 w-8 text-right">{count}</span>
                   </div>
                 </div>
               ))}
@@ -186,21 +186,21 @@ export function SustainabilityDashboard() {
                 <Badge
                   key={level}
                   variant="outline"
-                  className={`${certLevelColors[level] || 'bg-slate-100 text-slate-700'}`}
+                  className={`${certLevelColors[level] || 'bg-white/[0.06] text-white/70'}`}
                 >
                   {level.replace('_', ' ')} ({count})
                 </Badge>
               ))}
             </div>
 
-            <div className="mt-4 pt-4 border-t border-slate-100">
+            <div className="mt-4 pt-4 border-t border-white/[0.04]">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-500">Certifications This Year</span>
-                <span className="font-medium text-emerald-600">+{kpis.certifications_this_year || 0}</span>
+                <span className="text-white/40">Certifications This Year</span>
+                <span className="font-medium text-emerald-400">+{kpis.certifications_this_year || 0}</span>
               </div>
               <div className="flex items-center justify-between text-sm mt-2">
-                <span className="text-slate-500">Expiring Soon</span>
-                <span className="font-medium text-amber-600">{kpis.certifications_expiring_soon || 0}</span>
+                <span className="text-white/40">Expiring Soon</span>
+                <span className="font-medium text-amber-400">{kpis.certifications_expiring_soon || 0}</span>
               </div>
             </div>
           </CardContent>
@@ -211,7 +211,7 @@ export function SustainabilityDashboard() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Building2 className="h-4 w-4 text-slate-600" />
+            <Building2 className="h-4 w-4 text-white/60" />
             Certified Properties
           </CardTitle>
           <CardDescription>Properties with active sustainability certifications</CardDescription>
@@ -220,30 +220,30 @@ export function SustainabilityDashboard() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm" data-testid="certifications-table">
               <thead>
-                <tr className="border-b border-slate-200">
-                  <th className="text-left py-3 px-2 font-medium text-slate-600">Property</th>
-                  <th className="text-left py-3 px-2 font-medium text-slate-600">Certification</th>
-                  <th className="text-left py-3 px-2 font-medium text-slate-600">Level</th>
-                  <th className="text-right py-3 px-2 font-medium text-slate-600">Score</th>
-                  <th className="text-right py-3 px-2 font-medium text-slate-600">Value Premium</th>
-                  <th className="text-right py-3 px-2 font-medium text-slate-600">Impact</th>
+                <tr className="border-b border-white/[0.06]">
+                  <th className="text-left py-3 px-2 font-medium text-white/60">Property</th>
+                  <th className="text-left py-3 px-2 font-medium text-white/60">Certification</th>
+                  <th className="text-left py-3 px-2 font-medium text-white/60">Level</th>
+                  <th className="text-right py-3 px-2 font-medium text-white/60">Score</th>
+                  <th className="text-right py-3 px-2 font-medium text-white/60">Value Premium</th>
+                  <th className="text-right py-3 px-2 font-medium text-white/60">Impact</th>
                 </tr>
               </thead>
               <tbody>
                 {certifications.map((cert, idx) => (
-                  <tr key={cert.id || idx} className="border-b border-slate-100 hover:bg-slate-50">
+                  <tr key={cert.id || idx} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
                     <td className="py-3 px-2">
-                      <div className="font-medium text-slate-800">{cert.property_name}</div>
-                      <div className="text-xs text-slate-500 capitalize">{cert.property_sector}</div>
+                      <div className="font-medium text-white/90">{cert.property_name}</div>
+                      <div className="text-xs text-white/40 capitalize">{cert.property_sector}</div>
                     </td>
                     <td className="py-3 px-2">
-                      <Badge variant="outline" className="bg-slate-50">
+                      <Badge variant="outline" className="bg-white/[0.02]">
                         {certTypeLabels[cert.certification_type] || cert.certification_type?.toUpperCase()}
                       </Badge>
                     </td>
                     <td className="py-3 px-2">
                       <Badge
-                        className={`${certLevelColors[cert.certification_level] || 'bg-slate-100 text-slate-700'}`}
+                        className={`${certLevelColors[cert.certification_level] || 'bg-white/[0.06] text-white/70'}`}
                       >
                         {(cert.certification_level || '').replace('_', ' ')}
                       </Badge>
@@ -251,10 +251,10 @@ export function SustainabilityDashboard() {
                     <td className="py-3 px-2 text-right font-medium">
                       {cert.score || '-'}
                     </td>
-                    <td className="py-3 px-2 text-right text-emerald-600 font-medium">
+                    <td className="py-3 px-2 text-right text-emerald-400 font-medium">
                       +{cert.value_premium_percent || 0}%
                     </td>
-                    <td className="py-3 px-2 text-right font-medium text-slate-800">
+                    <td className="py-3 px-2 text-right font-medium text-white/90">
                       {formatCurrency(cert.estimated_value_impact)}
                     </td>
                   </tr>

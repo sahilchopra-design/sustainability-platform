@@ -8,7 +8,7 @@ from typing import Optional
 from datetime import datetime, timezone, timedelta
 import uuid
 import httpx
-from passlib.context import CryptContext
+import bcrypt as _bcrypt
 from sqlalchemy.orm import Session
 from fastapi import Depends
 
@@ -17,7 +17,16 @@ from db.models.portfolio_pg import UserPG, UserSessionPG
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def _hash_pw(password: str) -> str:
+    return _bcrypt.hashpw(password.encode(), _bcrypt.gensalt()).decode()
+
+
+def _verify_pw(password: str, hashed: str) -> bool:
+    try:
+        return _bcrypt.checkpw(password.encode(), hashed.encode())
+    except Exception:
+        return False
 SESSION_DAYS = 7
 EMERGENT_AUTH_URL = "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data"
 
@@ -108,7 +117,7 @@ def register(body: RegisterReq, response: Response, db: Session = Depends(get_db
         raise HTTPException(400, "Email already registered")
 
     user = UserPG(user_id=f"user_{uuid.uuid4().hex[:12]}", email=body.email,
-                  name=body.name, password_hash=pwd_context.hash(body.password))
+                  name=body.name, password_hash=_hash_pw(body.password))
     db.add(user)
     db.commit()
 
@@ -122,7 +131,7 @@ def login(body: LoginReq, response: Response, db: Session = Depends(get_db)):
     user = db.query(UserPG).filter(UserPG.email == body.email).first()
     if not user or not user.password_hash:
         raise HTTPException(401, "Invalid credentials")
-    if not pwd_context.verify(body.password, user.password_hash):
+    if not _verify_pw(body.password, user.password_hash):
         raise HTTPException(401, "Invalid credentials")
 
     token = _create_session(db, user.user_id)

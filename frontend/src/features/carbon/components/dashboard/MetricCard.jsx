@@ -21,20 +21,20 @@ export const MetricCard = ({
       case 'up':
         return {
           icon: TrendingUp,
-          color: 'text-emerald-600',
-          bgColor: 'bg-emerald-50'
+          color: 'text-emerald-400',
+          bgColor: 'bg-emerald-500/10'
         };
       case 'down':
         return {
           icon: TrendingDown,
-          color: 'text-rose-600',
-          bgColor: 'bg-rose-50'
+          color: 'text-rose-400',
+          bgColor: 'bg-rose-500/10'
         };
       default:
         return {
           icon: Minus,
-          color: 'text-slate-500',
-          bgColor: 'bg-slate-50'
+          color: 'text-white/40',
+          bgColor: 'bg-white/[0.02]'
         };
     }
   };
@@ -45,7 +45,7 @@ export const MetricCard = ({
   return (
     <div
       className={`
-        bg-white rounded-xl border border-slate-200 p-6
+        bg-[#0d1424] rounded-xl border border-white/[0.06] p-6
         cursor-pointer transition-all duration-200
         hover:shadow-md hover:-translate-y-0.5
         ${className}
@@ -55,7 +55,7 @@ export const MetricCard = ({
     >
       <div className="flex items-center justify-between mb-4">
         <div className={`p-2.5 rounded-lg ${trendConfig.bgColor}`}>
-          {Icon && <Icon className="w-5 h-5 text-blue-600" />}
+          {Icon && <Icon className="w-5 h-5 text-blue-300" />}
         </div>
         {trendValue && (
           <div className={`flex items-center gap-1 text-sm font-medium ${trendConfig.color}`}>
@@ -66,10 +66,10 @@ export const MetricCard = ({
       </div>
 
       <div className="space-y-1">
-        <p className="text-sm font-medium text-slate-500">{title}</p>
+        <p className="text-sm font-medium text-white/40">{title}</p>
         <div className="flex items-baseline gap-1.5">
-          <span className="text-3xl font-bold text-slate-900 tabular-nums">{value}</span>
-          {unit && <span className="text-sm text-slate-500">{unit}</span>}
+          <span className="text-3xl font-bold text-white tabular-nums">{value}</span>
+          {unit && <span className="text-sm text-white/40">{unit}</span>}
         </div>
       </div>
     </div>

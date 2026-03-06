@@ -20,16 +20,16 @@ export default function SustainabilityPage() {
   const [activeTab, setActiveTab] = useState('dashboard');
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-white/[0.02]">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 px-6 py-4">
+      <div className="bg-[#0d1424] border-b border-white/[0.06] px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-100 rounded-lg">
-            <Leaf className="h-6 w-6 text-emerald-600" />
+            <Leaf className="h-6 w-6 text-emerald-400" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900">Sustainability Frameworks</h1>
-            <p className="text-sm text-slate-500">
+            <h1 className="text-xl font-bold text-white">Sustainability Frameworks</h1>
+            <p className="text-sm text-white/40">
               Analyze green certification value impact: GRESB, LEED, BREEAM, and more
             </p>
           </div>
@@ -41,15 +41,15 @@ export default function SustainabilityPage() {
             <Award className="h-3 w-3 mr-1" />
             GRESB
           </Badge>
-          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+          <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
             <Leaf className="h-3 w-3 mr-1" />
             LEED
           </Badge>
-          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+          <Badge variant="outline" className="bg-blue-500/10 text-blue-300 border-blue-500/20">
             <Building2 className="h-3 w-3 mr-1" />
             BREEAM
           </Badge>
-          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+          <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/20">
             <CheckCircle className="h-3 w-3 mr-1" />
             Energy Star
           </Badge>
@@ -59,10 +59,10 @@ export default function SustainabilityPage() {
       {/* Main Content */}
       <div className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-6 bg-white border border-slate-200">
+          <TabsList className="grid w-full grid-cols-5 mb-6 bg-[#0d1424] border border-white/[0.06]">
             <TabsTrigger
               value="dashboard"
-              className="flex items-center gap-2 data-[state=active]:bg-slate-100"
+              className="flex items-center gap-2 data-[state=active]:bg-white/[0.06]"
               data-testid="tab-sustainability-dashboard"
             >
               <LayoutDashboard className="h-4 w-4" />
@@ -78,7 +78,7 @@ export default function SustainabilityPage() {
             </TabsTrigger>
             <TabsTrigger
               value="leed"
-              className="flex items-center gap-2 data-[state=active]:bg-green-50 data-[state=active]:text-green-700"
+              className="flex items-center gap-2 data-[state=active]:bg-green-500/10 data-[state=active]:text-green-400"
               data-testid="tab-leed"
             >
               <Leaf className="h-4 w-4" />
@@ -86,7 +86,7 @@ export default function SustainabilityPage() {
             </TabsTrigger>
             <TabsTrigger
               value="breeam"
-              className="flex items-center gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700"
+              className="flex items-center gap-2 data-[state=active]:bg-blue-500/10 data-[state=active]:text-blue-300"
               data-testid="tab-breeam"
             >
               <Building2 className="h-4 w-4" />
@@ -94,7 +94,7 @@ export default function SustainabilityPage() {
             </TabsTrigger>
             <TabsTrigger
               value="value-impact"
-              className="flex items-center gap-2 data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700"
+              className="flex items-center gap-2 data-[state=active]:bg-emerald-500/10 data-[state=active]:text-emerald-400"
               data-testid="tab-value-impact"
             >
               <DollarSign className="h-4 w-4" />
@@ -108,13 +108,13 @@ export default function SustainabilityPage() {
 
           <TabsContent value="gresb" className="mt-0">
             <div className="mb-4">
-              <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-white/90 flex items-center gap-2">
                 <div className="p-1.5 bg-violet-100 rounded">
                   <Award className="h-4 w-4 text-violet-600" />
                 </div>
                 GRESB Assessment Calculator
               </h2>
-              <p className="text-sm text-slate-600 mt-1">
+              <p className="text-sm text-white/60 mt-1">
                 Global Real Estate Sustainability Benchmark for portfolio-level ESG performance evaluation
               </p>
             </div>
@@ -123,13 +123,13 @@ export default function SustainabilityPage() {
 
           <TabsContent value="leed" className="mt-0">
             <div className="mb-4">
-              <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-white/90 flex items-center gap-2">
                 <div className="p-1.5 bg-green-100 rounded">
-                  <Leaf className="h-4 w-4 text-green-600" />
+                  <Leaf className="h-4 w-4 text-green-400" />
                 </div>
                 LEED Certification Calculator
               </h2>
-              <p className="text-sm text-slate-600 mt-1">
+              <p className="text-sm text-white/60 mt-1">
                 Leadership in Energy and Environmental Design - the most widely used green building rating system
               </p>
             </div>
@@ -138,13 +138,13 @@ export default function SustainabilityPage() {
 
           <TabsContent value="breeam" className="mt-0">
             <div className="mb-4">
-              <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-white/90 flex items-center gap-2">
                 <div className="p-1.5 bg-blue-100 rounded">
-                  <Building2 className="h-4 w-4 text-blue-600" />
+                  <Building2 className="h-4 w-4 text-blue-300" />
                 </div>
                 BREEAM Certification Calculator
               </h2>
-              <p className="text-sm text-slate-600 mt-1">
+              <p className="text-sm text-white/60 mt-1">
                 Building Research Establishment Environmental Assessment Method - the world's leading sustainability assessment for buildings with LEED comparison
               </p>
             </div>
@@ -153,13 +153,13 @@ export default function SustainabilityPage() {
 
           <TabsContent value="value-impact" className="mt-0">
             <div className="mb-4">
-              <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-white/90 flex items-center gap-2">
                 <div className="p-1.5 bg-emerald-100 rounded">
-                  <DollarSign className="h-4 w-4 text-emerald-600" />
+                  <DollarSign className="h-4 w-4 text-emerald-400" />
                 </div>
                 Value Impact Analysis
               </h2>
-              <p className="text-sm text-slate-600 mt-1">
+              <p className="text-sm text-white/60 mt-1">
                 Calculate rent/value premiums and ROI for green certifications based on research data
               </p>
             </div>

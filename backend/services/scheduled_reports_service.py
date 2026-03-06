@@ -99,7 +99,7 @@ def create_scheduled_report_table():
                 ON scheduled_reports (user_id)
             """))
             conn.commit()
-            print("✅ Scheduled reports table ready")
+            print("[OK] Scheduled reports table ready")
     except Exception as e:
         print(f"Error creating scheduled reports table: {e}")
 

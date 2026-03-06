@@ -442,10 +442,10 @@ export default function MethodologyCalculator() {
 
   return (
     <div className="space-y-6" data-testid="methodology-calculator">
-      <Card className="bg-white border-slate-200">
+      <Card className="bg-[#0d1424] border-white/[0.06]">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Calculator className="w-5 h-5 text-emerald-600" />
+            <Calculator className="w-5 h-5 text-emerald-400" />
             Methodology Calculator
           </CardTitle>
           <CardDescription>
@@ -489,17 +489,17 @@ export default function MethodologyCalculator() {
                       {methodologies.map((m) => (
                         <SelectItem key={m.code} value={m.code}>
                           <span className="font-medium">{m.code}</span>
-                          <span className="text-slate-500 ml-2">- {m.name}</span>
+                          <span className="text-white/40 ml-2">- {m.name}</span>
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="flex items-center gap-2 mt-6">
-                  <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded">
+                  <span className="px-2 py-1 bg-white/[0.06] text-white/60 text-xs rounded">
                     {methodologies.find(m => m.code === selectedMethodology)?.standard || '-'}
                   </span>
-                  <span className="px-2 py-1 bg-emerald-100 text-emerald-600 text-xs rounded">
+                  <span className="px-2 py-1 bg-emerald-100 text-emerald-400 text-xs rounded">
                     {methodologies.find(m => m.code === selectedMethodology)?.scale || 'Large'}
                   </span>
                 </div>
@@ -513,7 +513,7 @@ export default function MethodologyCalculator() {
                       <Label className="flex items-center gap-1 text-sm">
                         {config.label}
                         {config.unit && (
-                          <span className="text-slate-400 text-xs">({config.unit})</span>
+                          <span className="text-white/30 text-xs">({config.unit})</span>
                         )}
                       </Label>
                       {config.type === 'select' ? (
@@ -551,8 +551,8 @@ export default function MethodologyCalculator() {
 
               {/* Generic inputs for methodologies without specific configs */}
               {selectedMethodology && !INPUT_CONFIGS[selectedMethodology] && (
-                <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                  <p className="text-amber-700 text-sm">
+                <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                  <p className="text-amber-400 text-sm">
                     This methodology uses default inputs. Click calculate to see the result.
                   </p>
                 </div>
@@ -593,11 +593,11 @@ export default function MethodologyCalculator() {
 
       {/* Results Card */}
       {result && (
-        <Card className="bg-white border-slate-200" data-testid="calculation-result">
+        <Card className="bg-[#0d1424] border-white/[0.06]" data-testid="calculation-result">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="flex items-center gap-2 text-emerald-700">
+                <CardTitle className="flex items-center gap-2 text-emerald-400">
                   <Leaf className="w-5 h-5" />
                   Calculation Results
                 </CardTitle>
@@ -619,62 +619,62 @@ export default function MethodologyCalculator() {
           </CardHeader>
           <CardContent>
             {result.error ? (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-700">{result.error}</p>
+              <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                <p className="text-red-400">{result.error}</p>
               </div>
             ) : (
               <div className="space-y-6">
                 {/* Main Result */}
-                <div className="p-6 bg-emerald-50 border border-emerald-200 rounded-xl text-center">
-                  <p className="text-sm text-emerald-600 mb-1">Annual Emission Reductions</p>
-                  <p className="text-4xl font-bold text-emerald-700">
+                <div className="p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-center">
+                  <p className="text-sm text-emerald-400 mb-1">Annual Emission Reductions</p>
+                  <p className="text-4xl font-bold text-emerald-400">
                     {formatNumber(result.emission_reductions)}
                   </p>
-                  <p className="text-sm text-emerald-600 mt-1">{result.unit}</p>
+                  <p className="text-sm text-emerald-400 mt-1">{result.unit}</p>
                 </div>
 
                 {/* Detailed Breakdown */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {result.baseline_emissions !== undefined && (
-                    <div className="p-4 bg-slate-50 rounded-lg">
-                      <p className="text-xs text-slate-500">Baseline Emissions</p>
-                      <p className="text-lg font-semibold text-slate-700">
+                    <div className="p-4 bg-white/[0.02] rounded-lg">
+                      <p className="text-xs text-white/40">Baseline Emissions</p>
+                      <p className="text-lg font-semibold text-white/70">
                         {formatNumber(result.baseline_emissions)}
                       </p>
-                      <p className="text-xs text-slate-400">{result.unit}</p>
+                      <p className="text-xs text-white/30">{result.unit}</p>
                     </div>
                   )}
                   {result.project_emissions !== undefined && (
-                    <div className="p-4 bg-slate-50 rounded-lg">
-                      <p className="text-xs text-slate-500">Project Emissions</p>
-                      <p className="text-lg font-semibold text-slate-700">
+                    <div className="p-4 bg-white/[0.02] rounded-lg">
+                      <p className="text-xs text-white/40">Project Emissions</p>
+                      <p className="text-lg font-semibold text-white/70">
                         {formatNumber(result.project_emissions)}
                       </p>
-                      <p className="text-xs text-slate-400">{result.unit}</p>
+                      <p className="text-xs text-white/30">{result.unit}</p>
                     </div>
                   )}
                   {result.annual_generation_mwh !== undefined && (
-                    <div className="p-4 bg-blue-50 rounded-lg">
+                    <div className="p-4 bg-blue-500/10 rounded-lg">
                       <p className="text-xs text-blue-500">Annual Generation</p>
-                      <p className="text-lg font-semibold text-blue-700">
+                      <p className="text-lg font-semibold text-blue-300">
                         {formatNumber(result.annual_generation_mwh)}
                       </p>
                       <p className="text-xs text-blue-400">MWh</p>
                     </div>
                   )}
                   {result.total_credits !== undefined && (
-                    <div className="p-4 bg-amber-50 rounded-lg">
+                    <div className="p-4 bg-amber-500/10 rounded-lg">
                       <p className="text-xs text-amber-500">Total Credits (Lifetime)</p>
-                      <p className="text-lg font-semibold text-amber-700">
+                      <p className="text-lg font-semibold text-amber-400">
                         {formatNumber(result.total_credits)}
                       </p>
                       <p className="text-xs text-amber-400">{result.unit}</p>
                     </div>
                   )}
                   {result.annual_credits_per_stove !== undefined && (
-                    <div className="p-4 bg-purple-50 rounded-lg">
+                    <div className="p-4 bg-purple-500/10 rounded-lg">
                       <p className="text-xs text-purple-500">Credits per Stove</p>
-                      <p className="text-lg font-semibold text-purple-700">
+                      <p className="text-lg font-semibold text-purple-300">
                         {formatNumber(result.annual_credits_per_stove)}
                       </p>
                       <p className="text-xs text-purple-400">{result.unit}/stove</p>
@@ -685,30 +685,30 @@ export default function MethodologyCalculator() {
                 {/* Yearly Results for Forestry */}
                 {result.yearly_results && result.yearly_results.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-medium text-slate-700 mb-3">Yearly Projections</h4>
+                    <h4 className="text-sm font-medium text-white/70 mb-3">Yearly Projections</h4>
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="bg-slate-50">
-                            <th className="px-3 py-2 text-left text-slate-600">Year</th>
-                            <th className="px-3 py-2 text-right text-slate-600">CO2 Sequestered</th>
-                            <th className="px-3 py-2 text-right text-slate-600">Risk Buffer</th>
-                            <th className="px-3 py-2 text-right text-slate-600">Net Credits</th>
+                          <tr className="bg-white/[0.02]">
+                            <th className="px-3 py-2 text-left text-white/60">Year</th>
+                            <th className="px-3 py-2 text-right text-white/60">CO2 Sequestered</th>
+                            <th className="px-3 py-2 text-right text-white/60">Risk Buffer</th>
+                            <th className="px-3 py-2 text-right text-white/60">Net Credits</th>
                           </tr>
                         </thead>
                         <tbody>
                           {result.yearly_results.slice(0, 10).map((yr, idx) => (
-                            <tr key={idx} className="border-b border-slate-100">
+                            <tr key={idx} className="border-b border-white/[0.04]">
                               <td className="px-3 py-2">{yr.year}</td>
                               <td className="px-3 py-2 text-right">{formatNumber(yr.co2_sequestered)}</td>
-                              <td className="px-3 py-2 text-right text-red-600">-{formatNumber(yr.risk_buffer)}</td>
-                              <td className="px-3 py-2 text-right font-medium text-emerald-600">{formatNumber(yr.net_credits)}</td>
+                              <td className="px-3 py-2 text-right text-red-400">-{formatNumber(yr.risk_buffer)}</td>
+                              <td className="px-3 py-2 text-right font-medium text-emerald-400">{formatNumber(yr.net_credits)}</td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
                       {result.yearly_results.length > 10 && (
-                        <p className="text-xs text-slate-400 mt-2">
+                        <p className="text-xs text-white/30 mt-2">
                           Showing first 10 of {result.yearly_results.length} years
                         </p>
                       )}
@@ -734,10 +734,10 @@ export default function MethodologyCalculator() {
           {saveSuccess ? (
             <div className="py-8 text-center">
               <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Check className="w-8 h-8 text-emerald-600" />
+                <Check className="w-8 h-8 text-emerald-400" />
               </div>
-              <p className="text-lg font-semibold text-slate-900">Project Saved!</p>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-lg font-semibold text-white">Project Saved!</p>
+              <p className="text-sm text-white/40 mt-1">
                 Your calculation has been added to the portfolio.
               </p>
             </div>
@@ -750,8 +750,8 @@ export default function MethodologyCalculator() {
                   {loadingPortfolios ? (
                     <Skeleton className="h-10 w-full" />
                   ) : portfolios.length === 0 ? (
-                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                      <p className="text-sm text-amber-700">
+                    <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                      <p className="text-sm text-amber-400">
                         No portfolios found. Please create a portfolio first.
                       </p>
                     </div>
@@ -814,11 +814,11 @@ export default function MethodologyCalculator() {
                 </div>
 
                 {/* Calculation Summary */}
-                <div className="p-3 bg-slate-50 rounded-lg">
-                  <p className="text-xs text-slate-500 mb-1">Calculation Summary</p>
+                <div className="p-3 bg-white/[0.02] rounded-lg">
+                  <p className="text-xs text-white/40 mb-1">Calculation Summary</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-slate-700">{selectedMethodology}</span>
-                    <span className="text-sm font-bold text-emerald-600">
+                    <span className="text-sm font-medium text-white/70">{selectedMethodology}</span>
+                    <span className="text-sm font-bold text-emerald-400">
                       {formatNumber(result?.emission_reductions)} tCO2e/year
                     </span>
                   </div>
@@ -826,9 +826,9 @@ export default function MethodologyCalculator() {
 
                 {/* Error Message */}
                 {saveError && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
+                  <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-2">
                     <X className="w-4 h-4 text-red-500" />
-                    <p className="text-sm text-red-700">{saveError}</p>
+                    <p className="text-sm text-red-400">{saveError}</p>
                   </div>
                 )}
               </div>

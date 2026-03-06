@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5174,
+      "cwd": "C:\\Users\\SahilChopra\\AppData\\Local\\Temp\\sp-tmp\\data_hub\\frontend"
+    },
+    {
+      "name": "backend",
+      "runtimeExecutable": "uvicorn",
+      "runtimeArgs": ["server:app", "--host", "0.0.0.0", "--port", "8002", "--reload"],
+      "port": 8002,
+      "cwd": "C:\\Users\\SahilChopra\\AppData\\Local\\Temp\\sp-tmp\\data_hub\\backend"
+    }
+  ]
+}

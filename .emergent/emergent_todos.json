@@ -1,54 +1,67 @@
 [
   {
     "content": "Create TypeScript types for scenario builder frontend",
-    "status": "pending"
+    "status": "completed",
+    "note": "Implemented as JSX/JS (no .ts/.tsx files exist in this codebase)"
   },
   {
     "content": "Create useScenarioBuilder.ts hook for scenario creation and editing",
-    "status": "pending"
+    "status": "completed",
+    "note": "Implemented as useScenarioBuilder.js — full state management, save/publish, versioning, offline fallback"
   },
   {
     "content": "Create useScenarioTemplates.ts hook for template management",
-    "status": "pending"
+    "status": "completed",
+    "note": "Implemented as useScenarioTemplates.js — filtering, sorting, grouping by category"
   },
   {
     "content": "Build ScenarioTemplateGallery.tsx with filtering and search",
-    "status": "pending"
+    "status": "completed",
+    "note": "Implemented as ScenarioTemplateGallery.jsx — family/category filters, search, 8 templates"
   },
   {
     "content": "Build ParameterConfigurator.tsx with organized parameter groups",
-    "status": "pending"
+    "status": "completed",
+    "note": "Implemented as ParameterConfigurator.jsx — accordion groups, sliders, NGFS baseline markers, delta badges"
   },
   {
     "content": "Build TrajectoryVisualizer.tsx with interactive charts and editable points",
-    "status": "pending"
+    "status": "completed",
+    "note": "Implemented as TrajectoryVisualizer.jsx — Recharts LineChart, EditableDot, EditPopover, data table"
   },
   {
     "content": "Build ScenarioImpactPreviewPanel.tsx with quick impact calculation",
-    "status": "pending"
+    "status": "completed",
+    "note": "Implemented as ScenarioImpactPreviewPanel.jsx — calls /api/v1/monte-carlo/quick, DeltaBar, offline fallback"
   },
   {
     "content": "Build ScenarioVersionTimeline.tsx with version history",
-    "status": "pending"
+    "status": "completed",
+    "note": "Implemented as ScenarioVersionTimeline.jsx — spine/dot timeline, diff display, restore button"
   },
   {
     "content": "Build ScenarioComparisonView.tsx for side-by-side comparison",
-    "status": "pending"
+    "status": "completed",
+    "note": "Implemented as ScenarioComparisonView.jsx — param diff table, metric bar chart, 2 NGFS scenarios max"
   },
   {
     "content": "Build NGFSDataBrowser.tsx for data source management",
-    "status": "pending"
+    "status": "completed",
+    "note": "Implemented as NGFSDataBrowser.jsx — 9 NGFS variables, trajectory preview chart, Import to Scenario"
   },
   {
     "content": "Build ScenarioBuilderWizard.tsx with 5-step wizard",
-    "status": "pending"
+    "status": "completed",
+    "note": "Implemented as ScenarioBuilderWizard.jsx — 5 steps: Template, Parameters, Trajectory, Preview, Review"
   },
   {
     "content": "Create ScenarioBuilderPage.tsx and ScenarioGalleryPage.tsx",
-    "status": "pending"
+    "status": "completed",
+    "note": "Implemented as ScenarioBuilderPage.jsx (/scenario-builder-v2) and ScenarioGalleryPage.jsx (/scenario-gallery)"
   },
   {
     "content": "Add routes and test scenario builder components",
-    "status": "pending"
+    "status": "completed",
+    "note": "Routes wired into App.js: /scenario-builder-v2 and /scenario-gallery. Nav entries added to Scenarios & Data group."
   }
 ]

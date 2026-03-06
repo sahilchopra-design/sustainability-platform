@@ -11,10 +11,10 @@ import { ExportButton } from '../../../../components/shared/ExportButton';
 import { exportStrandedAssets } from '../../../../lib/exportUtils';
 
 const RISK_COLORS = {
-  low: { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
-  medium: { bg: 'bg-yellow-50', text: 'text-yellow-700', border: 'border-yellow-200' },
-  high: { bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-200' },
-  critical: { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' },
+  low: { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/20' },
+  medium: { bg: 'bg-yellow-500/10', text: 'text-yellow-400', border: 'border-yellow-500/20' },
+  high: { bg: 'bg-orange-500/10', text: 'text-orange-400', border: 'border-orange-500/20' },
+  critical: { bg: 'bg-red-500/10', text: 'text-red-400', border: 'border-red-500/20' },
 };
 
 const formatCurrency = (value) => {
@@ -54,7 +54,7 @@ export function StrandedAssetDashboard() {
     <div className="space-y-6" data-testid="stranded-asset-dashboard">
       {/* Header with Export Button */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-800">Stranded Asset Overview</h2>
+        <h2 className="text-lg font-semibold text-white/90">Stranded Asset Overview</h2>
         <ExportButton 
           onExport={handleExport}
           label="Export Analysis"
@@ -70,16 +70,16 @@ export function StrandedAssetDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Total Exposure</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                <p className="text-sm font-medium text-white/40 dark:text-white/30">Total Exposure</p>
+                <p className="text-2xl font-bold text-white dark:text-white">
                   {formatCurrency(parseFloat(kpis?.total_exposure_usd || 0))}
                 </p>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-white/40 mt-1">
                   {kpis?.total_assets || 0} assets tracked
                 </p>
               </div>
               <div className="p-3 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-                <DollarSign className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                <DollarSign className="h-6 w-6 text-amber-400 dark:text-amber-400" />
               </div>
             </div>
           </CardContent>
@@ -90,16 +90,16 @@ export function StrandedAssetDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Value at Risk</p>
-                <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+                <p className="text-sm font-medium text-white/40 dark:text-white/30">Value at Risk</p>
+                <p className="text-2xl font-bold text-red-400 dark:text-red-400">
                   {formatCurrency(parseFloat(kpis?.stranded_value_at_risk_usd || 0))}
                 </p>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-white/40 mt-1">
                   {((parseFloat(kpis?.stranded_value_at_risk_usd || 0) / parseFloat(kpis?.total_exposure_usd || 1)) * 100).toFixed(1)}% of exposure
                 </p>
               </div>
               <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-lg">
-                <TrendingDown className="h-6 w-6 text-red-600 dark:text-red-400" />
+                <TrendingDown className="h-6 w-6 text-red-400 dark:text-red-400" />
               </div>
             </div>
           </CardContent>
@@ -110,16 +110,16 @@ export function StrandedAssetDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">High Risk Assets</p>
-                <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                <p className="text-sm font-medium text-white/40 dark:text-white/30">High Risk Assets</p>
+                <p className="text-2xl font-bold text-orange-400 dark:text-orange-400">
                   {(kpis?.high_risk_assets || 0) + (kpis?.critical_risk_assets || 0)}
                 </p>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-white/40 mt-1">
                   {kpis?.critical_risk_assets || 0} critical
                 </p>
               </div>
               <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
-                <AlertTriangle className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+                <AlertTriangle className="h-6 w-6 text-orange-400 dark:text-orange-400" />
               </div>
             </div>
           </CardContent>
@@ -130,16 +130,16 @@ export function StrandedAssetDashboard() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Avg Risk Score</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                <p className="text-sm font-medium text-white/40 dark:text-white/30">Avg Risk Score</p>
+                <p className="text-2xl font-bold text-white dark:text-white">
                   {(parseFloat(kpis?.avg_stranding_risk_score || 0) * 100).toFixed(0)}%
                 </p>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-white/40 mt-1">
                   Portfolio weighted
                 </p>
               </div>
               <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                <Target className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <Target className="h-6 w-6 text-blue-300 dark:text-blue-400" />
               </div>
             </div>
           </CardContent>
@@ -157,7 +157,7 @@ export function StrandedAssetDashboard() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{kpis?.total_reserves_count || 0}</p>
-            <p className="text-xs text-slate-500">Oil, Gas, Coal reserves</p>
+            <p className="text-xs text-white/40">Oil, Gas, Coal reserves</p>
           </CardContent>
         </Card>
 
@@ -170,7 +170,7 @@ export function StrandedAssetDashboard() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{kpis?.total_plants_count || 0}</p>
-            <p className="text-xs text-slate-500">Coal, Gas, Nuclear facilities</p>
+            <p className="text-xs text-white/40">Coal, Gas, Nuclear facilities</p>
           </CardContent>
         </Card>
 
@@ -183,7 +183,7 @@ export function StrandedAssetDashboard() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{kpis?.total_infrastructure_count || 0}</p>
-            <p className="text-xs text-slate-500">Pipelines, Terminals, Refineries</p>
+            <p className="text-xs text-white/40">Pipelines, Terminals, Refineries</p>
           </CardContent>
         </Card>
       </div>
@@ -232,9 +232,9 @@ export function StrandedAssetDashboard() {
                   <div key={level} className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="capitalize font-medium">{level} Risk</span>
-                      <span className="text-slate-500">{count} assets ({percentage.toFixed(0)}%)</span>
+                      <span className="text-white/40">{count} assets ({percentage.toFixed(0)}%)</span>
                     </div>
-                    <div className="h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-3 bg-white/[0.06] dark:bg-[#111827] rounded-full overflow-hidden">
                       <div 
                         className={`h-full ${colors.bg} ${colors.border} border-r-2`}
                         style={{ width: `${percentage}%` }}
@@ -272,20 +272,20 @@ export function StrandedAssetDashboard() {
                     key={alert.alert_id}
                     className={`p-3 rounded-lg border ${
                       alert.risk_level === 'critical' 
-                        ? 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800' 
-                        : 'bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800'
+                        ? 'bg-red-500/10 border-red-500/20 dark:bg-red-900/20 dark:border-red-800' 
+                        : 'bg-orange-500/10 border-orange-500/20 dark:bg-orange-900/20 dark:border-orange-800'
                     }`}
                     data-testid="critical-alert-item"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <p className="font-medium text-slate-900 dark:text-white">
+                        <p className="font-medium text-white dark:text-white">
                           {alert.asset_name}
                         </p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        <p className="text-xs text-white/40 dark:text-white/30 mt-1">
                           {alert.counterparty_name} • {alert.asset_type}
                         </p>
-                        <p className="text-xs text-slate-600 dark:text-slate-300 mt-2">
+                        <p className="text-xs text-white/60 dark:text-white/20 mt-2">
                           {alert.alert_trigger}
                         </p>
                       </div>
@@ -296,10 +296,10 @@ export function StrandedAssetDashboard() {
                         >
                           {(parseFloat(alert.stranding_risk_score) * 100).toFixed(0)}%
                         </Badge>
-                        <p className="text-sm font-bold text-red-600 dark:text-red-400">
+                        <p className="text-sm font-bold text-red-400 dark:text-red-400">
                           {formatCurrency(parseFloat(alert.estimated_impact_usd))}
                         </p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-white/40">
                           {alert.time_to_stranding_years}y to stranding
                         </p>
                       </div>
@@ -308,7 +308,7 @@ export function StrandedAssetDashboard() {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-32 text-slate-400">
+              <div className="flex flex-col items-center justify-center h-32 text-white/30">
                 <Zap className="h-8 w-8 mb-2" />
                 <p>No critical alerts</p>
               </div>

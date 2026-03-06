@@ -14,10 +14,10 @@ import {
 import { Building2, Search, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react';
 
 const PROPERTY_TYPE_COLORS = {
-  office: 'bg-blue-50 text-blue-700',
-  retail: 'bg-purple-50 text-purple-700',
-  industrial: 'bg-amber-50 text-amber-700',
-  multifamily: 'bg-emerald-50 text-emerald-700',
+  office: 'bg-blue-500/10 text-blue-300',
+  retail: 'bg-purple-500/10 text-purple-300',
+  industrial: 'bg-amber-500/10 text-amber-400',
+  multifamily: 'bg-emerald-500/10 text-emerald-400',
   hotel: 'bg-pink-50 text-pink-700',
   mixed_use: 'bg-cyan-50 text-cyan-700',
 };
@@ -43,9 +43,9 @@ export function HoldingsTable({ holdings, isLoading }) {
   
   if (isLoading) {
     return (
-      <Card className="bg-white" data-testid="holdings-table-loading">
+      <Card className="bg-[#0d1424]" data-testid="holdings-table-loading">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold text-slate-700">Portfolio Holdings</CardTitle>
+          <CardTitle className="text-sm font-semibold text-white/70">Portfolio Holdings</CardTitle>
         </CardHeader>
         <CardContent>
           <Skeleton className="h-8 w-64 mb-4" />
@@ -96,17 +96,17 @@ export function HoldingsTable({ holdings, isLoading }) {
   };
   
   return (
-    <Card className="bg-white" data-testid="holdings-table">
+    <Card className="bg-[#0d1424]" data-testid="holdings-table">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+          <CardTitle className="text-sm font-semibold text-white/70 flex items-center gap-2">
             <Building2 className="h-4 w-4 text-blue-500" />
             Portfolio Holdings
             <Badge variant="outline" className="ml-2">
               {holdings?.total || 0} properties
             </Badge>
           </CardTitle>
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-white/60">
             Total Value: <span className="font-semibold">{formatCurrency(holdings?.total_value)}</span>
           </div>
         </div>
@@ -114,7 +114,7 @@ export function HoldingsTable({ holdings, isLoading }) {
       <CardContent>
         {/* Search */}
         <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
           <Input
             placeholder="Search by name, location, or type..."
             value={searchTerm}
@@ -128,7 +128,7 @@ export function HoldingsTable({ holdings, isLoading }) {
         <div className="border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow className="bg-slate-50">
+              <TableRow className="bg-white/[0.02]">
                 <TableHead className="cursor-pointer" onClick={() => handleSort('property_name')}>
                   <div className="flex items-center gap-1">
                     Property <SortIcon field="property_name" />
@@ -156,7 +156,7 @@ export function HoldingsTable({ holdings, isLoading }) {
             <TableBody>
               {sorted.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-slate-500">
+                  <TableCell colSpan={6} className="text-center py-8 text-white/40">
                     {searchTerm ? 'No holdings match your search' : 'No holdings in this portfolio'}
                   </TableCell>
                 </TableRow>
@@ -169,14 +169,14 @@ export function HoldingsTable({ holdings, isLoading }) {
                     <TableRow key={holding.id} data-testid={`holding-row-${holding.id}`}>
                       <TableCell>
                         <div>
-                          <p className="font-medium text-slate-800">{holding.property_name || 'Unknown'}</p>
-                          <p className="text-xs text-slate-500">{holding.property_location || '-'}</p>
+                          <p className="font-medium text-white/90">{holding.property_name || 'Unknown'}</p>
+                          <p className="text-xs text-white/40">{holding.property_location || '-'}</p>
                         </div>
                       </TableCell>
                       <TableCell>
                         <Badge 
                           variant="outline" 
-                          className={PROPERTY_TYPE_COLORS[holding.property_type] || 'bg-slate-50 text-slate-600'}
+                          className={PROPERTY_TYPE_COLORS[holding.property_type] || 'bg-white/[0.02] text-white/60'}
                         >
                           {holding.property_type || '-'}
                         </Badge>
@@ -191,7 +191,7 @@ export function HoldingsTable({ holdings, isLoading }) {
                         {formatPercent(holding.ownership_percentage)}
                       </TableCell>
                       <TableCell>
-                        <span className={isGain ? 'text-emerald-600' : gainLoss < 0 ? 'text-red-600' : 'text-slate-500'}>
+                        <span className={isGain ? 'text-emerald-400' : gainLoss < 0 ? 'text-red-400' : 'text-white/40'}>
                           {gainLoss > 0 ? '+' : ''}{formatCurrency(holding.unrealized_gain_loss)}
                         </span>
                       </TableCell>

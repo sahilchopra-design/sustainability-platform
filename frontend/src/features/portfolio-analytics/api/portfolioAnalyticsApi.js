@@ -149,3 +149,44 @@ export async function seedSampleData() {
   if (!res.ok) throw new Error('Failed to seed sample data');
   return res.json();
 }
+
+
+// ── PCAF / WACI — Real Financed Emissions ────────────────────────────────────
+
+/**
+ * Trigger a PCAF Standard v2.0 financed emissions calculation.
+ * Loads assets from assets_pg, resolves DQS hierarchy, calls PCAFWACIEngine,
+ * writes to pcaf_time_series, fires alert engine.
+ */
+export async function runPCAFCalculation(portfolioId) {
+  const res = await fetch(`${BASE}/${portfolioId}/pcaf-run`, {
+    method: 'POST',
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || 'PCAF calculation failed');
+  }
+  return res.json();
+}
+
+/**
+ * Get the latest cached PCAF results from pcaf_time_series.
+ * Runs engine on-demand if no cache exists.
+ */
+export async function fetchPCAFResults(portfolioId) {
+  const res = await fetch(`${BASE}/${portfolioId}/pcaf-results`);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || 'Failed to fetch PCAF results');
+  }
+  return res.json();
+}
+
+/**
+ * Get year-by-year WACI vs. glidepath history for sparkline charts.
+ */
+export async function fetchWACIHistory(portfolioId, years = 10) {
+  const res = await fetch(`${BASE}/${portfolioId}/waci-history?years=${years}`);
+  if (!res.ok) throw new Error('Failed to fetch WACI history');
+  return res.json();
+}

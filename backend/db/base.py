@@ -79,5 +79,6 @@ def init_db():
         CarbonMethodology, CarbonEmissionFactor, CarbonPortfolio,
         CarbonProject, CarbonScenario, CarbonCalculation, CarbonReport,
     )
+    from db.models.csrd_models import CsrdReportUpload  # noqa: F401
     Base.metadata.create_all(bind=engine)
-    print("✅ PostgreSQL database tables created")
+    print("[OK] PostgreSQL database tables created")

@@ -81,7 +81,7 @@ export function TechnologyDisruptionChart() {
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
                 selectedMetric === key
                   ? 'bg-amber-500 text-white shadow-lg scale-105'
-                  : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  : 'bg-white/[0.06] dark:bg-[#111827] hover:bg-white/[0.08] dark:hover:bg-[#1a2234]'
               }`}
             >
               <MetricIcon className="h-4 w-4" />
@@ -108,7 +108,7 @@ export function TechnologyDisruptionChart() {
               <select
                 value={selectedRegion}
                 onChange={(e) => setSelectedRegion(e.target.value)}
-                className="border rounded-lg px-3 py-1.5 text-sm bg-white dark:bg-slate-800"
+                className="border rounded-lg px-3 py-1.5 text-sm bg-[#0d1424] dark:bg-[#111827]"
               >
                 {REGION_OPTIONS.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -194,33 +194,33 @@ export function TechnologyDisruptionChart() {
             ) : (
               <>
                 {/* Current Value */}
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
-                  <p className="text-xs text-slate-500 mb-1">Current ({data?.current_year})</p>
+                <div className="p-4 bg-white/[0.02] dark:bg-[#111827] rounded-lg">
+                  <p className="text-xs text-white/40 mb-1">Current ({data?.current_year})</p>
                   <p className="text-2xl font-bold" style={{ color: config?.color }}>
                     {parseFloat(data?.current_value || 0).toFixed(1)}{config?.unit}
                   </p>
                 </div>
 
                 {/* 2030 Projection */}
-                <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-                  <p className="text-xs text-slate-500 mb-1">2030 Projection</p>
-                  <p className="text-2xl font-bold text-amber-600">
+                <div className="p-4 bg-amber-500/10 dark:bg-amber-900/20 rounded-lg border border-amber-500/20 dark:border-amber-800">
+                  <p className="text-xs text-white/40 mb-1">2030 Projection</p>
+                  <p className="text-2xl font-bold text-amber-400">
                     {parseFloat(data?.projected_2030 || 0).toFixed(1)}{config?.unit}
                   </p>
                 </div>
 
                 {/* 2040 Projection */}
-                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                  <p className="text-xs text-slate-500 mb-1">2040 Projection</p>
-                  <p className="text-2xl font-bold text-blue-600">
+                <div className="p-4 bg-blue-500/10 dark:bg-blue-900/20 rounded-lg">
+                  <p className="text-xs text-white/40 mb-1">2040 Projection</p>
+                  <p className="text-2xl font-bold text-blue-300">
                     {parseFloat(data?.projected_2040 || 0).toFixed(1)}{config?.unit}
                   </p>
                 </div>
 
                 {/* 2050 Projection */}
-                <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
-                  <p className="text-xs text-slate-500 mb-1">2050 Projection</p>
-                  <p className="text-2xl font-bold text-emerald-600">
+                <div className="p-4 bg-emerald-500/10 dark:bg-emerald-900/20 rounded-lg border border-emerald-500/20 dark:border-emerald-800">
+                  <p className="text-xs text-white/40 mb-1">2050 Projection</p>
+                  <p className="text-2xl font-bold text-emerald-400">
                     {parseFloat(data?.projected_2050 || 0).toFixed(1)}{config?.unit}
                   </p>
                 </div>
@@ -228,8 +228,8 @@ export function TechnologyDisruptionChart() {
                 {/* CAGR */}
                 {data?.growth_rate_cagr && (
                   <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <span className="text-sm text-slate-500">CAGR</span>
-                    <Badge className={parseFloat(data.growth_rate_cagr) > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}>
+                    <span className="text-sm text-white/40">CAGR</span>
+                    <Badge className={parseFloat(data.growth_rate_cagr) > 0 ? 'bg-emerald-100 text-emerald-400' : 'bg-red-100 text-red-400'}>
                       {parseFloat(data.growth_rate_cagr) > 0 ? '+' : ''}{parseFloat(data.growth_rate_cagr).toFixed(1)}%
                     </Badge>
                   </div>
@@ -251,9 +251,9 @@ export function TechnologyDisruptionChart() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left py-2 px-3 font-medium text-slate-500">Year</th>
+                    <th className="text-left py-2 px-3 font-medium text-white/40">Year</th>
                     {chartData.map(item => (
-                      <th key={item.year} className="text-center py-2 px-3 font-medium text-slate-500">
+                      <th key={item.year} className="text-center py-2 px-3 font-medium text-white/40">
                         {item.year}
                       </th>
                     ))}

@@ -181,14 +181,14 @@ export function LEAPAssessmentWizard({ onComplete }) {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2">
-              <Leaf className="h-5 w-5 text-emerald-600" />
+              <Leaf className="h-5 w-5 text-emerald-400" />
               LEAP Assessment Wizard
             </CardTitle>
             <CardDescription>
               TNFD LEAP methodology for nature-related risk assessment
             </CardDescription>
           </div>
-          <Badge variant="outline" className="bg-emerald-50 text-emerald-700">
+          <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400">
             Step {currentStep + 1} of {STEPS.length}
           </Badge>
         </div>
@@ -207,11 +207,11 @@ export function LEAPAssessmentWizard({ onComplete }) {
               <div 
                 key={step.id}
                 className={`flex flex-col items-center gap-1 transition-colors ${
-                  isActive ? 'text-emerald-600' : isComplete ? 'text-emerald-500' : 'text-slate-400'
+                  isActive ? 'text-emerald-400' : isComplete ? 'text-emerald-500' : 'text-white/30'
                 }`}
               >
                 <div className={`p-2 rounded-full ${
-                  isActive ? 'bg-emerald-100' : isComplete ? 'bg-emerald-50' : 'bg-slate-100'
+                  isActive ? 'bg-emerald-100' : isComplete ? 'bg-emerald-500/10' : 'bg-white/[0.06]'
                 }`}>
                   {isComplete ? (
                     <CheckCircle className="h-5 w-5" />
@@ -294,7 +294,7 @@ export function LEAPAssessmentWizard({ onComplete }) {
 function LocateStep({ formData, updateForm }) {
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2 text-emerald-700 bg-emerald-50 p-3 rounded-lg">
+      <div className="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 p-3 rounded-lg">
         <Info className="h-5 w-5" />
         <span className="text-sm">Identify where your organization interfaces with nature</span>
       </div>
@@ -381,19 +381,19 @@ function LocateStep({ formData, updateForm }) {
 function EvaluateStep({ formData, updateForm, toggleArrayItem, encoreData }) {
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2 text-blue-700 bg-blue-50 p-3 rounded-lg">
+      <div className="flex items-center gap-2 text-blue-300 bg-blue-500/10 p-3 rounded-lg">
         <Info className="h-5 w-5" />
         <span className="text-sm">Evaluate your dependencies on and impacts to nature</span>
       </div>
       
       <div className="space-y-4">
         <h4 className="font-medium">Ecosystem Service Dependencies</h4>
-        <p className="text-sm text-slate-500">Select the ecosystem services your operations depend on</p>
+        <p className="text-sm text-white/40">Select the ecosystem services your operations depend on</p>
         <div className="grid grid-cols-3 gap-3">
           {ECOSYSTEM_SERVICES.map(service => (
             <div 
               key={service}
-              className="flex items-center gap-2 p-2 rounded border hover:bg-slate-50 cursor-pointer"
+              className="flex items-center gap-2 p-2 rounded border hover:bg-white/[0.02] cursor-pointer"
               onClick={() => toggleArrayItem('ecosystem_services', service)}
             >
               <Checkbox 
@@ -408,7 +408,7 @@ function EvaluateStep({ formData, updateForm, toggleArrayItem, encoreData }) {
       
       <div className="border-t pt-4">
         <h4 className="font-medium mb-2">ENCORE Dependencies</h4>
-        <p className="text-sm text-slate-500 mb-4">
+        <p className="text-sm text-white/40 mb-4">
           Based on sector: {formData.sector || 'Not selected'}
         </p>
         
@@ -420,13 +420,13 @@ function EvaluateStep({ formData, updateForm, toggleArrayItem, encoreData }) {
               .map((dep, idx) => (
                 <div 
                   key={idx}
-                  className="flex items-center justify-between p-2 bg-slate-50 rounded"
+                  className="flex items-center justify-between p-2 bg-white/[0.02] rounded"
                 >
                   <span className="text-sm">{dep.ecosystem_service}</span>
                   <Badge variant="outline" className={
-                    dep.materiality === 'Very High' ? 'bg-red-50 text-red-700' :
-                    dep.materiality === 'High' ? 'bg-orange-50 text-orange-700' :
-                    'bg-yellow-50 text-yellow-700'
+                    dep.materiality === 'Very High' ? 'bg-red-500/10 text-red-400' :
+                    dep.materiality === 'High' ? 'bg-orange-500/10 text-orange-400' :
+                    'bg-yellow-500/10 text-yellow-400'
                   }>
                     {dep.materiality}
                   </Badge>
@@ -434,7 +434,7 @@ function EvaluateStep({ formData, updateForm, toggleArrayItem, encoreData }) {
               ))}
           </div>
         ) : (
-          <p className="text-sm text-slate-400 italic">
+          <p className="text-sm text-white/30 italic">
             Select a sector in the Locate step to see ENCORE dependencies
           </p>
         )}
@@ -447,7 +447,7 @@ function EvaluateStep({ formData, updateForm, toggleArrayItem, encoreData }) {
 function AssessStep({ formData, updateForm, scenarios }) {
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2 text-amber-700 bg-amber-50 p-3 rounded-lg">
+      <div className="flex items-center gap-2 text-amber-400 bg-amber-500/10 p-3 rounded-lg">
         <AlertTriangle className="h-5 w-5" />
         <span className="text-sm">Assess material nature-related risks and opportunities</span>
       </div>
@@ -486,7 +486,7 @@ function AssessStep({ formData, updateForm, scenarios }) {
                 {formData.transition_risk_exposure}%
               </span>
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-white/40">
               Policy, technology, and market changes related to nature
             </p>
           </div>
@@ -506,7 +506,7 @@ function AssessStep({ formData, updateForm, scenarios }) {
                 {formData.physical_risk_exposure}%
               </span>
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-white/40">
               Acute and chronic nature degradation impacts
             </p>
           </div>
@@ -529,7 +529,7 @@ function PrepareStep({ formData, updateForm, toggleArrayItem, result, isCalculat
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2 text-purple-700 bg-purple-50 p-3 rounded-lg">
+      <div className="flex items-center gap-2 text-purple-300 bg-purple-500/10 p-3 rounded-lg">
         <FileText className="h-5 w-5" />
         <span className="text-sm">Prepare to respond to risks and report on nature-related matters</span>
       </div>
@@ -540,7 +540,7 @@ function PrepareStep({ formData, updateForm, toggleArrayItem, result, isCalculat
           {MITIGATION_STRATEGIES.map(strategy => (
             <div 
               key={strategy}
-              className="flex items-center gap-2 p-2 rounded border hover:bg-slate-50 cursor-pointer"
+              className="flex items-center gap-2 p-2 rounded border hover:bg-white/[0.02] cursor-pointer"
               onClick={() => toggleArrayItem('mitigation_strategies', strategy)}
             >
               <Checkbox 
@@ -574,7 +574,7 @@ function PrepareStep({ formData, updateForm, toggleArrayItem, result, isCalculat
       {/* Results Display */}
       {result && (
         <div className="border-t pt-4 mt-4">
-          <h4 className="font-medium mb-4 text-emerald-700 flex items-center gap-2">
+          <h4 className="font-medium mb-4 text-emerald-400 flex items-center gap-2">
             <CheckCircle className="h-5 w-5" />
             Assessment Results
           </h4>

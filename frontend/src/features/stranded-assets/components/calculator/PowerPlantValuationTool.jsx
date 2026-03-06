@@ -13,21 +13,21 @@ import {
 } from '../../hooks/useStrandedAssets';
 
 const TECHNOLOGY_COLORS = {
-  coal: { bg: 'bg-slate-100', text: 'text-slate-700', icon: '⚫' },
-  gas_ccgt: { bg: 'bg-blue-100', text: 'text-blue-700', icon: '🔵' },
-  gas_ocgt: { bg: 'bg-sky-100', text: 'text-sky-700', icon: '💨' },
-  nuclear: { bg: 'bg-purple-100', text: 'text-purple-700', icon: '☢️' },
+  coal: { bg: 'bg-white/[0.06]', text: 'text-white/70', icon: '⚫' },
+  gas_ccgt: { bg: 'bg-blue-100', text: 'text-blue-300', icon: '🔵' },
+  gas_ocgt: { bg: 'bg-sky-100', text: 'text-sky-400', icon: '💨' },
+  nuclear: { bg: 'bg-purple-100', text: 'text-purple-300', icon: '☢️' },
   hydro: { bg: 'bg-cyan-100', text: 'text-cyan-700', icon: '💧' },
-  wind_onshore: { bg: 'bg-emerald-100', text: 'text-emerald-700', icon: '🌬️' },
-  wind_offshore: { bg: 'bg-teal-100', text: 'text-teal-700', icon: '🌊' },
-  solar_pv: { bg: 'bg-yellow-100', text: 'text-yellow-700', icon: '☀️' },
+  wind_onshore: { bg: 'bg-emerald-100', text: 'text-emerald-400', icon: '🌬️' },
+  wind_offshore: { bg: 'bg-teal-100', text: 'text-teal-400', icon: '🌊' },
+  solar_pv: { bg: 'bg-yellow-100', text: 'text-yellow-400', icon: '☀️' },
 };
 
 const RISK_BADGE_COLORS = {
-  low: 'bg-emerald-100 text-emerald-700',
-  medium: 'bg-yellow-100 text-yellow-700',
-  high: 'bg-orange-100 text-orange-700',
-  critical: 'bg-red-100 text-red-700',
+  low: 'bg-emerald-100 text-emerald-400',
+  medium: 'bg-yellow-100 text-yellow-400',
+  high: 'bg-orange-100 text-orange-400',
+  critical: 'bg-red-100 text-red-400',
 };
 
 const formatCurrency = (value) => {
@@ -102,13 +102,13 @@ export function PowerPlantValuationTool() {
                   className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                     !technologyFilter
                       ? 'bg-amber-500 text-white'
-                      : 'bg-slate-100 hover:bg-slate-200'
+                      : 'bg-white/[0.06] hover:bg-white/[0.08]'
                   }`}
                 >
                   All
                 </button>
                 {uniqueTechnologies.map(tech => {
-                  const colors = TECHNOLOGY_COLORS[tech] || { bg: 'bg-slate-100', text: 'text-slate-700' };
+                  const colors = TECHNOLOGY_COLORS[tech] || { bg: 'bg-white/[0.06]', text: 'text-white/70' };
                   return (
                     <button
                       key={tech}
@@ -137,25 +137,25 @@ export function PowerPlantValuationTool() {
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-amber-500"></div>
                   </div>
                 ) : filteredPlants.map((plant) => {
-                  const colors = TECHNOLOGY_COLORS[plant.technology_type] || { bg: 'bg-slate-100', text: 'text-slate-700', icon: '⚡' };
+                  const colors = TECHNOLOGY_COLORS[plant.technology_type] || { bg: 'bg-white/[0.06]', text: 'text-white/70', icon: '⚡' };
                   return (
                     <label 
                       key={plant.id}
                       className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${
                         selectedPlants.includes(plant.id)
-                          ? 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200'
-                          : 'hover:bg-slate-50 dark:hover:bg-slate-800'
+                          ? 'bg-amber-500/10 dark:bg-amber-900/20 border border-amber-500/20'
+                          : 'hover:bg-white/[0.02] dark:hover:bg-[#111827]'
                       }`}
                     >
                       <input
                         type="checkbox"
                         checked={selectedPlants.includes(plant.id)}
                         onChange={() => handlePlantToggle(plant.id)}
-                        className="rounded border-slate-300"
+                        className="rounded border-white/[0.08]"
                       />
                       <div className="flex-1">
                         <p className="font-medium text-sm">{plant.plant_name}</p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-white/40">
                           {plant.capacity_mw} MW • {plant.country_code}
                         </p>
                       </div>
@@ -176,7 +176,7 @@ export function PowerPlantValuationTool() {
               <select
                 value={selectedScenario}
                 onChange={(e) => setSelectedScenario(e.target.value)}
-                className="w-full border rounded-lg px-3 py-2 bg-white dark:bg-slate-800"
+                className="w-full border rounded-lg px-3 py-2 bg-[#0d1424] dark:bg-[#111827]"
               >
                 <option value="">Select a scenario...</option>
                 {scenariosLoading ? (
@@ -206,7 +206,7 @@ export function PowerPlantValuationTool() {
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       targetYears.includes(year)
                         ? 'bg-amber-500 text-white'
-                        : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200'
+                        : 'bg-white/[0.06] dark:bg-[#111827] hover:bg-white/[0.08]'
                     }`}
                   >
                     {year}
@@ -228,7 +228,7 @@ export function PowerPlantValuationTool() {
                   step="0.5"
                   value={discountRate}
                   onChange={(e) => setDiscountRate(parseFloat(e.target.value))}
-                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                  className="w-full h-2 bg-white/[0.08] rounded-lg appearance-none cursor-pointer"
                 />
               </div>
               <label className="flex items-center gap-2 cursor-pointer">
@@ -236,7 +236,7 @@ export function PowerPlantValuationTool() {
                   type="checkbox"
                   checked={includeRepurposing}
                   onChange={(e) => setIncludeRepurposing(e.target.checked)}
-                  className="rounded border-slate-300"
+                  className="rounded border-white/[0.08]"
                 />
                 <span className="text-sm">Include Repurposing Options</span>
               </label>
@@ -261,7 +261,7 @@ export function PowerPlantValuationTool() {
             </Button>
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
                 {error}
               </div>
             )}
@@ -280,28 +280,28 @@ export function PowerPlantValuationTool() {
             {calculating ? (
               <div className="flex flex-col items-center justify-center h-64">
                 <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-500 mb-4"></div>
-                <p className="text-slate-500">Analyzing power plants...</p>
+                <p className="text-white/40">Analyzing power plants...</p>
               </div>
             ) : results?.results?.length > 0 ? (
               <div className="space-y-6">
                 {/* Summary */}
-                <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
-                  <p className="text-sm text-slate-500 mb-1">Scenario: {results.scenario_name}</p>
+                <div className="p-4 bg-white/[0.02] dark:bg-[#111827] rounded-lg">
+                  <p className="text-sm text-white/40 mb-1">Scenario: {results.scenario_name}</p>
                   <div className="grid grid-cols-3 gap-4 mt-3">
                     <div>
-                      <p className="text-xs text-slate-500">Plants Analyzed</p>
+                      <p className="text-xs text-white/40">Plants Analyzed</p>
                       <p className="text-xl font-bold">{results.portfolio_summary?.total_plants_analyzed}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-slate-500">Total Capacity</p>
+                      <p className="text-xs text-white/40">Total Capacity</p>
                       <p className="text-xl font-bold">{results.portfolio_summary?.total_capacity_mw?.toLocaleString()} MW</p>
                     </div>
                     <div>
-                      <p className="text-xs text-slate-500">Avg NPV Impact</p>
+                      <p className="text-xs text-white/40">Avg NPV Impact</p>
                       <p className={`text-xl font-bold ${
                         results.portfolio_summary?.avg_npv_impact_percent < 0 
-                          ? 'text-red-600' 
-                          : 'text-emerald-600'
+                          ? 'text-red-400' 
+                          : 'text-emerald-400'
                       }`}>
                         {results.portfolio_summary?.avg_npv_impact_percent?.toFixed(1)}%
                       </p>
@@ -312,7 +312,7 @@ export function PowerPlantValuationTool() {
                 {/* Individual Results */}
                 <div className="space-y-4 max-h-[400px] overflow-y-auto">
                   {results.results.map((result) => {
-                    const colors = TECHNOLOGY_COLORS[result.technology_type] || { bg: 'bg-slate-100', text: 'text-slate-700' };
+                    const colors = TECHNOLOGY_COLORS[result.technology_type] || { bg: 'bg-white/[0.06]', text: 'text-white/70' };
                     return (
                       <div 
                         key={result.plant_id}
@@ -322,7 +322,7 @@ export function PowerPlantValuationTool() {
                         <div className="flex items-start justify-between mb-4">
                           <div>
                             <h4 className="font-medium">{result.plant_name}</h4>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-white/40">
                               {result.capacity_mw} MW • {result.remaining_life_years}y remaining
                             </p>
                           </div>
@@ -338,8 +338,8 @@ export function PowerPlantValuationTool() {
 
                         {/* NPV Comparison */}
                         <div className="grid grid-cols-3 gap-2 mb-4">
-                          <div className="bg-slate-50 dark:bg-slate-800 p-2 rounded text-center">
-                            <p className="text-xs text-slate-500">Baseline NPV</p>
+                          <div className="bg-white/[0.02] dark:bg-[#111827] p-2 rounded text-center">
+                            <p className="text-xs text-white/40">Baseline NPV</p>
                             <p className="font-bold text-sm">{formatCurrency(result.baseline_npv_usd)}</p>
                           </div>
                           <div className="flex items-center justify-center">
@@ -349,12 +349,12 @@ export function PowerPlantValuationTool() {
                           </div>
                           <div className={`p-2 rounded text-center ${
                             result.npv_impact_percent < 0 
-                              ? 'bg-red-50 dark:bg-red-900/20' 
-                              : 'bg-emerald-50 dark:bg-emerald-900/20'
+                              ? 'bg-red-500/10 dark:bg-red-900/20' 
+                              : 'bg-emerald-500/10 dark:bg-emerald-900/20'
                           }`}>
-                            <p className="text-xs text-slate-500">Scenario NPV</p>
+                            <p className="text-xs text-white/40">Scenario NPV</p>
                             <p className={`font-bold text-sm ${
-                              result.npv_impact_percent < 0 ? 'text-red-600' : 'text-emerald-600'
+                              result.npv_impact_percent < 0 ? 'text-red-400' : 'text-emerald-400'
                             }`}>
                               {formatCurrency(result.scenario_npv_usd)}
                             </p>
@@ -363,11 +363,11 @@ export function PowerPlantValuationTool() {
 
                         {/* Optimal Retirement */}
                         {result.optimal_retirement_year && (
-                          <div className="flex items-center gap-2 p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg mb-4">
+                          <div className="flex items-center gap-2 p-3 bg-orange-500/10 dark:bg-orange-900/20 rounded-lg mb-4">
                             <Zap className="h-5 w-5 text-orange-500" />
                             <div className="flex-1">
-                              <p className="text-xs text-slate-500">Optimal Retirement</p>
-                              <p className="font-bold text-orange-600">{result.optimal_retirement_year}</p>
+                              <p className="text-xs text-white/40">Optimal Retirement</p>
+                              <p className="font-bold text-orange-400">{result.optimal_retirement_year}</p>
                             </div>
                           </div>
                         )}
@@ -375,7 +375,7 @@ export function PowerPlantValuationTool() {
                         {/* Repurposing Options */}
                         {result.repurposing_options?.length > 0 && (
                           <div className="mb-4">
-                            <p className="text-xs font-medium text-slate-500 mb-2">Repurposing Options</p>
+                            <p className="text-xs font-medium text-white/40 mb-2">Repurposing Options</p>
                             <div className="grid grid-cols-2 gap-2">
                               {result.repurposing_options.slice(0, 4).map((option, i) => (
                                 <div 
@@ -386,10 +386,10 @@ export function PowerPlantValuationTool() {
                                     <Wrench className="h-3 w-3" />
                                     <span className="font-medium capitalize">{option.option_type}</span>
                                   </div>
-                                  <p className="text-slate-500">
+                                  <p className="text-white/40">
                                     Cost: {formatCurrency(option.capital_cost_usd)}
                                   </p>
-                                  <p className="text-slate-500">
+                                  <p className="text-white/40">
                                     Feasibility: {(option.feasibility_score * 100).toFixed(0)}%
                                   </p>
                                 </div>
@@ -399,7 +399,7 @@ export function PowerPlantValuationTool() {
                         )}
 
                         {/* Recommendation */}
-                        <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                        <div className="flex items-start gap-2 p-3 bg-blue-500/10 dark:bg-blue-900/20 rounded-lg">
                           <CheckCircle className="h-4 w-4 text-blue-500 mt-0.5" />
                           <p className="text-sm">{result.recommended_action}</p>
                         </div>
@@ -409,7 +409,7 @@ export function PowerPlantValuationTool() {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-64 text-slate-400">
+              <div className="flex flex-col items-center justify-center h-64 text-white/30">
                 <Factory className="h-12 w-12 mb-4" />
                 <p className="text-center">
                   Select power plants and a scenario to run valuation

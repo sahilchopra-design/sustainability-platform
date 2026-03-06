@@ -7,9 +7,7 @@ import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { MapPin } from 'lucide-react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-
-const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN || 'pk.eyJ1IjoiY2hvcHJhc2FoaWwzIiwiYSI6ImNtanEzbnRqOTN0anEzZG9idjg5Mm9kdTkifQ.zxCEdfkhCT5Q1AbkeRyEEw';
-mapboxgl.accessToken = MAPBOX_TOKEN;
+import { MapboxTokenGate } from '../../../../components/shared/MapboxTokenGate';
 
 // Country coordinates for projects without specific coordinates
 const COUNTRY_COORDS = {
@@ -36,12 +34,14 @@ const getRiskColor = (riskLevel) => {
   }
 };
 
-export const GeographicMap = ({ 
+const GeographicMapInner = ({
   projects = [],
   geoDistribution = [],
   height = 400,
-  onProjectClick
+  onProjectClick,
+  accessToken,
 }) => {
+  if (accessToken) mapboxgl.accessToken = accessToken;
   const mapContainer = useRef(null);
   const map = useRef(null);
   const markersRef = useRef([]);
@@ -159,19 +159,19 @@ export const GeographicMap = ({
   }, [mapLoaded, markers, onProjectClick]);
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6" data-testid="geographic-map">
-      <h3 className="text-lg font-semibold text-slate-900 mb-4">
+    <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6" data-testid="geographic-map">
+      <h3 className="text-lg font-semibold text-white mb-4">
         Project Locations
       </h3>
       
       <div 
         ref={mapContainer} 
-        className="rounded-lg overflow-hidden border border-slate-200" 
+        className="rounded-lg overflow-hidden border border-white/[0.06]" 
         style={{ height }}
       />
       
       {/* Legend */}
-      <div className="mt-4 flex items-center gap-4 text-xs text-slate-500">
+      <div className="mt-4 flex items-center gap-4 text-xs text-white/40">
         <span className="font-medium">Risk Level:</span>
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded-full bg-emerald-500" />
@@ -189,13 +189,13 @@ export const GeographicMap = ({
       
       {/* Distribution summary */}
       {geoDistribution.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-slate-100">
-          <p className="text-xs font-medium text-slate-500 mb-2">Distribution by Country</p>
+        <div className="mt-4 pt-4 border-t border-white/[0.04]">
+          <p className="text-xs font-medium text-white/40 mb-2">Distribution by Country</p>
           <div className="flex flex-wrap gap-2">
             {geoDistribution.map((geo) => (
               <div 
                 key={geo.country_code}
-                className="px-2 py-1 bg-slate-100 rounded text-xs"
+                className="px-2 py-1 bg-white/[0.06] rounded text-xs"
               >
                 <span className="font-medium">{geo.country_code}:</span>{' '}
                 {geo.project_count} project{geo.project_count !== 1 ? 's' : ''} ({geo.total_credits?.toLocaleString()} tCO2e)
@@ -205,6 +205,15 @@ export const GeographicMap = ({
         </div>
       )}
     </div>
+  );
+};
+
+export const GeographicMap = (props) => {
+  const { height = 400, ...rest } = props;
+  return (
+    <MapboxTokenGate height={`${height}px`}>
+      {(token) => <GeographicMapInner {...rest} height={height} accessToken={token} />}
+    </MapboxTokenGate>
   );
 };
 

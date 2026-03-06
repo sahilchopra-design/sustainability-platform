@@ -71,10 +71,10 @@ export function BiodiversityOverlaps() {
   return (
     <div className="space-y-6" data-testid="biodiversity-overlaps">
       {/* Header */}
-      <Card className="bg-white dark:bg-slate-800">
+      <Card className="bg-[#0d1424] dark:bg-[#111827]">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TreePine className="h-5 w-5 text-green-600" />
+            <TreePine className="h-5 w-5 text-green-400" />
             Biodiversity Sites Browser
           </CardTitle>
           <CardDescription>
@@ -84,7 +84,7 @@ export function BiodiversityOverlaps() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/30" />
               <input
                 type="text"
                 placeholder="Search sites..."
@@ -130,7 +130,7 @@ export function BiodiversityOverlaps() {
         {Object.entries(SITE_TYPE_LABELS).map(([type, label]) => (
           <Card 
             key={type} 
-            className={`bg-white dark:bg-slate-800 cursor-pointer transition-all hover:shadow-lg ${
+            className={`bg-[#0d1424] dark:bg-[#111827] cursor-pointer transition-all hover:shadow-lg ${
               siteTypeFilter === type ? 'ring-2 ring-green-500' : ''
             }`}
             onClick={() => setSiteTypeFilter(siteTypeFilter === type ? '' : type)}
@@ -138,7 +138,7 @@ export function BiodiversityOverlaps() {
             <CardContent className="pt-4 pb-4">
               <div className="flex items-center gap-2 mb-2">
                 <div className={`w-3 h-3 rounded-full ${SITE_TYPE_COLORS[type]}`} />
-                <span className="text-xs text-slate-500">{label}</span>
+                <span className="text-xs text-white/40">{label}</span>
               </div>
               <p className="text-xl font-bold">{siteTypeCounts[type] || 0}</p>
             </CardContent>
@@ -148,7 +148,7 @@ export function BiodiversityOverlaps() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Sites List */}
-        <Card className="bg-white dark:bg-slate-800 lg:col-span-2">
+        <Card className="bg-[#0d1424] dark:bg-[#111827] lg:col-span-2">
           <CardHeader>
             <CardTitle className="text-lg">Protected Sites</CardTitle>
           </CardHeader>
@@ -164,8 +164,8 @@ export function BiodiversityOverlaps() {
                     key={site.id}
                     className={`p-4 rounded-lg cursor-pointer transition-all ${
                       selectedSite?.id === site.id
-                        ? 'bg-green-50 dark:bg-green-900/30 border-2 border-green-500'
-                        : 'bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700'
+                        ? 'bg-green-500/10 dark:bg-green-900/30 border-2 border-green-500'
+                        : 'bg-white/[0.02] dark:bg-[#0d1424]/50 hover:bg-white/[0.06] dark:hover:bg-[#1a2234]'
                     }`}
                     onClick={() => setSelectedSite(site)}
                     data-testid={`site-${site.id}`}
@@ -175,7 +175,7 @@ export function BiodiversityOverlaps() {
                         <div className={`w-3 h-3 rounded-full ${SITE_TYPE_COLORS[site.site_type] || 'bg-gray-500'}`} />
                         <div>
                           <p className="font-medium text-sm">{site.site_name}</p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-white/40">
                             {site.country_code} • {site.ecosystem_type || 'Unknown ecosystem'}
                           </p>
                         </div>
@@ -185,7 +185,7 @@ export function BiodiversityOverlaps() {
                           {SITE_TYPE_LABELS[site.site_type] || site.site_type}
                         </Badge>
                         {site.area_km2 && (
-                          <p className="text-xs text-slate-500 mt-1">
+                          <p className="text-xs text-white/40 mt-1">
                             {site.area_km2.toLocaleString()} km²
                           </p>
                         )}
@@ -213,7 +213,7 @@ export function BiodiversityOverlaps() {
         </Card>
 
         {/* Site Details */}
-        <Card className="bg-white dark:bg-slate-800">
+        <Card className="bg-[#0d1424] dark:bg-[#111827]">
           <CardHeader>
             <CardTitle className="text-lg">Site Details</CardTitle>
           </CardHeader>
@@ -224,41 +224,41 @@ export function BiodiversityOverlaps() {
                   <div className={`w-4 h-4 rounded-full ${SITE_TYPE_COLORS[selectedSite.site_type] || 'bg-gray-500'}`} />
                   <div>
                     <h3 className="font-semibold">{selectedSite.site_name}</h3>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-white/40">
                       {SITE_TYPE_LABELS[selectedSite.site_type] || selectedSite.site_type}
                     </p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-                    <p className="text-xs text-slate-500">Country</p>
+                  <div className="p-3 bg-white/[0.02] dark:bg-[#0d1424]/50 rounded-lg">
+                    <p className="text-xs text-white/40">Country</p>
                     <p className="font-medium">{selectedSite.country_code}</p>
                   </div>
-                  <div className="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-                    <p className="text-xs text-slate-500">Area</p>
+                  <div className="p-3 bg-white/[0.02] dark:bg-[#0d1424]/50 rounded-lg">
+                    <p className="text-xs text-white/40">Area</p>
                     <p className="font-medium">{selectedSite.area_km2?.toLocaleString() || 'N/A'} km²</p>
                   </div>
-                  <div className="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-                    <p className="text-xs text-slate-500">Ecosystem</p>
+                  <div className="p-3 bg-white/[0.02] dark:bg-[#0d1424]/50 rounded-lg">
+                    <p className="text-xs text-white/40">Ecosystem</p>
                     <p className="font-medium">{selectedSite.ecosystem_type || 'Unknown'}</p>
                   </div>
-                  <div className="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-                    <p className="text-xs text-slate-500">Designated</p>
+                  <div className="p-3 bg-white/[0.02] dark:bg-[#0d1424]/50 rounded-lg">
+                    <p className="text-xs text-white/40">Designated</p>
                     <p className="font-medium">{selectedSite.designation_year || 'N/A'}</p>
                   </div>
                 </div>
 
                 {selectedSite.iucn_category && (
-                  <div className="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-                    <p className="text-xs text-slate-500">IUCN Category</p>
+                  <div className="p-3 bg-white/[0.02] dark:bg-[#0d1424]/50 rounded-lg">
+                    <p className="text-xs text-white/40">IUCN Category</p>
                     <Badge className="mt-1">{selectedSite.iucn_category}</Badge>
                   </div>
                 )}
 
                 {selectedSite.latitude && selectedSite.longitude && (
-                  <div className="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-                    <p className="text-xs text-slate-500">Coordinates</p>
+                  <div className="p-3 bg-white/[0.02] dark:bg-[#0d1424]/50 rounded-lg">
+                    <p className="text-xs text-white/40">Coordinates</p>
                     <p className="font-mono text-sm">
                       {selectedSite.latitude?.toFixed(4)}, {selectedSite.longitude?.toFixed(4)}
                     </p>
@@ -267,7 +267,7 @@ export function BiodiversityOverlaps() {
 
                 {selectedSite.key_species?.length > 0 && (
                   <div>
-                    <p className="text-xs text-slate-500 mb-2">Key Species</p>
+                    <p className="text-xs text-white/40 mb-2">Key Species</p>
                     <div className="flex flex-wrap gap-1">
                       {selectedSite.key_species.map((species, i) => (
                         <Badge key={i} variant="outline" className="text-xs">
@@ -279,12 +279,12 @@ export function BiodiversityOverlaps() {
                 )}
 
                 <div className="pt-4 border-t">
-                  <p className="text-xs text-slate-500">Data Source</p>
+                  <p className="text-xs text-white/40">Data Source</p>
                   <p className="text-sm">{selectedSite.data_source || 'WDPA'}</p>
                 </div>
               </div>
             ) : (
-              <div className="text-center py-8 text-slate-500">
+              <div className="text-center py-8 text-white/40">
                 <TreePine className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p>Select a site to view details</p>
               </div>
@@ -294,10 +294,10 @@ export function BiodiversityOverlaps() {
       </div>
 
       {/* Info Alert */}
-      <Alert className="bg-green-50 dark:bg-green-900/20 border-green-200">
-        <Shield className="h-4 w-4 text-green-600" />
-        <AlertTitle className="text-green-800 dark:text-green-200">Data Sources</AlertTitle>
-        <AlertDescription className="text-green-700 dark:text-green-300">
+      <Alert className="bg-green-500/10 dark:bg-green-900/20 border-green-500/20">
+        <Shield className="h-4 w-4 text-green-400" />
+        <AlertTitle className="text-green-300 dark:text-green-200">Data Sources</AlertTitle>
+        <AlertDescription className="text-green-400 dark:text-green-300">
           This module includes data from WDPA (World Database on Protected Areas), 
           Key Biodiversity Areas, Ramsar Convention wetlands, and BirdLife International IBAs.
         </AlertDescription>

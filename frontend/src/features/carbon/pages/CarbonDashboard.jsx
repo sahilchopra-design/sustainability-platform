@@ -211,8 +211,8 @@ export default function CarbonDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Carbon Credits</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <h1 className="text-2xl font-bold text-white">Carbon Credits</h1>
+          <p className="text-sm text-white/40 mt-1">
             Manage your carbon credit portfolio and track performance
           </p>
         </div>
@@ -284,12 +284,12 @@ export default function CarbonDashboard() {
 
       {/* No Portfolio Selected */}
       {!selectedPortfolioId && !portfoliosLoading && (
-        <div className="text-center py-16 bg-white rounded-xl border border-slate-200">
-          <Leaf className="w-12 h-12 mx-auto text-slate-300 mb-4" />
-          <h3 className="text-lg font-semibold text-slate-900 mb-2">
+        <div className="text-center py-16 bg-[#0d1424] rounded-xl border border-white/[0.06]">
+          <Leaf className="w-12 h-12 mx-auto text-white/20 mb-4" />
+          <h3 className="text-lg font-semibold text-white mb-2">
             No Portfolio Selected
           </h3>
-          <p className="text-sm text-slate-500 mb-4">
+          <p className="text-sm text-white/40 mb-4">
             Create or select a portfolio to view your carbon credits dashboard
           </p>
           <Button onClick={() => setShowNewPortfolio(true)}>
@@ -369,7 +369,7 @@ export default function CarbonDashboard() {
               {/* Project Summary Table */}
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-slate-900">Projects</h3>
+                  <h3 className="text-lg font-semibold text-white">Projects</h3>
                   <Button 
                     variant="outline" 
                     size="sm"
@@ -397,7 +397,7 @@ export default function CarbonDashboard() {
             {/* Projects Tab */}
             <TabsContent value="projects" className="space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-slate-900">All Projects</h3>
+                <h3 className="text-lg font-semibold text-white">All Projects</h3>
                 <Button onClick={() => setShowNewProject(true)}>
                   <Plus className="w-4 h-4 mr-2" />
                   Add Project

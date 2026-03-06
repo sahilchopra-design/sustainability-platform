@@ -132,3 +132,47 @@ export function useSeedSampleData() {
     },
   });
 }
+
+
+// ── PCAF hooks ────────────────────────────────────────────────────────────────
+
+/**
+ * Hook to fetch PCAF results for a portfolio (cached from pcaf_time_series).
+ * staleTime 5 min — recalculation is triggered manually via runPCAF mutation.
+ */
+export function usePCAFResults(portfolioId) {
+  return useQuery({
+    queryKey: ['portfolio-analytics', 'pcaf-results', portfolioId],
+    queryFn: () => api.fetchPCAFResults(portfolioId),
+    enabled: !!portfolioId,
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+  });
+}
+
+/**
+ * Hook to trigger a new PCAF calculation (writes to pcaf_time_series).
+ */
+export function useRunPCAF() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (portfolioId) => api.runPCAFCalculation(portfolioId),
+    onSuccess: (_, portfolioId) => {
+      queryClient.invalidateQueries({
+        queryKey: ['portfolio-analytics', 'pcaf-results', portfolioId],
+      });
+    },
+  });
+}
+
+/**
+ * Hook to fetch WACI year-by-year history for sparkline charts.
+ */
+export function useWACIHistory(portfolioId, years = 10) {
+  return useQuery({
+    queryKey: ['portfolio-analytics', 'waci-history', portfolioId, years],
+    queryFn: () => api.fetchWACIHistory(portfolioId, years),
+    enabled: !!portfolioId,
+    staleTime: 5 * 60 * 1000,
+  });
+}

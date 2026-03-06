@@ -26,14 +26,14 @@ const STEP_COLORS = {
 
 const getRiskBadgeClass = (rating) => {
   const ratings = {
-    'Low': 'bg-green-100 text-green-800',
+    'Low': 'bg-green-100 text-green-300',
     'Low-Medium': 'bg-lime-100 text-lime-800',
     'Medium': 'bg-yellow-100 text-yellow-800',
-    'Medium-High': 'bg-orange-100 text-orange-800',
-    'High': 'bg-red-100 text-red-800',
+    'Medium-High': 'bg-orange-100 text-orange-300',
+    'High': 'bg-red-100 text-red-300',
     'Very High': 'bg-red-200 text-red-900',
   };
-  return ratings[rating] || 'bg-slate-100 text-slate-800';
+  return ratings[rating] || 'bg-white/[0.06] text-white/90';
 };
 
 export function LEAPResultsVisualization({ result }) {
@@ -73,17 +73,17 @@ export function LEAPResultsVisualization({ result }) {
   return (
     <div className="space-y-6" data-testid="leap-results-visualization">
       {/* Overall Summary */}
-      <Card className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border-emerald-200">
+      <Card className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border-emerald-500/20">
         <CardContent className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {/* Overall Score */}
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white shadow-lg mb-3">
-                <span className="text-3xl font-bold text-emerald-600">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#0d1424] shadow-lg mb-3">
+                <span className="text-3xl font-bold text-emerald-400">
                   {overallScore.toFixed(1)}
                 </span>
               </div>
-              <p className="text-sm font-medium text-slate-600">Overall Score</p>
+              <p className="text-sm font-medium text-white/60">Overall Score</p>
               <Badge className={getRiskBadgeClass(result.overall_risk_rating)}>
                 {result.overall_risk_rating || 'Medium'}
               </Badge>
@@ -109,7 +109,7 @@ export function LEAPResultsVisualization({ result }) {
                   <p className="text-2xl font-bold" style={{ color: step.color }}>
                     {score.toFixed(1)}
                   </p>
-                  <p className="text-xs text-slate-500">{step.label}</p>
+                  <p className="text-xs text-white/40">{step.label}</p>
                   <Progress 
                     value={(score / 5) * 100} 
                     className="h-1.5 mt-2"
@@ -127,7 +127,7 @@ export function LEAPResultsVisualization({ result }) {
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Target className="h-4 w-4 text-emerald-600" />
+              <Target className="h-4 w-4 text-emerald-400" />
               LEAP Score Profile
             </CardTitle>
             <CardDescription>Assessment scores across LEAP steps</CardDescription>
@@ -162,7 +162,7 @@ export function LEAPResultsVisualization({ result }) {
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Shield className="h-4 w-4 text-amber-600" />
+              <Shield className="h-4 w-4 text-amber-400" />
               Risk Distribution
             </CardTitle>
             <CardDescription>Nature-related risk breakdown</CardDescription>
@@ -202,7 +202,7 @@ export function LEAPResultsVisualization({ result }) {
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-blue-600" />
+              <TrendingUp className="h-4 w-4 text-blue-300" />
               Scenario Comparison
             </CardTitle>
             <CardDescription>Risk scores across different climate/nature scenarios</CardDescription>
@@ -233,7 +233,7 @@ export function LEAPResultsVisualization({ result }) {
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Leaf className="h-4 w-4 text-emerald-600" />
+              <Leaf className="h-4 w-4 text-emerald-400" />
               Recommendations
             </CardTitle>
           </CardHeader>
@@ -242,15 +242,15 @@ export function LEAPResultsVisualization({ result }) {
               {result.recommendations.map((rec, idx) => (
                 <div 
                   key={idx}
-                  className="flex items-start gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg"
+                  className="flex items-start gap-3 p-3 bg-white/[0.02] dark:bg-[#111827] rounded-lg"
                 >
                   <CheckCircle className="h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
+                    <p className="text-sm font-medium text-white/90 dark:text-white/15">
                       {rec.title || rec}
                     </p>
                     {rec.description && (
-                      <p className="text-xs text-slate-500 mt-1">{rec.description}</p>
+                      <p className="text-xs text-white/40 mt-1">{rec.description}</p>
                     )}
                   </div>
                 </div>

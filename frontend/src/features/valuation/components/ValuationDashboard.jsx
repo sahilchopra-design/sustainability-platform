@@ -75,7 +75,7 @@ export function ValuationDashboard() {
     <div className="space-y-6">
       {/* Header with Export */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-800">Valuation Overview</h2>
+        <h2 className="text-lg font-semibold text-white/90">Valuation Overview</h2>
         <ExportButton 
           onExport={handleExport}
           label="Export Valuation"
@@ -86,9 +86,9 @@ export function ValuationDashboard() {
       
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-emerald-50 to-white border-emerald-200">
+        <Card className="bg-gradient-to-br from-emerald-50 to-white border-emerald-500/20">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2 text-emerald-700">
+            <CardTitle className="text-sm font-medium flex items-center gap-2 text-emerald-400">
               <DollarSign className="h-4 w-4" />
               Portfolio Value
             </CardTitle>
@@ -97,15 +97,15 @@ export function ValuationDashboard() {
             <p className="text-2xl font-bold text-emerald-900">
               {formatCurrency(kpis?.total_portfolio_value, true)}
             </p>
-            <p className="text-xs text-emerald-600">
+            <p className="text-xs text-emerald-400">
               {kpis?.total_properties || 0} properties tracked
             </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-blue-50 to-white border-blue-200">
+        <Card className="bg-gradient-to-br from-blue-50 to-white border-blue-500/20">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2 text-blue-700">
+            <CardTitle className="text-sm font-medium flex items-center gap-2 text-blue-300">
               <TrendingUp className="h-4 w-4" />
               Avg Cap Rate
             </CardTitle>
@@ -114,7 +114,7 @@ export function ValuationDashboard() {
             <p className="text-2xl font-bold text-blue-900">
               {formatPercent(kpis?.avg_cap_rate)}
             </p>
-            <p className="text-xs text-blue-600">
+            <p className="text-xs text-blue-300">
               Portfolio weighted average
             </p>
           </CardContent>
@@ -137,9 +137,9 @@ export function ValuationDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-amber-50 to-white border-amber-200">
+        <Card className="bg-gradient-to-br from-amber-50 to-white border-amber-500/20">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2 text-amber-700">
+            <CardTitle className="text-sm font-medium flex items-center gap-2 text-amber-400">
               <Calculator className="h-4 w-4" />
               Total Valuations
             </CardTitle>
@@ -148,7 +148,7 @@ export function ValuationDashboard() {
             <p className="text-2xl font-bold text-amber-900">
               {kpis?.total_valuations || 0}
             </p>
-            <p className="text-xs text-amber-600">
+            <p className="text-xs text-amber-400">
               Across all approaches
             </p>
           </CardContent>
@@ -160,7 +160,7 @@ export function ValuationDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <PieChart className="h-5 w-5 text-slate-500" />
+              <PieChart className="h-5 w-5 text-white/40" />
               Properties by Type
             </CardTitle>
           </CardHeader>
@@ -175,7 +175,7 @@ export function ValuationDashboard() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-32 bg-slate-100 rounded-full h-2">
+                    <div className="w-32 bg-white/[0.06] rounded-full h-2">
                       <div 
                         className="bg-emerald-500 h-2 rounded-full" 
                         style={{ 
@@ -183,7 +183,7 @@ export function ValuationDashboard() {
                         }}
                       />
                     </div>
-                    <span className="text-sm text-slate-600 w-8 text-right">{count}</span>
+                    <span className="text-sm text-white/60 w-8 text-right">{count}</span>
                   </div>
                 </div>
               ))}
@@ -194,7 +194,7 @@ export function ValuationDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Calculator className="h-5 w-5 text-slate-500" />
+              <Calculator className="h-5 w-5 text-white/40" />
               Valuations by Method
             </CardTitle>
           </CardHeader>
@@ -213,15 +213,15 @@ export function ValuationDashboard() {
                       {method.replace('_', ' ')}
                     </span>
                     <div className="flex items-center gap-2">
-                      <div className="w-32 bg-slate-100 rounded-full h-2">
+                      <div className="w-32 bg-white/[0.06] rounded-full h-2">
                         <div 
-                          className={`${colors[method] || 'bg-slate-500'} h-2 rounded-full`} 
+                          className={`${colors[method] || 'bg-white/[0.07]'} h-2 rounded-full`} 
                           style={{ 
                             width: `${(count / (kpis?.total_valuations || 1)) * 100}%` 
                           }}
                         />
                       </div>
-                      <span className="text-sm text-slate-600 w-8 text-right">{count}</span>
+                      <span className="text-sm text-white/60 w-8 text-right">{count}</span>
                     </div>
                   </div>
                 );
@@ -235,45 +235,45 @@ export function ValuationDashboard() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-slate-500" />
+            <Building2 className="h-5 w-5 text-white/40" />
             Property Portfolio
           </CardTitle>
         </CardHeader>
         <CardContent>
           {propsLoading ? (
             <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-slate-500"></div>
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white/[0.08]"></div>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-slate-200">
-                    <th className="text-left py-3 px-2 text-sm font-medium text-slate-600">Property</th>
-                    <th className="text-left py-3 px-2 text-sm font-medium text-slate-600">Type</th>
-                    <th className="text-left py-3 px-2 text-sm font-medium text-slate-600">Location</th>
-                    <th className="text-right py-3 px-2 text-sm font-medium text-slate-600">Size (SF)</th>
-                    <th className="text-right py-3 px-2 text-sm font-medium text-slate-600">Market Value</th>
-                    <th className="text-right py-3 px-2 text-sm font-medium text-slate-600">Cap Rate</th>
-                    <th className="text-center py-3 px-2 text-sm font-medium text-slate-600">Quality</th>
+                  <tr className="border-b border-white/[0.06]">
+                    <th className="text-left py-3 px-2 text-sm font-medium text-white/60">Property</th>
+                    <th className="text-left py-3 px-2 text-sm font-medium text-white/60">Type</th>
+                    <th className="text-left py-3 px-2 text-sm font-medium text-white/60">Location</th>
+                    <th className="text-right py-3 px-2 text-sm font-medium text-white/60">Size (SF)</th>
+                    <th className="text-right py-3 px-2 text-sm font-medium text-white/60">Market Value</th>
+                    <th className="text-right py-3 px-2 text-sm font-medium text-white/60">Cap Rate</th>
+                    <th className="text-center py-3 px-2 text-sm font-medium text-white/60">Quality</th>
                   </tr>
                 </thead>
                 <tbody>
                   {properties.map((property) => (
                     <tr 
                       key={property.id} 
-                      className="border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors"
+                      className="border-b border-white/[0.04] hover:bg-white/[0.02] cursor-pointer transition-colors"
                     >
                       <td className="py-3 px-2">
                         <div className="font-medium text-sm">{property.property_name}</div>
-                        <div className="text-xs text-slate-500">{property.address}</div>
+                        <div className="text-xs text-white/40">{property.address}</div>
                       </td>
                       <td className="py-3 px-2">
                         <Badge variant="outline" className="capitalize">
                           {property.property_type?.replace('_', ' ')}
                         </Badge>
                       </td>
-                      <td className="py-3 px-2 text-sm text-slate-600">
+                      <td className="py-3 px-2 text-sm text-white/60">
                         {property.city}, {property.state_province}
                       </td>
                       <td className="py-3 px-2 text-sm text-right">
@@ -289,10 +289,10 @@ export function ValuationDashboard() {
                         <Badge 
                           className={
                             property.quality_rating === 'class_a' 
-                              ? 'bg-emerald-100 text-emerald-800' 
+                              ? 'bg-emerald-100 text-emerald-300' 
                               : property.quality_rating === 'class_b'
-                              ? 'bg-blue-100 text-blue-800'
-                              : 'bg-slate-100 text-slate-800'
+                              ? 'bg-blue-100 text-blue-300'
+                              : 'bg-white/[0.06] text-white/90'
                           }
                         >
                           {property.quality_rating?.replace('class_', 'Class ').toUpperCase()}

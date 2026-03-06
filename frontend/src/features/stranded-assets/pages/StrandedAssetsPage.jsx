@@ -10,36 +10,38 @@ import { StrandedAssetDashboard } from '../components/dashboard/StrandedAssetDas
 import { ReserveImpairmentCalculator } from '../components/calculator/ReserveImpairmentCalculator';
 import { PowerPlantValuationTool } from '../components/calculator/PowerPlantValuationTool';
 import { TechnologyDisruptionChart } from '../components/charts/TechnologyDisruptionChart';
+import { JustTransitionPanel } from '../components/JustTransitionPanel';
+import { ETMPanel } from '../components/ETMPanel';
 
 export default function StrandedAssetsPage() {
   const [activeTab, setActiveTab] = useState('dashboard');
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-white/[0.02] dark:bg-[#0d1424]">
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-              <TrendingDown className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+              <TrendingDown className="h-6 w-6 text-amber-400 dark:text-amber-400" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+              <h1 className="text-2xl font-bold text-white dark:text-white">
                 Stranded Asset Analysis
               </h1>
-              <p className="text-slate-600 dark:text-slate-400">
+              <p className="text-white/60 dark:text-white/30">
                 Climate transition risk assessment for energy assets
               </p>
             </div>
           </div>
           <div className="flex gap-2 mt-3">
-            <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+            <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/20">
               IEA Scenarios
             </Badge>
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+            <Badge variant="outline" className="bg-blue-500/10 text-blue-300 border-blue-500/20">
               NGFS Framework
             </Badge>
-            <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+            <Badge variant="outline" className="bg-purple-500/10 text-purple-300 border-purple-500/20">
               NPV Analysis
             </Badge>
           </div>
@@ -47,10 +49,10 @@ export default function StrandedAssetsPage() {
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 h-auto p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+          <TabsList className="grid w-full grid-cols-7 h-auto p-1 bg-white/[0.06] dark:bg-[#111827] rounded-lg">
             <TabsTrigger 
               value="dashboard" 
-              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700"
+              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-[#0d1424] dark:data-[state=active]:bg-[#1a2234]"
               data-testid="tab-dashboard"
             >
               <BarChart3 className="h-4 w-4" />
@@ -58,7 +60,7 @@ export default function StrandedAssetsPage() {
             </TabsTrigger>
             <TabsTrigger 
               value="reserves" 
-              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700"
+              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-[#0d1424] dark:data-[state=active]:bg-[#1a2234]"
               data-testid="tab-reserves"
             >
               <Fuel className="h-4 w-4" />
@@ -66,7 +68,7 @@ export default function StrandedAssetsPage() {
             </TabsTrigger>
             <TabsTrigger 
               value="plants" 
-              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700"
+              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-[#0d1424] dark:data-[state=active]:bg-[#1a2234]"
               data-testid="tab-plants"
             >
               <Factory className="h-4 w-4" />
@@ -74,19 +76,33 @@ export default function StrandedAssetsPage() {
             </TabsTrigger>
             <TabsTrigger 
               value="disruption" 
-              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700"
+              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-[#0d1424] dark:data-[state=active]:bg-[#1a2234]"
               data-testid="tab-disruption"
             >
               <LineChart className="h-4 w-4" />
               <span className="hidden sm:inline">Tech Disruption</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="alerts" 
-              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700"
+            <TabsTrigger
+              value="alerts"
+              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-[#0d1424] dark:data-[state=active]:bg-[#1a2234]"
               data-testid="tab-alerts"
             >
               <AlertTriangle className="h-4 w-4" />
               <span className="hidden sm:inline">Alerts</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="just-transition"
+              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-[#0d1424] dark:data-[state=active]:bg-[#1a2234]"
+            >
+              <Target className="h-4 w-4" />
+              <span className="hidden sm:inline">Just Transition</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="etm"
+              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-[#0d1424] dark:data-[state=active]:bg-[#1a2234]"
+            >
+              <Calculator className="h-4 w-4" />
+              <span className="hidden sm:inline">ETM</span>
             </TabsTrigger>
           </TabsList>
 
@@ -113,6 +129,24 @@ export default function StrandedAssetsPage() {
           {/* Alerts Tab */}
           <TabsContent value="alerts" className="space-y-6">
             <CriticalAssetsPanel />
+          </TabsContent>
+
+          {/* Just Transition Tab */}
+          <TabsContent value="just-transition" className="space-y-6">
+            <div className="p-1">
+              <h2 className="text-base font-semibold text-white/80 mb-1">Just Transition Calculator</h2>
+              <p className="text-xs text-white/30 mb-4">ILO Just Transition Guidelines · IRENA WETO 2023 · World Bank JT Framework — Employment, social cost and financing gap analysis</p>
+              <JustTransitionPanel />
+            </div>
+          </TabsContent>
+
+          {/* ETM Tab */}
+          <TabsContent value="etm" className="space-y-6">
+            <div className="p-1">
+              <h2 className="text-base font-semibold text-white/80 mb-1">Energy Transition Mechanism (ETM)</h2>
+              <p className="text-xs text-white/30 mb-4">ADB/AIIB/Citi ETM Framework 2022 — Early coal plant retirement via concessional debt buyout and blended finance structure</p>
+              <ETMPanel />
+            </div>
           </TabsContent>
         </Tabs>
       </div>
@@ -167,7 +201,7 @@ function CriticalAssetsPanel() {
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors capitalize ${
                 riskFilter === level
                   ? 'bg-red-500 text-white'
-                  : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200'
+                  : 'bg-white/[0.06] dark:bg-[#111827] hover:bg-white/[0.08]'
               }`}
             >
               {level} ({level === 'critical' ? data.critical_count : data.high_count})
@@ -182,8 +216,8 @@ function CriticalAssetsPanel() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Critical Alerts</p>
-                <p className="text-2xl font-bold text-red-600">{data.critical_count}</p>
+                <p className="text-sm text-white/40">Critical Alerts</p>
+                <p className="text-2xl font-bold text-red-400">{data.critical_count}</p>
               </div>
               <AlertTriangle className="h-8 w-8 text-red-500" />
             </div>
@@ -193,8 +227,8 @@ function CriticalAssetsPanel() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">High Risk Alerts</p>
-                <p className="text-2xl font-bold text-orange-600">{data.high_count}</p>
+                <p className="text-sm text-white/40">High Risk Alerts</p>
+                <p className="text-2xl font-bold text-orange-400">{data.high_count}</p>
               </div>
               <Target className="h-8 w-8 text-orange-500" />
             </div>
@@ -204,7 +238,7 @@ function CriticalAssetsPanel() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Total Alerts</p>
+                <p className="text-sm text-white/40">Total Alerts</p>
                 <p className="text-2xl font-bold">{data.total}</p>
               </div>
               <BarChart3 className="h-8 w-8 text-amber-500" />
@@ -229,21 +263,21 @@ function CriticalAssetsPanel() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Asset</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Type</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Counterparty</th>
-                    <th className="text-center py-3 px-4 text-sm font-medium text-slate-500">Risk</th>
-                    <th className="text-right py-3 px-4 text-sm font-medium text-slate-500">Impact</th>
-                    <th className="text-center py-3 px-4 text-sm font-medium text-slate-500">Time</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Action</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-white/40">Asset</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-white/40">Type</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-white/40">Counterparty</th>
+                    <th className="text-center py-3 px-4 text-sm font-medium text-white/40">Risk</th>
+                    <th className="text-right py-3 px-4 text-sm font-medium text-white/40">Impact</th>
+                    <th className="text-center py-3 px-4 text-sm font-medium text-white/40">Time</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-white/40">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {data.alerts.map((alert) => (
-                    <tr key={alert.alert_id} className="border-b hover:bg-slate-50 dark:hover:bg-slate-800">
+                    <tr key={alert.alert_id} className="border-b hover:bg-white/[0.02] dark:hover:bg-[#111827]">
                       <td className="py-3 px-4">
                         <p className="font-medium">{alert.asset_name}</p>
-                        <p className="text-xs text-slate-500">{alert.alert_trigger}</p>
+                        <p className="text-xs text-white/40">{alert.alert_trigger}</p>
                       </td>
                       <td className="py-3 px-4">
                         <Badge variant="outline" className="capitalize">
@@ -254,20 +288,20 @@ function CriticalAssetsPanel() {
                       <td className="py-3 px-4 text-center">
                         <Badge 
                           className={alert.risk_level === 'critical' 
-                            ? 'bg-red-100 text-red-700' 
-                            : 'bg-orange-100 text-orange-700'
+                            ? 'bg-red-100 text-red-400' 
+                            : 'bg-orange-100 text-orange-400'
                           }
                         >
                           {(parseFloat(alert.stranding_risk_score) * 100).toFixed(0)}%
                         </Badge>
                       </td>
-                      <td className="py-3 px-4 text-right font-bold text-red-600">
+                      <td className="py-3 px-4 text-right font-bold text-red-400">
                         {formatCurrency(parseFloat(alert.estimated_impact_usd))}
                       </td>
                       <td className="py-3 px-4 text-center text-sm">
                         {alert.time_to_stranding_years}y
                       </td>
-                      <td className="py-3 px-4 text-sm text-blue-600">
+                      <td className="py-3 px-4 text-sm text-blue-300">
                         {alert.recommended_action}
                       </td>
                     </tr>
@@ -276,7 +310,7 @@ function CriticalAssetsPanel() {
               </table>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-48 text-slate-400">
+            <div className="flex flex-col items-center justify-center h-48 text-white/30">
               <AlertTriangle className="h-12 w-12 mb-4" />
               <p>No alerts matching the selected criteria</p>
             </div>

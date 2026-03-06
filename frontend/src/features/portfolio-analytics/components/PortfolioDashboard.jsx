@@ -31,10 +31,10 @@ const ICON_MAP = {
 };
 
 const COLOR_MAP = {
-  emerald: 'bg-emerald-100 text-emerald-700',
-  blue: 'bg-blue-100 text-blue-700',
-  red: 'bg-red-100 text-red-700',
-  amber: 'bg-amber-100 text-amber-700',
+  emerald: 'bg-emerald-100 text-emerald-400',
+  blue: 'bg-blue-100 text-blue-300',
+  red: 'bg-red-100 text-red-400',
+  amber: 'bg-amber-100 text-amber-400',
   violet: 'bg-violet-100 text-violet-700',
 };
 
@@ -51,15 +51,15 @@ function formatValue(value) {
 
 function KPICard({ kpi }) {
   const Icon = ICON_MAP[kpi.icon] || DollarSign;
-  const colorClass = COLOR_MAP[kpi.color] || 'bg-slate-100 text-slate-700';
+  const colorClass = COLOR_MAP[kpi.color] || 'bg-white/[0.06] text-white/70';
   
   return (
-    <Card className="bg-white hover:shadow-md transition-shadow" data-testid={`kpi-${kpi.id}`}>
+    <Card className="bg-[#0d1424] hover:shadow-md transition-shadow" data-testid={`kpi-${kpi.id}`}>
       <CardContent className="pt-4 pb-3">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs text-slate-500 mb-1">{kpi.label}</p>
-            <p className="text-xl font-bold text-slate-900">{formatValue(kpi.value)}</p>
+            <p className="text-xs text-white/40 mb-1">{kpi.label}</p>
+            <p className="text-xl font-bold text-white">{formatValue(kpi.value)}</p>
             {kpi.change !== null && kpi.change !== undefined && (
               <div className="flex items-center gap-1 mt-1">
                 {kpi.trend === 'up' ? (
@@ -67,7 +67,7 @@ function KPICard({ kpi }) {
                 ) : kpi.trend === 'down' ? (
                   <ArrowDown className="h-3 w-3 text-red-500" />
                 ) : null}
-                <span className={`text-xs ${kpi.trend === 'up' ? 'text-emerald-600' : kpi.trend === 'down' ? 'text-red-600' : 'text-slate-500'}`}>
+                <span className={`text-xs ${kpi.trend === 'up' ? 'text-emerald-400' : kpi.trend === 'down' ? 'text-red-400' : 'text-white/40'}`}>
                   {kpi.change > 0 ? '+' : ''}{kpi.change}% {kpi.change_period}
                 </span>
               </div>
@@ -86,9 +86,9 @@ function SectorAllocationChart({ data }) {
   if (!data || data.length === 0) return null;
   
   return (
-    <Card className="bg-white" data-testid="chart-sector-allocation">
+    <Card className="bg-[#0d1424]" data-testid="chart-sector-allocation">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold text-slate-700">Sector Allocation</CardTitle>
+        <CardTitle className="text-sm font-semibold text-white/70">Sector Allocation</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[200px]">
@@ -125,9 +125,9 @@ function GeographicChart({ data }) {
   if (!data || data.length === 0) return null;
   
   return (
-    <Card className="bg-white" data-testid="chart-geographic">
+    <Card className="bg-[#0d1424]" data-testid="chart-geographic">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold text-slate-700">Geographic Distribution</CardTitle>
+        <CardTitle className="text-sm font-semibold text-white/70">Geographic Distribution</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[200px]">
@@ -153,9 +153,9 @@ function RiskDistributionChart({ data }) {
   if (!data || data.length === 0) return null;
   
   return (
-    <Card className="bg-white" data-testid="chart-risk-distribution">
+    <Card className="bg-[#0d1424]" data-testid="chart-risk-distribution">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold text-slate-700">Risk Distribution</CardTitle>
+        <CardTitle className="text-sm font-semibold text-white/70">Risk Distribution</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[200px]">
@@ -184,9 +184,9 @@ function AlertsList({ alerts }) {
   if (!alerts || alerts.length === 0) return null;
   
   const severityColors = {
-    critical: 'bg-red-50 border-red-200 text-red-800',
-    warning: 'bg-amber-50 border-amber-200 text-amber-800',
-    info: 'bg-blue-50 border-blue-200 text-blue-800',
+    critical: 'bg-red-500/10 border-red-500/20 text-red-300',
+    warning: 'bg-amber-500/10 border-amber-500/20 text-amber-300',
+    info: 'bg-blue-500/10 border-blue-500/20 text-blue-300',
   };
   
   const severityIcons = {
@@ -196,9 +196,9 @@ function AlertsList({ alerts }) {
   };
   
   return (
-    <Card className="bg-white" data-testid="alerts-list">
+    <Card className="bg-[#0d1424]" data-testid="alerts-list">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+        <CardTitle className="text-sm font-semibold text-white/70 flex items-center gap-2">
           <AlertTriangle className="h-4 w-4 text-amber-500" />
           Alerts & Notifications
         </CardTitle>
@@ -251,8 +251,8 @@ export function PortfolioDashboard({ dashboard, isLoading }) {
   
   if (!dashboard) {
     return (
-      <Card className="bg-white">
-        <CardContent className="py-12 text-center text-slate-500">
+      <Card className="bg-[#0d1424]">
+        <CardContent className="py-12 text-center text-white/40">
           <p>No dashboard data available. Select a portfolio to view analytics.</p>
         </CardContent>
       </Card>
@@ -264,16 +264,16 @@ export function PortfolioDashboard({ dashboard, isLoading }) {
       {/* Portfolio Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-slate-800">{dashboard.portfolio_name}</h2>
-          <p className="text-xs text-slate-500">
+          <h2 className="text-lg font-semibold text-white/90">{dashboard.portfolio_name}</h2>
+          <p className="text-xs text-white/40">
             Last updated: {new Date(dashboard.last_updated).toLocaleString()}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
+          <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
             {dashboard.property_count} Properties
           </Badge>
-          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+          <Badge variant="outline" className="bg-blue-500/10 text-blue-300 border-blue-500/20">
             AUM: ${(parseFloat(dashboard.total_aum) / 1e9).toFixed(2)}B
           </Badge>
           <ExportButton 

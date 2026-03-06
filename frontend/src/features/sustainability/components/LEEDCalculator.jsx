@@ -30,7 +30,7 @@ const regions = [
 const levelColors = {
   platinum: 'bg-violet-500',
   gold: 'bg-amber-500',
-  silver: 'bg-slate-400',
+  silver: 'bg-white/[0.08]',
   certified: 'bg-green-500',
 };
 
@@ -116,7 +116,7 @@ export function LEEDCalculator() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Calculator className="h-4 w-4 text-green-600" />
+            <Calculator className="h-4 w-4 text-green-400" />
             LEED Assessment Input
           </CardTitle>
           <CardDescription>
@@ -185,7 +185,7 @@ export function LEEDCalculator() {
                 <Label className="text-sm font-medium">Category Scores</Label>
                 <div className="flex items-center gap-2">
                   <Badge
-                    className={`${levelColors[getCertLevel(totalPoints).toLowerCase()] || 'bg-slate-300'} text-white`}
+                    className={`${levelColors[getCertLevel(totalPoints).toLowerCase()] || 'bg-white/[0.10]'} text-white`}
                   >
                     {getCertLevel(totalPoints)}
                   </Badge>
@@ -197,7 +197,7 @@ export function LEEDCalculator() {
                 {categoryConfig.map((cat) => (
                   <div key={cat.key}>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="text-slate-600">{cat.label}</span>
+                      <span className="text-white/60">{cat.label}</span>
                       <span className="font-medium">
                         {formData.category_scores[cat.key]}/{cat.max}
                       </span>
@@ -233,7 +233,7 @@ export function LEEDCalculator() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-base flex items-center gap-2">
-                  <Leaf className="h-4 w-4 text-green-600" />
+                  <Leaf className="h-4 w-4 text-green-400" />
                   LEED Certification Result
                 </CardTitle>
               </CardHeader>
@@ -242,24 +242,24 @@ export function LEEDCalculator() {
                   <div className="text-center">
                     <div
                       className={`w-20 h-20 rounded-full ${
-                        levelColors[result.certification_level] || 'bg-slate-300'
+                        levelColors[result.certification_level] || 'bg-white/[0.10]'
                       } flex items-center justify-center mb-2`}
                     >
                       <Award className="h-10 w-10 text-white" />
                     </div>
-                    <Badge className={`${levelColors[result.certification_level] || 'bg-slate-400'} text-white`}>
+                    <Badge className={`${levelColors[result.certification_level] || 'bg-white/[0.08]'} text-white`}>
                       {(result.certification_level || '').toUpperCase()}
                     </Badge>
                   </div>
                   <div className="flex-1">
-                    <div className="text-4xl font-bold text-slate-800">{result.total_points}</div>
-                    <div className="text-sm text-slate-500">out of 110 points</div>
+                    <div className="text-4xl font-bold text-white/90">{result.total_points}</div>
+                    <div className="text-sm text-white/40">out of 110 points</div>
                     {result.points_to_next_level && (
-                      <div className="text-xs text-green-600 mt-1">
+                      <div className="text-xs text-green-400 mt-1">
                         {result.points_to_next_level} points to next level
                       </div>
                     )}
-                    <div className="text-xs text-slate-500 mt-1">
+                    <div className="text-xs text-white/40 mt-1">
                       {result.percentile_in_market}th percentile in market
                     </div>
                   </div>
@@ -271,28 +271,28 @@ export function LEEDCalculator() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-emerald-600" />
+                  <TrendingUp className="h-4 w-4 text-emerald-400" />
                   Estimated Value Impact
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 bg-emerald-50 rounded-lg">
-                    <div className="text-xs text-emerald-600 mb-1">Value Premium</div>
-                    <div className="text-xl font-bold text-emerald-700">
+                  <div className="p-3 bg-emerald-500/10 rounded-lg">
+                    <div className="text-xs text-emerald-400 mb-1">Value Premium</div>
+                    <div className="text-xl font-bold text-emerald-400">
                       +{parseFloat(result.estimated_value_premium_percent || 0).toFixed(1)}%
                     </div>
                   </div>
-                  <div className="p-3 bg-blue-50 rounded-lg">
-                    <div className="text-xs text-blue-600 mb-1">Rent Premium</div>
-                    <div className="text-xl font-bold text-blue-700">
+                  <div className="p-3 bg-blue-500/10 rounded-lg">
+                    <div className="text-xs text-blue-300 mb-1">Rent Premium</div>
+                    <div className="text-xl font-bold text-blue-300">
                       +{parseFloat(result.estimated_rent_premium_percent || 0).toFixed(1)}%
                     </div>
                   </div>
                   {result.estimated_value_impact && (
-                    <div className="col-span-2 p-3 bg-green-50 rounded-lg">
-                      <div className="text-xs text-green-600 mb-1">Estimated Value Impact</div>
-                      <div className="text-2xl font-bold text-green-700">
+                    <div className="col-span-2 p-3 bg-green-500/10 rounded-lg">
+                      <div className="text-xs text-green-400 mb-1">Estimated Value Impact</div>
+                      <div className="text-2xl font-bold text-green-400">
                         {formatCurrency(result.estimated_value_impact)}
                       </div>
                     </div>
@@ -305,17 +305,17 @@ export function LEEDCalculator() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <Target className="h-4 w-4 text-blue-600" />
+                  <Target className="h-4 w-4 text-blue-300" />
                   Category Performance
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   <div>
-                    <div className="text-xs text-slate-500 mb-1">Strongest Categories</div>
+                    <div className="text-xs text-white/40 mb-1">Strongest Categories</div>
                     <div className="flex flex-wrap gap-1">
                       {(result.strongest_categories || []).map((cat) => (
-                        <Badge key={cat} variant="outline" className="bg-emerald-50 text-emerald-700 text-xs">
+                        <Badge key={cat} variant="outline" className="bg-emerald-500/10 text-emerald-400 text-xs">
                           <CheckCircle2 className="h-3 w-3 mr-1" />
                           {cat.replace(/_/g, ' ')}
                         </Badge>
@@ -324,10 +324,10 @@ export function LEEDCalculator() {
                   </div>
                   {result.weakest_categories?.length > 0 && (
                     <div>
-                      <div className="text-xs text-slate-500 mb-1">Areas for Improvement</div>
+                      <div className="text-xs text-white/40 mb-1">Areas for Improvement</div>
                       <div className="flex flex-wrap gap-1">
                         {result.weakest_categories.map((cat) => (
-                          <Badge key={cat} variant="outline" className="bg-amber-50 text-amber-700 text-xs">
+                          <Badge key={cat} variant="outline" className="bg-amber-500/10 text-amber-400 text-xs">
                             {cat.replace(/_/g, ' ')}
                           </Badge>
                         ))}
@@ -336,11 +336,11 @@ export function LEEDCalculator() {
                   )}
                   {Object.keys(result.improvement_potential || {}).length > 0 && (
                     <div className="pt-2 border-t">
-                      <div className="text-xs text-slate-500 mb-2">Improvement Potential</div>
+                      <div className="text-xs text-white/40 mb-2">Improvement Potential</div>
                       {Object.entries(result.improvement_potential).slice(0, 3).map(([cat, points]) => (
                         <div key={cat} className="flex justify-between text-xs mb-1">
-                          <span className="text-slate-600">{cat.replace(/_/g, ' ')}</span>
-                          <span className="text-green-600 font-medium">+{points} pts possible</span>
+                          <span className="text-white/60">{cat.replace(/_/g, ' ')}</span>
+                          <span className="text-green-400 font-medium">+{points} pts possible</span>
                         </div>
                       ))}
                     </div>
@@ -353,8 +353,8 @@ export function LEEDCalculator() {
 
         {!result && (
           <Card className="border-dashed">
-            <CardContent className="py-12 text-center text-slate-500">
-              <Leaf className="h-12 w-12 mx-auto mb-4 text-slate-300" />
+            <CardContent className="py-12 text-center text-white/40">
+              <Leaf className="h-12 w-12 mx-auto mb-4 text-white/20" />
               <p>Enter property details and category scores to calculate LEED assessment</p>
             </CardContent>
           </Card>

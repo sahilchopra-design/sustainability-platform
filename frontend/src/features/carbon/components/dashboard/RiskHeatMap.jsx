@@ -29,29 +29,29 @@ export const RiskHeatMap = ({ risks = [] }) => {
         High: 'bg-rose-500'
       }
     };
-    return matrix[impact]?.[probability] || 'bg-slate-200';
+    return matrix[impact]?.[probability] || 'bg-white/[0.08]';
   };
 
   const getTextColor = (impact, probability) => {
     if (impact === 'High' || impact === 'Critical') return 'text-white';
     if (impact === 'Medium' && probability === 'High') return 'text-white';
-    return 'text-slate-800';
+    return 'text-white/90';
   };
 
   const impactLevels = ['Low', 'Medium', 'High'];
   const probabilityLevels = ['Low', 'Medium', 'High'];
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6" data-testid="risk-heatmap">
-      <h3 className="text-lg font-semibold text-slate-900 mb-4">
+    <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6" data-testid="risk-heatmap">
+      <h3 className="text-lg font-semibold text-white mb-4">
         Risk Heat Map
       </h3>
 
       <div className="grid grid-cols-4 gap-2">
         {/* Header Row */}
-        <div className="text-xs font-medium text-slate-500">Impact →</div>
+        <div className="text-xs font-medium text-white/40">Impact →</div>
         {impactLevels.map((level) => (
-          <div key={level} className="text-xs font-medium text-slate-500 text-center">
+          <div key={level} className="text-xs font-medium text-white/40 text-center">
             {level}
           </div>
         ))}
@@ -59,7 +59,7 @@ export const RiskHeatMap = ({ risks = [] }) => {
         {/* Data Rows */}
         {probabilityLevels.map((probability) => (
           <React.Fragment key={probability}>
-            <div className="text-xs font-medium text-slate-500 flex items-center">
+            <div className="text-xs font-medium text-white/40 flex items-center">
               {probability} Prob
             </div>
             {impactLevels.map((impact) => {
@@ -72,8 +72,8 @@ export const RiskHeatMap = ({ risks = [] }) => {
                   className={`
                     h-12 rounded-md flex items-center justify-center text-xs font-medium
                     transition-all duration-200 hover:scale-105 cursor-pointer
-                    ${risk ? getColor(impact, probability) : 'bg-slate-100'}
-                    ${risk ? getTextColor(impact, probability) : 'text-slate-400'}
+                    ${risk ? getColor(impact, probability) : 'bg-white/[0.06]'}
+                    ${risk ? getTextColor(impact, probability) : 'text-white/30'}
                   `}
                   title={risk ? `${risk.category}: ${risk.score}/100` : 'No risk'}
                   data-testid={`risk-cell-${impact}-${probability}`}
@@ -87,7 +87,7 @@ export const RiskHeatMap = ({ risks = [] }) => {
       </div>
 
       {/* Legend */}
-      <div className="mt-4 flex items-center gap-4 text-xs text-slate-500">
+      <div className="mt-4 flex items-center gap-4 text-xs text-white/40">
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded bg-emerald-400" />
           <span>Low Risk</span>
