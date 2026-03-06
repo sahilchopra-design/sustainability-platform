@@ -75,6 +75,7 @@ from api.v1.routes.organisations import router as organisations_router
 from api.v1.routes.ingestion import router as ingestion_router
 from api.v1.routes.entity_resolution import router as entity_resolution_router
 from api.v1.routes.emissions_data import router as emissions_data_router
+from api.v1.routes.scenario_data import router as scenario_data_router
 
 
 @asynccontextmanager
@@ -210,6 +211,7 @@ app.include_router(organisations_router)          # Organisations — multi-tena
 app.include_router(ingestion_router)              # Ingestion — data source sync, job history, scheduler
 app.include_router(entity_resolution_router)      # Entity Resolution -- LEI lookup, sanctions screening
 app.include_router(emissions_data_router)          # Emissions Data -- Climate TRACE + OWID CO2/energy queries
+app.include_router(scenario_data_router)           # Scenario Data -- NGFS scenarios + SBTi targets
 
 # Audit middleware — append-only log for all mutating requests (POST/PUT/PATCH/DELETE)
 from middleware.audit_middleware import AuditMiddleware

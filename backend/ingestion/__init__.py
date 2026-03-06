@@ -18,8 +18,12 @@ def register_all_ingesters():
     from ingestion.sanctions_ingester import SanctionsIngester
     from ingestion.climate_trace_ingester import ClimateTraceIngester
     from ingestion.owid_ingester import OwidIngester
+    from ingestion.ngfs_ingester import NgfsIngester
+    from ingestion.sbti_ingester import SbtiIngester
 
     ingestion_manager.register(GleifIngester)
     ingestion_manager.register(SanctionsIngester)
     ingestion_manager.register(ClimateTraceIngester)
     ingestion_manager.register(OwidIngester)
+    ingestion_manager.register(NgfsIngester)
+    ingestion_manager.register(SbtiIngester)
