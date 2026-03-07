@@ -22,6 +22,8 @@ def register_all_ingesters():
     from ingestion.sbti_ingester import SbtiIngester
     from ingestion.sec_edgar_ingester import SecEdgarIngester
     from ingestion.yfinance_ingester import YfinanceIngester
+    from ingestion.wdpa_gfw_ingester import WdpaGfwIngester
+    from ingestion.gem_coal_ingester import GemCoalIngester
 
     ingestion_manager.register(GleifIngester)
     ingestion_manager.register(SanctionsIngester)
@@ -31,3 +33,5 @@ def register_all_ingesters():
     ingestion_manager.register(SbtiIngester)
     ingestion_manager.register(SecEdgarIngester)
     ingestion_manager.register(YfinanceIngester)
+    ingestion_manager.register(WdpaGfwIngester)
+    ingestion_manager.register(GemCoalIngester)

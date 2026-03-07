@@ -81,6 +81,8 @@ from api.v1.routes.data_hub_catalog import router as data_hub_catalog_router
 from api.v1.routes.glidepath_serve import router as glidepath_serve_router
 from api.v1.routes.carbon_prices import router as carbon_prices_router
 from api.v1.routes.benchmarks import router as benchmarks_router
+from api.v1.routes.nature_data import router as nature_data_router
+from api.v1.routes.energy_data import router as energy_data_router
 
 
 @asynccontextmanager
@@ -222,6 +224,8 @@ app.include_router(data_hub_catalog_router)        # Data Hub Catalog -- cross-s
 app.include_router(glidepath_serve_router)         # Glidepaths -- NZBA + CRREM pathway serve
 app.include_router(carbon_prices_router)           # Carbon Prices -- NGFS carbon price projections
 app.include_router(benchmarks_router)              # Benchmarks -- sector WACI + financial benchmarks
+app.include_router(nature_data_router)             # Nature Data -- WDPA protected areas + GFW tree cover loss
+app.include_router(energy_data_router)             # Energy Data -- GEM Global Coal Plant Tracker
 
 # Audit middleware — append-only log for all mutating requests (POST/PUT/PATCH/DELETE)
 from middleware.audit_middleware import AuditMiddleware
