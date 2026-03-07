@@ -24,6 +24,8 @@ def register_all_ingesters():
     from ingestion.yfinance_ingester import YfinanceIngester
     from ingestion.wdpa_gfw_ingester import WdpaGfwIngester
     from ingestion.gem_coal_ingester import GemCoalIngester
+    from ingestion.irena_crrem_grid_ingester import IrenaCrremGridIngester
+    from ingestion.violation_tracker_ingester import ViolationTrackerIngester
 
     ingestion_manager.register(GleifIngester)
     ingestion_manager.register(SanctionsIngester)
@@ -35,3 +37,5 @@ def register_all_ingesters():
     ingestion_manager.register(YfinanceIngester)
     ingestion_manager.register(WdpaGfwIngester)
     ingestion_manager.register(GemCoalIngester)
+    ingestion_manager.register(IrenaCrremGridIngester)
+    ingestion_manager.register(ViolationTrackerIngester)
