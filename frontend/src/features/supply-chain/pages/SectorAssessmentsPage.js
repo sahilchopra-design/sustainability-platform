@@ -14,6 +14,8 @@ import { GreenHydrogenPanel } from '../../sector-assessments/GreenHydrogenPanel'
 import InsurancePanel from '../../sector-assessments/InsurancePanel';
 import AgriculturePanel from '../../sector-assessments/AgriculturePanel';
 import MiningPanel from '../../sector-assessments/MiningPanel';
+import GeothermalPanel from '../../sector-assessments/GeothermalPanel';
+import { IrenaFivePillarsPanel } from '../../sector-assessments/IrenaFivePillarsPanel';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar,
@@ -467,6 +469,8 @@ const PANELS = [
   { id: 'insurance',     label: 'Insurance Climate',            sub: 'Solvency II / CAT / TP' },
   { id: 'agriculture',   label: 'Agriculture Risk',             sub: 'EUDR / IPCC AR6 / Soil' },
   { id: 'mining',        label: 'Mining & Extractives',         sub: 'GISTM / Critical Minerals' },
+  { id: 'geothermal',   label: 'Geothermal Energy',            sub: 'LCOE / Viability / NPV' },
+  { id: 'fivepillars',  label: 'IRENA Five Pillars',           sub: 'Transition Readiness' },
 ];
 
 export default function SectorAssessmentsPage() {
@@ -521,6 +525,8 @@ export default function SectorAssessmentsPage() {
         {activePanel === 'insurance'      && <InsurancePanel />}
         {activePanel === 'agriculture'    && <AgriculturePanel />}
         {activePanel === 'mining'         && <MiningPanel />}
+        {activePanel === 'geothermal'    && <GeothermalPanel />}
+        {activePanel === 'fivepillars'   && <IrenaFivePillarsPanel />}
       </div>
     </div>
   );

@@ -86,6 +86,8 @@ from api.v1.routes.energy_data import router as energy_data_router
 from api.v1.routes.reference_data import router as reference_data_router
 from api.v1.routes.violations import router as violations_router
 from api.v1.routes.gdelt_controversy import router as gdelt_controversy_router
+from api.v1.routes.geothermal import router as geothermal_router
+from api.v1.routes.irena_five_pillars import router as irena_five_pillars_router
 
 
 @asynccontextmanager
@@ -232,6 +234,8 @@ app.include_router(energy_data_router)             # Energy Data -- GEM Global C
 app.include_router(reference_data_router)          # Reference Data -- IRENA LCOE, CRREM, Grid EFs
 app.include_router(violations_router)              # Violations -- Corporate penalty tracker
 app.include_router(gdelt_controversy_router)       # GDELT -- Events, GKG, Controversy Scores
+app.include_router(geothermal_router)              # Geothermal -- LCOE, viability, seismicity, NPV/IRR
+app.include_router(irena_five_pillars_router)      # IRENA Five Pillars -- Transition readiness assessment
 
 # Audit middleware — append-only log for all mutating requests (POST/PUT/PATCH/DELETE)
 from middleware.audit_middleware import AuditMiddleware
