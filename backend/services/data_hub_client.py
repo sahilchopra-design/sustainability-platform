@@ -220,30 +220,69 @@ def get_crrem_pathway(
     db,
     country: str,
     asset_type: str,
+    scenario: str = "1.5C",
 ) -> Optional[List[Dict[str, Any]]]:
     """
     Retrieve the CRREM carbon intensity pathway for a real estate asset.
 
-    Uses reference CRREM data embedded in glidepath_serve.py until the
-    A13 ingester provides live data from CRREM API.
+    Queries dh_crrem_pathways (live data from A13 ingester) first.
+    Falls back to hardcoded reference data if no live rows found.
 
     Returns list of dicts: [{year, intensity, source}, ...]
     """
-    # Import from the serve module which has the reference data
-    from api.v1.routes.glidepath_serve import _CRREM_REFERENCE, _CRREM_YEARS
+    from sqlalchemy import text as sa_text
 
     country_upper = country.upper()
     asset_lower = asset_type.lower()
+
+    # Resolve ISO-2 to ISO-3 for DB lookup
+    country_iso3 = _JURISDICTION_TO_ISO3.get(country_upper, country_upper)
+
+    # ── Try live DB data ─────────────────────────────────────────────────────
+    try:
+        rows = db.execute(sa_text("""
+            SELECT year, carbon_intensity_kgco2_m2, energy_intensity_kwh_m2
+            FROM dh_crrem_pathways
+            WHERE LOWER(property_type) = :ptype
+              AND country_iso3 = :country_iso3
+              AND scenario = :scenario
+            ORDER BY year
+        """), {
+            "ptype": asset_lower,
+            "country_iso3": country_iso3,
+            "scenario": scenario,
+        }).mappings().all()
+
+        if rows:
+            pathway = []
+            for r in rows:
+                intensity = float(r["carbon_intensity_kgco2_m2"]) if r["carbon_intensity_kgco2_m2"] else None
+                if intensity is not None:
+                    pathway.append({
+                        "year": int(r["year"]),
+                        "intensity": round(intensity, 2),
+                        "unit": "kgCO2/m2/yr",
+                        "source": "CRREM v2.0 (live)",
+                    })
+            if pathway:
+                return pathway
+    except Exception as exc:
+        logger.debug("CRREM live query failed, falling back to reference: %s", exc)
+
+    # ── Fallback to hardcoded reference ──────────────────────────────────────
+    from api.v1.routes.glidepath_serve import _CRREM_REFERENCE, _CRREM_YEARS
 
     asset_data = _CRREM_REFERENCE.get(asset_lower)
     if not asset_data:
         return None
 
-    country_pathway = asset_data.get(country_upper)
+    # Hardcoded reference uses 2-letter codes
+    country_2 = country_upper[:2] if len(country_upper) >= 2 else country_upper
+    country_pathway = asset_data.get(country_upper) or asset_data.get(country_2)
     if not country_pathway:
         country_pathway = asset_data.get("DE")
-        if not country_pathway:
-            country_pathway = list(asset_data.values())[0]
+    if not country_pathway:
+        country_pathway = list(asset_data.values())[0]
 
     pathway = []
     for i, year in enumerate(_CRREM_YEARS):
@@ -252,7 +291,7 @@ def get_crrem_pathway(
                 "year": year,
                 "intensity": country_pathway[i],
                 "unit": "kgCO2/m2/yr",
-                "source": "CRREM v2.0 (reference)",
+                "source": "CRREM v2.0 (reference fallback)",
             })
 
     return pathway if pathway else None

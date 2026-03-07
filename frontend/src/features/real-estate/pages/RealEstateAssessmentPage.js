@@ -3,7 +3,7 @@
  * Methodology: RICS VPS4 / IVS 2024 / CRREM v2.0 / TCFD / GRESB
  * Covers: CLVaR, Stranding Risk, EPC-adjusted Valuation, Physical Risk, Nature Overlay
  */
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import axios from "axios";
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
@@ -340,20 +340,72 @@ function CLVaRPanel({ properties }) {
 }
 
 // ─── CRREM Stranding Panel ───────────────────────────────────────────────────
+const CRREM_FALLBACK_PATHWAY = [
+  { year: 2025, office: 220, retail: 260, industrial: 110, residential: 180 },
+  { year: 2030, office: 170, retail: 200, industrial: 90, residential: 140 },
+  { year: 2035, office: 120, retail: 150, industrial: 70, residential: 100 },
+  { year: 2040, office: 85, retail: 105, industrial: 50, residential: 70 },
+  { year: 2045, office: 55, retail: 70, industrial: 35, residential: 45 },
+  { year: 2050, office: 30, retail: 40, industrial: 20, residential: 25 },
+];
+
 function CRREMPanel({ properties }) {
-  const crremPathway = [
-    { year: 2025, office: 220, retail: 260, industrial: 110, residential: 180 },
-    { year: 2030, office: 170, retail: 200, industrial: 90, residential: 140 },
-    { year: 2035, office: 120, retail: 150, industrial: 70, residential: 100 },
-    { year: 2040, office: 85, retail: 105, industrial: 50, residential: 70 },
-    { year: 2045, office: 55, retail: 70, industrial: 35, residential: 45 },
-    { year: 2050, office: 30, retail: 40, industrial: 20, residential: 25 },
-  ];
+  const [crremData, setCrremData] = useState({});
+  const [crremSource, setCrremSource] = useState("reference fallback");
+
+  // Fetch live CRREM pathway data for Office and Retail from Data Hub
+  useEffect(() => {
+    const fetchCRREM = async () => {
+      const types = ["office", "retail"];
+      const results = {};
+      let source = "reference fallback";
+      for (const ptype of types) {
+        try {
+          const res = await axios.get(`${API}/api/v1/glidepaths/crrem/GB/${ptype}`);
+          if (res.data?.pathway_series?.length > 0) {
+            results[ptype] = res.data.pathway_series;
+            source = res.data.source || "CRREM v2.0 (live)";
+          }
+        } catch { /* fallback below */ }
+      }
+      if (Object.keys(results).length > 0) {
+        setCrremData(results);
+        setCrremSource(source);
+      }
+    };
+    fetchCRREM();
+  }, []);
+
+  // Build pathway from live data or fallback
+  const crremPathway = useMemo(() => {
+    if (crremData.office) {
+      // Merge live data for available types
+      const years = [...new Set([
+        ...(crremData.office || []).map(p => p.year),
+        ...(crremData.retail || []).map(p => p.year),
+      ])].sort((a, b) => a - b);
+
+      return years.map(year => {
+        const officeRow = (crremData.office || []).find(p => p.year === year);
+        const retailRow = (crremData.retail || []).find(p => p.year === year);
+        return {
+          year,
+          office: officeRow ? officeRow.energy_intensity_kwh_m2 || officeRow.intensity * 5 : null,
+          retail: retailRow ? retailRow.energy_intensity_kwh_m2 || retailRow.intensity * 5 : null,
+          industrial: null,
+          residential: null,
+        };
+      }).filter(r => r.office || r.retail);
+    }
+    return CRREM_FALLBACK_PATHWAY;
+  }, [crremData]);
 
   const colors = ["#6366f1", "#10b981", "#f59e0b", "#ef4444", "#3b82f6"];
 
   const chartData = crremPathway.map(row => {
-    const point = { year: row.year, "Office Pathway": row.office, "Retail Pathway": row.retail };
+    const point = { year: row.year };
+    if (row.office) point["Office Pathway"] = Math.round(row.office);
+    if (row.retail) point["Retail Pathway"] = Math.round(row.retail);
     properties.forEach((p, i) => {
       const yearsAhead = row.year - 2025;
       const improvement = 3.5;
@@ -368,6 +420,7 @@ function CRREMPanel({ properties }) {
         <strong>Methodology:</strong> CRREM v2.0 (2023) energy/carbon intensity pathways aligned with Paris Agreement.
         Stranding occurs when a property's projected energy intensity exceeds the CRREM budget for its asset class and geography.
         Assumes 3.5% p.a. efficiency improvement post-retrofit CapEx.
+        <span className="ml-2 opacity-70">Source: {crremSource}</span>
       </div>
       <ResponsiveContainer width="100%" height={280}>
         <ComposedChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 5 }}>

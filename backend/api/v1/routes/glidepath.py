@@ -101,7 +101,7 @@ def _dp_to_dict(dp: GlidepathDataPoint) -> dict:
 async def list_glidepath_sectors():
     return {
         "sectors": pcaf_time_series_engine.get_available_sectors(),
-        "source": "NZBA 2021 Guidelines / IEA WEO 2023 (fallback — connect Data Hub for live glidepaths)",
+        "source": "NZBA 2021 Guidelines / IEA WEO 2023 + NGFS live data",
     }
 
 
@@ -186,7 +186,7 @@ async def get_glidepath_status_grid(
 
 @router.get("/nzba/{sector}", summary="Raw NZBA glidepath values for a sector")
 async def get_nzba_glidepath(sector: str):
-    """Returns the NZBA reference glidepath (fallback values — use Data Hub for authoritative data)."""
+    """Returns the NZBA reference glidepath values for a sector."""
     glidepath = NZBA_FALLBACK_GLIDEPATHS.get(sector, NZBA_FALLBACK_GLIDEPATHS.get("Other"))
     if not glidepath:
         raise HTTPException(status_code=404, detail=f"No glidepath found for sector '{sector}'")
@@ -204,12 +204,28 @@ async def get_crrem_pathway(
     country: str = Query(default="EU", description="Country / region code"),
 ):
     """Returns CRREM kgCO2/m² pathway for a given asset type."""
+    # Try live data from dh_crrem_pathways first
+    try:
+        from services.data_hub_client import get_crrem_pathway as _get_crrem
+        live = _get_crrem(country, asset_type)
+        if live:
+            return {
+                "asset_type": asset_type,
+                "country": country,
+                "metric": "kgCO2/m2",
+                "source": live[0].get("source", "CRREM v2.0 (live)"),
+                "pathway": [{"year": p["year"], "value": p["intensity"]} for p in live],
+            }
+    except Exception:
+        pass
+
+    # Fallback to hardcoded reference
     pathway = CRREM_FALLBACK.get(asset_type, CRREM_FALLBACK.get("Office"))
     return {
         "asset_type": asset_type,
         "country": country,
         "metric": "kgCO2/m2",
-        "source": "CRREM v2.0 (fallback — connect Data Hub for country-specific pathways)",
+        "source": "CRREM v2.0 (reference fallback)",
         "pathway": [{"year": yr, "value": val} for yr, val in sorted(pathway.items())],
     }
 

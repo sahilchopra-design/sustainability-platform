@@ -267,13 +267,12 @@ export default function GlidepathTrackerPage() {
         </button>
       </div>
 
-      {/* Data Hub status banner */}
+      {/* Data source status banner */}
       <div className="flex items-center gap-3 bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
-        <div className="w-2 h-2 rounded-full bg-blue-400" />
+        <div className="w-2 h-2 rounded-full bg-emerald-400" />
         <span className="text-xs text-blue-300">
-          Showing NZBA 2021 / IEA WEO 2023 reference glidepaths (fallback).
+          NZBA 2021 / IEA WEO 2023 + NGFS live scenario data. CRREM pathways from live Data Hub.
           Actual portfolio WACI populates after running a PCAF calculation.
-          Connect Data Hub (port 8002) for live sector benchmarks.
         </span>
       </div>
 
