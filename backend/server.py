@@ -88,6 +88,9 @@ from api.v1.routes.violations import router as violations_router
 from api.v1.routes.gdelt_controversy import router as gdelt_controversy_router
 from api.v1.routes.geothermal import router as geothermal_router
 from api.v1.routes.irena_five_pillars import router as irena_five_pillars_router
+from api.v1.routes.pcaf_asset_classes import router as pcaf_asset_classes_router
+from api.v1.routes.pcaf_advanced import router as pcaf_advanced_router
+from api.v1.routes.sat_coal_checker import router as sat_coal_checker_router
 
 
 @asynccontextmanager
@@ -236,6 +239,9 @@ app.include_router(violations_router)              # Violations -- Corporate pen
 app.include_router(gdelt_controversy_router)       # GDELT -- Events, GKG, Controversy Scores
 app.include_router(geothermal_router)              # Geothermal -- LCOE, viability, seismicity, NPV/IRR
 app.include_router(irena_five_pillars_router)      # IRENA Five Pillars -- Transition readiness assessment
+app.include_router(pcaf_asset_classes_router)      # PCAF v2.0 -- All 7 asset class financed emissions (investor-grade)
+app.include_router(pcaf_advanced_router)           # PCAF Advanced -- Security/Fund/Portfolio/Index multi-level analytics
+app.include_router(sat_coal_checker_router)        # SAT Coal -- IEA NZE / NZBA coal phase-out criteria checker
 
 # Audit middleware — append-only log for all mutating requests (POST/PUT/PATCH/DELETE)
 from middleware.audit_middleware import AuditMiddleware
