@@ -36,8 +36,9 @@ router = APIRouter(prefix="/api/v1/data-intake", tags=["Data Intake"])
 
 @router.get("/status")
 def get_data_intake_status(db: Session = Depends(get_db)):
-    """Return completion indicators for each data intake module."""
+    """Return completion indicators for each data intake module + Data Hub reference counts."""
     try:
+        # -- Client intake module counts --
         counts = {}
         tables = [
             ("loan_portfolio",    "di_loan_portfolio_uploads"),
@@ -52,72 +53,135 @@ def get_data_intake_status(db: Session = Depends(get_db)):
             row = db.execute(text(f"SELECT COUNT(*) FROM {tbl}")).fetchone()
             counts[key] = row[0] if row else 0
 
+        modules = [
+            {
+                "id": "loan_portfolio",
+                "label": "Loan Portfolio",
+                "route": "/data-intake/portfolio",
+                "count": counts["loan_portfolio"],
+                "unit": "uploads",
+                "status": "active" if counts["loan_portfolio"] > 0 else "empty",
+                "priority": "P0",
+            },
+            {
+                "id": "counterparty",
+                "label": "Counterparty Emissions",
+                "route": "/data-intake/counterparty",
+                "count": counts["counterparty"],
+                "unit": "counterparties",
+                "status": "active" if counts["counterparty"] > 0 else "empty",
+                "priority": "P0",
+            },
+            {
+                "id": "real_estate",
+                "label": "Real Estate EUI",
+                "route": "/data-intake/real-estate",
+                "count": counts["real_estate"],
+                "unit": "assets",
+                "status": "active" if counts["real_estate"] > 0 else "empty",
+                "priority": "P1",
+            },
+            {
+                "id": "shipping_fleet",
+                "label": "Shipping Fleet",
+                "route": "/data-intake/shipping-fleet",
+                "count": counts["shipping_fleet"],
+                "unit": "vessels",
+                "status": "active" if counts["shipping_fleet"] > 0 else "empty",
+                "priority": "P1",
+            },
+            {
+                "id": "steel_borrowers",
+                "label": "Steel Borrowers",
+                "route": "/data-intake/steel-borrowers",
+                "count": counts["steel_borrowers"],
+                "unit": "borrowers",
+                "status": "active" if counts["steel_borrowers"] > 0 else "empty",
+                "priority": "P1",
+            },
+            {
+                "id": "project_finance",
+                "label": "Project Finance",
+                "route": "/data-intake/project-finance",
+                "count": counts["project_finance"],
+                "unit": "projects",
+                "status": "active" if counts["project_finance"] > 0 else "empty",
+                "priority": "P1",
+            },
+            {
+                "id": "internal_config",
+                "label": "Internal Config",
+                "route": "/data-intake/internal-config",
+                "count": counts["internal_config"],
+                "unit": "keys",
+                "status": "configured" if counts["internal_config"] >= 8 else "empty",
+                "priority": "P1",
+            },
+        ]
+
+        # -- Data Hub reference data counts --
+        dh_tables = [
+            ("sbti_companies",        "dh_sbti_companies",        "SBTi Companies",            "companies",  "ESG"),
+            ("ca100_assessments",     "dh_ca100_assessments",     "CA100+ Benchmark 2025",     "companies",  "ESG"),
+            ("country_risk_indices",  "dh_country_risk_indices",  "Country Risk Indices",      "entries",    "Governance"),
+            ("reference_data",        "dh_reference_data",        "Reference Data (Coal/Other)","entries",   "Energy"),
+            ("crrem_pathways",        "dh_crrem_pathways",        "CRREM Pathways",            "pathways",   "Real Estate"),
+            ("irena_lcoe",            "dh_irena_lcoe",            "IRENA LCOE",                "records",    "Energy"),
+            ("grid_emission_factors", "dh_grid_emission_factors", "Grid Emission Factors",     "countries",  "Emissions"),
+            ("controversy_scores",    "dh_controversy_scores",    "GDELT Controversy Scores",  "entities",   "ESG"),
+            ("violation_tracker",     "dh_violation_tracker",     "Violation Tracker",         "violations", "Governance"),
+            ("gdelt_events",          "dh_gdelt_events",          "GDELT Events",             "events",     "ESG"),
+            ("application_kpis",      "dh_application_kpis",      "Application KPIs",         "kpis",       "Platform"),
+        ]
+        data_hub = []
+        dh_total = 0
+        for key, tbl, label, unit, category in dh_tables:
+            try:
+                row = db.execute(text(f"SELECT COUNT(*) FROM {tbl}")).fetchone()
+                cnt = row[0] if row else 0
+            except Exception:
+                cnt = 0
+            dh_total += cnt
+            data_hub.append({
+                "id": key,
+                "label": label,
+                "table": tbl,
+                "count": cnt,
+                "unit": unit,
+                "category": category,
+                "status": "active" if cnt > 0 else "empty",
+            })
+
+        # -- Country Risk breakdown (sub-indices) --
+        cri_breakdown = []
+        try:
+            rows = db.execute(text(
+                "SELECT index_name, COUNT(*) FROM dh_country_risk_indices GROUP BY index_name ORDER BY index_name"
+            )).fetchall()
+            cri_breakdown = [{"index": r[0], "count": r[1]} for r in rows]
+        except Exception:
+            pass
+
+        # -- Summary stats --
+        active_modules = [m for m in modules if m["status"] in ("active", "configured")]
+        total_client = sum(m["count"] for m in modules)
+        completion_pct = round(len(active_modules) / len(modules) * 100) if modules else 0
+        dh_active = len([d for d in data_hub if d["status"] == "active"])
+
         return {
-            "modules": [
-                {
-                    "id": "loan_portfolio",
-                    "label": "Loan Portfolio",
-                    "route": "/data-intake/portfolio",
-                    "count": counts["loan_portfolio"],
-                    "unit": "uploads",
-                    "status": "active" if counts["loan_portfolio"] > 0 else "empty",
-                    "priority": "P0",
-                },
-                {
-                    "id": "counterparty",
-                    "label": "Counterparty Emissions",
-                    "route": "/data-intake/counterparty",
-                    "count": counts["counterparty"],
-                    "unit": "counterparties",
-                    "status": "active" if counts["counterparty"] > 0 else "empty",
-                    "priority": "P0",
-                },
-                {
-                    "id": "real_estate",
-                    "label": "Real Estate EUI",
-                    "route": "/data-intake/real-estate",
-                    "count": counts["real_estate"],
-                    "unit": "assets",
-                    "status": "active" if counts["real_estate"] > 0 else "empty",
-                    "priority": "P1",
-                },
-                {
-                    "id": "shipping_fleet",
-                    "label": "Shipping Fleet",
-                    "route": "/data-intake/shipping-fleet",
-                    "count": counts["shipping_fleet"],
-                    "unit": "vessels",
-                    "status": "active" if counts["shipping_fleet"] > 0 else "empty",
-                    "priority": "P1",
-                },
-                {
-                    "id": "steel_borrowers",
-                    "label": "Steel Borrowers",
-                    "route": "/data-intake/steel-borrowers",
-                    "count": counts["steel_borrowers"],
-                    "unit": "borrowers",
-                    "status": "active" if counts["steel_borrowers"] > 0 else "empty",
-                    "priority": "P1",
-                },
-                {
-                    "id": "project_finance",
-                    "label": "Project Finance",
-                    "route": "/data-intake/project-finance",
-                    "count": counts["project_finance"],
-                    "unit": "projects",
-                    "status": "active" if counts["project_finance"] > 0 else "empty",
-                    "priority": "P1",
-                },
-                {
-                    "id": "internal_config",
-                    "label": "Internal Config",
-                    "route": "/data-intake/internal-config",
-                    "count": counts["internal_config"],
-                    "unit": "keys",
-                    "status": "configured" if counts["internal_config"] >= 8 else "empty",
-                    "priority": "P1",
-                },
-            ]
+            "modules": modules,
+            "data_hub": data_hub,
+            "country_risk_breakdown": cri_breakdown,
+            "summary": {
+                "total_client_records": total_client,
+                "total_reference_records": dh_total,
+                "client_modules_active": len(active_modules),
+                "client_modules_total": len(modules),
+                "client_completion_pct": completion_pct,
+                "dh_sources_active": dh_active,
+                "dh_sources_total": len(data_hub),
+                "dh_completion_pct": round(dh_active / len(data_hub) * 100) if data_hub else 0,
+            },
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
