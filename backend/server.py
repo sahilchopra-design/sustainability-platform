@@ -85,6 +85,7 @@ from api.v1.routes.nature_data import router as nature_data_router
 from api.v1.routes.energy_data import router as energy_data_router
 from api.v1.routes.reference_data import router as reference_data_router
 from api.v1.routes.violations import router as violations_router
+from api.v1.routes.gdelt_controversy import router as gdelt_controversy_router
 
 
 @asynccontextmanager
@@ -230,6 +231,7 @@ app.include_router(nature_data_router)             # Nature Data -- WDPA protect
 app.include_router(energy_data_router)             # Energy Data -- GEM Global Coal Plant Tracker
 app.include_router(reference_data_router)          # Reference Data -- IRENA LCOE, CRREM, Grid EFs
 app.include_router(violations_router)              # Violations -- Corporate penalty tracker
+app.include_router(gdelt_controversy_router)       # GDELT -- Events, GKG, Controversy Scores
 
 # Audit middleware — append-only log for all mutating requests (POST/PUT/PATCH/DELETE)
 from middleware.audit_middleware import AuditMiddleware
