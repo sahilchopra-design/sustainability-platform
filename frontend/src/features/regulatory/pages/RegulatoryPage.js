@@ -94,12 +94,12 @@ function SFDRPanel() {
   const handleCalc = async () => {
     setLoading(true); setError(null); setResult(null);
     try {
-      const { data } = await axios.post(`${API}/api/v1/pcaf/sfdr-pai`, {
+      const { data } = await axios.post(`${API}/api/v1/sfdr/pai`, {
         investees, reporting_year: reportingYear,
       });
       setResult(data);
     } catch (err) {
-      setError(err?.response?.data?.detail || err.message);
+      { const d = err?.response?.data?.detail; setError(typeof d === "string" ? d : Array.isArray(d) ? d.map(e => e.msg || JSON.stringify(e)).join("; ") : err.message); }
     } finally {
       setLoading(false);
     }
@@ -310,12 +310,12 @@ function EUTaxonomyPanel() {
   const handleCalc = async () => {
     setLoading(true); setError(null); setResult(null);
     try {
-      const { data } = await axios.post(`${API}/api/v1/pcaf/eu-taxonomy`, {
+      const { data } = await axios.post(`${API}/api/v1/eu-taxonomy/alignment`, {
         entities, reporting_year: reportingYear,
       });
       setResult(data);
     } catch (err) {
-      setError(err?.response?.data?.detail || err.message);
+      { const d = err?.response?.data?.detail; setError(typeof d === "string" ? d : Array.isArray(d) ? d.map(e => e.msg || JSON.stringify(e)).join("; ") : err.message); }
     } finally {
       setLoading(false);
     }

@@ -2,9 +2,9 @@
 Data Hub Catalog API -- unified data source catalog, cross-source search,
 entity 360-view, and coverage analytics.
 
-Serves as the primary discovery and integration layer across all 8 ingested
+Serves as the primary discovery and integration layer across all 13 ingested
 data sources (GLEIF, Sanctions, Climate TRACE, OWID, NGFS, SBTi, SEC EDGAR,
-yfinance).
+yfinance, CA100+, CPI, FSI, Freedom House FIW, UNDP GII, GEM Coal Tracker).
 
 Endpoints:
   GET  /data-hub-catalog/sources        -- data source catalog with live row counts
@@ -99,6 +99,66 @@ _SOURCE_REGISTRY = [
         "table": "dh_yfinance_market_data",
         "access": "Python Library",
     },
+    # ── Reference datasets (migration 033) ──────────────────────────────────
+    {
+        "key": "ca100",
+        "name": "Climate Action 100+ Benchmark 2025",
+        "category": "ESG",
+        "description": "Net-zero company benchmark — 169 focus companies assessed across 10 indicators",
+        "table": "dh_ca100_assessments",
+        "access": "Excel Download",
+        "api_route": "/api/v1/ca100",
+    },
+    {
+        "key": "cpi",
+        "name": "Transparency International CPI 2023",
+        "category": "Governance",
+        "description": "Corruption Perceptions Index — 180 countries scored 0-100 (higher = less corrupt)",
+        "table": "dh_country_risk_indices",
+        "table_filter": "index_name = 'CPI'",
+        "access": "Excel Download",
+        "api_route": "/api/v1/country-risk",
+    },
+    {
+        "key": "fsi",
+        "name": "Fragile States Index 2023",
+        "category": "Governance",
+        "description": "Fund for Peace FSI — 176 countries scored 0-120 (higher = more fragile)",
+        "table": "dh_country_risk_indices",
+        "table_filter": "index_name = 'FSI'",
+        "access": "Excel Download",
+        "api_route": "/api/v1/country-risk",
+    },
+    {
+        "key": "fh_fiw",
+        "name": "Freedom House FIW 2013-2025",
+        "category": "Governance",
+        "description": "Freedom in the World — 195 countries, PR/CL ratings (1 = most free), 13 years",
+        "table": "dh_country_risk_indices",
+        "table_filter": "index_name = 'FH_FIW'",
+        "access": "Excel Download",
+        "api_route": "/api/v1/country-risk",
+    },
+    {
+        "key": "undp_gii",
+        "name": "UNDP HDR Gender Inequality Index",
+        "category": "Social",
+        "description": "UNDP GII — ~195 countries scored 0-1 (higher = more gender inequality)",
+        "table": "dh_country_risk_indices",
+        "table_filter": "index_name = 'UNDP_GII'",
+        "access": "Excel Download",
+        "api_route": "/api/v1/country-risk",
+    },
+    {
+        "key": "gem_coal",
+        "name": "GEM Coal Plant Tracker (Country)",
+        "category": "Energy",
+        "description": "Global Energy Monitor coal capacity by country — operating, construction, announced, retired",
+        "table": "dh_reference_data",
+        "table_filter": "source_name = 'GEM Coal Plant Tracker'",
+        "access": "CSV Download",
+        "api_route": "/api/v1/country-risk/coal-capacity",
+    },
 ]
 
 # Map source key to ORM model
@@ -124,7 +184,10 @@ def list_catalog_sources(
     for src in _SOURCE_REGISTRY:
         model = _MODEL_MAP.get(src["key"])
         row_count = 0
+        last_sync = None
+
         if model:
+            # ORM-based sources
             try:
                 row_count = db.query(func.count(
                     getattr(model, "id", None) or getattr(model, "lei", None)
@@ -132,25 +195,48 @@ def list_catalog_sources(
             except Exception:
                 row_count = 0
 
-        # Try to get last ingested_at timestamp
-        last_sync = None
-        if model and hasattr(model, "ingested_at"):
-            try:
-                ts = db.query(func.max(model.ingested_at)).scalar()
-                last_sync = ts.isoformat() if ts else None
-            except Exception:
-                pass
-        elif model and hasattr(model, "last_update_date"):
-            try:
-                ts = db.query(func.max(model.last_update_date)).scalar()
-                last_sync = ts.isoformat() if ts else None
-            except Exception:
-                pass
+            if hasattr(model, "ingested_at"):
+                try:
+                    ts = db.query(func.max(model.ingested_at)).scalar()
+                    last_sync = ts.isoformat() if ts else None
+                except Exception:
+                    pass
+            elif hasattr(model, "last_update_date"):
+                try:
+                    ts = db.query(func.max(model.last_update_date)).scalar()
+                    last_sync = ts.isoformat() if ts else None
+                except Exception:
+                    pass
+        else:
+            # Raw-SQL sources (reference datasets without ORM models)
+            table_name = src.get("table")
+            table_filter = src.get("table_filter")
+            if table_name:
+                try:
+                    where = f"WHERE {table_filter}" if table_filter else ""
+                    row_count = db.execute(
+                        text(f"SELECT COUNT(*) FROM {table_name} {where}")
+                    ).scalar() or 0
+                except Exception:
+                    row_count = 0
+                try:
+                    ts = db.execute(
+                        text(f"SELECT MAX(ingested_at) FROM {table_name} {where}")
+                    ).scalar()
+                    last_sync = ts.isoformat() if ts else None
+                except Exception:
+                    pass
 
         sources.append({
-            **src,
+            "key": src["key"],
+            "name": src["name"],
+            "category": src["category"],
+            "description": src["description"],
+            "table": src["table"],
+            "access": src["access"],
             "row_count": row_count,
             "last_sync": last_sync,
+            **({"api_route": src["api_route"]} if "api_route" in src else {}),
         })
 
     return {"sources": sources, "total_sources": len(sources)}
@@ -230,6 +316,37 @@ def get_coverage(
         "distinct_tickers": db.query(func.count(distinct(YfinanceMarketData.ticker))).scalar() or 0,
         "distinct_sectors": db.query(func.count(distinct(YfinanceMarketData.sector))).scalar() or 0,
     }
+
+    # ── Reference datasets (raw SQL) ───────────────────────────────────────
+    try:
+        coverage["ca100"] = {
+            "records": db.execute(text("SELECT COUNT(*) FROM dh_ca100_assessments")).scalar() or 0,
+            "distinct_sectors": db.execute(text("SELECT COUNT(DISTINCT sector) FROM dh_ca100_assessments WHERE sector IS NOT NULL")).scalar() or 0,
+            "distinct_regions": db.execute(text("SELECT COUNT(DISTINCT hq_region) FROM dh_ca100_assessments WHERE hq_region IS NOT NULL")).scalar() or 0,
+        }
+    except Exception:
+        coverage["ca100"] = {"records": 0}
+
+    try:
+        coverage["country_risk"] = {
+            "records": db.execute(text("SELECT COUNT(*) FROM dh_country_risk_indices")).scalar() or 0,
+            "distinct_indices": db.execute(text("SELECT COUNT(DISTINCT index_name) FROM dh_country_risk_indices")).scalar() or 0,
+            "distinct_countries": db.execute(text("SELECT COUNT(DISTINCT country_iso3) FROM dh_country_risk_indices")).scalar() or 0,
+            "year_range": {
+                "min": db.execute(text("SELECT MIN(year) FROM dh_country_risk_indices")).scalar(),
+                "max": db.execute(text("SELECT MAX(year) FROM dh_country_risk_indices")).scalar(),
+            },
+        }
+    except Exception:
+        coverage["country_risk"] = {"records": 0}
+
+    try:
+        coverage["gem_coal"] = {
+            "records": db.execute(text("SELECT COUNT(*) FROM dh_reference_data WHERE source_name = 'GEM Coal Plant Tracker'")).scalar() or 0,
+            "distinct_countries": db.execute(text("SELECT COUNT(DISTINCT entity_name) FROM dh_reference_data WHERE source_name = 'GEM Coal Plant Tracker'")).scalar() or 0,
+        }
+    except Exception:
+        coverage["gem_coal"] = {"records": 0}
 
     total_records = sum(v.get("records", 0) for v in coverage.values())
     return {"coverage": coverage, "total_records": total_records}
@@ -363,6 +480,39 @@ def cross_source_search(
             results["owid"] = [{
                 "country_iso3": r[0], "country_name": r[1], "records": r[2],
             } for r in owid_results]
+
+    # CA100+ search (by company name or ISIN)
+    if not source_filter or "ca100" in source_filter:
+        try:
+            ca100_rows = db.execute(text("""
+                SELECT id, company_name, isin, sector_cluster, sector, hq_region
+                FROM dh_ca100_assessments
+                WHERE LOWER(company_name) LIKE :q OR LOWER(isin) LIKE :q
+                ORDER BY company_name LIMIT :lim
+            """), {"q": q_like.lower(), "lim": limit}).fetchall()
+            if ca100_rows:
+                results["ca100"] = [{
+                    "id": r[0], "company_name": r[1], "isin": r[2],
+                    "sector_cluster": r[3], "sector": r[4], "hq_region": r[5],
+                } for r in ca100_rows]
+        except Exception:
+            pass
+
+    # Country Risk search (by country name or ISO3)
+    if not source_filter or "country_risk" in source_filter:
+        try:
+            cr_rows = db.execute(text("""
+                SELECT DISTINCT country_iso3, country_name
+                FROM dh_country_risk_indices
+                WHERE LOWER(country_name) LIKE :q OR UPPER(country_iso3) LIKE :q2
+                ORDER BY country_name LIMIT :lim
+            """), {"q": q_like.lower(), "q2": q_like.upper(), "lim": limit}).fetchall()
+            if cr_rows:
+                results["country_risk"] = [{
+                    "country_iso3": r[0], "country_name": r[1],
+                } for r in cr_rows]
+        except Exception:
+            pass
 
     total_hits = sum(len(v) for v in results.values())
     return {
@@ -524,5 +674,28 @@ def get_freshness(
             except Exception:
                 entry["last_ingested"] = None
         freshness[src["key"]] = entry
+
+    # ── Reference datasets (raw SQL) ───────────────────────────────────────
+    _raw_freshness = [
+        ("ca100", "CA100+ Benchmark 2025", "dh_ca100_assessments", None),
+        ("cpi", "CPI 2023", "dh_country_risk_indices", "index_name = 'CPI'"),
+        ("fsi", "FSI 2023", "dh_country_risk_indices", "index_name = 'FSI'"),
+        ("fh_fiw", "Freedom House FIW", "dh_country_risk_indices", "index_name = 'FH_FIW'"),
+        ("undp_gii", "UNDP GII", "dh_country_risk_indices", "index_name = 'UNDP_GII'"),
+        ("gem_coal", "GEM Coal Tracker", "dh_reference_data", "source_name = 'GEM Coal Plant Tracker'"),
+    ]
+    for rkey, rname, rtable, rfilter in _raw_freshness:
+        where = f"WHERE {rfilter}" if rfilter else ""
+        entry = {"source": rname, "key": rkey}
+        try:
+            entry["row_count"] = db.execute(text(f"SELECT COUNT(*) FROM {rtable} {where}")).scalar() or 0
+        except Exception:
+            entry["row_count"] = 0
+        try:
+            ts = db.execute(text(f"SELECT MAX(ingested_at) FROM {rtable} {where}")).scalar()
+            entry["last_ingested"] = ts.isoformat() if ts else None
+        except Exception:
+            entry["last_ingested"] = None
+        freshness[rkey] = entry
 
     return {"freshness": freshness}

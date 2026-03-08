@@ -53,13 +53,20 @@ function Badge({ label, color = 'bg-white/[0.06] text-white/60' }) {
   return <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${color}`}>{label}</span>;
 }
 
-function Card({ title, subtitle, children, className = '' }) {
+function Card({ title, subtitle, badge, children, className = '' }) {
   return (
     <div className={`bg-[#0d1424] rounded-xl border border-white/[0.06] shadow-sm ${className}`}>
       {(title || subtitle) && (
-        <div className="px-6 py-4 border-b border-white/[0.04]">
-          {title && <h2 className="text-sm font-semibold text-white/90">{title}</h2>}
-          {subtitle && <p className="text-xs text-white/40 mt-0.5">{subtitle}</p>}
+        <div className="px-6 py-4 border-b border-white/[0.04] flex items-center justify-between">
+          <div>
+            {title && <h2 className="text-sm font-semibold text-white/90">{title}</h2>}
+            {subtitle && <p className="text-xs text-white/40 mt-0.5">{subtitle}</p>}
+          </div>
+          {badge && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+              {badge}
+            </span>
+          )}
         </div>
       )}
       <div className="p-6">{children}</div>
@@ -182,7 +189,7 @@ function Scope3Panel() {
       setError('Add at least one activity with a quantity > 0.'); setLoading(false); return;
     }
     try {
-      const { data } = await axios.post(`${API}/api/v1/supply-chain/scope3-assessment`, {
+      const { data } = await axios.post(`${API}/api/v1/supply-chain/scope3/calculate`, {
         entity_id: entityId || 'entity_001',
         reporting_year: reportingYear,
         activities_by_category: cleanedActivities,
@@ -190,7 +197,7 @@ function Scope3Panel() {
       });
       setResult(data);
     } catch (err) {
-      setError(err?.response?.data?.detail || err.message);
+      { const d = err?.response?.data?.detail; setError(typeof d === "string" ? d : Array.isArray(d) ? d.map(e => e.msg || JSON.stringify(e)).join("; ") : err.message); }
     } finally {
       setLoading(false);
     }
@@ -474,13 +481,52 @@ function SBTiPanel() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
+  // SBTi company search state
+  const [sbtiSearch, setSbtiSearch] = useState('');
+  const [sbtiResults, setSbtiResults] = useState([]);
+  const [sbtiSearching, setSbtiSearching] = useState(false);
+  const [sbtiStats, setSbtiStats] = useState(null);
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  // Load SBTi stats on mount
+  React.useEffect(() => {
+    axios.get(`${API}/api/v1/scenarios/sbti/stats`).then(r => setSbtiStats(r.data)).catch(() => {});
+  }, []);
+
+  // Debounced company search
+  React.useEffect(() => {
+    if (sbtiSearch.length < 2) { setSbtiResults([]); return; }
+    const t = setTimeout(async () => {
+      setSbtiSearching(true);
+      try {
+        const { data } = await axios.get(`${API}/api/v1/scenarios/sbti`, { params: { company: sbtiSearch, limit: 8 } });
+        setSbtiResults(data.records || []);
+        setShowDropdown(true);
+      } catch { setSbtiResults([]); }
+      setSbtiSearching(false);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [sbtiSearch]);
+
+  const selectCompany = (c) => {
+    setSelectedCompany(c);
+    setSbtiSearch(c.company_name);
+    setShowDropdown(false);
+    set('entity_id', c.id);
+    // Pre-fill form with SBTi data if available
+    if (c.near_term_target_year) set('target_year', c.near_term_target_year);
+    if (c.near_term_ambition === '1.5C') set('sbti_pathway', '1.5C');
+    else if (c.near_term_ambition === 'Well-below 2C' || c.near_term_ambition === 'WB2C') set('sbti_pathway', 'well-below-2C');
+  };
+
   const handleCalc = async () => {
     setLoading(true); setError(null); setResult(null);
     try {
-      const { data } = await axios.post(`${API}/api/v1/supply-chain/sbti-trajectory`, form);
+      const { data } = await axios.post(`${API}/api/v1/supply-chain/scope3/sbti-target`, { ...form, entity_id: form.entity_id || "entity_001" });
       setResult(data);
     } catch (err) {
-      setError(err?.response?.data?.detail || err.message);
+      { const d = err?.response?.data?.detail; setError(typeof d === "string" ? d : Array.isArray(d) ? d.map(e => e.msg || JSON.stringify(e)).join("; ") : err.message); }
     } finally {
       setLoading(false);
     }
@@ -497,8 +543,114 @@ function SBTiPanel() {
 
   return (
     <div className="space-y-6">
-      <Card title="SBTi Target Setting & Trajectory" subtitle="Science Based Targets initiative — Corporate Net-Zero Standard v2.0">
+      {/* SBTi Stats Banner */}
+      {sbtiStats && (
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+          <div className="bg-[#0d1424] rounded-lg border border-white/[0.06] p-3 text-center">
+            <p className="text-lg font-bold text-cyan-400">{sbtiStats.total_companies?.toLocaleString()}</p>
+            <p className="text-[10px] text-white/30">Total Companies</p>
+          </div>
+          <div className="bg-[#0d1424] rounded-lg border border-white/[0.06] p-3 text-center">
+            <p className="text-lg font-bold text-emerald-400">{sbtiStats.committed?.toLocaleString()}</p>
+            <p className="text-[10px] text-white/30">Committed</p>
+          </div>
+          <div className="bg-[#0d1424] rounded-lg border border-white/[0.06] p-3 text-center">
+            <p className="text-lg font-bold text-violet-400">{sbtiStats.targets_set?.toLocaleString()}</p>
+            <p className="text-[10px] text-white/30">Targets Set</p>
+          </div>
+          <div className="bg-[#0d1424] rounded-lg border border-white/[0.06] p-3 text-center">
+            <p className="text-lg font-bold text-amber-400">{sbtiStats.net_zero_committed?.toLocaleString()}</p>
+            <p className="text-[10px] text-white/30">Net Zero Committed</p>
+          </div>
+          <div className="bg-[#0d1424] rounded-lg border border-white/[0.06] p-3 text-center">
+            <p className="text-lg font-bold text-blue-400">{sbtiStats.aligned_1_5c?.toLocaleString()}</p>
+            <p className="text-[10px] text-white/30">1.5°C Aligned</p>
+          </div>
+          <div className="bg-[#0d1424] rounded-lg border border-white/[0.06] p-3 text-center">
+            <p className="text-lg font-bold text-white/70">{sbtiStats.sectors}</p>
+            <p className="text-[10px] text-white/30">Sectors</p>
+          </div>
+          <div className="bg-[#0d1424] rounded-lg border border-white/[0.06] p-3 text-center">
+            <p className="text-lg font-bold text-white/70">{sbtiStats.countries}</p>
+            <p className="text-[10px] text-white/30">Countries</p>
+          </div>
+        </div>
+      )}
+
+      <Card title="SBTi Target Setting & Trajectory" subtitle="Science Based Targets initiative — Corporate Net-Zero Standard v2.0" badge={sbtiStats ? `${sbtiStats.total_companies?.toLocaleString()} companies in registry` : undefined}>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {/* Company Search Autocomplete */}
+          <div className="col-span-2 md:col-span-3 relative">
+            <label className="block text-xs font-medium text-white/60 mb-1">
+              Search SBTi Company Registry
+              <span className="text-white/30 ml-2 font-normal">({sbtiStats?.total_companies?.toLocaleString() || '...'} companies)</span>
+            </label>
+            <input
+              className="w-full border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+              value={sbtiSearch}
+              onChange={e => { setSbtiSearch(e.target.value); setShowDropdown(true); }}
+              onFocus={() => sbtiResults.length > 0 && setShowDropdown(true)}
+              placeholder="Type company name (e.g. Shell, Unilever, BASF)..."
+            />
+            {sbtiSearching && (
+              <div className="absolute right-3 top-8">
+                <div className="w-4 h-4 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+              </div>
+            )}
+            {showDropdown && sbtiResults.length > 0 && (
+              <div className="absolute z-50 w-full mt-1 bg-[#0d1424] border border-white/[0.1] rounded-lg shadow-xl max-h-64 overflow-y-auto">
+                {sbtiResults.map(c => (
+                  <button
+                    key={c.id}
+                    onClick={() => selectCompany(c)}
+                    className="w-full text-left px-4 py-2.5 hover:bg-white/[0.04] border-b border-white/[0.03] last:border-0 transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-white/80 font-medium">{c.company_name}</span>
+                      <span className={`text-[10px] px-2 py-0.5 rounded border ${
+                        c.target_status === 'Targets set' ? 'bg-violet-500/10 text-violet-400 border-violet-500/20'
+                        : c.target_status === 'Committed' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                        : 'bg-white/[0.04] text-white/40 border-white/[0.06]'
+                      }`}>{c.target_status || 'unknown'}</span>
+                    </div>
+                    <div className="flex gap-3 mt-0.5 text-[10px] text-white/30">
+                      <span>{c.sector || 'N/A'}</span>
+                      <span>{c.country || 'N/A'}</span>
+                      {c.near_term_ambition && <span className="text-cyan-400">{c.near_term_ambition}</span>}
+                      {c.net_zero_committed && <span className="text-amber-400">Net Zero</span>}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Selected Company Info */}
+          {selectedCompany && (
+            <div className="col-span-2 md:col-span-3 bg-[#080e1c] rounded-lg border border-cyan-500/20 p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-white/90">{selectedCompany.company_name}</p>
+                  <div className="flex gap-4 mt-1 text-[10px] text-white/40">
+                    <span>Sector: <span className="text-white/60">{selectedCompany.sector || 'N/A'}</span></span>
+                    <span>Country: <span className="text-white/60">{selectedCompany.country || 'N/A'}</span></span>
+                    <span>ISIN: <span className="text-white/60 font-mono">{selectedCompany.isin || 'N/A'}</span></span>
+                    <span>Status: <span className="text-cyan-400">{selectedCompany.target_status?.replace(/_/g, ' ')}</span></span>
+                  </div>
+                  <div className="flex gap-4 mt-1 text-[10px] text-white/40">
+                    <span>Near-term: <span className="text-white/60">{selectedCompany.near_term_ambition || 'N/A'} by {selectedCompany.near_term_target_year || 'N/A'}</span></span>
+                    <span>Long-term: <span className="text-white/60">{selectedCompany.long_term_ambition || 'N/A'} by {selectedCompany.long_term_target_year || 'N/A'}</span></span>
+                    {selectedCompany.net_zero_committed && <span className="text-amber-400 font-medium">Net Zero by {selectedCompany.net_zero_year || 'TBD'}</span>}
+                  </div>
+                </div>
+                <button onClick={() => { setSelectedCompany(null); setSbtiSearch(''); set('entity_id', ''); }}
+                  className="text-xs text-white/30 hover:text-white/60 border border-white/[0.06] rounded px-2 py-1">
+                  Clear
+                </button>
+              </div>
+            </div>
+          )}
+
           <div>
             <label className="block text-xs font-medium text-white/60 mb-1">Entity ID</label>
             <input className="w-full border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
@@ -628,7 +780,7 @@ function EmissionFactorPanel() {
       });
       setResult(data);
     } catch (err) {
-      setError(err?.response?.data?.detail || err.message);
+      { const d = err?.response?.data?.detail; setError(typeof d === "string" ? d : Array.isArray(d) ? d.map(e => e.msg || JSON.stringify(e)).join("; ") : err.message); }
     } finally {
       setLoading(false);
     }

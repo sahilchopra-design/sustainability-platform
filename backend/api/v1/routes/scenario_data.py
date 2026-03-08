@@ -236,7 +236,7 @@ def sbti_sectors(
         db.query(
             SbtiCompany.sector,
             func.count(SbtiCompany.id).label("companies"),
-            func.sum(case((SbtiCompany.near_term_ambition == "1.5C", 1), else_=0)).label("count_1_5c"),
+            func.sum(case((SbtiCompany.near_term_ambition.ilike("1.5%"), 1), else_=0)).label("count_1_5c"),
             func.sum(case((SbtiCompany.net_zero_committed == True, 1), else_=0)).label("net_zero"),
         )
         .group_by(SbtiCompany.sector)
@@ -285,17 +285,26 @@ def sbti_stats(
 ):
     """SBTi summary statistics."""
     total = db.query(func.count(SbtiCompany.id)).scalar() or 0
-    committed = db.query(func.count(SbtiCompany.id)).filter(SbtiCompany.target_status == "committed").scalar() or 0
-    near_term = db.query(func.count(SbtiCompany.id)).filter(SbtiCompany.target_status == "near_term_approved").scalar() or 0
-    net_zero = db.query(func.count(SbtiCompany.id)).filter(SbtiCompany.net_zero_committed == True).scalar() or 0
-    aligned_15 = db.query(func.count(SbtiCompany.id)).filter(SbtiCompany.near_term_ambition == "1.5C").scalar() or 0
+    # Case-insensitive matching against actual data values
+    committed = db.query(func.count(SbtiCompany.id)).filter(
+        func.lower(SbtiCompany.target_status) == "committed"
+    ).scalar() or 0
+    targets_set = db.query(func.count(SbtiCompany.id)).filter(
+        func.lower(SbtiCompany.target_status) == "targets set"
+    ).scalar() or 0
+    net_zero = db.query(func.count(SbtiCompany.id)).filter(
+        SbtiCompany.net_zero_committed == True
+    ).scalar() or 0
+    aligned_15 = db.query(func.count(SbtiCompany.id)).filter(
+        SbtiCompany.near_term_ambition.ilike("1.5%")
+    ).scalar() or 0
     sectors = db.query(func.count(distinct(SbtiCompany.sector))).scalar() or 0
     countries = db.query(func.count(distinct(SbtiCompany.country))).scalar() or 0
 
     return {
         "total_companies": total,
         "committed": committed,
-        "near_term_approved": near_term,
+        "targets_set": targets_set,
         "net_zero_committed": net_zero,
         "aligned_1_5c": aligned_15,
         "sectors": sectors,

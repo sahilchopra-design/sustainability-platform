@@ -100,8 +100,8 @@ function DataCentrePanel() {
   const set = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
   const handleCalc = async () => {
     setLoading(true); setError(null); setResult(null);
-    try { const { data } = await axios.post(`${API}/api/v1/sector-assessments/data-centre`, form); setResult(data); }
-    catch (err) { setError(err?.response?.data?.detail || err.message); }
+    try { const { data } = await axios.post(`${API}/api/v1/sector/technology/data-center`, { ...form, facility_id: form.facility_id || "DC_001" }); setResult(data); }
+    catch (err) { const d = err?.response?.data?.detail; setError(typeof d === "string" ? d : Array.isArray(d) ? d.map(e => e.msg || JSON.stringify(e)).join("; ") : err.message); }
     finally { setLoading(false); }
   };
   const radarData = result?.efficiency_benchmarks?.map(b => ({
@@ -229,8 +229,8 @@ function CATRiskPanel() {
   const set = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
   const handleCalc = async () => {
     setLoading(true); setError(null); setResult(null);
-    try { const { data } = await axios.post(`${API}/api/v1/sector-assessments/cat-risk`, form); setResult(data); }
-    catch (err) { setError(err?.response?.data?.detail || err.message); }
+    try { const { data } = await axios.post(`${API}/api/v1/sector/insurance/cat-risk`, { ...form, property_id: form.property_id || "PROP_001" }); setResult(data); }
+    catch (err) { const d = err?.response?.data?.detail; setError(typeof d === "string" ? d : Array.isArray(d) ? d.map(e => e.msg || JSON.stringify(e)).join("; ") : err.message); }
     finally { setLoading(false); }
   };
   const lossData = result?.return_period_losses?.map(r => ({
@@ -326,9 +326,23 @@ function PowerPlantPanel() {
   const set = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
   const handleCalc = async () => {
     setLoading(true); setError(null); setResult(null);
-    try { const { data } = await axios.post(`${API}/api/v1/sector-assessments/power-plant-decarbonisation`, form); setResult(data); }
-    catch (err) { setError(err?.response?.data?.detail || err.message); }
-    finally { setLoading(false); }
+    try {
+      const payload = {
+        plant_id: form.plant_id || "PLANT_001",
+        plant_type: form.fuel_type || "coal",
+        country_iso: form.country_iso || "GB",
+        installed_capacity_mw: parseFloat(form.installed_capacity_mw) || 500,
+        current_load_factor_pct: parseFloat(form.capacity_factor_pct) || 57,
+        current_emission_intensity_gco2_kwh: parseFloat(form.carbon_intensity_gco2_per_kwh) || 820,
+        year_commissioned: parseInt(form.year_commissioned) || null,
+        remaining_asset_life_years: parseInt(form.remaining_useful_life_years) || null,
+      };
+      const { data } = await axios.post(`${API}/api/v1/sector/energy/plant-decarbonisation`, payload);
+      setResult(data);
+    } catch (err) {
+      const d = err?.response?.data?.detail;
+      setError(typeof d === "string" ? d : Array.isArray(d) ? d.map(e => e.msg || JSON.stringify(e)).join("; ") : err.message);
+    } finally { setLoading(false); }
   };
   const transitionData = result?.decarbonisation_pathways?.map(p => ({
     year: p.year, baselineCI: form.carbon_intensity_gco2_per_kwh,

@@ -91,6 +91,30 @@ from api.v1.routes.irena_five_pillars import router as irena_five_pillars_router
 from api.v1.routes.pcaf_asset_classes import router as pcaf_asset_classes_router
 from api.v1.routes.pcaf_advanced import router as pcaf_advanced_router
 from api.v1.routes.sat_coal_checker import router as sat_coal_checker_router
+from api.v1.routes.ca100 import router as ca100_router
+from api.v1.routes.country_risk import router as country_risk_router
+from api.v1.routes.dashboard_analytics import router as dashboard_analytics_router
+from api.v1.routes.cdm_tools import router as cdm_tools_router
+from api.v1.routes.pcaf_ecl_bridge import router as pcaf_ecl_bridge_router
+from api.v1.routes.ead import router as ead_router
+from api.v1.routes.gar import router as gar_router
+from api.v1.routes.stress_testing import router as stress_testing_router
+from api.v1.routes.lgd_vintage import router as lgd_vintage_router
+from api.v1.routes.re_portfolio import router as re_portfolio_router
+from api.v1.routes.epc_retrofit import router as epc_retrofit_router
+from api.v1.routes.green_premium_tenant import router as green_premium_tenant_router
+from api.v1.routes.fund_management import router as fund_management_router
+from api.v1.routes.attribution_benchmark import router as attribution_benchmark_router
+from api.v1.routes.sfdr_exclusion import router as sfdr_exclusion_router
+from api.v1.routes.pe_deals import router as pe_deals_router
+from api.v1.routes.pe_portfolio import router as pe_portfolio_router
+from api.v1.routes.pe_reporting import router as pe_reporting_router
+from api.v1.routes.renewable_ppa import router as renewable_ppa_router
+from api.v1.routes.energy_transition import router as energy_transition_router
+from api.v1.routes.energy_emissions import router as energy_emissions_router
+from api.v1.routes.xbrl_export import router as xbrl_export_router
+from api.v1.routes.disclosure_trends import router as disclosure_trends_router
+from api.v1.routes.entity360 import router as entity360_router
 
 
 @asynccontextmanager
@@ -164,6 +188,8 @@ app.include_router(sub_param_router)
 app.include_router(cbam_router)
 # Include Carbon Credits routes
 app.include_router(carbon_router)
+# Include CDM Methodological Tools & Activity Guide routes
+app.include_router(cdm_tools_router)
 # Include Nature Risk routes
 app.include_router(nature_risk_router)
 # Include Stranded Assets routes
@@ -242,12 +268,47 @@ app.include_router(irena_five_pillars_router)      # IRENA Five Pillars -- Trans
 app.include_router(pcaf_asset_classes_router)      # PCAF v2.0 -- All 7 asset class financed emissions (investor-grade)
 app.include_router(pcaf_advanced_router)           # PCAF Advanced -- Security/Fund/Portfolio/Index multi-level analytics
 app.include_router(sat_coal_checker_router)        # SAT Coal -- IEA NZE / NZBA coal phase-out criteria checker
+app.include_router(ca100_router)                   # CA100+ Net Zero Company Benchmark
+app.include_router(country_risk_router)            # Country Risk & Governance Indices
+app.include_router(dashboard_analytics_router)     # Dashboard Analytics -- real-data aggregation
+app.include_router(pcaf_ecl_bridge_router)         # PCAF -> ECL Bridge -- financed emissions to credit risk
+app.include_router(ead_router)                     # EAD Calculator -- Basel III/IV CCF + maturity adjustment
+app.include_router(gar_router)                     # GAR & Climate Scoring -- EU Taxonomy Art.449a + counterparty climate score
+app.include_router(stress_testing_router)           # Stress Testing & PD Backtesting -- multi-scenario ECL + EBA GL/2017/16
+app.include_router(lgd_vintage_router)             # LGD Downturn & Vintage Analysis -- CRR2/EBA GL/2019/03 + IFRS 9 vintage
+app.include_router(re_portfolio_router)            # RE Portfolio NAV Roll-Up -- INREV NAV + CRREM v2 + EPC/MEPS
+app.include_router(epc_retrofit_router)            # EPC Transition Risk + Retrofit CapEx Planner -- MEPS + NPV/payback
+app.include_router(green_premium_tenant_router)    # Green Premium / Brown Discount + Tenant ESG Tracker
+app.include_router(fund_management_router)         # Fund Structure + Holdings-Level Analytics (SFDR/WACI/Active Share)
+app.include_router(attribution_benchmark_router)   # ESG Attribution (Brinson-Fachler) + Benchmark Analytics (CTB/PAB)
+app.include_router(sfdr_exclusion_router)          # SFDR Periodic Report + Exclusion Screening + Compliance
+app.include_router(pe_deals_router)                # PE Deal Pipeline + ESG Screening + Sector Heatmap
+app.include_router(pe_portfolio_router)            # PE Portfolio Monitoring (ILPA KPIs) + Value Creation Plans
+app.include_router(pe_reporting_router)            # PE GP/LP Reporting + Impact Framework + IRR Sensitivity
+app.include_router(renewable_ppa_router)           # Renewable Project Finance (P50/P90) + PPA Risk Scoring
+app.include_router(energy_transition_router)       # Generation Transition Planner + Grid EF Trajectory
+app.include_router(energy_emissions_router)        # Methane OGMP 2.0 + Scope 3 Cat 11 + CSRD Auto-Population
+app.include_router(xbrl_export_router)             # XBRL/iXBRL Export (CSRD/ISSB) + XBRL Ingestion (multi-schema)
+app.include_router(disclosure_trends_router)       # Disclosure Completeness (9 frameworks) + Multi-Year Trend Analytics
+app.include_router(entity360_router)               # Entity 360 Profile + Counterparty Master (dedup, quality scoring)
 
-# Audit middleware — append-only log for all mutating requests (POST/PUT/PATCH/DELETE)
+# ── Global error handlers ─────────────────────────────────────────────────────
+from middleware.error_handler import register_error_handlers
+register_error_handlers(app)
+
+# ── Middleware stack (order matters: outermost = first to execute) ─────────────
+# CORS → RateLimit → RequestLogger → AuditMiddleware → [Route Handlers]
+
 from middleware.audit_middleware import AuditMiddleware
 app.add_middleware(AuditMiddleware)
 
-# CORS — must be added AFTER AuditMiddleware so CORS headers reach the client
+from middleware.request_logger import RequestLoggerMiddleware
+app.add_middleware(RequestLoggerMiddleware)
+
+from middleware.rate_limiter import RateLimitMiddleware
+app.add_middleware(RateLimitMiddleware)
+
+# CORS — must be outermost so CORS headers reach the client on ALL responses (including 429)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

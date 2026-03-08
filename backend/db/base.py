@@ -80,5 +80,8 @@ def init_db():
         CarbonProject, CarbonScenario, CarbonCalculation, CarbonReport,
     )
     from db.models.csrd_models import CsrdReportUpload  # noqa: F401
+    from db.models.cdm_tools import (  # noqa: F401
+        CDMTool, CDMToolExecution, MethodologyToolDependency,
+    )
     Base.metadata.create_all(bind=engine)
     print("[OK] PostgreSQL database tables created")

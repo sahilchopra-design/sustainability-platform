@@ -1,1 +1,5 @@
 # middleware package
+from middleware.audit_middleware import AuditMiddleware
+from middleware.rate_limiter import RateLimitMiddleware
+from middleware.request_logger import RequestLoggerMiddleware
+from middleware.error_handler import register_error_handlers

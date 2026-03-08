@@ -1407,22 +1407,65 @@ METHODOLOGY_CALCULATORS = {
 
 
 def calculate_by_methodology(methodology_code: str, inputs: Dict[str, Any]) -> Dict[str, Any]:
-    """Route calculation to the appropriate methodology function."""
+    """Route calculation to the appropriate methodology function.
+
+    If `use_cdm_tools=True` is passed in inputs, the function will also
+    execute the relevant CDM methodological tool chain and attach the
+    results to the output under `"cdm_tools_used"`.
+
+    If `country_code` is provided but `grid_emission_factor` is not,
+    TOOL07 will be auto-invoked to resolve the grid EF (when applicable).
+    """
     calculator = METHODOLOGY_CALCULATORS.get(methodology_code)
-    
+
     if not calculator:
         return {
             "error": f"Methodology {methodology_code} not found or not implemented",
             "available_methodologies": list(METHODOLOGY_CALCULATORS.keys())
         }
-    
+
+    # --- CDM tool auto-resolution for grid emission factor ---
+    _auto_resolved_grid_ef = False
+    if inputs.get("country_code") and not inputs.get("grid_emission_factor"):
+        try:
+            from services.cdm_tools_engine import calculate_cdm_tool
+            tool07 = calculate_cdm_tool("TOOL07", {"country_code": inputs["country_code"]})
+            ef_value = tool07.get("outputs", {}).get("ef_cm_tco2_mwh")
+            if ef_value:
+                inputs["grid_emission_factor"] = ef_value
+                _auto_resolved_grid_ef = True
+        except Exception:
+            pass  # Fallback — caller must supply EF manually
+
     try:
-        return calculator(inputs)
+        result = calculator(inputs)
     except Exception as e:
         return {
             "error": f"Calculation failed: {str(e)}",
             "methodology": methodology_code
         }
+
+    if _auto_resolved_grid_ef:
+        result["grid_ef_source"] = f"TOOL07 auto-resolved for {inputs['country_code']}"
+        result["grid_emission_factor_used"] = inputs["grid_emission_factor"]
+
+    # --- Optional full CDM tool chain execution ---
+    if inputs.get("use_cdm_tools"):
+        try:
+            from services.cdm_tools_engine import (
+                get_tools_for_methodology,
+                execute_tool_chain,
+            )
+            tool_codes = get_tools_for_methodology(methodology_code)
+            if tool_codes:
+                tool_inputs = inputs.get("cdm_tool_inputs", {})
+                chain = execute_tool_chain(methodology_code, tool_inputs)
+                result["cdm_tools_used"] = chain.get("tools_executed", [])
+                result["cdm_tools_summary"] = chain.get("summary", {})
+        except Exception as e:
+            result["cdm_tools_error"] = str(e)
+
+    return result
 
 
 def get_methodologies_by_sector(sector: str) -> List[Dict[str, Any]]:

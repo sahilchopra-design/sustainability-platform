@@ -545,3 +545,544 @@ def get_entity_lineage(
         }
         for r in rows
     ]
+
+
+# ===========================================================================
+# ESRS Catalog API  — browse, search, and retrieve data point definitions
+# ===========================================================================
+
+@router.get("/catalog")
+def list_catalog(
+    standard: Optional[str] = Query(None, description="Filter by standard code (E1, S1, G1, ESRS 2)"),
+    module: Optional[str] = Query(None, description="Filter by platform module"),
+    dr: Optional[str] = Query(None, description="Filter by Disclosure Requirement code"),
+    disclosure_type: Optional[str] = Query(None, description="quantitative | qualitative | policy | target | action | metric"),
+    reporting_area: Optional[str] = Query(None, description="GOV | SBM | IRO | MT"),
+    search: Optional[str] = Query(None, description="Free-text search in indicator name"),
+    mandatory_only: bool = Query(False, description="Show only mandatory data points"),
+    with_ar: bool = Query(False, description="Show only data points with AR text"),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(50, ge=1, le=500),
+    db: Session = Depends(get_db),
+):
+    """
+    Browse the ESRS data point catalog (1,184 data points).
+    Supports filtering by standard, module, DR, type, and free-text search.
+    """
+    conditions = []
+    params = {}
+
+    if standard:
+        conditions.append("standard_code = :standard")
+        params["standard"] = standard
+    if module:
+        conditions.append("module_mapping = :module")
+        params["module"] = module
+    if dr:
+        conditions.append("disclosure_requirement = :dr")
+        params["dr"] = dr
+    if disclosure_type:
+        conditions.append("disclosure_type = :dtype")
+        params["dtype"] = disclosure_type
+    if reporting_area:
+        conditions.append("reporting_area = :rarea")
+        params["rarea"] = reporting_area
+    if search:
+        conditions.append("indicator_name ILIKE :search")
+        params["search"] = f"%{search}%"
+    if mandatory_only:
+        conditions.append("is_mandatory = true")
+    if with_ar:
+        conditions.append("ar_text IS NOT NULL")
+
+    where_clause = " AND ".join(conditions) if conditions else "1=1"
+
+    # Count
+    count_row = db.execute(
+        text(f"SELECT COUNT(*) FROM csrd_esrs_catalog WHERE {where_clause}"),
+        params,
+    ).fetchone()
+    total = count_row[0]
+
+    # Paginated results
+    offset = (page - 1) * page_size
+    params["limit"] = page_size
+    params["offset"] = offset
+
+    rows = db.execute(
+        text(f"""
+            SELECT indicator_code, standard_code, disclosure_requirement,
+                   data_point_code, paragraph_ref, topic, sub_topic,
+                   indicator_name, disclosure_type, is_mandatory,
+                   module_mapping, reporting_area, related_ar,
+                   dr_full_name, conditional_or_alternative, is_voluntary,
+                   sfdr_pillar3_benchmark, phase_in_less_750,
+                   phase_in_all_undertakings, esrs_phase_in, smei_exemption,
+                   unit_of_measure, gri_disclosure_ref
+            FROM csrd_esrs_catalog
+            WHERE {where_clause}
+            ORDER BY standard_code, indicator_code
+            LIMIT :limit OFFSET :offset
+        """),
+        params,
+    ).fetchall()
+
+    return {
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "items": [
+            {
+                "indicator_code": r[0],
+                "standard_code": r[1],
+                "disclosure_requirement": r[2],
+                "data_point_code": r[3],
+                "paragraph_ref": r[4],
+                "topic": r[5],
+                "sub_topic": r[6],
+                "indicator_name": r[7],
+                "disclosure_type": r[8],
+                "is_mandatory": r[9],
+                "module_mapping": r[10],
+                "reporting_area": r[11],
+                "related_ar": r[12],
+                "dr_full_name": r[13],
+                "conditional_or_alternative": r[14],
+                "is_voluntary": r[15],
+                "sfdr_pillar3_benchmark": r[16],
+                "phase_in_less_750": r[17],
+                "phase_in_all_undertakings": r[18],
+                "esrs_phase_in": r[19],
+                "smei_exemption": r[20],
+                "unit_of_measure": r[21],
+                "gri_disclosure_ref": r[22],
+            }
+            for r in rows
+        ],
+    }
+
+
+@router.get("/catalog/summary/standards")
+def catalog_summary_by_standard(db: Session = Depends(get_db)):
+    """
+    Summary statistics of the ESRS catalog by standard.
+    Returns count of data points, quantitative/qualitative split,
+    mandatory count, and AR/DR coverage.
+    """
+    rows = db.execute(text("""
+        SELECT
+            standard_code,
+            COUNT(*) as total,
+            COUNT(*) FILTER (WHERE disclosure_type = 'quantitative') as quantitative,
+            COUNT(*) FILTER (WHERE disclosure_type = 'qualitative') as qualitative,
+            COUNT(*) FILTER (WHERE is_mandatory = true) as mandatory,
+            COUNT(*) FILTER (WHERE dr_full_name IS NOT NULL) as with_dr_name,
+            COUNT(*) FILTER (WHERE ar_text IS NOT NULL) as with_ar_text,
+            COUNT(*) FILTER (WHERE related_ar IS NOT NULL) as with_ar_ref,
+            COUNT(DISTINCT disclosure_requirement) as unique_drs,
+            module_mapping
+        FROM csrd_esrs_catalog
+        GROUP BY standard_code, module_mapping
+        ORDER BY standard_code
+    """)).fetchall()
+
+    return {
+        "standards": [
+            {
+                "standard_code": r[0],
+                "total_data_points": r[1],
+                "quantitative": r[2],
+                "qualitative": r[3],
+                "mandatory": r[4],
+                "with_dr_name": r[5],
+                "with_ar_text": r[6],
+                "with_ar_ref": r[7],
+                "unique_disclosure_requirements": r[8],
+                "module_mapping": r[9],
+            }
+            for r in rows
+        ],
+        "total_data_points": sum(r[1] for r in rows),
+    }
+
+
+@router.get("/catalog/summary/modules")
+def catalog_summary_by_module(db: Session = Depends(get_db)):
+    """
+    Summary of data points grouped by platform module.
+    """
+    rows = db.execute(text("""
+        SELECT
+            module_mapping,
+            COUNT(*) as total,
+            COUNT(*) FILTER (WHERE disclosure_type = 'quantitative') as quantitative,
+            COUNT(*) FILTER (WHERE is_mandatory = true) as mandatory,
+            array_agg(DISTINCT standard_code ORDER BY standard_code) as standards
+        FROM csrd_esrs_catalog
+        GROUP BY module_mapping
+        ORDER BY COUNT(*) DESC
+    """)).fetchall()
+
+    return {
+        "modules": [
+            {
+                "module": r[0],
+                "total_data_points": r[1],
+                "quantitative": r[2],
+                "mandatory": r[3],
+                "standards": r[4],
+            }
+            for r in rows
+        ],
+    }
+
+
+@router.get("/catalog/{indicator_code}")
+def get_catalog_item(
+    indicator_code: str,
+    db: Session = Depends(get_db),
+):
+    """
+    Get full detail for a single ESRS data point, including AR/DR text.
+    """
+    row = db.execute(
+        text("""
+            SELECT indicator_code, standard_code, disclosure_requirement,
+                   data_point_code, paragraph_ref, topic, sub_topic,
+                   indicator_name, indicator_description, disclosure_type,
+                   is_mandatory, is_sector_specific, applicable_sectors,
+                   esrs_phase_in, smei_exemption, unit_of_measure,
+                   preferred_unit, allowed_units, calculation_method,
+                   reference_standard, xbrl_tag, gri_equivalent,
+                   tcfd_pillar, issb_equivalent, brsr_equivalent,
+                   sdg_alignment, always_material, materiality_assessment_guidance,
+                   related_ar, ar_text, dr_text, dr_full_name,
+                   conditional_or_alternative, is_voluntary,
+                   sfdr_pillar3_benchmark, phase_in_less_750,
+                   phase_in_all_undertakings, module_mapping, reporting_area,
+                   created_at, updated_at, gri_disclosure_ref
+            FROM csrd_esrs_catalog
+            WHERE indicator_code = :code
+        """),
+        {"code": indicator_code},
+    ).fetchone()
+
+    if not row:
+        raise HTTPException(404, f"Data point '{indicator_code}' not found in catalog")
+
+    return {
+        "indicator_code": row[0],
+        "standard_code": row[1],
+        "disclosure_requirement": row[2],
+        "data_point_code": row[3],
+        "paragraph_ref": row[4],
+        "topic": row[5],
+        "sub_topic": row[6],
+        "indicator_name": row[7],
+        "indicator_description": row[8],
+        "disclosure_type": row[9],
+        "is_mandatory": row[10],
+        "is_sector_specific": row[11],
+        "applicable_sectors": row[12],
+        "esrs_phase_in": row[13],
+        "smei_exemption": row[14],
+        "unit_of_measure": row[15],
+        "preferred_unit": row[16],
+        "allowed_units": row[17],
+        "calculation_method": row[18],
+        "reference_standard": row[19],
+        "xbrl_tag": row[20],
+        "gri_equivalent": row[21],
+        "tcfd_pillar": row[22],
+        "issb_equivalent": row[23],
+        "brsr_equivalent": row[24],
+        "sdg_alignment": row[25],
+        "always_material": row[26],
+        "materiality_assessment_guidance": row[27],
+        "related_ar": row[28],
+        "ar_text": row[29],
+        "dr_text": row[30],
+        "dr_full_name": row[31],
+        "conditional_or_alternative": row[32],
+        "is_voluntary": row[33],
+        "sfdr_pillar3_benchmark": row[34],
+        "phase_in_less_750": row[35],
+        "phase_in_all_undertakings": row[36],
+        "module_mapping": row[37],
+        "reporting_area": row[38],
+        "created_at": str(row[39]) if row[39] else None,
+        "updated_at": str(row[40]) if row[40] else None,
+        "gri_disclosure_ref": row[41],
+    }
+
+
+# ===========================================================================
+# GRI Standards API — browse GRI disclosures and ESRS-GRI mapping
+# ===========================================================================
+
+@router.get("/gri/standards")
+def list_gri_standards(
+    standard: Optional[str] = Query(None, description="Filter by GRI standard code (e.g. 'GRI 305')"),
+    disclosure: Optional[str] = Query(None, description="Filter by disclosure code (e.g. '305-1')"),
+    topic: Optional[str] = Query(None, description="Environmental | Social | Governance | Economic | General"),
+    search: Optional[str] = Query(None, description="Free-text search in label"),
+    concrete_only: bool = Query(True, description="Exclude abstract grouping elements"),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(50, ge=1, le=500),
+    db: Session = Depends(get_db),
+):
+    """
+    Browse the GRI Standards catalog (2,230 elements, 1,143 concrete data points).
+    """
+    conditions = []
+    params: dict = {}
+
+    if standard:
+        conditions.append("standard_code = :standard")
+        params["standard"] = standard
+    if disclosure:
+        conditions.append("disclosure_code = :disclosure")
+        params["disclosure"] = disclosure
+    if topic:
+        conditions.append("topic_area = :topic")
+        params["topic"] = topic
+    if search:
+        conditions.append("label ILIKE :search")
+        params["search"] = f"%{search}%"
+    if concrete_only:
+        conditions.append("is_abstract = false")
+
+    where = " AND ".join(conditions) if conditions else "1=1"
+
+    count_row = db.execute(
+        text(f"SELECT COUNT(*) FROM gri_standards WHERE {where}"), params
+    ).fetchone()
+    total = count_row[0]
+
+    offset = (page - 1) * page_size
+    params["limit"] = page_size
+    params["offset"] = offset
+
+    rows = db.execute(text(f"""
+        SELECT element_id, element_name, standard_code, disclosure_code,
+               disclosure_name, label, verbose_label, documentation,
+               data_type, period_type, is_abstract, topic_area
+        FROM gri_standards
+        WHERE {where}
+        ORDER BY standard_code, disclosure_code, element_name
+        LIMIT :limit OFFSET :offset
+    """), params).fetchall()
+
+    return {
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "items": [
+            {
+                "element_id": r[0],
+                "element_name": r[1],
+                "standard_code": r[2],
+                "disclosure_code": r[3],
+                "disclosure_name": r[4],
+                "label": r[5],
+                "verbose_label": r[6],
+                "documentation": r[7],
+                "data_type": r[8],
+                "period_type": r[9],
+                "is_abstract": r[10],
+                "topic_area": r[11],
+            }
+            for r in rows
+        ],
+    }
+
+
+@router.get("/gri/standards/summary")
+def gri_standards_summary(db: Session = Depends(get_db)):
+    """Summary statistics of the GRI Standards catalog grouped by standard."""
+    rows = db.execute(text("""
+        SELECT
+            standard_code,
+            topic_area,
+            COUNT(*) as total,
+            COUNT(*) FILTER (WHERE is_abstract = false) as concrete,
+            COUNT(DISTINCT disclosure_code) as disclosures
+        FROM gri_standards
+        GROUP BY standard_code, topic_area
+        ORDER BY standard_code
+    """)).fetchall()
+
+    return {
+        "standards": [
+            {
+                "standard_code": r[0],
+                "topic_area": r[1],
+                "total_elements": r[2],
+                "concrete_data_points": r[3],
+                "unique_disclosures": r[4],
+            }
+            for r in rows
+        ],
+        "total_elements": sum(r[2] for r in rows),
+        "total_concrete": sum(r[3] for r in rows),
+    }
+
+
+@router.get("/gri/mapping")
+def list_gri_esrs_mapping(
+    esrs_standard: Optional[str] = Query(None, description="Filter by ESRS standard (E1, S1, etc.)"),
+    gri_standard: Optional[str] = Query(None, description="Filter by GRI standard (GRI 305, etc.)"),
+    esrs_dr: Optional[str] = Query(None, description="Filter by ESRS DR (E1-6, GOV-1, etc.)"),
+    gri_disclosure: Optional[str] = Query(None, description="Filter by GRI disclosure (305-1, etc.)"),
+    search: Optional[str] = Query(None, description="Free-text search in data point names"),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(50, ge=1, le=500),
+    db: Session = Depends(get_db),
+):
+    """
+    Browse ESRS ↔ GRI data-point mapping (649 mapping rows).
+    """
+    conditions = []
+    params: dict = {}
+
+    if esrs_standard:
+        conditions.append("esrs_standard = :esrs_std")
+        params["esrs_std"] = esrs_standard
+    if gri_standard:
+        conditions.append("gri_standard = :gri_std")
+        params["gri_std"] = gri_standard
+    if esrs_dr:
+        conditions.append("esrs_dr = :esrs_dr")
+        params["esrs_dr"] = esrs_dr
+    if gri_disclosure:
+        conditions.append("gri_disclosure = :gri_disc")
+        params["gri_disc"] = gri_disclosure
+    if search:
+        conditions.append("(esrs_dp_name ILIKE :search OR gri_dp_name ILIKE :search)")
+        params["search"] = f"%{search}%"
+
+    where = " AND ".join(conditions) if conditions else "1=1"
+
+    count_row = db.execute(
+        text(f"SELECT COUNT(*) FROM gri_esrs_mapping WHERE {where}"), params
+    ).fetchone()
+    total = count_row[0]
+
+    offset = (page - 1) * page_size
+    params["limit"] = page_size
+    params["offset"] = offset
+
+    rows = db.execute(text(f"""
+        SELECT esrs_indicator_code, esrs_standard, esrs_dr, esrs_paragraph,
+               esrs_dp_name, gri_standard, gri_disclosure, gri_sub_item,
+               gri_dp_name, mapping_notes, mapping_quality
+        FROM gri_esrs_mapping
+        WHERE {where}
+        ORDER BY esrs_standard, esrs_dr, esrs_paragraph
+        LIMIT :limit OFFSET :offset
+    """), params).fetchall()
+
+    return {
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "items": [
+            {
+                "esrs_indicator_code": r[0],
+                "esrs_standard": r[1],
+                "esrs_dr": r[2],
+                "esrs_paragraph": r[3],
+                "esrs_dp_name": r[4],
+                "gri_standard": r[5],
+                "gri_disclosure": r[6],
+                "gri_sub_item": r[7],
+                "gri_dp_name": r[8],
+                "mapping_notes": r[9],
+                "mapping_quality": r[10],
+            }
+            for r in rows
+        ],
+    }
+
+
+@router.get("/gri/mapping/summary")
+def gri_mapping_summary(db: Session = Depends(get_db)):
+    """Summary of ESRS-GRI mapping coverage by ESRS standard."""
+    rows = db.execute(text("""
+        SELECT
+            m.esrs_standard,
+            COUNT(*) as total_mappings,
+            COUNT(DISTINCT m.gri_standard) as gri_standards_used,
+            COUNT(DISTINCT m.gri_disclosure) as gri_disclosures_used,
+            COUNT(DISTINCT m.esrs_dr) as esrs_drs_mapped
+        FROM gri_esrs_mapping m
+        GROUP BY m.esrs_standard
+        ORDER BY m.esrs_standard
+    """)).fetchall()
+
+    # Also get ESRS catalog coverage
+    coverage = db.execute(text("""
+        SELECT
+            standard_code,
+            COUNT(*) as total_dps,
+            COUNT(*) FILTER (WHERE gri_disclosure_ref IS NOT NULL) as gri_linked
+        FROM csrd_esrs_catalog
+        GROUP BY standard_code
+        ORDER BY standard_code
+    """)).fetchall()
+
+    return {
+        "mapping_by_esrs": [
+            {
+                "esrs_standard": r[0],
+                "total_mappings": r[1],
+                "gri_standards_used": r[2],
+                "gri_disclosures_used": r[3],
+                "esrs_drs_mapped": r[4],
+            }
+            for r in rows
+        ],
+        "catalog_coverage": [
+            {
+                "standard_code": r[0],
+                "total_data_points": r[1],
+                "gri_linked": r[2],
+                "coverage_pct": round(r[2] * 100 / max(r[1], 1), 1),
+            }
+            for r in coverage
+        ],
+    }
+
+
+@router.get("/gri/mapping/esrs/{indicator_code}")
+def get_gri_for_esrs(
+    indicator_code: str,
+    db: Session = Depends(get_db),
+):
+    """Get all GRI mappings for a specific ESRS data point."""
+    rows = db.execute(text("""
+        SELECT esrs_indicator_code, esrs_standard, esrs_dr, esrs_paragraph,
+               esrs_dp_name, gri_standard, gri_disclosure, gri_sub_item,
+               gri_dp_name, mapping_notes, mapping_quality
+        FROM gri_esrs_mapping
+        WHERE esrs_indicator_code = :code
+        ORDER BY gri_standard, gri_disclosure
+    """), {"code": indicator_code}).fetchall()
+
+    if not rows:
+        raise HTTPException(404, f"No GRI mapping found for ESRS '{indicator_code}'")
+
+    return {
+        "esrs_indicator_code": indicator_code,
+        "gri_mappings": [
+            {
+                "gri_standard": r[5],
+                "gri_disclosure": r[6],
+                "gri_sub_item": r[7],
+                "gri_dp_name": r[8],
+                "mapping_notes": r[9],
+                "mapping_quality": r[10],
+            }
+            for r in rows
+        ],
+    }

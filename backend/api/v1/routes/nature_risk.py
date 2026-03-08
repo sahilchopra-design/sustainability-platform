@@ -450,85 +450,156 @@ async def calculate_biodiversity_overlaps(request: BiodiversityOverlapRequest):
 # ============ Portfolio Nature Risk Routes (Financial Sector) ============
 
 @router.post("/portfolio/analyze")
-async def analyze_portfolio_nature_risk(request: PortfolioNatureRiskRequest):
-    """Comprehensive nature risk analysis for portfolios."""
+async def analyze_portfolio_nature_risk(
+    request: PortfolioNatureRiskRequest,
+    db: Session = Depends(get_db),
+):
+    """Comprehensive nature risk analysis for portfolios.
+
+    Uses real portfolio holdings from assets_pg when the portfolio exists
+    in the database; falls back to sample holdings otherwise.
+    """
     calculator = PortfolioNatureRiskCalculator()
-    
+
     # Get scenarios
     all_scenarios = get_default_scenarios()
     scenarios = [s for s in all_scenarios if s['id'] in request.scenario_ids]
-    
     if not scenarios:
         scenarios = all_scenarios[:1]
-    
-    # Sample holdings for demo
-    sample_holdings = [
-        {
-            "id": str(uuid4()),
-            "entity_name": "Energy Corp A",
-            "sector": "ENERGY",
-            "exposure_usd": 50000000,
-            "sector_code": "ENERGY",
-            "biome_exposure": {"tropical_forest": True, "freshwater": True},
-            "baseline_water_stress": 3.5
-        },
-        {
-            "id": str(uuid4()),
-            "entity_name": "Mining Corp B",
-            "sector": "MINING",
-            "exposure_usd": 30000000,
-            "sector_code": "MINING",
-            "biome_exposure": {"grassland": True, "mountain": True},
-            "baseline_water_stress": 4.2
-        },
-        {
-            "id": str(uuid4()),
-            "entity_name": "Agribusiness Corp C",
-            "sector": "AGRICULTURE",
-            "exposure_usd": 25000000,
-            "sector_code": "AGRICULTURE",
-            "biome_exposure": {"savanna": True, "wetland": True},
-            "baseline_water_stress": 2.8
-        }
-    ]
-    
+
+    # Attempt to load real holdings from DB
+    holdings = []
+    portfolio_name = f"Portfolio {request.portfolio_id[:8]}"
+    try:
+        rows = db.execute(text("""
+            SELECT a.id, a.company_name, a.company_sector, a.exposure
+            FROM assets_pg a
+            WHERE a.portfolio_id = :pid
+            ORDER BY a.exposure DESC
+            LIMIT 50
+        """), {"pid": request.portfolio_id}).fetchall()
+
+        if rows:
+            # Map sectors to ENCORE codes
+            _sector_map = {
+                "Power Generation": "ENERGY", "Oil & Gas": "ENERGY", "Energy": "ENERGY",
+                "Utilities": "ENERGY", "Mining": "MINING", "Metals & Mining": "MINING",
+                "Real Estate": "REAL_ESTATE", "Airlines": "TRANSPORT", "Automotive": "TRANSPORT",
+                "Technology": "TECHNOLOGY", "Banking": "FINANCE", "Financial Services": "FINANCE",
+                "Insurance": "FINANCE", "Industrials": "INDUSTRIALS",
+            }
+            for r in rows:
+                sector = r[2] or "Other"
+                code = _sector_map.get(sector, sector.upper().replace(" ", "_"))
+                holdings.append({
+                    "id": str(r[0]),
+                    "entity_name": r[1] or "Unknown",
+                    "sector": sector,
+                    "exposure_usd": float(r[3]) if r[3] else 0,
+                    "sector_code": code,
+                    "biome_exposure": {},
+                    "baseline_water_stress": 2.5,
+                })
+
+            # Try to get portfolio name
+            prow = db.execute(text("SELECT name FROM portfolios_pg WHERE id = :pid"),
+                              {"pid": request.portfolio_id}).fetchone()
+            if prow:
+                portfolio_name = prow[0]
+    except Exception:
+        pass
+
+    # Fallback to sample holdings if DB query returned nothing
+    if not holdings:
+        holdings = [
+            {"id": str(uuid4()), "entity_name": "Energy Corp A", "sector": "ENERGY",
+             "exposure_usd": 50_000_000, "sector_code": "ENERGY",
+             "biome_exposure": {"tropical_forest": True, "freshwater": True},
+             "baseline_water_stress": 3.5},
+            {"id": str(uuid4()), "entity_name": "Mining Corp B", "sector": "MINING",
+             "exposure_usd": 30_000_000, "sector_code": "MINING",
+             "biome_exposure": {"grassland": True, "mountain": True},
+             "baseline_water_stress": 4.2},
+            {"id": str(uuid4()), "entity_name": "Agribusiness Corp C", "sector": "AGRICULTURE",
+             "exposure_usd": 25_000_000, "sector_code": "AGRICULTURE",
+             "biome_exposure": {"savanna": True, "wetland": True},
+             "baseline_water_stress": 2.8},
+        ]
+
     result = calculator.calculate_portfolio_nature_risk(
-        sample_holdings,
-        scenarios,
-        include_collateral_impact=request.include_collateral_impact
+        holdings, scenarios,
+        include_collateral_impact=request.include_collateral_impact,
     )
-    
+
     return {
         "portfolio_id": request.portfolio_id,
-        "portfolio_name": f"Portfolio {request.portfolio_id[:8]}",
+        "portfolio_name": portfolio_name,
         "analysis_date": datetime.now().isoformat(),
-        **result
+        "holdings_source": "database" if len(holdings) > 3 or (holdings and holdings[0].get("entity_name") != "Energy Corp A") else "sample",
+        **result,
     }
 
 
 @router.get("/portfolio/{portfolio_id}/nature-exposure")
 async def get_portfolio_nature_exposure(
     portfolio_id: str,
-    scenario_id: Optional[str] = Query(None)
+    scenario_id: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
 ):
-    """Get summary of portfolio exposure to nature-related risks."""
-    # Return sample exposure data
+    """Get summary of portfolio exposure to nature-related risks.
+
+    Aggregates real sector-level exposure from assets_pg when data exists.
+    """
+    try:
+        rows = db.execute(text("""
+            SELECT
+                company_sector,
+                SUM(exposure)                     AS total_exposure,
+                COUNT(*)                           AS asset_count,
+                AVG(base_pd)                       AS avg_pd
+            FROM assets_pg
+            WHERE portfolio_id = :pid AND company_sector IS NOT NULL
+            GROUP BY company_sector
+            ORDER BY SUM(exposure) DESC
+        """), {"pid": portfolio_id}).fetchall()
+    except Exception:
+        rows = []
+
+    if rows:
+        total_exposure = sum(float(r[1]) for r in rows)
+        # Nature-sensitive sectors get higher risk scores
+        high_risk_sectors = {"Mining", "Metals & Mining", "Oil & Gas", "Power Generation", "Energy"}
+        high_risk_exp = sum(float(r[1]) for r in rows if r[0] in high_risk_sectors)
+        sector_bd = {}
+        for r in rows:
+            sector_bd[r[0]] = {
+                "exposure_usd": round(float(r[1]), 0),
+                "asset_count": r[2],
+                "avg_risk_score": round(4.0 if r[0] in high_risk_sectors else 2.0 + (float(r[3]) * 10 if r[3] else 0), 1),
+            }
+        return {
+            "portfolio_id": portfolio_id,
+            "total_exposure_usd": round(total_exposure, 0),
+            "high_risk_exposure_usd": round(high_risk_exp, 0),
+            "high_risk_percent": round(high_risk_exp / max(total_exposure, 1) * 100, 1),
+            "sector_breakdown": sector_bd,
+            "key_dependencies": ["water", "soil_quality", "climate_regulation"],
+            "data_source": "assets_pg",
+        }
+
+    # Fallback
     return {
         "portfolio_id": portfolio_id,
-        "total_exposure_usd": 105000000,
-        "high_risk_exposure_usd": 30000000,
+        "total_exposure_usd": 105_000_000,
+        "high_risk_exposure_usd": 30_000_000,
         "high_risk_percent": 28.6,
         "sector_breakdown": {
-            "ENERGY": {"exposure_usd": 50000000, "avg_risk_score": 3.2},
-            "MINING": {"exposure_usd": 30000000, "avg_risk_score": 4.1},
-            "AGRICULTURE": {"exposure_usd": 25000000, "avg_risk_score": 2.5}
+            "ENERGY": {"exposure_usd": 50_000_000, "avg_risk_score": 3.2},
+            "MINING": {"exposure_usd": 30_000_000, "avg_risk_score": 4.1},
+            "AGRICULTURE": {"exposure_usd": 25_000_000, "avg_risk_score": 2.5},
         },
         "key_dependencies": ["water", "soil_quality", "climate_regulation"],
-        "recommendations": [
-            "Reduce exposure to high water-stress mining operations",
-            "Engage with energy sector on nature transition plans",
-            "Monitor agricultural dependencies on pollination services"
-        ]
+        "data_source": "sample",
     }
 
 

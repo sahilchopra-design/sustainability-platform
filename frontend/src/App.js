@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import './App.css';
+import { ErrorBoundary, RouteErrorBoundary } from './components/shared/ErrorBoundary';
 
 import Dashboard from './pages/Dashboard';
 import Portfolios from './pages/Portfolios';
@@ -56,6 +57,8 @@ import ScenarioGalleryPage from './features/scenario-builder/pages/ScenarioGalle
 import AsiaRegulatoryPage from './pages/AsiaRegulatoryPage';
 import ChinaTradePage from './pages/ChinaTradePage';
 import DataMappingPage from './pages/DataMappingPage';
+import CA100Page from './features/esg-disclosure/pages/CA100Page';
+import CountryRiskPage from './features/country-risk/pages/CountryRiskPage';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -105,6 +108,7 @@ const NAV_GROUPS = [
       { to: '/supply-chain',            icon: 'truck',     label: 'Supply Chain Scope 3' },
       { to: '/sector-assessments',      icon: 'server',    label: 'Sector Assessments' },
       { to: '/engagement-tracker',      icon: 'users',     label: 'Engagement Tracker',       badge: 'NEW' },
+      { to: '/country-risk',            icon: 'globe',     label: 'Country Risk',             badge: 'NEW' },
     ],
   },
   {
@@ -114,6 +118,7 @@ const NAV_GROUPS = [
       { to: '/asia-regulatory',   icon: 'globe',      label: 'Asia Regulatory',        badge: 'BRSR·HKMA·CBI' },
       { to: '/peer-benchmark',    icon: 'users',       label: 'Peer Benchmark',         badge: 'NEW' },
       { to: '/company-profiles',  icon: 'building',    label: 'Company Profiles',        badge: 'NEW' },
+      { to: '/ca100',             icon: 'target',      label: 'CA100+ Benchmark',        badge: 'NEW' },
     ],
   },
   {
@@ -566,6 +571,10 @@ function AppRouter() {
             <Route path="/asia-regulatory"            element={<AsiaRegulatoryPage />} />
             {/* Data Mapping — source to KPI to module */}
             <Route path="/data-mapping"               element={<DataMappingPage />} />
+            {/* CA100+ Net Zero Company Benchmark */}
+            <Route path="/ca100"                      element={<CA100Page />} />
+            {/* Country Risk & Governance */}
+            <Route path="/country-risk"               element={<CountryRiskPage />} />
             {/* China Trade Platform — standalone module */}
             <Route path="/china-trade"                element={<ChinaTradePage />} />
           </Routes>
@@ -577,13 +586,15 @@ function AppRouter() {
 
 function App() {
   return (
-    <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <Router>
-          <AppRouter />
-        </Router>
-      </QueryClientProvider>
-    </Provider>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <QueryClientProvider client={queryClient}>
+          <Router>
+            <AppRouter />
+          </Router>
+        </QueryClientProvider>
+      </Provider>
+    </ErrorBoundary>
   );
 }
 

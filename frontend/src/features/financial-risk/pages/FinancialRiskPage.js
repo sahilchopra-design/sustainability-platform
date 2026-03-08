@@ -67,25 +67,38 @@ function ECLPanel() {
   const addExposure = () => setExposures(prev => [...prev, { ...DEFAULT_EXPOSURE, instrument_id: `EXP-${String(prev.length + 1).padStart(3, "0")}` }]);
   const removeExposure = (idx) => setExposures(prev => prev.filter((_, i) => i !== idx));
 
+  const TRANSITION_RISK_MAP = { very_low: 1, low: 3, medium: 5, high: 7, very_high: 9 };
+
   const runECL = async () => {
     setLoading(true); setError(null); setResult(null);
     try {
+      const pd12m = (e) => Math.min((parseFloat(e.base_pd_pct) || 2) / 100, 1);
+      const matYr = (e) => parseInt(e.maturity_years) || 5;
       const payload = {
         exposures: exposures.map(e => ({
-          ...e,
-          exposure_ead: parseFloat(e.exposure_ead) || 0,
-          base_pd_pct: parseFloat(e.base_pd_pct) || 0,
-          base_lgd_pct: parseFloat(e.base_lgd_pct) || 0,
-          maturity_years: parseInt(e.maturity_years) || 5,
-          current_stage: parseInt(e.current_stage) || 1,
-          physical_risk_score: parseFloat(e.physical_risk_score) || 0,
+          base_inputs: {
+            exposure_id: e.instrument_id || "EXP-001",
+            sector: e.sector || "power_generation",
+            country_iso: e.country_iso || "GB",
+            exposure_at_default_gbp: parseFloat(e.exposure_ead) || 1000000,
+            base_pd_12m: pd12m(e),
+            base_pd_lifetime: Math.min(pd12m(e) * matYr(e), 0.999),
+            lgd: Math.min((parseFloat(e.base_lgd_pct) || 40) / 100, 1),
+            maturity_years: matYr(e),
+            current_stage: parseInt(e.current_stage) || 1,
+          },
+          climate_inputs: {
+            physical_risk_score: Math.min((parseFloat(e.physical_risk_score) || 0) / 10, 10),
+            transition_risk_score: TRANSITION_RISK_MAP[e.sector_transition_risk] || 5,
+          },
         })),
       };
-      const res = await axios.post(`${API_BASE}/api/v1/ecl/portfolio-ecl`, payload);
+      const res = await axios.post(`${API_BASE}/api/v1/ecl/portfolio`, payload);
       setResult(res.data);
       setActiveTab("results");
     } catch (err) {
-      setError(err.response?.data?.detail || err.message);
+      const d = err.response?.data?.detail;
+      setError(typeof d === "string" ? d : Array.isArray(d) ? d.map(e => e.msg || JSON.stringify(e)).join("; ") : err.message);
     } finally {
       setLoading(false);
     }
@@ -290,21 +303,26 @@ function PCaFPanel() {
     setLoading(true); setError(null); setResult(null);
     try {
       const payload = {
-        portfolio_name: "My Portfolio",
-        investees: investees.map(e => ({
-          ...e,
-          evic_eur: parseFloat(e.evic_eur) || 0,
-          investment_value_eur: parseFloat(e.investment_value_eur) || 0,
-          scope1_tco2e: parseFloat(e.scope1_tco2e) || 0,
-          scope2_tco2e: parseFloat(e.scope2_tco2e) || 0,
-          scope3_tco2e: parseFloat(e.scope3_tco2e) || 0,
-          revenue_eur: parseFloat(e.revenue_eur) || 0,
+        investees: investees.map((e, idx) => ({
+          investee_id: `INV_${String(idx + 1).padStart(3, "0")}`,
+          name: e.company_name || `Investee ${idx + 1}`,
+          sector: (e.sector || "Default").charAt(0).toUpperCase() + (e.sector || "Default").slice(1),
+          country_iso: "GB",
+          investment_value_gbp: parseFloat(e.investment_value_eur) || 1,
+          enterprise_value_gbp: parseFloat(e.evic_eur) || undefined,
+          revenue_gbp: parseFloat(e.revenue_eur) || undefined,
+          scope1_tco2e: parseFloat(e.scope1_tco2e) || undefined,
+          scope2_tco2e: parseFloat(e.scope2_tco2e) || undefined,
+          scope3_tco2e: parseFloat(e.scope3_tco2e) || undefined,
         })),
+        reporting_year: 2024,
+        asset_class: investees[0]?.asset_class || "listed_equity",
       };
-      const res = await axios.post(`${API_BASE}/api/v1/pcaf/portfolio-emissions`, payload);
+      const res = await axios.post(`${API_BASE}/api/v1/pcaf/financed-emissions`, payload);
       setResult(res.data);
     } catch (err) {
-      setError(err.response?.data?.detail || err.message);
+      const d = err.response?.data?.detail;
+      setError(typeof d === "string" ? d : Array.isArray(d) ? d.map(e => e.msg || JSON.stringify(e)).join("; ") : err.message);
     } finally {
       setLoading(false);
     }

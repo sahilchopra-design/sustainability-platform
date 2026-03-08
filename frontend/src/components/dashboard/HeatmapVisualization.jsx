@@ -82,16 +82,20 @@ export function HeatmapVisualization({
   // Generate sample heatmap data from portfolio data
   const heatmapData = useMemo(() => {
     if (!data) {
-      // Return sample data for demo
+      // Deterministic demo data (no Math.random)
       const sectors = ['Energy', 'Utilities', 'Industrials', 'Financials', 'Technology'];
       const geographies = ['US', 'EU', 'UK', 'APAC', 'LatAm'];
-      
+      const seed = [
+        [78.2, 45.1, 32.4, 56.8, 12.3],
+        [41.5, 28.9, 19.7, 34.2, 8.6],
+        [63.1, 37.6, 25.8, 48.5, 15.9],
+        [52.4, 89.3, 42.1, 61.7, 23.4],
+        [34.7, 21.5, 68.9, 27.3, 45.2],
+      ];
       return {
         rows: sectors,
         cols: geographies,
-        values: sectors.map(sector => 
-          geographies.map(() => Math.random() * 100e6)
-        ),
+        values: seed.map(row => row.map(v => v * 1e6)),
         format: 'currency',
       };
     }
