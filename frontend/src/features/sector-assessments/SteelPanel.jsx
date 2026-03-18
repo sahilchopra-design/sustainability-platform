@@ -35,7 +35,7 @@ const Field = ({ label, children, hint }) => (
 const Num = ({ value, onChange, min = 0, max, step = 'any', placeholder }) => (
   <input type="number" value={value} onChange={e => onChange(e.target.value)}
     min={min} max={max} step={step} placeholder={placeholder}
-    className="w-full bg-white/5 border border-white/15 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+    className="w-full bg-gray-50 border border-black/15 rounded px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-black/60"
     style={{ fontFamily: 'IBM Plex Mono, monospace' }} />
 );
 
@@ -44,7 +44,7 @@ const RouteSlider = ({ label, value, onChange, colour }) => (
   <div className="space-y-1">
     <div className="flex justify-between items-center">
       <label className="text-xs text-gray-400">{label}</label>
-      <span className="text-xs font-mono text-white">{(parseFloat(value || 0) * 100).toFixed(0)}%</span>
+      <span className="text-xs font-mono text-gray-900">{(parseFloat(value || 0) * 100).toFixed(0)}%</span>
     </div>
     <input type="range" min={0} max={1} step={0.01} value={value}
       onChange={e => onChange(e.target.value)}
@@ -104,7 +104,7 @@ export default function SteelPanel() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Steel Decarbonisation</h2>
+        <h2 className="text-lg font-semibold text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Steel Decarbonisation</h2>
         <p className="text-sm text-gray-400 mt-0.5">BF-BOF / EAF / DRI production route mix vs IEA NZE glidepath</p>
       </div>
 
@@ -114,7 +114,7 @@ export default function SteelPanel() {
           <div className="col-span-2">
             <Field label="Plant Name">
               <input type="text" value={form.plant_name} onChange={e => set('plant_name', e.target.value)}
-                className="w-full bg-white/5 border border-white/15 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/60" />
+                className="w-full bg-gray-50 border border-black/15 rounded px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-black/60" />
             </Field>
           </div>
           <Field label="Annual Production (Mt/yr)">
@@ -144,7 +144,7 @@ export default function SteelPanel() {
       </div>
 
       <button onClick={handleCalculate} disabled={loading || !mixOk}
-        className="w-full py-3 rounded-lg text-sm font-semibold text-white disabled:opacity-50"
+        className="w-full py-3 rounded-lg text-sm font-semibold text-gray-900 disabled:opacity-50"
         style={{ background: 'linear-gradient(135deg, hsl(199,89%,40%), hsl(199,89%,30%))' }}
         data-testid="steel-calculate-btn">
         {loading ? 'Calculating...' : 'Calculate Emission Intensity'}
@@ -162,9 +162,9 @@ export default function SteelPanel() {
               { label: 'vs IEA NZE 2030', value: `${parseFloat(result.pct_vs_iea_2030) > 0 ? '+' : ''}${parseFloat(result.pct_vs_iea_2030).toFixed(1)}%`, unit: result.rag_2030 },
               { label: 'IEA 2030 Target', value: `${parseFloat(result.iea_2030_target).toFixed(2)}`, unit: 'tCO₂/tSteel' },
             ].map((k, i) => (
-              <div key={i} data-testid={k.testId} className="rounded-lg p-3 border border-white/10 bg-white/3">
+              <div key={i} data-testid={k.testId} className="rounded-lg p-3 border border-black/10 bg-white/3">
                 <div className="text-xs text-gray-400 mb-1">{k.label}</div>
-                <div className="text-xl font-bold text-white" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>{k.value}</div>
+                <div className="text-xl font-bold text-gray-900" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>{k.value}</div>
                 <div className="text-xs mt-0.5" style={{ color: i === 2 ? ragColour : '#6b7280' }}>{k.unit}</div>
               </div>
             ))}
@@ -173,7 +173,7 @@ export default function SteelPanel() {
           {/* Route mix donut + glidepath chart side by side */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Route breakdown donut */}
-            <div className="rounded-lg border border-white/10 p-4" style={{ background: 'hsl(222,35%,9%)' }}>
+            <div className="rounded-lg border border-black/10 p-4" style={{ background: 'hsl(222,35%,9%)' }}>
               <div className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">Production Route Mix</div>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
@@ -183,7 +183,7 @@ export default function SteelPanel() {
                       <Cell key={i} fill={ROUTE_COLOURS[entry.name] || '#6b7280'} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8 }}
+                  <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid rgba(0,0,0,0.15)', borderRadius: 8 }}
                     formatter={v => [`${parseFloat(v).toFixed(3)} tCO₂/t`, 'Contribution']} />
                   <Legend wrapperStyle={{ color: '#9ca3af', fontSize: 11 }} />
                 </PieChart>
@@ -191,14 +191,14 @@ export default function SteelPanel() {
             </div>
 
             {/* Glidepath chart */}
-            <div className="rounded-lg border border-white/10 p-4" style={{ background: 'hsl(222,35%,9%)' }}>
+            <div className="rounded-lg border border-black/10 p-4" style={{ background: 'hsl(222,35%,9%)' }}>
               <div className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">vs IEA NZE Glidepath</div>
               <ResponsiveContainer width="100%" height={200}>
                 <ComposedChart data={glidepathData} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
                   <XAxis dataKey="year" tick={{ fill: '#9ca3af', fontSize: 10 }} />
                   <YAxis tick={{ fill: '#9ca3af', fontSize: 10 }} tickFormatter={v => `${v}`} />
-                  <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8 }}
+                  <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid rgba(0,0,0,0.15)', borderRadius: 8 }}
                     formatter={(v, name) => [v ? `${Number(v).toFixed(2)} tCO₂/t` : 'No data', name]} />
                   <Legend wrapperStyle={{ color: '#9ca3af', fontSize: 10 }} />
                   <Line type="monotone" dataKey="current" stroke="#22d3ee" strokeWidth={2.5}
@@ -214,14 +214,14 @@ export default function SteelPanel() {
 
           {/* Scenarios */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-lg border border-white/10 bg-white/3 p-3">
+            <div className="rounded-lg border border-black/10 bg-white/3 p-3">
               <div className="text-xs text-gray-400 mb-1">Scenario: 100% EAF + Renewable Power</div>
               <div className="text-xl font-bold text-emerald-400" style={{ fontFamily: 'IBM Plex Mono' }}>
                 {parseFloat(result.scenario_full_eaf_renewable_intensity).toFixed(2)} tCO₂/t
               </div>
               <div className="text-xs text-gray-500 mt-0.5">Best-in-class achievable intensity</div>
             </div>
-            <div className="rounded-lg border border-white/10 bg-white/3 p-3">
+            <div className="rounded-lg border border-black/10 bg-white/3 p-3">
               <div className="text-xs text-gray-400 mb-1">Scenario: 50% Green H₂ DRI</div>
               <div className="text-xl font-bold text-blue-400" style={{ fontFamily: 'IBM Plex Mono' }}>
                 {parseFloat(result.scenario_dri_h2_50pct_intensity).toFixed(2)} tCO₂/t

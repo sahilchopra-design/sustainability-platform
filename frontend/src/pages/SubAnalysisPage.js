@@ -278,7 +278,7 @@ export default function SubAnalysisPage() {
                     <div key={i} className="flex items-center gap-3 text-sm">
                       <span className="w-40 text-xs truncate">{e.parameter}</span>
                       <div className="flex-1 bg-muted rounded-full h-2">
-                        <div className="h-2 rounded-full bg-cyan-500" style={{ width: `${Math.min(100, Math.abs(e.elasticity) * 10)}%` }} />
+                        <div className="h-2 rounded-full bg-black" style={{ width: `${Math.min(100, Math.abs(e.elasticity) * 10)}%` }} />
                       </div>
                       <span className="w-16 text-right tabular-nums text-xs font-medium">{e.elasticity.toFixed(2)}</span>
                     </div>

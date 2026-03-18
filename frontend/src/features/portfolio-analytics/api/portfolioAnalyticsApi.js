@@ -62,7 +62,16 @@ export async function updatePortfolio(portfolioId, data) {
  */
 export async function fetchHoldings(portfolioId) {
   const res = await fetch(`${BASE}/portfolios/${portfolioId}/holdings`);
-  if (!res.ok) throw new Error('Failed to fetch holdings');
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    const error = new Error(
+      typeof err.detail === 'string' ? err.detail
+      : err.detail?.message || 'Failed to fetch holdings'
+    );
+    error.requiredData = err.detail?.required_data || [];
+    error.statusCode = res.status;
+    throw error;
+  }
   return res.json();
 }
 
@@ -101,10 +110,19 @@ export async function fetchDashboard(portfolioId, params = {}) {
   const searchParams = new URLSearchParams();
   if (params.scenario_id) searchParams.set('scenario_id', params.scenario_id);
   if (params.time_horizon) searchParams.set('time_horizon', params.time_horizon);
-  
+
   const url = `${BASE}/portfolios/${portfolioId}/dashboard?${searchParams.toString()}`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error('Failed to fetch dashboard');
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    const error = new Error(
+      typeof err.detail === 'string' ? err.detail
+      : err.detail?.message || 'Failed to fetch dashboard'
+    );
+    error.requiredData = err.detail?.required_data || [];
+    error.statusCode = res.status;
+    throw error;
+  }
   return res.json();
 }
 
@@ -177,7 +195,14 @@ export async function fetchPCAFResults(portfolioId) {
   const res = await fetch(`${BASE}/${portfolioId}/pcaf-results`);
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || 'Failed to fetch PCAF results');
+    // Attach structured error details for the UI to display
+    const error = new Error(
+      typeof err.detail === 'string' ? err.detail
+      : err.detail?.message || 'Failed to fetch PCAF results'
+    );
+    error.requiredData = err.detail?.required_data || [];
+    error.statusCode = res.status;
+    throw error;
   }
   return res.json();
 }

@@ -85,10 +85,9 @@ function Dashboard() {
         </div>
         
         <div className="flex items-center gap-3">
-          <ReportExportButton 
-            analysisResults={analysisResults} 
+          <ReportExportButton
+            analysisResults={analysisResults}
             portfolioData={selectedPortfolio}
-            disabled={!analysisResults}
           />
         </div>
       </div>

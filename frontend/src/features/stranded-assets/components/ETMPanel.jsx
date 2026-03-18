@@ -57,8 +57,8 @@ export function ETMPanel() {
 
   const inputField = (key, label, type = "number", step = "1") => (
     <div key={key}>
-      <label className="text-xs text-white/40 block mb-1">{label}</label>
-      <input type={type} step={step} className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+      <label className="text-xs text-gray-500 block mb-1">{label}</label>
+      <input type={type} step={step} className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
         value={form[key]} onChange={e => set(key, type === "text" ? e.target.value : +e.target.value)} />
     </div>
   );
@@ -72,14 +72,14 @@ export function ETMPanel() {
   return (
     <div className="space-y-6">
       {/* Methodology Note */}
-      <div className="p-3 bg-indigo-500/5 border border-indigo-500/20 rounded-lg text-xs text-indigo-300 flex items-start gap-2">
+      <div className="p-3 bg-gray-800/5 border border-black/20 rounded-lg text-xs text-gray-600 flex items-start gap-2">
         <Info className="h-4 w-4 mt-0.5 shrink-0" />
         <span>ADB/AIIB/Citi Energy Transition Mechanism (ETM) Framework 2022. The ETM SPV purchases outstanding coal plant debt at concessional rates, enabling early retirement. Abatement cost benchmarked against $80/tCO₂ social cost of carbon (World Bank 2023).</span>
       </div>
 
       {/* Input Form */}
-      <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-white/80 mb-4">Coal Plant Parameters</h3>
+      <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <h3 className="text-sm font-semibold text-gray-800 mb-4">Coal Plant Parameters</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {inputField("plant_name", "Plant Name", "text")}
           {inputField("plant_country", "Country", "text")}
@@ -89,7 +89,7 @@ export function ETMPanel() {
           {inputField("capacity_factor_pct", "Capacity Factor (%)")}
         </div>
 
-        <h4 className="text-xs font-semibold text-white/50 mt-4 mb-3">Financial Structure</h4>
+        <h4 className="text-xs font-semibold text-gray-500 mt-4 mb-3">Financial Structure</h4>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {inputField("outstanding_debt_usd_m", "Outstanding Debt (M USD)")}
           {inputField("equity_book_value_usd_m", "Equity Book Value (M USD)")}
@@ -99,7 +99,7 @@ export function ETMPanel() {
           {inputField("etm_tranche_pct", "ETM Debt Tranche (%)", "number", "0.1")}
         </div>
 
-        <h4 className="text-xs font-semibold text-white/50 mt-4 mb-3">RE Replacement</h4>
+        <h4 className="text-xs font-semibold text-gray-500 mt-4 mb-3">RE Replacement</h4>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {inputField("re_replacement_mw", "RE Replacement (MW)")}
           {inputField("re_capex_usd_per_mw", "RE Capex (USD/MW)")}
@@ -107,7 +107,7 @@ export function ETMPanel() {
         </div>
 
         <button onClick={compute} disabled={loading}
-          className="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-lg flex items-center gap-2">
+          className="mt-4 px-4 py-2 bg-[#164E8A] hover:bg-[#12407A] text-gray-900 text-xs font-medium rounded-lg flex items-center gap-2">
           {loading ? <><RefreshCw className="h-3 w-3 animate-spin" /> Computing…</> : <><Zap className="h-3 w-3" /> Compute ETM Package</>}
         </button>
         {error && <div className="mt-2 text-xs text-red-400">Error: {error}</div>}
@@ -136,13 +136,13 @@ export function ETMPanel() {
               { label: "Avoided CO₂", val: fmtN(result.climate_impact?.avoided_co2_mt, 2) + " Mt", color: "green" },
             ].map(({ label, val, color }) => {
               const clsMap = {
-                indigo: "text-indigo-400", red: "text-red-400",
+                indigo: "text-gray-700", red: "text-red-400",
                 blue: "text-blue-400", green: "text-emerald-400",
               };
               return (
-                <div key={label} className="bg-[#111827] border border-white/[0.06] rounded-lg p-3 text-center">
+                <div key={label} className="bg-white border border-gray-200 rounded-lg p-3 text-center">
                   <div className={`text-xl font-bold ${clsMap[color]}`}>{val}</div>
-                  <div className="text-xs text-white/30 mt-1">{label}</div>
+                  <div className="text-xs text-gray-500 mt-1">{label}</div>
                 </div>
               );
             })}
@@ -151,8 +151,8 @@ export function ETMPanel() {
           {/* Package breakdown + Climate */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* ETM Package Waterfall */}
-            <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-white/70 mb-3">ETM Package Breakdown (M USD)</h3>
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">ETM Package Breakdown (M USD)</h3>
               <ResponsiveContainer width="100%" height={180}>
                 <BarChart data={packageData} layout="vertical" margin={{ left: 60, right: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" horizontal={false} />
@@ -168,18 +168,18 @@ export function ETMPanel() {
             </div>
 
             {/* Climate Metrics */}
-            <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-white/70 mb-4">Climate Impact Metrics</h3>
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <h3 className="text-sm font-semibold text-gray-700 mb-4">Climate Impact Metrics</h3>
               <div className="space-y-3 text-xs">
                 {[
                   ["Avoided CO₂", `${fmtN(result.climate_impact?.avoided_co2_mt, 3)} Mt`, "text-emerald-400"],
                   ["Abatement Cost", `$${fmtN(result.climate_impact?.abatement_cost_usd_per_tco2, 0)}/tCO₂`, result.climate_impact?.abatement_cost_usd_per_tco2 < 80 ? "text-emerald-400" : result.climate_impact?.abatement_cost_usd_per_tco2 < 150 ? "text-amber-400" : "text-red-400"],
-                  ["WB SCC Benchmark", "$80/tCO₂", "text-white/40"],
+                  ["WB SCC Benchmark", "$80/tCO₂", "text-gray-500"],
                   ["NPV Saving (vs natural)", fmtM(result.climate_impact?.npv_saving_vs_natural_retirement_usd_m), result.climate_impact?.npv_saving_vs_natural_retirement_usd_m > 0 ? "text-emerald-400" : "text-red-400"],
-                  ["Concessional Savings", fmtM(result.etm_package_usd_m?.concessional_savings), "text-indigo-400"],
+                  ["Concessional Savings", fmtM(result.etm_package_usd_m?.concessional_savings), "text-gray-700"],
                 ].map(([label, val, cls]) => (
-                  <div key={label} className="flex justify-between items-center border-b border-white/[0.04] pb-2">
-                    <span className="text-white/40">{label}</span>
+                  <div key={label} className="flex justify-between items-center border-b border-gray-200 pb-2">
+                    <span className="text-gray-500">{label}</span>
                     <span className={`font-medium ${cls}`}>{val}</span>
                   </div>
                 ))}

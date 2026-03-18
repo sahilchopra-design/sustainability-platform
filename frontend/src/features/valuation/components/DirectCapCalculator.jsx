@@ -87,7 +87,7 @@ export function DirectCapCalculator() {
         <CardContent className="space-y-6">
           {/* Property Size & Rent */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-white/70 border-b pb-2">
+            <h4 className="text-sm font-semibold text-gray-700 border-b pb-2">
               Gross Income
             </h4>
             <div className="grid grid-cols-2 gap-4">
@@ -122,13 +122,13 @@ export function DirectCapCalculator() {
                 onChange={(e) => handleChange('other_income', e.target.value)}
                 data-testid="input-other-income"
               />
-              <p className="text-xs text-white/40">Parking, storage, laundry, etc.</p>
+              <p className="text-xs text-gray-500">Parking, storage, laundry, etc.</p>
             </div>
           </div>
 
           {/* Vacancy & Collection Loss */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-white/70 border-b pb-2">
+            <h4 className="text-sm font-semibold text-gray-700 border-b pb-2">
               Vacancy & Losses
             </h4>
             <div className="grid grid-cols-2 gap-4">
@@ -159,7 +159,7 @@ export function DirectCapCalculator() {
 
           {/* Operating Expenses */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-white/70 border-b pb-2">
+            <h4 className="text-sm font-semibold text-gray-700 border-b pb-2">
               Operating Expenses
             </h4>
             <div className="space-y-2">
@@ -172,7 +172,7 @@ export function DirectCapCalculator() {
                 onChange={(e) => handleChange('operating_expense_ratio', e.target.value)}
                 data-testid="input-expense-ratio"
               />
-              <p className="text-xs text-white/40">
+              <p className="text-xs text-gray-500">
                 Includes taxes, insurance, maintenance, management
               </p>
             </div>
@@ -180,7 +180,7 @@ export function DirectCapCalculator() {
 
           {/* Cap Rate */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-white/70 border-b pb-2">
+            <h4 className="text-sm font-semibold text-gray-700 border-b pb-2">
               Capitalization Rate
             </h4>
             <div className="space-y-2">
@@ -249,11 +249,11 @@ export function DirectCapCalculator() {
 
               {/* Income Breakdown */}
               <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-white/70 flex items-center gap-2">
+                <h4 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                   <TrendingUp className="h-4 w-4" />
                   Income Statement
                 </h4>
-                <div className="bg-white/[0.02] rounded-lg p-4 space-y-2">
+                <div className="bg-gray-50 rounded-lg p-4 space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Potential Gross Income (PGI)</span>
                     <span className="font-medium">{formatCurrency(result.pgi)}</span>
@@ -283,16 +283,16 @@ export function DirectCapCalculator() {
 
               {/* Key Metrics */}
               <div className="grid grid-cols-3 gap-3">
-                <div className="bg-white/[0.02] rounded-lg p-3 text-center">
-                  <p className="text-xs text-white/40">Expense Ratio</p>
+                <div className="bg-gray-50 rounded-lg p-3 text-center">
+                  <p className="text-xs text-gray-500">Expense Ratio</p>
                   <p className="text-lg font-semibold">{formatPercent(result.expense_ratio)}</p>
                 </div>
-                <div className="bg-white/[0.02] rounded-lg p-3 text-center">
-                  <p className="text-xs text-white/40">GIM</p>
+                <div className="bg-gray-50 rounded-lg p-3 text-center">
+                  <p className="text-xs text-gray-500">GIM</p>
                   <p className="text-lg font-semibold">{parseFloat(result.gross_income_multiplier).toFixed(2)}x</p>
                 </div>
-                <div className="bg-white/[0.02] rounded-lg p-3 text-center">
-                  <p className="text-xs text-white/40">NIM</p>
+                <div className="bg-gray-50 rounded-lg p-3 text-center">
+                  <p className="text-xs text-gray-500">NIM</p>
                   <p className="text-lg font-semibold">{parseFloat(result.net_income_multiplier).toFixed(2)}x</p>
                 </div>
               </div>
@@ -309,7 +309,7 @@ export function DirectCapCalculator() {
               </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-white/30">
+            <div className="flex flex-col items-center justify-center py-12 text-gray-500">
               <Building2 className="h-16 w-16 mb-4 opacity-50" />
               <p className="text-sm">Enter inputs and click Calculate</p>
               <p className="text-xs mt-1">Results will appear here</p>

@@ -380,3 +380,131 @@ def _screening_to_dict(r: EntityScreeningResult) -> dict:
         "portfolio_id": r.portfolio_id,
         "asset_id": r.asset_id,
     }
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Cross-module Entity Resolution — resolve entities across siloed tables
+# ═══════════════════════════════════════════════════════════════════════════
+
+def _get_resolution_service():
+    """Lazy-load the entity resolution service."""
+    from services.entity_resolution_service import EntityResolutionService
+    from db.base import engine as db_engine
+    return EntityResolutionService(db_engine)
+
+
+class CrossModuleResolveRequest(BaseModel):
+    lei: Optional[str] = None
+    name: Optional[str] = None
+    isin: Optional[str] = None
+
+
+class BulkResolveRequest(BaseModel):
+    records: list[CrossModuleResolveRequest]
+
+
+@router.post("/cross-module/resolve", summary="Resolve entity across all modules")
+def cross_module_resolve(
+    req: CrossModuleResolveRequest,
+    _user=Depends(require_min_role("viewer")),
+):
+    """
+    Find all records across fi_entities, energy_entities, sc_entities,
+    regulatory_entities, csrd_entity_registry, company_profiles, assets_pg,
+    pcaf_investees, and ecl_assessments that match the given identifiers.
+
+    Priority: LEI exact match > ISIN exact match > fuzzy name match.
+    """
+    svc = _get_resolution_service()
+    match = svc.resolve_entity(lei=req.lei, name=req.name, isin=req.isin)
+    return {
+        "company_profile_id": match.company_profile_id,
+        "lei": match.lei,
+        "canonical_name": match.canonical_name,
+        "match_method": match.match_method,
+        "confidence": match.confidence,
+        "linked_records": [
+            {"table": r.table, "id": r.id, "lei": r.lei, "name": r.name, "isin": r.isin}
+            for r in match.linked_records
+        ],
+    }
+
+
+@router.post("/cross-module/resolve/batch", summary="Batch resolve entities")
+def cross_module_resolve_batch(
+    req: BulkResolveRequest,
+    _user=Depends(require_min_role("viewer")),
+):
+    """Resolve a batch of entities. Returns one match per input record."""
+    svc = _get_resolution_service()
+    matches = svc.bulk_resolve([r.model_dump() for r in req.records])
+    return {
+        "results": [
+            {
+                "company_profile_id": m.company_profile_id,
+                "lei": m.lei,
+                "canonical_name": m.canonical_name,
+                "match_method": m.match_method,
+                "confidence": m.confidence,
+                "linked_count": len(m.linked_records),
+            }
+            for m in matches
+        ],
+    }
+
+
+@router.get("/cross-module/entity/{lei}", summary="Full entity graph by LEI")
+def entity_graph(
+    lei: str,
+    _user=Depends(require_min_role("viewer")),
+):
+    """
+    Return all cross-module data for an entity identified by LEI.
+    Queries company_profiles, fi_entities, energy_entities, sc_entities,
+    regulatory_entities, csrd_entity_registry, assets_pg, pcaf_investees,
+    and ecl_assessments.
+    """
+    if len(lei) != 20:
+        raise HTTPException(400, "LEI must be exactly 20 characters")
+
+    svc = _get_resolution_service()
+    data = svc.build_entity_graph(lei)
+
+    def _safe_dict(d):
+        """Convert datetimes/UUIDs in a dict to strings."""
+        if d is None:
+            return None
+        return {
+            k: (v.isoformat() if hasattr(v, "isoformat") else str(v) if isinstance(v, uuid.UUID) else v)
+            for k, v in d.items()
+        }
+
+    return {
+        "lei": lei,
+        "module_count": data.module_count,
+        "company_profile": _safe_dict(data.company_profile),
+        "fi_entity": _safe_dict(data.fi_entity),
+        "energy_entity": _safe_dict(data.energy_entity),
+        "sc_entity": _safe_dict(data.sc_entity),
+        "regulatory_entity": _safe_dict(data.regulatory_entity),
+        "csrd_entity": _safe_dict(data.csrd_entity),
+        "portfolio_assets": [_safe_dict(a) for a in data.portfolio_assets],
+        "pcaf_investees": [_safe_dict(i) for i in data.pcaf_investees],
+        "ecl_assessments": [_safe_dict(e) for e in data.ecl_assessments],
+    }
+
+
+@router.post("/cross-module/auto-link", summary="Auto-link unlinked entities by LEI")
+def auto_link_entities(
+    _user=Depends(require_role("admin")),
+):
+    """
+    Background job: scan all sector entity tables for records with LEI that
+    don't yet have a company_profile_id, and link them. Creates new
+    company_profiles records where needed.
+
+    Admin only.
+    """
+    svc = _get_resolution_service()
+    stats = svc.auto_link_unlinked()
+    return {"status": "completed", "linkage_stats": stats}

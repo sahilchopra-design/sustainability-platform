@@ -67,14 +67,14 @@ export default function LoanPortfolioUpload() {
     <div className="p-6 bg-gray-900 min-h-screen text-gray-100">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Loan Portfolio Upload</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Loan Portfolio Upload</h1>
           <p className="text-gray-400 text-sm mt-1">
             Upload CSV files containing counterparty loan data for PCAF financed emissions.
           </p>
         </div>
         <button
           onClick={downloadTemplate}
-          className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-sm text-white rounded border border-gray-600"
+          className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-sm text-gray-900 rounded border border-gray-600"
         >
           Download Template
         </button>
@@ -137,7 +137,7 @@ export default function LoanPortfolioUpload() {
               placeholder="Upload name (optional)"
               value={uploadName}
               onChange={e => setUploadName(e.target.value)}
-              className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white"
+              className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-gray-900"
             />
           </div>
 
@@ -160,7 +160,7 @@ export default function LoanPortfolioUpload() {
                       onClick={() => { setSelectedUpload(u.id); setTab(1); }}
                     >
                       <td className="py-2 pr-4 text-gray-400">{u.id}</td>
-                      <td className="py-2 pr-4 text-white">{u.upload_name}</td>
+                      <td className="py-2 pr-4 text-gray-900">{u.upload_name}</td>
                       <td className="py-2 pr-4 text-gray-400 text-xs">{u.filename}</td>
                       <td className="py-2 pr-4">
                         <span className={`px-2 py-0.5 rounded text-xs font-medium ${
@@ -169,7 +169,7 @@ export default function LoanPortfolioUpload() {
                           : 'bg-yellow-900 text-yellow-300'
                         }`}>{u.status}</span>
                       </td>
-                      <td className="py-2 pr-4 text-white">{u.total_rows}</td>
+                      <td className="py-2 pr-4 text-gray-900">{u.total_rows}</td>
                       <td className="py-2 pr-4 text-green-400">{u.valid_rows}</td>
                       <td className="py-2 pr-4 text-red-400">{u.error_rows}</td>
                       <td className="py-2 pr-4 text-gray-400 text-xs">
@@ -209,9 +209,9 @@ export default function LoanPortfolioUpload() {
                   {rows.map(r => (
                     <tr key={r.id} className={r.is_valid ? '' : 'bg-red-900/10'}>
                       <td className="py-1.5 pr-3 text-gray-300 font-mono text-xs">{r.counterparty_id}</td>
-                      <td className="py-1.5 pr-3 text-white text-xs">{r.counterparty_name}</td>
+                      <td className="py-1.5 pr-3 text-gray-900 text-xs">{r.counterparty_name}</td>
                       <td className="py-1.5 pr-3 text-gray-400 text-xs">{r.instrument_type}</td>
-                      <td className="py-1.5 pr-3 text-white text-xs">{Number(r.outstanding_amount || 0).toLocaleString()}</td>
+                      <td className="py-1.5 pr-3 text-gray-900 text-xs">{Number(r.outstanding_amount || 0).toLocaleString()}</td>
                       <td className="py-1.5 pr-3 text-gray-400 text-xs">{r.currency}</td>
                       <td className="py-1.5 pr-3 text-gray-400 text-xs">{r.sector_gics}</td>
                       <td className="py-1.5 pr-3 text-gray-400 text-xs">{r.country_iso2}</td>
@@ -241,7 +241,7 @@ export default function LoanPortfolioUpload() {
           <p className="text-xs mt-2">Download the template, fill it in, and upload it above.</p>
           <button
             onClick={downloadTemplate}
-            className="mt-4 px-4 py-2 bg-blue-700 hover:bg-blue-600 text-sm text-white rounded"
+            className="mt-4 px-4 py-2 bg-blue-700 hover:bg-blue-600 text-sm text-gray-900 rounded"
           >
             Download CSV Template
           </button>

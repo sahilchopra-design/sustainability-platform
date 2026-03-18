@@ -31,22 +31,22 @@ const PIE_COLORS = [C.blue, C.green, C.amber, C.red, C.purple, C.cyan, C.indigo,
 // ─── Atoms ──────────────────────────────────────────────────────────────────
 function Card({ children, className = '' }) {
   return (
-    <div className={`bg-[#0e1829] border border-white/[0.07] rounded-xl p-5 ${className}`}>
+    <div className={`bg-white border border-gray-200 rounded-xl p-5 ${className}`}>
       {children}
     </div>
   );
 }
 
 function SectionTitle({ children }) {
-  return <h3 className="text-sm font-semibold text-white/60 uppercase tracking-widest mb-4">{children}</h3>;
+  return <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-widest mb-4">{children}</h3>;
 }
 
-function Stat({ label, value, sub, color = 'text-white' }) {
+function Stat({ label, value, sub, color = 'text-gray-900' }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-xs text-white/40 uppercase tracking-wide">{label}</span>
+      <span className="text-xs text-gray-500 uppercase tracking-wide">{label}</span>
       <span className={`text-2xl font-bold ${color}`}>{value}</span>
-      {sub && <span className="text-xs text-white/40">{sub}</span>}
+      {sub && <span className="text-xs text-gray-500">{sub}</span>}
     </div>
   );
 }
@@ -58,8 +58,8 @@ function Badge({ children, color = 'blue' }) {
     amber:  'bg-amber-500/15 text-amber-400 border-amber-500/20',
     red:    'bg-red-500/15 text-red-400 border-red-500/20',
     purple: 'bg-purple-500/15 text-purple-400 border-purple-500/20',
-    cyan:   'bg-cyan-500/15 text-cyan-400 border-cyan-500/20',
-    slate:  'bg-slate-500/15 text-slate-400 border-slate-500/20',
+    cyan:   'bg-black/15 text-gray-700 border-black/[0.15]',
+    slate:  'bg-gray-500/15 text-gray-500 border-slate-500/20',
   };
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border ${map[color] || map.blue}`}>
@@ -77,14 +77,14 @@ function Spinner() {
 }
 
 function Empty({ msg = 'No data available' }) {
-  return <div className="text-center py-12 text-white/30 text-sm">{msg}</div>;
+  return <div className="text-center py-12 text-gray-500 text-sm">{msg}</div>;
 }
 
 function TT({ active, payload, label, unit = '' }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#0e1829] border border-white/[0.07] rounded-lg p-3 text-xs shadow-xl">
-      {label && <p className="text-white/50 mb-2">{label}</p>}
+    <div className="bg-white border border-gray-200 rounded-lg p-3 text-xs shadow-xl">
+      {label && <p className="text-gray-500 mb-2">{label}</p>}
       {payload.map((p, i) => (
         <p key={i} style={{ color: p.color || '#fff' }}>
           {p.name}: <span className="font-bold">{typeof p.value === 'number' ? p.value.toLocaleString() : p.value}{unit}</span>
@@ -191,14 +191,14 @@ function ExporterTab() {
         <SectionTitle>Search Exporters</SectionTitle>
         <div className="flex flex-wrap gap-3 mb-4">
           <input
-            className="flex-1 min-w-[200px] bg-[#060c18] border border-white/[0.07] rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-blue-500/50"
+            className="flex-1 min-w-[200px] bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500/50"
             placeholder="Company name or keyword…"
             value={query}
             onChange={e => setQuery(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && search()}
           />
           <select
-            className="bg-[#060c18] border border-white/[0.07] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500/50"
+            className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500/50"
             value={sector}
             onChange={e => setSector(e.target.value)}
           >
@@ -208,7 +208,7 @@ function ExporterTab() {
             ))}
           </select>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-white/40">Min CBAM Score:</span>
+            <span className="text-xs text-gray-500">Min CBAM Score:</span>
             <input
               type="range" min={0} max={100} step={10}
               value={minScore}
@@ -219,7 +219,7 @@ function ExporterTab() {
           </div>
           <button
             onClick={search}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-lg transition-colors"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-gray-900 text-sm font-semibold rounded-lg transition-colors"
           >
             Search
           </button>
@@ -229,7 +229,7 @@ function ExporterTab() {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="text-white/40 border-b border-white/[0.07]">
+                <tr className="text-gray-500 border-b border-gray-200">
                   <th className="text-left pb-2 pr-4">Company</th>
                   <th className="text-left pb-2 pr-4">Sector</th>
                   <th className="text-right pb-2 pr-4">CBAM Readiness</th>
@@ -241,15 +241,15 @@ function ExporterTab() {
               </thead>
               <tbody>
                 {exporters.map((e, i) => (
-                  <tr key={i} className="border-b border-white/[0.03] hover:bg-white/[0.02]">
+                  <tr key={i} className="border-b border-black/[0.04] hover:bg-gray-50">
                     <td className="py-2 pr-4">
-                      <div className="font-semibold text-white">{e.entity_name}</div>
-                      <div className="text-white/30">{e.entity_name_zh}</div>
+                      <div className="font-semibold text-gray-900">{e.entity_name}</div>
+                      <div className="text-gray-500">{e.entity_name_zh}</div>
                     </td>
-                    <td className="py-2 pr-4 text-white/60">{e.sector}</td>
+                    <td className="py-2 pr-4 text-gray-600">{e.sector}</td>
                     <td className="py-2 pr-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                        <div className="w-16 h-1.5 bg-black/[0.06] rounded-full overflow-hidden">
                           <div
                             className="h-full rounded-full"
                             style={{
@@ -258,11 +258,11 @@ function ExporterTab() {
                             }}
                           />
                         </div>
-                        <span className="text-white font-bold">{e.cbam_readiness_score}</span>
+                        <span className="text-gray-900 font-bold">{e.cbam_readiness_score}</span>
                       </div>
                       <div className="mt-0.5 flex justify-end"><ReadinessBand score={e.cbam_readiness_score} /></div>
                     </td>
-                    <td className="py-2 pr-4 text-right text-white">{e.avg_embedded_carbon_tco2_per_tonne?.toFixed(3)} tCO₂/t</td>
+                    <td className="py-2 pr-4 text-right text-gray-900">{e.avg_embedded_carbon_tco2_per_tonne?.toFixed(3)} tCO₂/t</td>
                     <td className="py-2 pr-4 text-right">
                       <span className={e.vs_eu_benchmark_pct > 0 ? 'text-red-400' : 'text-green-400'}>
                         {e.vs_eu_benchmark_pct > 0 ? '+' : ''}{e.vs_eu_benchmark_pct?.toFixed(1)}%
@@ -271,7 +271,7 @@ function ExporterTab() {
                     <td className="py-2 pr-4 text-center">
                       {e.cbam_applicable ? <Badge color="amber">CBAM</Badge> : <Badge color="slate">N/A</Badge>}
                     </td>
-                    <td className="py-2 text-white/50">{(e.key_export_markets || []).join(', ')}</td>
+                    <td className="py-2 text-gray-500">{(e.key_export_markets || []).join(', ')}</td>
                   </tr>
                 ))}
               </tbody>
@@ -340,18 +340,18 @@ function CBAMTab() {
         <SectionTitle>CBAM Liability Calculator — Auto-Fill from China Trade Data</SectionTitle>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="text-xs text-white/40 block mb-1">Supplier / Exporter Name</label>
+            <label className="text-xs text-gray-500 block mb-1">Supplier / Exporter Name</label>
             <input
-              className="w-full bg-[#060c18] border border-white/[0.07] rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-blue-500/50"
+              className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500/50"
               placeholder="e.g. China Baowu Steel Group"
               value={entityName}
               onChange={e => setEntityName(e.target.value)}
             />
           </div>
           <div>
-            <label className="text-xs text-white/40 block mb-1">HS-4 Code (CBAM Annex I)</label>
+            <label className="text-xs text-gray-500 block mb-1">HS-4 Code (CBAM Annex I)</label>
             <input
-              className="w-full bg-[#060c18] border border-white/[0.07] rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-blue-500/50"
+              className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500/50"
               placeholder="e.g. 7208 (Steel) / 7601 (Aluminium)"
               value={hsCode}
               onChange={e => setHsCode(e.target.value)}
@@ -361,7 +361,7 @@ function CBAMTab() {
         <button
           onClick={doAutoFill}
           disabled={loading || !entityName || !hsCode}
-          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white text-sm font-semibold rounded-lg transition-colors mr-3"
+          className="px-4 py-2 bg-black hover:bg-gray-800 disabled:opacity-40 text-gray-900 text-sm font-semibold rounded-lg transition-colors mr-3"
         >
           {loading ? 'Fetching…' : 'Auto-Fill from China Trade Data'}
         </button>
@@ -373,21 +373,21 @@ function CBAMTab() {
           <SectionTitle>Auto-Fill Results — {autoFill.entity_name} / HS {autoFill.hs_code}</SectionTitle>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             <div>
-              <span className="text-xs text-white/40 block">Embedded Carbon</span>
-              <span className="text-lg font-bold text-white">{af.embedded_carbon_tco2_per_tonne} tCO₂/t</span>
+              <span className="text-xs text-gray-500 block">Embedded Carbon</span>
+              <span className="text-lg font-bold text-gray-900">{af.embedded_carbon_tco2_per_tonne} tCO₂/t</span>
             </div>
             <div>
-              <span className="text-xs text-white/40 block">EU Benchmark</span>
-              <span className="text-lg font-bold text-white">{af.eu_benchmark_tco2_per_tonne} tCO₂/t</span>
+              <span className="text-xs text-gray-500 block">EU Benchmark</span>
+              <span className="text-lg font-bold text-gray-900">{af.eu_benchmark_tco2_per_tonne} tCO₂/t</span>
             </div>
             <div>
-              <span className="text-xs text-white/40 block">Carbon Surplus vs Benchmark</span>
+              <span className="text-xs text-gray-500 block">Carbon Surplus vs Benchmark</span>
               <span className={`text-lg font-bold ${af.carbon_surplus_tco2_per_tonne > 0 ? 'text-red-400' : 'text-green-400'}`}>
                 {af.carbon_surplus_tco2_per_tonne > 0 ? '+' : ''}{af.carbon_surplus_tco2_per_tonne} tCO₂/t
               </span>
             </div>
             <div>
-              <span className="text-xs text-white/40 block">CETS Price</span>
+              <span className="text-xs text-gray-500 block">CETS Price</span>
               <span className="text-lg font-bold text-amber-400">¥{af.cets_price_cny} / €{af.cets_price_eur}</span>
             </div>
           </div>
@@ -404,20 +404,20 @@ function CBAMTab() {
         <SectionTitle>Calculate Net CBAM Liability</SectionTitle>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div>
-            <label className="text-xs text-white/40 block mb-1">Export Volume (tonnes)</label>
+            <label className="text-xs text-gray-500 block mb-1">Export Volume (tonnes)</label>
             <input
               type="number"
-              className="w-full bg-[#060c18] border border-white/[0.07] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500/50"
+              className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500/50"
               placeholder="e.g. 50000"
               value={volume}
               onChange={e => setVolume(e.target.value)}
             />
           </div>
           <div>
-            <label className="text-xs text-white/40 block mb-1">EU ETS Price (€/tCO₂)</label>
+            <label className="text-xs text-gray-500 block mb-1">EU ETS Price (€/tCO₂)</label>
             <input
               type="number"
-              className="w-full bg-[#060c18] border border-white/[0.07] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500/50"
+              className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500/50"
               value={etsPriceEur}
               onChange={e => setEtsPrice(e.target.value)}
             />
@@ -426,7 +426,7 @@ function CBAMTab() {
             <button
               onClick={doCalculate}
               disabled={calcLoading || !entityName || !hsCode || !volume}
-              className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-sm font-semibold rounded-lg transition-colors"
+              className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-gray-900 text-sm font-semibold rounded-lg transition-colors"
             >
               {calcLoading ? 'Calculating…' : 'Calculate CBAM Liability'}
             </button>
@@ -437,18 +437,18 @@ function CBAMTab() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-[#060c18] rounded-lg p-3">
-                  <span className="text-xs text-white/40 block">Gross CBAM Liability</span>
-                  <span className="text-xl font-bold text-white">€{(calc.gross_cbam_liability_eur || 0).toLocaleString()}</span>
+                <div className="bg-white rounded-lg p-3">
+                  <span className="text-xs text-gray-500 block">Gross CBAM Liability</span>
+                  <span className="text-xl font-bold text-gray-900">€{(calc.gross_cbam_liability_eur || 0).toLocaleString()}</span>
                 </div>
-                <div className="bg-[#060c18] rounded-lg p-3">
-                  <span className="text-xs text-white/40 block">CETS Art.9 Deduction</span>
+                <div className="bg-white rounded-lg p-3">
+                  <span className="text-xs text-gray-500 block">CETS Art.9 Deduction</span>
                   <span className="text-xl font-bold text-green-400">-€{(calc.cets_deduction_eur || 0).toLocaleString()}</span>
                 </div>
                 <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 col-span-2">
-                  <span className="text-xs text-white/40 block">Net CBAM Obligation</span>
+                  <span className="text-xs text-gray-500 block">Net CBAM Obligation</span>
                   <span className="text-2xl font-bold text-blue-400">€{(calc.net_cbam_liability_eur || 0).toLocaleString()}</span>
-                  <span className="text-xs text-white/30 block mt-0.5">€/tonne: {calc.cbam_per_tonne_eur?.toFixed(2)} · Total tCO₂: {calc.total_embedded_tco2?.toFixed(0)}</span>
+                  <span className="text-xs text-gray-500 block mt-0.5">€/tonne: {calc.cbam_per_tonne_eur?.toFixed(2)} · Total tCO₂: {calc.total_embedded_tco2?.toFixed(0)}</span>
                 </div>
               </div>
             </div>
@@ -476,7 +476,7 @@ function CBAMTab() {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="text-white/40 border-b border-white/[0.07]">
+                <tr className="text-gray-500 border-b border-gray-200">
                   <th className="text-left pb-2 pr-4">HS-4</th>
                   <th className="text-left pb-2 pr-4">Description</th>
                   <th className="text-left pb-2 pr-4">Sector</th>
@@ -486,11 +486,11 @@ function CBAMTab() {
               </thead>
               <tbody>
                 {(benchmarks.benchmarks || []).map((b, i) => (
-                  <tr key={i} className="border-b border-white/[0.03] hover:bg-white/[0.02]">
+                  <tr key={i} className="border-b border-black/[0.04] hover:bg-gray-50">
                     <td className="py-2 pr-4 font-mono text-blue-400">{b.hs_code}</td>
-                    <td className="py-2 pr-4 text-white/80">{b.description}</td>
+                    <td className="py-2 pr-4 text-gray-800">{b.description}</td>
                     <td className="py-2 pr-4"><Badge color="slate">{b.sector}</Badge></td>
-                    <td className="py-2 pr-4 text-right font-bold text-white">{b.eu_benchmark_tco2_per_tonne}</td>
+                    <td className="py-2 pr-4 text-right font-bold text-gray-900">{b.eu_benchmark_tco2_per_tonne}</td>
                     <td className="py-2 text-center"><Badge color="amber">CBAM</Badge></td>
                   </tr>
                 ))}
@@ -498,7 +498,7 @@ function CBAMTab() {
             </table>
           </div>
           {benchmarks.cets_reference && (
-            <div className="mt-3 flex gap-4 text-xs text-white/40">
+            <div className="mt-3 flex gap-4 text-xs text-gray-500">
               <span>CETS spot: <strong className="text-amber-400">¥{benchmarks.cets_reference.spot_cny}</strong></span>
               <span>EUR equiv: <strong className="text-amber-400">€{benchmarks.cets_reference.spot_eur}</strong></span>
               <span>EU ETS ref: <strong className="text-blue-400">€{benchmarks.cets_reference.eu_ets_reference_eur}</strong></span>
@@ -546,7 +546,7 @@ function SupplierTab() {
           <SectionTitle>Importer Decarbonisation Requirements</SectionTitle>
           <div className="flex gap-3 mb-4">
             <select
-              className="flex-1 bg-[#060c18] border border-white/[0.07] rounded-lg px-3 py-2 text-sm text-white focus:outline-none"
+              className="flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none"
               value={framework}
               onChange={e => setFramework(e.target.value)}
             >
@@ -554,7 +554,7 @@ function SupplierTab() {
               {['CBAM', 'CSDDD', 'SBTi', 'CDP', 'RE100'].map(f => <option key={f} value={f}>{f}</option>)}
             </select>
             <select
-              className="flex-1 bg-[#060c18] border border-white/[0.07] rounded-lg px-3 py-2 text-sm text-white focus:outline-none"
+              className="flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none"
               value={category}
               onChange={e => setCategory(e.target.value)}
             >
@@ -565,9 +565,9 @@ function SupplierTab() {
           {reqLoading ? <Spinner /> : requirements.length === 0 ? <Empty /> : (
             <div className="space-y-3">
               {requirements.map((r, i) => (
-                <div key={i} className="bg-[#060c18] rounded-lg p-3">
+                <div key={i} className="bg-white rounded-lg p-3">
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="font-semibold text-sm text-white">{r.importer_name}</span>
+                    <span className="font-semibold text-sm text-gray-900">{r.importer_name}</span>
                     <div className="flex gap-1.5">
                       <Badge color="blue">{r.framework}</Badge>
                       {r.cbam_art9_eligible && <Badge color="amber">Art.9</Badge>}
@@ -575,20 +575,20 @@ function SupplierTab() {
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div>
-                      <span className="text-white/40">Max Intensity</span>
-                      <span className="block font-bold text-white">{r.max_carbon_intensity_tco2_per_tonne} tCO₂/t</span>
+                      <span className="text-gray-500">Max Intensity</span>
+                      <span className="block font-bold text-gray-900">{r.max_carbon_intensity_tco2_per_tonne} tCO₂/t</span>
                     </div>
                     <div>
-                      <span className="text-white/40">Category</span>
-                      <span className="block text-white/80">{r.product_category}</span>
+                      <span className="text-gray-500">Category</span>
+                      <span className="block text-gray-800">{r.product_category}</span>
                     </div>
                     <div>
-                      <span className="text-white/40">Target Year</span>
-                      <span className="block text-white/80">{r.target_year}</span>
+                      <span className="text-gray-500">Target Year</span>
+                      <span className="block text-gray-800">{r.target_year}</span>
                     </div>
                     <div>
-                      <span className="text-white/40">Certifications</span>
-                      <span className="block text-white/80">{(r.required_certifications || []).join(', ')}</span>
+                      <span className="text-gray-500">Certifications</span>
+                      <span className="block text-gray-800">{(r.required_certifications || []).join(', ')}</span>
                     </div>
                   </div>
                 </div>
@@ -602,10 +602,10 @@ function SupplierTab() {
           <SectionTitle>Supplier Ranking Tool</SectionTitle>
           <div className="space-y-3 mb-4">
             <div>
-              <label className="text-xs text-white/40 block mb-1">Max Carbon Intensity (tCO₂/t)</label>
+              <label className="text-xs text-gray-500 block mb-1">Max Carbon Intensity (tCO₂/t)</label>
               <input
                 type="number"
-                className="w-full bg-[#060c18] border border-white/[0.07] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500/50"
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500/50"
                 placeholder="e.g. 2.0"
                 value={maxIntensity}
                 onChange={e => setMaxInt(e.target.value)}
@@ -618,11 +618,11 @@ function SupplierTab() {
                 onChange={e => setReqCert(e.target.checked)}
                 className="accent-blue-500"
               />
-              <span className="text-sm text-white/60">Require certified products only</span>
+              <span className="text-sm text-gray-600">Require certified products only</span>
             </label>
             <button
               onClick={rankSuppliers}
-              className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-lg transition-colors"
+              className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-500 text-gray-900 text-sm font-semibold rounded-lg transition-colors"
             >
               Rank Suppliers
             </button>
@@ -632,16 +632,16 @@ function SupplierTab() {
             ranked.suppliers?.length === 0 ? <Empty msg="No suppliers match criteria" /> : (
               <div className="space-y-2">
                 {(ranked.suppliers || []).map((s, i) => (
-                  <div key={i} className="flex items-center justify-between bg-[#060c18] rounded-lg px-3 py-2.5">
+                  <div key={i} className="flex items-center justify-between bg-white rounded-lg px-3 py-2.5">
                     <div className="flex items-center gap-3">
-                      <span className="text-xs font-bold text-white/30 w-5">#{i + 1}</span>
+                      <span className="text-xs font-bold text-gray-500 w-5">#{i + 1}</span>
                       <div>
-                        <div className="text-sm font-semibold text-white">{s.entity_name}</div>
-                        <div className="text-xs text-white/40">{s.sector}</div>
+                        <div className="text-sm font-semibold text-gray-900">{s.entity_name}</div>
+                        <div className="text-xs text-gray-500">{s.sector}</div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-bold text-white">{s.avg_embedded_carbon_tco2_per_tonne?.toFixed(3)} tCO₂/t</div>
+                      <div className="text-sm font-bold text-gray-900">{s.avg_embedded_carbon_tco2_per_tonne?.toFixed(3)} tCO₂/t</div>
                       <ReadinessBand score={s.cbam_readiness_score} />
                     </div>
                   </div>
@@ -694,11 +694,11 @@ function ESGETSTab() {
               </LineChart>
             </ResponsiveContainer>
             {cetsPrice?.current && (
-              <div className="mt-3 flex gap-6 text-xs text-white/50">
+              <div className="mt-3 flex gap-6 text-xs text-gray-500">
                 <span>Spot: <strong className="text-amber-400">¥{cetsPrice.current.spot_cny}</strong></span>
                 <span>EUR equiv: <strong className="text-amber-400">€{cetsPrice.current.spot_eur}</strong></span>
                 <span>YTD: <strong className={cetsPrice.current.ytd_change_pct >= 0 ? 'text-green-400' : 'text-red-400'}>{cetsPrice.current.ytd_change_pct >= 0 ? '+' : ''}{cetsPrice.current.ytd_change_pct}%</strong></span>
-                <span>Phase: <strong className="text-white">{cetsPrice.current.phase}</strong></span>
+                <span>Phase: <strong className="text-gray-900">{cetsPrice.current.phase}</strong></span>
               </div>
             )}
           </Card>
@@ -722,7 +722,7 @@ function ESGETSTab() {
       <Card>
         <div className="flex gap-3 mb-4">
           <select
-            className="bg-[#060c18] border border-white/[0.07] rounded-lg px-3 py-2 text-sm text-white focus:outline-none"
+            className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none"
             value={sector}
             onChange={e => setSector(e.target.value)}
           >
@@ -732,7 +732,7 @@ function ESGETSTab() {
             ))}
           </select>
           <select
-            className="bg-[#060c18] border border-white/[0.07] rounded-lg px-3 py-2 text-sm text-white focus:outline-none"
+            className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none"
             value={esgTier}
             onChange={e => setEsgTier(e.target.value)}
           >
@@ -747,7 +747,7 @@ function ESGETSTab() {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="text-white/40 border-b border-white/[0.07]">
+                <tr className="text-gray-500 border-b border-gray-200">
                   <th className="text-left pb-2 pr-3">Company</th>
                   <th className="text-left pb-2 pr-3">Sector</th>
                   <th className="text-left pb-2 pr-3">Tier</th>
@@ -760,15 +760,15 @@ function ESGETSTab() {
               </thead>
               <tbody>
                 {entities.map((e, i) => (
-                  <tr key={i} className="border-b border-white/[0.03] hover:bg-white/[0.02]">
-                    <td className="py-2 pr-3 font-semibold text-white">{e.entity_name}</td>
-                    <td className="py-2 pr-3 text-white/60">{e.sector}</td>
+                  <tr key={i} className="border-b border-black/[0.04] hover:bg-gray-50">
+                    <td className="py-2 pr-3 font-semibold text-gray-900">{e.entity_name}</td>
+                    <td className="py-2 pr-3 text-gray-600">{e.sector}</td>
                     <td className="py-2 pr-3"><ReadinessBand score={e.esg_tier === 'Leader' ? 90 : e.esg_tier === 'Advanced' ? 70 : e.esg_tier === 'Developing' ? 50 : 20} /></td>
                     <td className="py-2 pr-3 text-right text-green-400 font-bold">{e.environmental_score}</td>
                     <td className="py-2 pr-3 text-right text-blue-400 font-bold">{e.social_score}</td>
                     <td className="py-2 pr-3 text-right text-purple-400 font-bold">{e.governance_score}</td>
-                    <td className="py-2 pr-3 text-right text-white">{e.cets_covered ? <Badge color="amber">CETS</Badge> : <Badge color="slate">No</Badge>}</td>
-                    <td className="py-2 text-right text-white">{e.carbon_intensity_tco2_per_revenue ? `${e.carbon_intensity_tco2_per_revenue.toFixed(3)} tCO₂/¥mn` : '—'}</td>
+                    <td className="py-2 pr-3 text-right text-gray-900">{e.cets_covered ? <Badge color="amber">CETS</Badge> : <Badge color="slate">No</Badge>}</td>
+                    <td className="py-2 text-right text-gray-900">{e.carbon_intensity_tco2_per_revenue ? `${e.carbon_intensity_tco2_per_revenue.toFixed(3)} tCO₂/¥mn` : '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -784,7 +784,7 @@ function ESGETSTab() {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="text-white/40 border-b border-white/[0.07]">
+                <tr className="text-gray-500 border-b border-gray-200">
                   <th className="text-left pb-2 pr-4">Sector</th>
                   <th className="text-right pb-2 pr-4">2025 Baseline (MtCO₂)</th>
                   <th className="text-right pb-2 pr-4">2030 Target</th>
@@ -795,13 +795,13 @@ function ESGETSTab() {
               </thead>
               <tbody>
                 {ndcData.map((p, i) => (
-                  <tr key={i} className="border-b border-white/[0.03] hover:bg-white/[0.02]">
-                    <td className="py-2 pr-4 font-semibold text-white">{p.sector}</td>
-                    <td className="py-2 pr-4 text-right text-white/70">{p.baseline_emissions_mtco2?.toLocaleString()}</td>
+                  <tr key={i} className="border-b border-black/[0.04] hover:bg-gray-50">
+                    <td className="py-2 pr-4 font-semibold text-gray-900">{p.sector}</td>
+                    <td className="py-2 pr-4 text-right text-gray-700">{p.baseline_emissions_mtco2?.toLocaleString()}</td>
                     <td className="py-2 pr-4 text-right text-amber-400">{p.target_2030_mtco2?.toLocaleString()}</td>
                     <td className="py-2 pr-4 text-right text-green-400">{p.target_2050_mtco2?.toLocaleString()}</td>
                     <td className="py-2 pr-4 text-right text-red-400 font-bold">{p.reduction_pct_2030}%</td>
-                    <td className="py-2 text-white/50 text-xs">{p.key_metric}</td>
+                    <td className="py-2 text-gray-500 text-xs">{p.key_metric}</td>
                   </tr>
                 ))}
               </tbody>
@@ -817,7 +817,7 @@ function ESGETSTab() {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="text-white/40 border-b border-white/[0.07]">
+                <tr className="text-gray-500 border-b border-gray-200">
                   <th className="text-left pb-2 pr-4">Sector</th>
                   <th className="text-right pb-2 pr-4">Installations</th>
                   <th className="text-right pb-2 pr-4">Annual Emissions (MtCO₂)</th>
@@ -828,12 +828,12 @@ function ESGETSTab() {
               </thead>
               <tbody>
                 {ets.positions.map((p, i) => (
-                  <tr key={i} className="border-b border-white/[0.03] hover:bg-white/[0.02]">
-                    <td className="py-2 pr-4 font-semibold text-white">{p.sector}</td>
-                    <td className="py-2 pr-4 text-right text-white">{p.covered_installations?.toLocaleString()}</td>
-                    <td className="py-2 pr-4 text-right text-white">{p.annual_emissions_mtco2?.toFixed(2)}</td>
+                  <tr key={i} className="border-b border-black/[0.04] hover:bg-gray-50">
+                    <td className="py-2 pr-4 font-semibold text-gray-900">{p.sector}</td>
+                    <td className="py-2 pr-4 text-right text-gray-900">{p.covered_installations?.toLocaleString()}</td>
+                    <td className="py-2 pr-4 text-right text-gray-900">{p.annual_emissions_mtco2?.toFixed(2)}</td>
                     <td className="py-2 pr-4 text-right text-amber-400">{p.free_allocation_pct}%</td>
-                    <td className="py-2 pr-4 text-right text-white">{p.total_carbon_cost_cny_mn?.toLocaleString()}</td>
+                    <td className="py-2 pr-4 text-right text-gray-900">{p.total_carbon_cost_cny_mn?.toLocaleString()}</td>
                     <td className="py-2 text-center">
                       <Badge color={p.compliance_status === 'Surplus' ? 'green' : p.compliance_status === 'Deficit' ? 'red' : 'amber'}>
                         {p.compliance_status}
@@ -870,25 +870,25 @@ function CorridorsTab() {
           {top3.map((c, i) => (
             <Card key={i} className="border-blue-500/10">
               <div className="flex items-center justify-between mb-3">
-                <span className="font-bold text-white">{c.corridor_name}</span>
+                <span className="font-bold text-gray-900">{c.corridor_name}</span>
                 {c.cbam_applicable && <Badge color="amber">CBAM</Badge>}
               </div>
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-white/40">Trade Value</span>
-                  <span className="font-bold text-white">${c.trade_value_usd_bn?.toLocaleString()}bn</span>
+                  <span className="text-gray-500">Trade Value</span>
+                  <span className="font-bold text-gray-900">${c.trade_value_usd_bn?.toLocaleString()}bn</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-white/40">Annual CBAM Liability (est.)</span>
+                  <span className="text-gray-500">Annual CBAM Liability (est.)</span>
                   <span className="font-bold text-amber-400">€{c.annual_cbam_liability_est_eur_mn?.toLocaleString()}mn</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-white/40">CETS Arbitrage</span>
+                  <span className="text-gray-500">CETS Arbitrage</span>
                   <span className="font-bold text-red-400">€{c.arbitrage_eur_per_tco2}/tCO₂</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-white/40">Top Sectors</span>
-                  <span className="text-white/70">{(c.top_sectors || []).join(', ')}</span>
+                  <span className="text-gray-500">Top Sectors</span>
+                  <span className="text-gray-700">{(c.top_sectors || []).join(', ')}</span>
                 </div>
               </div>
             </Card>
@@ -903,7 +903,7 @@ function CorridorsTab() {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="text-white/40 border-b border-white/[0.07]">
+                <tr className="text-gray-500 border-b border-gray-200">
                   <th className="text-left pb-2 pr-4">Corridor</th>
                   <th className="text-right pb-2 pr-4">Trade Value (USD bn)</th>
                   <th className="text-right pb-2 pr-4">CBAM Liability (€mn est.)</th>
@@ -914,12 +914,12 @@ function CorridorsTab() {
               </thead>
               <tbody>
                 {allCorridors.map((c, i) => (
-                  <tr key={i} className="border-b border-white/[0.03] hover:bg-white/[0.02]">
-                    <td className="py-2 pr-4 font-semibold text-white">{c.corridor_name}</td>
-                    <td className="py-2 pr-4 text-right text-white">${c.trade_value_usd_bn?.toLocaleString()}</td>
+                  <tr key={i} className="border-b border-black/[0.04] hover:bg-gray-50">
+                    <td className="py-2 pr-4 font-semibold text-gray-900">{c.corridor_name}</td>
+                    <td className="py-2 pr-4 text-right text-gray-900">${c.trade_value_usd_bn?.toLocaleString()}</td>
                     <td className="py-2 pr-4 text-right text-amber-400">€{c.annual_cbam_liability_est_eur_mn?.toLocaleString()}</td>
                     <td className="py-2 pr-4 text-right text-red-400 font-bold">€{c.arbitrage_eur_per_tco2}</td>
-                    <td className="py-2 pr-4 text-white/60">{c.dominant_cbam_sector}</td>
+                    <td className="py-2 pr-4 text-gray-600">{c.dominant_cbam_sector}</td>
                     <td className="py-2 text-center">{c.cbam_applicable ? <Badge color="amber">CBAM</Badge> : <Badge color="slate">N/A</Badge>}</td>
                   </tr>
                 ))}
@@ -934,7 +934,7 @@ function CorridorsTab() {
         <div className="flex items-center justify-between mb-4">
           <SectionTitle>P&L Impact — EU ETS Price Scenarios</SectionTitle>
           <select
-            className="bg-[#060c18] border border-white/[0.07] rounded-lg px-3 py-2 text-sm text-white focus:outline-none"
+            className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none"
             value={plSector}
             onChange={e => setPlSector(e.target.value)}
           >
@@ -960,7 +960,7 @@ function CorridorsTab() {
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="text-white/40 border-b border-white/[0.07]">
+                  <tr className="text-gray-500 border-b border-gray-200">
                     <th className="text-right pb-2 pr-3">EU ETS</th>
                     <th className="text-right pb-2 pr-3">Gross CBAM</th>
                     <th className="text-right pb-2 pr-3">CETS Ded.</th>
@@ -969,8 +969,8 @@ function CorridorsTab() {
                 </thead>
                 <tbody>
                   {plData.map((p, i) => (
-                    <tr key={i} className="border-b border-white/[0.03]">
-                      <td className="py-1.5 pr-3 text-right text-white">€{p.eu_ets_price_eur}</td>
+                    <tr key={i} className="border-b border-black/[0.04]">
+                      <td className="py-1.5 pr-3 text-right text-gray-900">€{p.eu_ets_price_eur}</td>
                       <td className="py-1.5 pr-3 text-right text-amber-400">€{p.cbam_liability_eur_per_tonne?.toFixed(2)}</td>
                       <td className="py-1.5 pr-3 text-right text-green-400">€{p.cets_deduction_eur_per_tonne?.toFixed(2)}</td>
                       <td className="py-1.5 text-right text-red-400 font-bold">€{p.net_impact_eur_per_tonne?.toFixed(2)}</td>
@@ -1036,7 +1036,7 @@ function MarketplaceTab() {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="text-white/40 border-b border-white/[0.07]">
+                <tr className="text-gray-500 border-b border-gray-200">
                   <th className="text-left pb-2 pr-4">Standard</th>
                   <th className="text-right pb-2 pr-4">Spot (USD/tCO₂)</th>
                   <th className="text-right pb-2 pr-4">1Y Forward</th>
@@ -1047,20 +1047,20 @@ function MarketplaceTab() {
               </thead>
               <tbody>
                 {priceRows.map((p, i) => (
-                  <tr key={i} className="border-b border-white/[0.03] hover:bg-white/[0.02]">
+                  <tr key={i} className="border-b border-black/[0.04] hover:bg-gray-50">
                     <td className="py-2 pr-4">
-                      <div className="font-bold text-white">{p.standard}</div>
-                      <div className="text-white/30">{p.description}</div>
+                      <div className="font-bold text-gray-900">{p.standard}</div>
+                      <div className="text-gray-500">{p.description}</div>
                     </td>
                     <td className="py-2 pr-4 text-right font-bold text-green-400">${p.spot_usd?.toFixed(2)}</td>
-                    <td className="py-2 pr-4 text-right text-white">${p.forward_1y_usd?.toFixed(2)}</td>
+                    <td className="py-2 pr-4 text-right text-gray-900">${p.forward_1y_usd?.toFixed(2)}</td>
                     <td className="py-2 pr-4 text-right text-blue-400">
                       {p.contango_pct != null ? `${p.contango_pct > 0 ? '+' : ''}${p.contango_pct?.toFixed(1)}%` : '—'}
                     </td>
                     <td className="py-2 pr-4 text-right text-amber-400">
                       {p.vs_eu_ets_discount_pct != null ? `${p.vs_eu_ets_discount_pct?.toFixed(1)}%` : '—'}
                     </td>
-                    <td className="py-2 text-white/50">{p.exchange}</td>
+                    <td className="py-2 text-gray-500">{p.exchange}</td>
                   </tr>
                 ))}
               </tbody>
@@ -1075,7 +1075,7 @@ function MarketplaceTab() {
           <SectionTitle>Active Listings</SectionTitle>
           <div className="flex gap-2">
             <select
-              className="bg-[#060c18] border border-white/[0.07] rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none"
+              className="bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-gray-900 focus:outline-none"
               value={listingType}
               onChange={e => setListingType(e.target.value)}
             >
@@ -1083,7 +1083,7 @@ function MarketplaceTab() {
               {['Allowance', 'Offset', 'Certificate'].map(t => <option key={t} value={t}>{t}</option>)}
             </select>
             <select
-              className="bg-[#060c18] border border-white/[0.07] rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none"
+              className="bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-gray-900 focus:outline-none"
               value={standard}
               onChange={e => setStandard(e.target.value)}
             >
@@ -1092,7 +1092,7 @@ function MarketplaceTab() {
             </select>
             <button
               onClick={fetchListings}
-              className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition-colors"
+              className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-gray-900 text-xs font-semibold rounded-lg transition-colors"
             >
               Filter
             </button>
@@ -1102,11 +1102,11 @@ function MarketplaceTab() {
         {listLoading ? <Spinner /> : activeListings.length === 0 ? <Empty /> : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {activeListings.map((l, i) => (
-              <div key={i} className="bg-[#060c18] rounded-lg p-4 border border-white/[0.05] hover:border-white/[0.1] transition-colors">
+              <div key={i} className="bg-white rounded-lg p-4 border border-gray-200 hover:border-gray-300 transition-colors">
                 <div className="flex items-start justify-between mb-2">
                   <div>
-                    <div className="font-semibold text-sm text-white">{l.seller_name}</div>
-                    <div className="text-xs text-white/40">{l.project_name}</div>
+                    <div className="font-semibold text-sm text-gray-900">{l.seller_name}</div>
+                    <div className="text-xs text-gray-500">{l.project_name}</div>
                   </div>
                   <div className="flex gap-1.5">
                     <Badge color={l.listing_type === 'Allowance' ? 'blue' : l.listing_type === 'Offset' ? 'green' : 'purple'}>
@@ -1117,16 +1117,16 @@ function MarketplaceTab() {
                 </div>
                 <div className="grid grid-cols-3 gap-2 text-xs">
                   <div>
-                    <span className="text-white/40 block">Price</span>
+                    <span className="text-gray-500 block">Price</span>
                     <span className="font-bold text-green-400">${l.price_usd_per_tco2?.toFixed(2)}/t</span>
                   </div>
                   <div>
-                    <span className="text-white/40 block">Volume</span>
-                    <span className="font-bold text-white">{l.volume_tco2?.toLocaleString()} tCO₂</span>
+                    <span className="text-gray-500 block">Volume</span>
+                    <span className="font-bold text-gray-900">{l.volume_tco2?.toLocaleString()} tCO₂</span>
                   </div>
                   <div>
-                    <span className="text-white/40 block">Vintage</span>
-                    <span className="font-bold text-white">{l.vintage_year}</span>
+                    <span className="text-gray-500 block">Vintage</span>
+                    <span className="font-bold text-gray-900">{l.vintage_year}</span>
                   </div>
                 </div>
                 {(l.co_benefits || []).length > 0 && (
@@ -1247,7 +1247,7 @@ function ConnectedModulesTab() {
       {/* Header */}
       <div>
         <SectionTitle>Connected Modules — China Trade Platform Integration Map</SectionTitle>
-        <p className="text-sm text-white/40 -mt-3 mb-4">
+        <p className="text-sm text-gray-500 -mt-3 mb-4">
           China Trade data is available across all platform modules. Use the entity hub below to view a unified cross-module card for any Chinese exporter.
         </p>
       </div>
@@ -1256,14 +1256,14 @@ function ConnectedModulesTab() {
       <Card className="border-blue-500/20">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-sm font-bold text-white">Cross-Module Entity Hub</h3>
-            <p className="text-xs text-white/40 mt-0.5">Unified data card for any Chinese exporter across all modules</p>
+            <h3 className="text-sm font-bold text-gray-900">Cross-Module Entity Hub</h3>
+            <p className="text-xs text-gray-500 mt-0.5">Unified data card for any Chinese exporter across all modules</p>
           </div>
           <Badge color="amber">ALL MODULES</Badge>
         </div>
         <div className="flex gap-3 mb-4">
           <input
-            className="flex-1 bg-[#060c18] border border-white/[0.07] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500/50"
+            className="flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
             placeholder="e.g., China Baowu Steel Group"
             value={entityName}
             onChange={e => setEntityName(e.target.value)}
@@ -1272,7 +1272,7 @@ function ConnectedModulesTab() {
           <button
             onClick={fetchHub}
             disabled={hubLoading || !entityName.trim()}
-            className="px-5 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-medium rounded-lg transition-colors"
+            className="px-5 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-gray-900 text-sm font-medium rounded-lg transition-colors"
           >
             {hubLoading ? 'Loading…' : 'Look Up'}
           </button>
@@ -1283,20 +1283,20 @@ function ConnectedModulesTab() {
         {hub && !hub.error && (
           <div className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="bg-[#060c18] rounded-lg p-3">
-                <p className="text-[10px] text-white/40 mb-1">Sector</p>
-                <p className="text-sm font-bold text-white">{hub.sector}</p>
+              <div className="bg-white rounded-lg p-3">
+                <p className="text-[10px] text-gray-500 mb-1">Sector</p>
+                <p className="text-sm font-bold text-gray-900">{hub.sector}</p>
               </div>
-              <div className="bg-[#060c18] rounded-lg p-3">
-                <p className="text-[10px] text-white/40 mb-1">CBAM Readiness</p>
+              <div className="bg-white rounded-lg p-3">
+                <p className="text-[10px] text-gray-500 mb-1">CBAM Readiness</p>
                 <p className="text-xl font-bold text-blue-400">{hub.cbam_readiness_score}</p>
               </div>
-              <div className="bg-[#060c18] rounded-lg p-3">
-                <p className="text-[10px] text-white/40 mb-1">ESG Tier</p>
+              <div className="bg-white rounded-lg p-3">
+                <p className="text-[10px] text-gray-500 mb-1">ESG Tier</p>
                 <ReadinessBand score={hub.cbam_readiness_score} />
               </div>
-              <div className="bg-[#060c18] rounded-lg p-3">
-                <p className="text-[10px] text-white/40 mb-1">ETS Registered</p>
+              <div className="bg-white rounded-lg p-3">
+                <p className="text-[10px] text-gray-500 mb-1">ETS Registered</p>
                 <p className={`text-sm font-bold ${hub.ets_registered ? 'text-green-400' : 'text-amber-400'}`}>
                   {hub.ets_registered ? 'Yes' : 'No'}
                 </p>
@@ -1305,20 +1305,20 @@ function ConnectedModulesTab() {
 
             {hub.cbam_liability?.net_cbam_liability_eur != null && (
               <div className="grid grid-cols-3 gap-3">
-                <div className="bg-[#060c18] rounded-lg p-3">
-                  <p className="text-[10px] text-white/40 mb-1">Gross CBAM Liability</p>
-                  <p className="text-sm font-bold text-white">
+                <div className="bg-white rounded-lg p-3">
+                  <p className="text-[10px] text-gray-500 mb-1">Gross CBAM Liability</p>
+                  <p className="text-sm font-bold text-gray-900">
                     €{((hub.cbam_liability.gross_cbam_liability_eur || 0) / 1000).toFixed(0)}k
                   </p>
                 </div>
-                <div className="bg-[#060c18] rounded-lg p-3">
-                  <p className="text-[10px] text-white/40 mb-1">CETS Art.9 Deduction</p>
+                <div className="bg-white rounded-lg p-3">
+                  <p className="text-[10px] text-gray-500 mb-1">CETS Art.9 Deduction</p>
                   <p className="text-sm font-bold text-green-400">
                     -€{((hub.cbam_liability.cets_deduction_eur || 0) / 1000).toFixed(0)}k
                   </p>
                 </div>
-                <div className="bg-[#060c18] rounded-lg p-3">
-                  <p className="text-[10px] text-white/40 mb-1">Net CBAM Liability</p>
+                <div className="bg-white rounded-lg p-3">
+                  <p className="text-[10px] text-gray-500 mb-1">Net CBAM Liability</p>
                   <p className="text-sm font-bold text-amber-400">
                     €{((hub.cbam_liability.net_cbam_liability_eur || 0) / 1000).toFixed(0)}k
                   </p>
@@ -1350,13 +1350,13 @@ function ConnectedModulesTab() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {MODULE_CARDS.map((m, i) => (
             <a key={i} href={m.href}
-              className="block bg-[#0e1829] border border-white/[0.07] hover:border-white/[0.15] rounded-xl p-5 transition-all group">
+              className="block bg-white border border-gray-200 hover:border-black/[0.15] rounded-xl p-5 transition-all group">
               <div className="flex items-start justify-between mb-2">
-                <h4 className="text-sm font-bold text-white group-hover:text-blue-300 transition-colors">{m.title}</h4>
+                <h4 className="text-sm font-bold text-gray-900 group-hover:text-blue-300 transition-colors">{m.title}</h4>
                 <Badge color={m.badgeColor}>{m.badgeLabel}</Badge>
               </div>
-              <p className="text-xs text-white/50 mb-3 leading-relaxed">{m.description}</p>
-              <p className="text-[10px] text-white/30 font-mono border-t border-white/[0.04] pt-2">{m.dataPoint}</p>
+              <p className="text-xs text-gray-500 mb-3 leading-relaxed">{m.description}</p>
+              <p className="text-[10px] text-gray-500 font-mono border-t border-gray-200 pt-2">{m.dataPoint}</p>
             </a>
           ))}
         </div>
@@ -1371,15 +1371,15 @@ function ConnectedModulesTab() {
           {scope3 && (
             <Card>
               <div className="flex items-center justify-between mb-3">
-                <h4 className="text-xs font-bold text-white/70 uppercase tracking-wide">Scope 3 Cat 1 EFs</h4>
+                <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide">Scope 3 Cat 1 EFs</h4>
                 <Badge color="green">SUPPLY CHAIN</Badge>
               </div>
-              <p className="text-2xl font-bold text-white mb-1">{scope3.total_factors}</p>
-              <p className="text-xs text-white/40 mb-3">emission factor records</p>
+              <p className="text-2xl font-bold text-gray-900 mb-1">{scope3.total_factors}</p>
+              <p className="text-xs text-gray-500 mb-3">emission factor records</p>
               {(scope3.factors || []).slice(0, 4).map((f, i) => (
-                <div key={i} className="flex justify-between text-xs py-1 border-b border-white/[0.03]">
-                  <span className="text-white/50">{f.product || f.product_name}</span>
-                  <span className="font-bold text-white">{Number(f.ef_tco2_t || f.embedded_carbon_tco2_per_tonne || 0).toFixed(2)} tCO2/t</span>
+                <div key={i} className="flex justify-between text-xs py-1 border-b border-black/[0.04]">
+                  <span className="text-gray-500">{f.product || f.product_name}</span>
+                  <span className="font-bold text-gray-900">{Number(f.ef_tco2_t || f.embedded_carbon_tco2_per_tonne || 0).toFixed(2)} tCO2/t</span>
                 </div>
               ))}
               <a href="/supply-chain" className="text-[10px] text-blue-400 hover:underline mt-2 block">
@@ -1392,16 +1392,16 @@ function ConnectedModulesTab() {
           {portData && (
             <Card>
               <div className="flex items-center justify-between mb-3">
-                <h4 className="text-xs font-bold text-white/70 uppercase tracking-wide">Portfolio CBAM Exposure</h4>
+                <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide">Portfolio CBAM Exposure</h4>
                 <Badge color="cyan">PORTFOLIO</Badge>
               </div>
               <p className="text-2xl font-bold text-amber-400 mb-1">
                 €{((portData.total_net_cbam_liability_eur || 0) / 1e6).toFixed(1)}mn
               </p>
-              <p className="text-xs text-white/40 mb-3">net liability (after Art.9)</p>
+              <p className="text-xs text-gray-500 mb-3">net liability (after Art.9)</p>
               {(portData.sector_breakdown || []).slice(0, 4).map((s, i) => (
-                <div key={i} className="flex justify-between text-xs py-1 border-b border-white/[0.03]">
-                  <span className="text-white/50">{s.sector}</span>
+                <div key={i} className="flex justify-between text-xs py-1 border-b border-black/[0.04]">
+                  <span className="text-gray-500">{s.sector}</span>
                   <span className="font-bold text-amber-400">
                     €{((s.net_liability_eur || 0) / 1000).toFixed(0)}k
                   </span>
@@ -1417,15 +1417,15 @@ function ConnectedModulesTab() {
           {ngfsData && (
             <Card>
               <div className="flex items-center justify-between mb-3">
-                <h4 className="text-xs font-bold text-white/70 uppercase tracking-wide">NGFS × CETS Scenarios</h4>
+                <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide">NGFS × CETS Scenarios</h4>
                 <Badge color="purple">SCENARIOS</Badge>
               </div>
-              <p className="text-2xl font-bold text-white mb-1">¥{ngfsData.base_case_price_cny}</p>
-              <p className="text-xs text-white/40 mb-3">CETS spot · 2026-03-05</p>
+              <p className="text-2xl font-bold text-gray-900 mb-1">¥{ngfsData.base_case_price_cny}</p>
+              <p className="text-xs text-gray-500 mb-3">CETS spot · 2026-03-05</p>
               {(ngfsData.scenarios || []).map((s, i) => (
-                <div key={i} className="flex justify-between text-xs py-1 border-b border-white/[0.03]">
-                  <span className="text-white/50 truncate">{s.ngfs_scenario}</span>
-                  <span className="font-bold text-white ml-2">¥{s.cets_2030_cny} (2030)</span>
+                <div key={i} className="flex justify-between text-xs py-1 border-b border-black/[0.04]">
+                  <span className="text-gray-500 truncate">{s.ngfs_scenario}</span>
+                  <span className="font-bold text-gray-900 ml-2">¥{s.cets_2030_cny} (2030)</span>
                 </div>
               ))}
               <a href="/scenario-analysis" className="text-[10px] text-blue-400 hover:underline mt-2 block">
@@ -1454,17 +1454,17 @@ export default function ChinaTradePage() {
   const { data: summary } = useFetch(`${BASE}/summary`, []);
 
   return (
-    <div className="min-h-screen bg-[#060c18] text-white px-6 py-8">
+    <div className="min-h-screen bg-white text-gray-900 px-6 py-8">
 
       {/* Page header */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-1">
-          <h1 className="text-2xl font-bold text-white">China Trade &amp; Sustainability Platform</h1>
+          <h1 className="text-2xl font-bold text-gray-900">China Trade &amp; Sustainability Platform</h1>
           <Badge color="amber">CBAM</Badge>
           <Badge color="blue">CETS</Badge>
           <Badge color="green">ESG</Badge>
         </div>
-        <p className="text-sm text-white/40">
+        <p className="text-sm text-gray-500">
           Exporter intelligence · CBAM auto-fill · Supplier framework · China ESG &amp; ETS · Trade corridors · Carbon marketplace
         </p>
       </div>
@@ -1516,20 +1516,20 @@ export default function ChinaTradePage() {
       )}
 
       {/* Tab strip */}
-      <div className="flex overflow-x-auto gap-1 mb-6 bg-[#0e1829] rounded-xl p-1 border border-white/[0.07]">
+      <div className="flex overflow-x-auto gap-1 mb-6 bg-white rounded-xl p-1 border border-gray-200">
         {TABS.map(t => (
           <button
             key={t.id}
             onClick={() => setActiveTab(t.id)}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
               activeTab === t.id
-                ? 'bg-blue-600 text-white'
-                : 'text-white/50 hover:text-white hover:bg-white/[0.05]'
+                ? 'bg-blue-600 text-gray-900'
+                : 'text-gray-500 hover:text-gray-900 hover:bg-white/[0.05]'
             }`}
           >
             {t.label}
             <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-              activeTab === t.id ? 'bg-white/20 text-white' : 'bg-white/10 text-white/40'
+              activeTab === t.id ? 'bg-white/20 text-gray-900' : 'bg-black/[0.06] text-gray-500'
             }`}>
               {t.badge}
             </span>

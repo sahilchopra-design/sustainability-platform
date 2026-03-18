@@ -80,14 +80,14 @@ export default function CounterpartyEmissionsWizard() {
       <div className="p-6 bg-gray-900 min-h-screen text-gray-100">
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white">Counterparty Emissions</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Counterparty Emissions</h1>
             <p className="text-gray-400 text-sm mt-1">
               Scope 1/2/3 emissions per counterparty with PCAF Data Quality Score.
             </p>
           </div>
           <button
             onClick={() => { reset(); setView('wizard'); }}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-sm text-white rounded"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-sm text-gray-900 rounded"
           >
             + Add Counterparty
           </button>
@@ -112,11 +112,11 @@ export default function CounterpartyEmissionsWizard() {
                 {records.map(r => (
                   <tr key={r.id} className="hover:bg-gray-800">
                     <td className="py-2 pr-4 font-mono text-xs text-gray-300">{r.counterparty_id}</td>
-                    <td className="py-2 pr-4 text-white text-xs">{r.counterparty_name || '—'}</td>
+                    <td className="py-2 pr-4 text-gray-900 text-xs">{r.counterparty_name || '—'}</td>
                     <td className="py-2 pr-4 text-gray-300 text-xs">{r.reporting_year}</td>
-                    <td className="py-2 pr-4 text-white text-xs">{r.scope1_tco2e != null ? Number(r.scope1_tco2e).toLocaleString() : '—'}</td>
-                    <td className="py-2 pr-4 text-white text-xs">{r.scope2_market_tco2e != null ? Number(r.scope2_market_tco2e).toLocaleString() : '—'}</td>
-                    <td className="py-2 pr-4 text-white text-xs">{r.scope3_total_tco2e != null ? Number(r.scope3_total_tco2e).toLocaleString() : '—'}</td>
+                    <td className="py-2 pr-4 text-gray-900 text-xs">{r.scope1_tco2e != null ? Number(r.scope1_tco2e).toLocaleString() : '—'}</td>
+                    <td className="py-2 pr-4 text-gray-900 text-xs">{r.scope2_market_tco2e != null ? Number(r.scope2_market_tco2e).toLocaleString() : '—'}</td>
+                    <td className="py-2 pr-4 text-gray-900 text-xs">{r.scope3_total_tco2e != null ? Number(r.scope3_total_tco2e).toLocaleString() : '—'}</td>
                     <td className={`py-2 pr-4 font-bold text-xs ${DQS_COLORS[r.pcaf_dqs] || 'text-gray-400'}`}>{r.pcaf_dqs}</td>
                     <td className="py-2 pr-4 text-gray-400 text-xs">{r.data_source_type}</td>
                     <td className="py-2 pr-4 text-gray-400 text-xs">{r.assurance_level}</td>
@@ -140,8 +140,8 @@ export default function CounterpartyEmissionsWizard() {
   return (
     <div className="p-6 bg-gray-900 min-h-screen text-gray-100">
       <div className="mb-6 flex items-center gap-4">
-        <button onClick={() => setView('list')} className="text-gray-400 hover:text-white text-sm">← Back</button>
-        <h1 className="text-xl font-bold text-white">Add Counterparty Emissions</h1>
+        <button onClick={() => setView('list')} className="text-gray-400 hover:text-gray-900 text-sm">← Back</button>
+        <h1 className="text-xl font-bold text-gray-900">Add Counterparty Emissions</h1>
       </div>
 
       {/* Step indicator */}
@@ -149,9 +149,9 @@ export default function CounterpartyEmissionsWizard() {
         {STEPS.map((s, i) => (
           <div key={s} className="flex items-center flex-1">
             <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-              i < step ? 'bg-green-600 text-white' : i === step ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-400'
+              i < step ? 'bg-green-600 text-gray-900' : i === step ? 'bg-blue-600 text-gray-900' : 'bg-gray-700 text-gray-400'
             }`}>{i < step ? '✓' : i + 1}</div>
-            <div className={`text-xs ml-1.5 hidden sm:block ${i === step ? 'text-white' : 'text-gray-500'}`}>{s}</div>
+            <div className={`text-xs ml-1.5 hidden sm:block ${i === step ? 'text-gray-900' : 'text-gray-500'}`}>{s}</div>
             {i < STEPS.length - 1 && <div className={`flex-1 h-px mx-2 ${i < step ? 'bg-green-600' : 'bg-gray-700'}`} />}
           </div>
         ))}
@@ -163,11 +163,11 @@ export default function CounterpartyEmissionsWizard() {
           <div className="space-y-4">
             <Field label="Counterparty ID *" hint="e.g. LEI, internal ID">
               <input value={form.counterparty_id} onChange={e => set('counterparty_id', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" placeholder="CP001" />
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" placeholder="CP001" />
             </Field>
             <Field label="Counterparty Name">
               <input value={form.counterparty_name} onChange={e => set('counterparty_name', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" placeholder="Acme Corp" />
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" placeholder="Acme Corp" />
             </Field>
           </div>
         )}
@@ -176,7 +176,7 @@ export default function CounterpartyEmissionsWizard() {
         {step === 1 && (
           <Field label="Reporting Year *">
             <select value={form.reporting_year} onChange={e => set('reporting_year', e.target.value)}
-              className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white">
+              className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900">
               {[2024, 2023, 2022, 2021, 2020, 2019].map(y => <option key={y} value={y}>{y}</option>)}
             </select>
           </Field>
@@ -195,7 +195,7 @@ export default function CounterpartyEmissionsWizard() {
                   onChange={() => set('data_source_type', opt.value)} className="mt-0.5" />
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-white font-medium text-sm">{opt.label}</span>
+                    <span className="text-gray-900 font-medium text-sm">{opt.label}</span>
                     <span className={`text-xs font-mono font-bold ${DQS_COLORS[opt.dqs]}`}>DQS {opt.dqs}</span>
                   </div>
                   <div className="text-xs text-gray-400">{opt.desc}</div>
@@ -219,7 +219,7 @@ export default function CounterpartyEmissionsWizard() {
             ].map(([k, label]) => (
               <Field key={k} label={label}>
                 <input type="number" value={form[k]} onChange={e => set(k, e.target.value)}
-                  className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white"
+                  className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900"
                   placeholder="Leave blank if not available" />
               </Field>
             ))}
@@ -231,18 +231,18 @@ export default function CounterpartyEmissionsWizard() {
           <div className="space-y-4">
             <Field label="Evidence URL">
               <input value={form.evidence_url} onChange={e => set('evidence_url', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white"
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900"
                 placeholder="https://..." />
             </Field>
             <Field label="Assurance Level">
               <select value={form.assurance_level} onChange={e => set('assurance_level', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white">
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900">
                 {['none', 'limited', 'reasonable'].map(a => <option key={a} value={a}>{a}</option>)}
               </select>
             </Field>
             <Field label="Notes">
               <textarea value={form.notes} onChange={e => set('notes', e.target.value)} rows={3}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" />
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" />
             </Field>
           </div>
         )}
@@ -278,7 +278,7 @@ export default function CounterpartyEmissionsWizard() {
           <div className="flex justify-between mt-8">
             <button
               onClick={() => step > 0 ? setStep(s => s - 1) : setView('list')}
-              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-sm text-white rounded"
+              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-sm text-gray-900 rounded"
             >
               {step === 0 ? 'Cancel' : 'Back'}
             </button>
@@ -286,7 +286,7 @@ export default function CounterpartyEmissionsWizard() {
               <button
                 onClick={() => setStep(s => s + 1)}
                 disabled={step === 0 && !form.counterparty_id.trim()}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-sm text-white rounded"
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-sm text-gray-900 rounded"
               >
                 Next
               </button>
@@ -294,7 +294,7 @@ export default function CounterpartyEmissionsWizard() {
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="px-4 py-2 bg-green-600 hover:bg-green-500 disabled:opacity-40 text-sm text-white rounded"
+                className="px-4 py-2 bg-green-600 hover:bg-green-500 disabled:opacity-40 text-sm text-gray-900 rounded"
               >
                 {saving ? 'Saving...' : 'Save Record'}
               </button>
@@ -321,7 +321,7 @@ function Row({ label, value }) {
   return (
     <div className="flex justify-between">
       <span className="text-gray-400">{label}</span>
-      <span className="text-white font-medium">{value}</span>
+      <span className="text-gray-900 font-medium">{value}</span>
     </div>
   );
 }

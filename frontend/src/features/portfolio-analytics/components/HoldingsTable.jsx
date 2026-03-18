@@ -12,6 +12,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow
 } from '../../../components/ui/table';
 import { Building2, Search, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react';
+import { DataRequiredNotice } from '../../../components/shared/DataRequiredNotice';
 
 const PROPERTY_TYPE_COLORS = {
   office: 'bg-blue-500/10 text-blue-300',
@@ -36,16 +37,16 @@ function formatPercent(value) {
   return `${(parseFloat(value) * 100).toFixed(0)}%`;
 }
 
-export function HoldingsTable({ holdings, isLoading }) {
+export function HoldingsTable({ holdings, isLoading, error }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortField, setSortField] = useState('current_value');
   const [sortDir, setSortDir] = useState('desc');
   
   if (isLoading) {
     return (
-      <Card className="bg-[#0d1424]" data-testid="holdings-table-loading">
+      <Card className="bg-white" data-testid="holdings-table-loading">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold text-white/70">Portfolio Holdings</CardTitle>
+          <CardTitle className="text-sm font-semibold text-gray-700">Portfolio Holdings</CardTitle>
         </CardHeader>
         <CardContent>
           <Skeleton className="h-8 w-64 mb-4" />
@@ -59,14 +60,42 @@ export function HoldingsTable({ holdings, isLoading }) {
     );
   }
   
+  if (error) {
+    return (
+      <Card className="bg-white" data-testid="holdings-table-error">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-semibold text-gray-700">Portfolio Holdings</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DataRequiredNotice
+            title="Holdings Data Error"
+            message={error.message || 'Failed to load holdings data.'}
+            severity="error"
+            requirements={error.requiredData?.length > 0 ? error.requiredData : [
+              'Assets must exist in assets_pg table for this portfolio',
+              'Each asset needs: company_name, exposure/market_value, sector',
+              'Optional: country, asset_type, rating, base_pd, scope1/2/3 emissions',
+            ]}
+            testId="holdings-error-notice"
+          />
+        </CardContent>
+      </Card>
+    );
+  }
+
   const items = holdings?.items || [];
-  
-  // Filter
-  const filtered = items.filter(h => 
-    h.property_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    h.property_location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    h.property_type?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+
+  // Filter — skip when search is empty (null fields would otherwise filter out everything)
+  const filtered = searchTerm.trim()
+    ? items.filter(h => {
+        const term = searchTerm.toLowerCase();
+        return (
+          (h.property_name || h.id || '').toLowerCase().includes(term) ||
+          (h.property_location || '').toLowerCase().includes(term) ||
+          (h.property_type || '').toLowerCase().includes(term)
+        );
+      })
+    : items;
   
   // Sort
   const sorted = [...filtered].sort((a, b) => {
@@ -96,17 +125,17 @@ export function HoldingsTable({ holdings, isLoading }) {
   };
   
   return (
-    <Card className="bg-[#0d1424]" data-testid="holdings-table">
+    <Card className="bg-white" data-testid="holdings-table">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-semibold text-white/70 flex items-center gap-2">
+          <CardTitle className="text-sm font-semibold text-gray-700 flex items-center gap-2">
             <Building2 className="h-4 w-4 text-blue-500" />
             Portfolio Holdings
             <Badge variant="outline" className="ml-2">
               {holdings?.total || 0} properties
             </Badge>
           </CardTitle>
-          <div className="text-sm text-white/60">
+          <div className="text-sm text-gray-600">
             Total Value: <span className="font-semibold">{formatCurrency(holdings?.total_value)}</span>
           </div>
         </div>
@@ -114,7 +143,7 @@ export function HoldingsTable({ holdings, isLoading }) {
       <CardContent>
         {/* Search */}
         <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
           <Input
             placeholder="Search by name, location, or type..."
             value={searchTerm}
@@ -128,7 +157,7 @@ export function HoldingsTable({ holdings, isLoading }) {
         <div className="border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow className="bg-white/[0.02]">
+              <TableRow className="bg-gray-50">
                 <TableHead className="cursor-pointer" onClick={() => handleSort('property_name')}>
                   <div className="flex items-center gap-1">
                     Property <SortIcon field="property_name" />
@@ -151,12 +180,13 @@ export function HoldingsTable({ holdings, isLoading }) {
                     Gain/Loss <SortIcon field="unrealized_gain_loss" />
                   </div>
                 </TableHead>
+                <TableHead>Quality</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {sorted.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-white/40">
+                  <TableCell colSpan={7} className="text-center py-8 text-gray-500">
                     {searchTerm ? 'No holdings match your search' : 'No holdings in this portfolio'}
                   </TableCell>
                 </TableRow>
@@ -169,14 +199,14 @@ export function HoldingsTable({ holdings, isLoading }) {
                     <TableRow key={holding.id} data-testid={`holding-row-${holding.id}`}>
                       <TableCell>
                         <div>
-                          <p className="font-medium text-white/90">{holding.property_name || 'Unknown'}</p>
-                          <p className="text-xs text-white/40">{holding.property_location || '-'}</p>
+                          <p className="font-medium text-gray-900">{holding.property_name || 'Unknown'}</p>
+                          <p className="text-xs text-gray-500">{holding.property_location || '-'}</p>
                         </div>
                       </TableCell>
                       <TableCell>
                         <Badge 
                           variant="outline" 
-                          className={PROPERTY_TYPE_COLORS[holding.property_type] || 'bg-white/[0.02] text-white/60'}
+                          className={PROPERTY_TYPE_COLORS[holding.property_type] || 'bg-gray-50 text-gray-600'}
                         >
                           {holding.property_type || '-'}
                         </Badge>
@@ -191,9 +221,26 @@ export function HoldingsTable({ holdings, isLoading }) {
                         {formatPercent(holding.ownership_percentage)}
                       </TableCell>
                       <TableCell>
-                        <span className={isGain ? 'text-emerald-400' : gainLoss < 0 ? 'text-red-400' : 'text-white/40'}>
+                        <span className={isGain ? 'text-emerald-400' : gainLoss < 0 ? 'text-red-400' : 'text-gray-500'}>
                           {gainLoss > 0 ? '+' : ''}{formatCurrency(holding.unrealized_gain_loss)}
                         </span>
+                      </TableCell>
+                      <TableCell>
+                        {holding.data_quality === 'complete' ? (
+                          <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 text-[10px]">
+                            Complete
+                          </Badge>
+                        ) : holding.data_quality === 'partial' ? (
+                          <Badge variant="outline" className="bg-amber-50 text-amber-600 border-amber-200 text-[10px]" title={`Estimated: ${(holding.estimated_fields || []).join(', ')}`}>
+                            Partial
+                          </Badge>
+                        ) : holding.data_quality === 'estimated' ? (
+                          <Badge variant="outline" className="bg-red-50 text-red-500 border-red-200 text-[10px]" title={`Estimated: ${(holding.estimated_fields || []).join(', ')}`}>
+                            Est.
+                          </Badge>
+                        ) : (
+                          <span className="text-gray-400 text-[10px]">—</span>
+                        )}
                       </TableCell>
                     </TableRow>
                   );

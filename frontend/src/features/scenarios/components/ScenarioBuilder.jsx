@@ -156,7 +156,7 @@ export function ScenarioBuilder() {
               </div>
 
               {modifications.map((mod, idx) => (
-                <div key={idx} className="flex items-center gap-2 p-3 bg-white/[0.02] rounded-lg">
+                <div key={idx} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
                   <Select 
                     value={mod.type} 
                     onValueChange={(v) => updateModification(idx, 'type', v)}
@@ -179,7 +179,7 @@ export function ScenarioBuilder() {
                     onChange={(e) => updateModification(idx, 'new_value', parseFloat(e.target.value))}
                   />
                   
-                  <span className="text-sm text-white/40">
+                  <span className="text-sm text-gray-500">
                     {modificationTypes.find(t => t.value === mod.type)?.unit}
                   </span>
                   
@@ -258,9 +258,9 @@ export function ScenarioBuilder() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div className="p-3 bg-white/[0.02] rounded-lg text-center">
-                    <div className="text-xs text-white/40 mb-1">Base Value</div>
-                    <div className="text-lg font-bold text-white/70">
+                  <div className="p-3 bg-gray-50 rounded-lg text-center">
+                    <div className="text-xs text-gray-500 mb-1">Base Value</div>
+                    <div className="text-lg font-bold text-gray-700">
                       {formatCurrency(result.base_value)}
                     </div>
                   </div>
@@ -286,12 +286,12 @@ export function ScenarioBuilder() {
 
                 {/* Component Impacts */}
                 <div className="space-y-2">
-                  <div className="text-sm font-medium text-white/60">Impact Breakdown</div>
+                  <div className="text-sm font-medium text-gray-600">Impact Breakdown</div>
                   {result.component_impacts?.map((impact, idx) => (
-                    <div key={idx} className="flex items-center justify-between py-2 border-b border-white/[0.04]">
+                    <div key={idx} className="flex items-center justify-between py-2 border-b border-gray-200">
                       <div>
-                        <div className="text-sm text-white/70">{impact.modification}</div>
-                        <div className="text-xs text-white/40">
+                        <div className="text-sm text-gray-700">{impact.modification}</div>
+                        <div className="text-xs text-gray-500">
                           {impact.old_value?.toFixed(4)} → {impact.new_value?.toFixed(4)}
                         </div>
                       </div>
@@ -312,8 +312,8 @@ export function ScenarioBuilder() {
 
         {!result && (
           <Card className="border-dashed">
-            <CardContent className="py-12 text-center text-white/40">
-              <Calculator className="h-12 w-12 mx-auto mb-4 text-white/20" />
+            <CardContent className="py-12 text-center text-gray-500">
+              <Calculator className="h-12 w-12 mx-auto mb-4 text-gray-400" />
               <p>Select a property and add modifications to build a scenario</p>
             </CardContent>
           </Card>

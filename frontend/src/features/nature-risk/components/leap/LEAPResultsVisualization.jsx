@@ -33,7 +33,7 @@ const getRiskBadgeClass = (rating) => {
     'High': 'bg-red-100 text-red-300',
     'Very High': 'bg-red-200 text-red-900',
   };
-  return ratings[rating] || 'bg-white/[0.06] text-white/90';
+  return ratings[rating] || 'bg-gray-50 text-gray-900';
 };
 
 export function LEAPResultsVisualization({ result }) {
@@ -78,12 +78,12 @@ export function LEAPResultsVisualization({ result }) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {/* Overall Score */}
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#0d1424] shadow-lg mb-3">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white shadow-lg mb-3">
                 <span className="text-3xl font-bold text-emerald-400">
                   {overallScore.toFixed(1)}
                 </span>
               </div>
-              <p className="text-sm font-medium text-white/60">Overall Score</p>
+              <p className="text-sm font-medium text-gray-600">Overall Score</p>
               <Badge className={getRiskBadgeClass(result.overall_risk_rating)}>
                 {result.overall_risk_rating || 'Medium'}
               </Badge>
@@ -109,7 +109,7 @@ export function LEAPResultsVisualization({ result }) {
                   <p className="text-2xl font-bold" style={{ color: step.color }}>
                     {score.toFixed(1)}
                   </p>
-                  <p className="text-xs text-white/40">{step.label}</p>
+                  <p className="text-xs text-gray-500">{step.label}</p>
                   <Progress 
                     value={(score / 5) * 100} 
                     className="h-1.5 mt-2"
@@ -242,15 +242,15 @@ export function LEAPResultsVisualization({ result }) {
               {result.recommendations.map((rec, idx) => (
                 <div 
                   key={idx}
-                  className="flex items-start gap-3 p-3 bg-white/[0.02] dark:bg-[#111827] rounded-lg"
+                  className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-white rounded-lg"
                 >
                   <CheckCircle className="h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-white/90 dark:text-white/15">
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-400">
                       {rec.title || rec}
                     </p>
                     {rec.description && (
-                      <p className="text-xs text-white/40 mt-1">{rec.description}</p>
+                      <p className="text-xs text-gray-500 mt-1">{rec.description}</p>
                     )}
                   </div>
                 </div>

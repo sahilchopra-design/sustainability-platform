@@ -14,6 +14,7 @@ from services.xbrl_export_engine import (
     XBRLExportEngine,
     ESRS_XBRL_TAXONOMY,
     ESEF_VALIDATION_RULES,
+    CSRD_TO_XBRL_BRIDGE,
 )
 from services.xbrl_ingestion_engine import (
     XBRLIngestionEngine,
@@ -231,4 +232,111 @@ def ref_ingestion_stats():
         "mapped_concepts": _ingest.get_mapped_concept_count(),
         "export_taxonomy_concepts": len(ESRS_XBRL_TAXONOMY),
         "validation_rules": len(ESEF_VALIDATION_RULES),
+    }
+
+
+# ---------------------------------------------------------------------------
+# E2: CSRD Auto-Populate → XBRL Pipeline Endpoint
+# ---------------------------------------------------------------------------
+
+class CSRDToXBRLRequest(BaseModel):
+    """E2 pipeline: pass CSRD auto-populate output directly for XBRL generation."""
+    entity_lei: str = Field(..., description="20-char LEI of the reporting entity")
+    period_start: str = Field("2024-01-01", description="Reporting period start (ISO date)")
+    period_end: str = Field("2024-12-31", description="Reporting period end (ISO date)")
+    currency: str = Field("EUR", description="Reporting currency")
+    decimals: int = Field(0, ge=-6, le=4,
+        description="XBRL decimals attribute (0=exact, -3=thousands, -6=millions)")
+    # Accept the auto_populate output in two forms:
+    # 1. Full AutoPopulateResult serialised as dict (has 'entity_name' + 'populated_dps' list)
+    # 2. Flat data_points dict {csrd_dp_id: numeric_value} for simple callers
+    auto_populate_result: Optional[dict] = Field(None,
+        description="Full AutoPopulateResult dict from /api/v1/csrd/auto-populate")
+    flat_data_points: Optional[dict] = Field(None,
+        description="Simple flat dict {csrd_dp_id: value} — alternative to auto_populate_result")
+
+
+@router.post(
+    "/pipeline/csrd-to-xbrl",
+    summary="E2: CSRD auto-populate → XBRL iXBRL/XML pipeline",
+    description=(
+        "Accepts CSRD auto-populate output (AutoPopulateResult or flat dp dict) and "
+        "generates a complete XBRL package (iXBRL HTML + XBRL XML + validation). "
+        "Uses CSRD_TO_XBRL_BRIDGE to map ESRS dp_ids to EFRAG XBRL taxonomy concepts. "
+        "Unmapped DPs (qualitative/narrative) are listed in metadata.csrd_dps_unmapped."
+    ),
+)
+def csrd_to_xbrl_pipeline(req: CSRDToXBRLRequest):
+    """Run the CSRD auto-populate → XBRL export pipeline (E2)."""
+    if req.auto_populate_result:
+        result = _export.export_from_csrd_auto_populate(
+            auto_populate_result=req.auto_populate_result,
+            entity_lei=req.entity_lei,
+            period_start=req.period_start,
+            period_end=req.period_end,
+            currency=req.currency,
+            decimals=req.decimals,
+        )
+    elif req.flat_data_points:
+        # Translate flat dict through bridge
+        data_points: dict[str, float] = {}
+        unmapped = []
+        for csrd_key, value in req.flat_data_points.items():
+            xbrl_key = CSRD_TO_XBRL_BRIDGE.get(csrd_key)
+            if xbrl_key and value is not None:
+                data_points[xbrl_key] = float(value)
+            else:
+                unmapped.append(csrd_key)
+        result = _export.export(
+            entity_name=req.auto_populate_result.get("entity_name", "") if req.auto_populate_result else "",
+            entity_lei=req.entity_lei,
+            period_start=req.period_start,
+            period_end=req.period_end,
+            data_points=data_points,
+            currency=req.currency,
+            decimals=req.decimals,
+        )
+        result.metadata = {
+            "pipeline": "flat_data_points → xbrl_export",
+            "bridge_version": "E2-v1.0",
+            "csrd_dps_received": len(req.flat_data_points),
+            "csrd_dps_mapped": len(data_points),
+            "csrd_dps_unmapped": unmapped,
+        }
+    else:
+        from fastapi import HTTPException
+        raise HTTPException(
+            status_code=422,
+            detail="Provide either 'auto_populate_result' or 'flat_data_points'."
+        )
+
+    return {
+        "entity_lei": result.entity_lei,
+        "entity_name": result.entity_name,
+        "reporting_period": result.reporting_period,
+        "taxonomy_version": result.taxonomy_version,
+        "fact_count": result.fact_count,
+        "validation_passed": result.validation_passed,
+        "errors_count": result.errors_count,
+        "coverage_by_esrs": result.coverage_by_esrs,
+        "metadata": result.metadata,
+        "validation_results": [
+            {"rule_id": v.rule_id, "description": v.description, "passed": v.passed, "details": v.details}
+            for v in result.validation_results
+        ],
+        "ixbrl_html": result.ixbrl_html,
+        "xbrl_xml": result.xbrl_xml,
+    }
+
+
+@router.get("/ref/csrd-xbrl-bridge", summary="CSRD dp_id → XBRL taxonomy key bridge map")
+def ref_csrd_xbrl_bridge():
+    """Return the E2 bridge mapping from csrd_auto_populate dp_ids to XBRL taxonomy keys."""
+    return {
+        "bridge_map": CSRD_TO_XBRL_BRIDGE,
+        "total_mappings": len(CSRD_TO_XBRL_BRIDGE),
+        "note": (
+            "Maps numeric ESRS data point IDs from csrd_auto_populate.py to EFRAG XBRL taxonomy concepts. "
+            "Qualitative/narrative DPs have no numeric XBRL concept and are not included."
+        ),
     }

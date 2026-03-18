@@ -77,11 +77,11 @@ export default function RealEstateEUIUpload() {
     <div className="p-6 bg-gray-900 min-h-screen text-gray-100">
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Real Estate EUI Upload</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Real Estate EUI Upload</h1>
           <p className="text-gray-400 text-sm mt-1">Energy Use Intensity data with CRREM decarbonisation pathways.</p>
         </div>
         <button onClick={downloadTemplate}
-          className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-sm text-white rounded border border-gray-600">
+          className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-sm text-gray-900 rounded border border-gray-600">
           Download Template
         </button>
       </div>
@@ -112,7 +112,7 @@ export default function RealEstateEUIUpload() {
 
           <input type="text" placeholder="Batch label (optional)"
             value={uploadBatch} onChange={e => setUploadBatch(e.target.value)}
-            className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white mb-4" />
+            className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-gray-900 mb-4" />
 
           {uploadResult && (
             <div className="p-3 bg-green-900/30 border border-green-700 rounded text-sm text-green-300">
@@ -144,7 +144,7 @@ export default function RealEstateEUIUpload() {
             { label: 'With Stranding Year', value: assets.filter(a => a.stranding_year).length },
           ].map(k => (
             <div key={k.label} className="bg-gray-800 border border-gray-700 rounded-lg p-4">
-              <div className="text-xl font-bold text-white">{k.value}</div>
+              <div className="text-xl font-bold text-gray-900">{k.value}</div>
               <div className="text-xs text-gray-400">{k.label}</div>
             </div>
           ))}
@@ -155,7 +155,7 @@ export default function RealEstateEUIUpload() {
       <div className="flex items-center gap-3 mb-4">
         <input type="text" placeholder="Filter by name, city, type..." value={filter}
           onChange={e => setFilter(e.target.value)}
-          className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white" />
+          className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-gray-900" />
         <span className="text-xs text-gray-400">{filtered.length} assets</span>
       </div>
 
@@ -175,11 +175,11 @@ export default function RealEstateEUIUpload() {
               {filtered.slice(0, 200).map(a => (
                 <tr key={a.id} className="hover:bg-gray-800">
                   <td className="py-1.5 pr-3 font-mono text-xs text-gray-400">{a.asset_ref}</td>
-                  <td className="py-1.5 pr-3 text-white text-xs">{a.property_name}</td>
+                  <td className="py-1.5 pr-3 text-gray-900 text-xs">{a.property_name}</td>
                   <td className="py-1.5 pr-3 text-gray-400 text-xs">{a.city}</td>
                   <td className="py-1.5 pr-3 text-gray-400 text-xs">{a.country_iso2}</td>
                   <td className="py-1.5 pr-3 text-gray-400 text-xs">{a.property_type}</td>
-                  <td className="py-1.5 pr-3 text-white text-xs">{a.gross_floor_area_m2 ? Number(a.gross_floor_area_m2).toLocaleString() : '—'}</td>
+                  <td className="py-1.5 pr-3 text-gray-900 text-xs">{a.gross_floor_area_m2 ? Number(a.gross_floor_area_m2).toLocaleString() : '—'}</td>
                   <td className={`py-1.5 pr-3 font-medium text-xs ${euiColor(parseFloat(a.eui_kwh_m2_yr), a.property_type)}`}>
                     {a.eui_kwh_m2_yr || '—'}
                   </td>

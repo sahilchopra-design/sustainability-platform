@@ -13,9 +13,9 @@ export const NGFS_FAMILIES = ['Orderly', 'Disorderly', 'Hot house world'];
 export const NGFS_FAMILY_META = {
   Orderly: {
     color:       '#22d3ee',
-    bgClass:     'bg-cyan-500/15',
-    textClass:   'text-cyan-400',
-    borderClass: 'border-cyan-500/30',
+    bgClass:     'bg-black/15',
+    textClass:   'text-slate-700',
+    borderClass: 'border-black/[0.20]',
     description: 'Climate goals met with coordinated early action; low physical risk, managed transition.',
   },
   Disorderly: {

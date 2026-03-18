@@ -127,7 +127,7 @@ export function BlendedFinancePanel() {
   return (
     <div className="space-y-6">
       {/* Methodology note */}
-      <div className="p-3 bg-indigo-500/5 border border-indigo-500/20 rounded-lg text-xs text-indigo-300 flex items-start gap-2">
+      <div className="p-3 bg-gray-800/5 border border-black/20 rounded-lg text-xs text-gray-600 flex items-start gap-2">
         <Info className="h-4 w-4 mt-0.5 shrink-0" />
         <span>OECD Blended Finance Principles 2018 · MDB Cascade Approach · IFC EDGE concessional finance. The cascade approach tests if a project is commercially viable before adding public subsidy — only the minimum necessary concessional support is provided.</span>
       </div>
@@ -135,17 +135,17 @@ export function BlendedFinancePanel() {
       {/* Input + Live Results side-by-side */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Inputs */}
-        <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-          <h3 className="text-sm font-semibold text-white/80 mb-4">Project Parameters</h3>
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <h3 className="text-sm font-semibold text-gray-800 mb-4">Project Parameters</h3>
           <div className="space-y-3">
             <div>
-              <label className="text-xs text-white/40 block mb-1">Project Name</label>
-              <input className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+              <label className="text-xs text-gray-500 block mb-1">Project Name</label>
+              <input className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
                 value={params.project_name} onChange={e => set("project_name", e.target.value)} />
             </div>
             <div>
-              <label className="text-xs text-white/40 block mb-1">Project Type</label>
-              <select className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+              <label className="text-xs text-gray-500 block mb-1">Project Type</label>
+              <select className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
                 value={params.project_type} onChange={e => set("project_type", e.target.value)}>
                 {PROJECT_TYPES.map(v => <option key={v} value={v}>{v.replace(/_/g, " ")}</option>)}
               </select>
@@ -158,14 +158,14 @@ export function BlendedFinancePanel() {
               ["target_irr_pct", "Target Equity IRR (%)"],
             ].map(([k, label]) => (
               <div key={k}>
-                <label className="text-xs text-white/40 block mb-1">{label}</label>
-                <input type="number" step="0.5" className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+                <label className="text-xs text-gray-500 block mb-1">{label}</label>
+                <input type="number" step="0.5" className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
                   value={params[k]} onChange={e => set(k, +e.target.value)} />
               </div>
             ))}
           </div>
 
-          <h4 className="text-xs font-semibold text-white/50 mt-4 mb-2">Capital Stack (%)</h4>
+          <h4 className="text-xs font-semibold text-gray-500 mt-4 mb-2">Capital Stack (%)</h4>
           <div className="space-y-2">
             {[
               ["grant_pct", "Grant / ODA (%)", "#10b981"],
@@ -174,7 +174,7 @@ export function BlendedFinancePanel() {
             ].map(([k, label, color]) => (
               <div key={k}>
                 <div className="flex justify-between mb-1">
-                  <label className="text-xs text-white/40">{label}</label>
+                  <label className="text-xs text-gray-500">{label}</label>
                   <span className="text-xs font-medium" style={{ color }}>{params[k]}%</span>
                 </div>
                 <input type="range" min="0" max="60" step="5" value={params[k]}
@@ -182,20 +182,20 @@ export function BlendedFinancePanel() {
                   className="w-full accent-indigo-500 h-1.5" />
               </div>
             ))}
-            <div className="text-xs text-white/30">
+            <div className="text-xs text-gray-500">
               Equity = {Math.max(0, 100 - params.grant_pct - params.concessional_debt_pct - params.commercial_debt_pct).toFixed(0)}%
             </div>
           </div>
 
-          <h4 className="text-xs font-semibold text-white/50 mt-4 mb-2">Interest Rates (%)</h4>
+          <h4 className="text-xs font-semibold text-gray-500 mt-4 mb-2">Interest Rates (%)</h4>
           {[
             ["conc_rate_pct", "Concessional Rate", "0.5"],
             ["comm_rate_pct", "Commercial Rate", "0.5"],
             ["market_rate_pct", "Market Reference Rate", "0.5"],
           ].map(([k, label, step]) => (
             <div key={k} className="mb-2">
-              <label className="text-xs text-white/40 block mb-1">{label}</label>
-              <input type="number" step={step} className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+              <label className="text-xs text-gray-500 block mb-1">{label}</label>
+              <input type="number" step={step} className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
                 value={params[k]} onChange={e => set(k, +e.target.value)} />
             </div>
           ))}
@@ -209,13 +209,13 @@ export function BlendedFinancePanel() {
               {[
                 { label: "DSCR", val: result.dscr?.toFixed(2) + "x", cls: DSCR_COLOR, sub: "≥1.30x bankable" },
                 { label: "Equity IRR (est.)", val: fmtPct(result.irr_approx), cls: IRR_COLOR, sub: `Target: ${params.target_irr_pct}%` },
-                { label: "Blending Ratio", val: result.blendingRatio + "x", cls: "text-indigo-400", sub: "Private : Public $$" },
+                { label: "Blending Ratio", val: result.blendingRatio + "x", cls: "text-gray-700", sub: "Private : Public $$" },
                 { label: "Conc. Subsidy NPV", val: fmtM(result.concSubsidyNPV), cls: "text-purple-400", sub: "Interest savings" },
               ].map(({ label, val, cls, sub }) => (
-                <div key={label} className="bg-[#0d1424] border border-white/[0.06] rounded-lg p-3">
+                <div key={label} className="bg-white border border-gray-200 rounded-lg p-3">
                   <div className={`text-2xl font-bold ${cls}`}>{val}</div>
-                  <div className="text-xs text-white/40 mt-1">{label}</div>
-                  <div className="text-xs text-white/20">{sub}</div>
+                  <div className="text-xs text-gray-500 mt-1">{label}</div>
+                  <div className="text-xs text-gray-400">{sub}</div>
                 </div>
               ))}
             </div>
@@ -234,8 +234,8 @@ export function BlendedFinancePanel() {
             )}
 
             {/* Capital Stack Chart */}
-            <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-white/70 mb-3">Capital Stack — {params.project_name}</h3>
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">Capital Stack — {params.project_name}</h3>
               <ResponsiveContainer width="100%" height={160}>
                 <BarChart data={[{ name: "Capex" }]} layout="vertical" margin={{ left: 0, right: 20 }}>
                   <XAxis type="number" tick={{ fontSize: 10, fill: "#ffffff40" }} tickFormatter={v => `$${v}M`} />
@@ -251,24 +251,24 @@ export function BlendedFinancePanel() {
                 {result.stack.map(s => (
                   <div key={s.name} className="flex items-center gap-1.5 text-xs">
                     <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: s.fill }} />
-                    <span className="text-white/50">{s.name}: {fmtM(s.value)}</span>
+                    <span className="text-gray-500">{s.name}: {fmtM(s.value)}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Annual flows */}
-            <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4 text-xs">
-              <h3 className="text-sm font-semibold text-white/70 mb-3">Annual Cash Flow Summary</h3>
+            <div className="bg-white border border-gray-200 rounded-lg p-4 text-xs">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">Annual Cash Flow Summary</h3>
               {[
                 ["Revenue", result.annualNOI + params.annual_opex_usd_m, "text-emerald-400"],
                 ["Opex", -params.annual_opex_usd_m, "text-red-400"],
-                ["NOI", result.annualNOI, "text-white/70"],
+                ["NOI", result.annualNOI, "text-gray-700"],
                 ["Debt Service", -result.annualTotalDS, "text-orange-400"],
                 ["Equity Cash Flow", result.annualNOI - result.annualTotalDS, result.annualNOI - result.annualTotalDS > 0 ? "text-emerald-400" : "text-red-400"],
               ].map(([label, val, cls]) => (
-                <div key={label} className="flex justify-between py-1 border-b border-white/[0.04]">
-                  <span className="text-white/40">{label}</span>
+                <div key={label} className="flex justify-between py-1 border-b border-gray-200">
+                  <span className="text-gray-500">{label}</span>
                   <span className={`font-medium ${cls}`}>{fmtM(val)}/yr</span>
                 </div>
               ))}

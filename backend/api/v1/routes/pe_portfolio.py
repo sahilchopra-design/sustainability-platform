@@ -6,12 +6,20 @@ POST /api/v1/pe-portfolio/monitor-portfolio    — Portfolio-wide monitoring
 POST /api/v1/pe-portfolio/value-creation-plan  — Generate value creation plan
 GET  /api/v1/pe-portfolio/kpi-template         — ILPA KPI collection template
 GET  /api/v1/pe-portfolio/sector-levers        — Available ESG levers by sector
+
+DB-Powered (pe_portfolio_companies):
+POST  /api/v1/pe-portfolio/db/companies          — Create portfolio company
+GET   /api/v1/pe-portfolio/db/companies          — List portfolio companies
+PATCH /api/v1/pe-portfolio/db/companies/{id}     — Update portfolio company
+POST  /api/v1/pe-portfolio/db/companies/{id}/exit — Record exit
+GET   /api/v1/pe-portfolio/db/summary            — Portfolio summary (TVPI/DPI/RVPI)
 """
 from __future__ import annotations
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, Dict, Any
+from datetime import date
 
 from services.pe_portfolio_monitor import (
     PEPortfolioMonitor,
@@ -251,3 +259,105 @@ def get_sector_levers(sector: str = Query("Technology")):
         "levers": engine.get_sector_levers(sector),
         "available_sectors": engine.get_available_sectors(),
     }
+
+
+# ---------------------------------------------------------------------------
+# DB-Powered Endpoints  (pe_portfolio_companies)
+# ---------------------------------------------------------------------------
+
+def _get_pe_db():
+    """Lazy-load PEDBService with DB engine."""
+    from services.pe_db_service import PEDBService
+    from db.base import engine as db_engine
+    return PEDBService(db_engine)
+
+
+class PortfolioCompanyCreateRequest(BaseModel):
+    """Create a portfolio company record in pe_portfolio_companies."""
+    deal_id: Optional[str] = None
+    company_name: str
+    sector: str = "Other"
+    country: str = "US"
+    fund_id: str = ""
+    investment_date: Optional[date] = None
+    equity_invested_eur: float = Field(0, ge=0)
+    current_nav_eur: float = Field(0, ge=0)
+    ownership_pct: float = Field(0, ge=0, le=100)
+    board_seats: int = Field(0, ge=0)
+    esg_score_entry: Optional[float] = None
+    esg_score_current: Optional[float] = None
+    sdg_alignment: list[int] = Field(default_factory=list)
+
+
+class PortfolioCompanyUpdateRequest(BaseModel):
+    """Partial update for a portfolio company."""
+    current_nav_eur: Optional[float] = None
+    esg_score_current: Optional[float] = None
+    ownership_pct: Optional[float] = None
+    board_seats: Optional[int] = None
+    sdg_alignment: Optional[list[int]] = None
+    status: Optional[str] = None
+
+
+class ExitRequest(BaseModel):
+    """Record an exit event."""
+    exit_date: date
+    exit_proceeds_eur: float = Field(0, ge=0)
+
+
+@router.post("/db/companies", summary="Create portfolio company in DB")
+def db_create_company(req: PortfolioCompanyCreateRequest) -> Dict[str, Any]:
+    """Insert a new portfolio company into pe_portfolio_companies."""
+    svc = _get_pe_db()
+    data = req.model_dump()
+    # Convert date to string for DB
+    if data.get("investment_date"):
+        data["investment_date"] = data["investment_date"].isoformat()
+    return svc.create_portfolio_company(data)
+
+
+@router.get("/db/companies", summary="List portfolio companies from DB")
+def db_list_companies(
+    fund_id: Optional[str] = Query(None),
+    status: Optional[str] = Query(None),
+) -> Dict[str, Any]:
+    """List portfolio companies with optional fund/status filters."""
+    svc = _get_pe_db()
+    companies = svc.list_portfolio_companies(fund_id=fund_id, status=status)
+    return {"count": len(companies), "companies": companies}
+
+
+@router.patch("/db/companies/{company_id}", summary="Update portfolio company")
+def db_update_company(company_id: str, req: PortfolioCompanyUpdateRequest) -> Dict[str, Any]:
+    """Partial update for a portfolio company (NAV, ESG score, etc.)."""
+    svc = _get_pe_db()
+    updates = {k: v for k, v in req.model_dump().items() if v is not None}
+    if not updates:
+        raise HTTPException(400, "No fields to update")
+    result = svc.update_portfolio_company(company_id, updates)
+    if not result:
+        raise HTTPException(404, f"Portfolio company {company_id} not found")
+    return result
+
+
+@router.post("/db/companies/{company_id}/exit", summary="Record portfolio company exit")
+def db_record_exit(company_id: str, req: ExitRequest) -> Dict[str, Any]:
+    """Record an exit event — sets status=exited, exit_date, exit_proceeds."""
+    svc = _get_pe_db()
+    result = svc.record_exit(
+        company_id=company_id,
+        exit_date=req.exit_date.isoformat(),
+        exit_proceeds_eur=req.exit_proceeds_eur,
+    )
+    if not result:
+        raise HTTPException(404, f"Portfolio company {company_id} not found")
+    return result
+
+
+@router.get("/db/summary", summary="Portfolio summary with TVPI/DPI/RVPI")
+def db_portfolio_summary(
+    fund_id: Optional[str] = Query(None),
+) -> Dict[str, Any]:
+    """Aggregate portfolio summary: invested, NAV, exits, TVPI, DPI, RVPI."""
+    svc = _get_pe_db()
+    return svc.portfolio_summary(fund_id=fund_id)

@@ -13,7 +13,7 @@ const ALIGNMENT_COLORS = {
   'aligned': 'text-green-400 bg-green-100',
   'partial': 'text-yellow-400 bg-yellow-100',
   'not_aligned': 'text-red-400 bg-red-100',
-  'not_applicable': 'text-white/40 bg-white/[0.06]'
+  'not_applicable': 'text-gray-500 bg-gray-50'
 };
 
 const ALIGNMENT_ICONS = {
@@ -83,7 +83,7 @@ export function GBFAlignment() {
   return (
     <div className="space-y-6" data-testid="gbf-alignment">
       {/* Header */}
-      <Card className="bg-[#0d1424] dark:bg-[#111827]">
+      <Card className="bg-white dark:bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5 text-purple-300" />
@@ -166,12 +166,12 @@ export function GBFAlignment() {
                 : Shield;
               const colorClass = alignment 
                 ? ALIGNMENT_COLORS[alignment.alignment_status] 
-                : 'text-white/40 bg-white/[0.06]';
+                : 'text-gray-500 bg-gray-50';
 
               return (
                 <Card 
                   key={target.number}
-                  className="bg-[#0d1424] dark:bg-[#111827] hover:shadow-lg transition-shadow"
+                  className="bg-white dark:bg-white hover:shadow-lg transition-shadow"
                 >
                   <CardContent className="pt-6">
                     <div className="flex items-start justify-between gap-4">
@@ -184,14 +184,14 @@ export function GBFAlignment() {
                             {target.category}
                           </Badge>
                         </div>
-                        <p className="text-sm text-white/70 dark:text-white/20">
+                        <p className="text-sm text-gray-700 dark:text-gray-400">
                           {target.description}
                         </p>
                         
                         {alignment && (
                           <div className="mt-3">
                             <div className="flex items-center justify-between mb-1">
-                              <span className="text-xs text-white/40">Alignment Score</span>
+                              <span className="text-xs text-gray-500">Alignment Score</span>
                               <span className="text-xs font-medium">{alignment.alignment_score}%</span>
                             </div>
                             <Progress value={alignment.alignment_score} className="h-2" />
@@ -232,7 +232,7 @@ export function GBFAlignment() {
 
       {/* Alignment Details */}
       {alignmentData.length > 0 && (
-        <Card className="bg-[#0d1424] dark:bg-[#111827]">
+        <Card className="bg-white dark:bg-white">
           <CardHeader>
             <CardTitle className="text-lg">Your Alignment Progress</CardTitle>
             <CardDescription>
@@ -243,12 +243,12 @@ export function GBFAlignment() {
             <div className="space-y-3">
               {alignmentData.map((item, index) => {
                 const Icon = ALIGNMENT_ICONS[item.alignment_status] || Shield;
-                const colorClass = ALIGNMENT_COLORS[item.alignment_status] || 'text-white/40 bg-white/[0.06]';
+                const colorClass = ALIGNMENT_COLORS[item.alignment_status] || 'text-gray-500 bg-gray-50';
 
                 return (
                   <div 
                     key={index}
-                    className="flex items-center justify-between p-4 bg-white/[0.02] dark:bg-[#0d1424]/50 rounded-lg"
+                    className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-500 rounded-lg"
                   >
                     <div className="flex items-center gap-3">
                       <div className={`p-2 rounded-full ${colorClass}`}>
@@ -256,7 +256,7 @@ export function GBFAlignment() {
                       </div>
                       <div>
                         <p className="font-medium text-sm">{item.target_number}</p>
-                        <p className="text-xs text-white/40">{item.target_description}</p>
+                        <p className="text-xs text-gray-500">{item.target_description}</p>
                       </div>
                     </div>
                     <div className="text-right">

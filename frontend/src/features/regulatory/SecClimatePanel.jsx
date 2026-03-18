@@ -11,16 +11,16 @@ import {
 } from 'recharts';
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
-function Badge({ label, color = 'bg-[#0d1424]/[0.06] text-white/40' }) {
+function Badge({ label, color = 'bg-gray-50 text-gray-500' }) {
   return <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${color}`}>{label}</span>;
 }
 function Card({ title, subtitle, children, className = '' }) {
   return (
-    <div className={`bg-[#0d1424] rounded-xl border border-white/[0.06] ${className}`}>
+    <div className={`bg-white rounded-xl border border-gray-200 ${className}`}>
       {(title || subtitle) && (
-        <div className="px-6 py-4 border-b border-white/[0.05]">
-          {title && <h2 className="text-sm font-semibold text-white/90">{title}</h2>}
-          {subtitle && <p className="text-xs text-white/40 mt-0.5">{subtitle}</p>}
+        <div className="px-6 py-4 border-b border-gray-200">
+          {title && <h2 className="text-sm font-semibold text-gray-900">{title}</h2>}
+          {subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}
         </div>
       )}
       <div className="p-6">{children}</div>
@@ -47,7 +47,7 @@ const SEC_SECTIONS = [
   },
   {
     id: 'strategy', label: 'Strategy', ref: 'S-K Item 1502',
-    color: 'border-cyan-500/20 bg-cyan-500/[0.04]',
+    color: 'border-gray-200 bg-gray-50',
     items: [
       { id: 'str_risks', label: 'Material physical and transition climate risks identified over short/medium/long term' },
       { id: 'str_effects', label: 'Actual and potential effects on business strategy, financial planning, capital allocation' },
@@ -137,8 +137,8 @@ export default function SecClimatePanel() {
       <div className="flex flex-wrap gap-2">
         <Badge label="SEC Release 33-7211 (March 2024)" color="bg-blue-400/10 text-blue-300" />
         <Badge label="Reg S-K Items 1500–1507" color="bg-purple-400/10 text-purple-300" />
-        <Badge label="Reg S-X Article 14" color="bg-cyan-400/10 text-cyan-300" />
-        <Badge label="GHG Protocol" color="bg-white/[0.06] text-white/60" />
+        <Badge label="Reg S-X Article 14" color="bg-gray-50 text-gray-800" />
+        <Badge label="GHG Protocol" color="bg-gray-50 text-gray-600" />
         <Badge label="Partially Stayed (6th Cir. 2024)" color="bg-amber-500/10 text-amber-700" />
       </div>
 
@@ -149,9 +149,9 @@ export default function SecClimatePanel() {
         {/* Filer Setup */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div>
-            <label className="block text-xs font-medium text-white/60 mb-1">Registrant Category</label>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Registrant Category</label>
             <select
-              className="w-full border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-gray-700 focus:outline-none focus:ring-2 focus:ring-black/50"
               value={filerType} onChange={e => setFilerType(e.target.value)}
             >
               {FILER_TYPES.map(f => <option key={f.v} value={f.v}>{f.l}</option>)}
@@ -159,45 +159,45 @@ export default function SecClimatePanel() {
           </div>
           <div className="flex items-center gap-2 p-3 bg-blue-400/[0.06] rounded-lg border border-blue-400/10">
             <div>
-              <p className="text-[10px] text-white/40">Scope 1 & 2 GHG Deadline</p>
+              <p className="text-[10px] text-gray-500">Scope 1 & 2 GHG Deadline</p>
               <p className="text-sm font-bold text-blue-300">{filer?.scope_deadline}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 p-3 bg-purple-400/[0.06] rounded-lg border border-purple-400/10">
             <div>
-              <p className="text-[10px] text-white/40">Financial Statement Deadline</p>
+              <p className="text-[10px] text-gray-500">Financial Statement Deadline</p>
               <p className="text-sm font-bold text-purple-300">{filer?.fin_deadline}</p>
             </div>
           </div>
         </div>
 
         {/* GHG Data Entry */}
-        <div className="border border-white/[0.06] rounded-xl p-4 mb-6 bg-[#0b1120]">
-          <h3 className="text-xs font-bold text-white/60 uppercase tracking-wide mb-3">
+        <div className="border border-gray-200 rounded-xl p-4 mb-6 bg-[#f5f6f8]">
+          <h3 className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-3">
             GHG Emissions (Scope 1 & 2 only — Scope 3 not required)
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs text-white/40 mb-1">Scope 1 — Direct Emissions (tCO₂e)</label>
+              <label className="block text-xs text-gray-500 mb-1">Scope 1 — Direct Emissions (tCO₂e)</label>
               <input
                 type="number"
-                className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0d1424] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                 value={scope1} onChange={e => setScope1(e.target.value)} placeholder="e.g. 12000"
               />
             </div>
             <div>
-              <label className="block text-xs text-white/40 mb-1">Scope 2 Market-Based (tCO₂e)</label>
+              <label className="block text-xs text-gray-500 mb-1">Scope 2 Market-Based (tCO₂e)</label>
               <input
                 type="number"
-                className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0d1424] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                 value={scope2Market} onChange={e => setScope2Market(e.target.value)} placeholder="e.g. 8500"
               />
             </div>
             <div>
-              <label className="block text-xs text-white/40 mb-1">Scope 2 Location-Based (tCO₂e)</label>
+              <label className="block text-xs text-gray-500 mb-1">Scope 2 Location-Based (tCO₂e)</label>
               <input
                 type="number"
-                className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0d1424] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                 value={scope2Location} onChange={e => setScope2Location(e.target.value)} placeholder="e.g. 11000"
               />
             </div>
@@ -208,7 +208,7 @@ export default function SecClimatePanel() {
                 <p className="text-xs font-bold text-blue-300">
                   {(parseFloat(scope1 || 0) + parseFloat(scope2Market || 0)).toLocaleString()} tCO₂e
                 </p>
-                <p className="text-[10px] text-white/40">Total Scope 1+2 (market)</p>
+                <p className="text-[10px] text-gray-500">Total Scope 1+2 (market)</p>
               </div>
             </div>
           )}
@@ -219,23 +219,23 @@ export default function SecClimatePanel() {
           {SEC_SECTIONS.map(sec => (
             <div key={sec.id} className={`border rounded-xl p-4 ${sec.color}`}>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs font-bold text-white/80">{sec.label}</h3>
-                <Badge label={sec.ref} color="bg-white/[0.06] text-white/40" />
+                <h3 className="text-xs font-bold text-gray-800">{sec.label}</h3>
+                <Badge label={sec.ref} color="bg-gray-50 text-gray-500" />
               </div>
               <div className="space-y-2">
                 {sec.items.map(item => (
-                  <div key={item.id} className="bg-[#0d1424] rounded-lg p-3 border border-white/[0.04]">
-                    <p className="text-xs text-white/60 mb-2">{item.label}</p>
+                  <div key={item.id} className="bg-white rounded-lg p-3 border border-gray-200">
+                    <p className="text-xs text-gray-600 mb-2">{item.label}</p>
                     <div className="flex items-center gap-3">
                       <select
-                        className="border border-white/[0.06] rounded px-2 py-1 text-xs bg-[#0b1120] text-white/70 focus:outline-none w-56"
+                        className="border border-gray-200 rounded px-2 py-1 text-xs bg-[#f5f6f8] text-gray-700 focus:outline-none w-56"
                         value={disclosures[item.id]?.maturity || 0}
                         onChange={e => set(item.id, 'maturity', parseInt(e.target.value))}
                       >
                         {MATURITY.map(m => <option key={m.v} value={m.v}>{m.l}</option>)}
                       </select>
                       <input
-                        className="flex-1 border border-white/[0.06] rounded px-2 py-1 text-xs bg-[#0b1120] text-white/40 focus:outline-none"
+                        className="flex-1 border border-gray-200 rounded px-2 py-1 text-xs bg-[#f5f6f8] text-gray-500 focus:outline-none"
                         placeholder="Notes / evidence / owner"
                         value={disclosures[item.id]?.notes || ''}
                         onChange={e => set(item.id, 'notes', e.target.value)}
@@ -254,7 +254,7 @@ export default function SecClimatePanel() {
         <div className="mt-6 flex justify-end">
           <button
             onClick={compute}
-            className="bg-cyan-400 hover:bg-cyan-300 text-[#080e1c] text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors"
+            className="bg-[#164E8A] hover:bg-[#12407A] text-[#ffffff] text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors"
           >
             Generate SEC Assessment
           </button>
@@ -267,14 +267,14 @@ export default function SecClimatePanel() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="col-span-2 md:col-span-1 bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-400/10 rounded-xl p-5 text-center">
               <p className="text-xs text-blue-200/60 mb-1">Overall Readiness</p>
-              <p className="text-3xl font-bold text-white">{result.pct.toFixed(0)}<span className="text-lg text-white/40">%</span></p>
+              <p className="text-3xl font-bold text-gray-900">{result.pct.toFixed(0)}<span className="text-lg text-gray-500">%</span></p>
               <p className="text-xs text-blue-200/60 mt-1">{result.readinessLabel}</p>
             </div>
             {result.sectionScores.map((s, i) => (
-              <div key={i} className="bg-[#0d1424] border border-white/[0.06] rounded-xl p-4">
-                <p className="text-xs text-white/40 mb-1 truncate">{s.section}</p>
+              <div key={i} className="bg-white border border-gray-200 rounded-xl p-4">
+                <p className="text-xs text-gray-500 mb-1 truncate">{s.section}</p>
                 <p className={`text-xl font-bold ${s.score >= 3 ? 'text-emerald-400' : s.score >= 2 ? 'text-amber-400' : 'text-red-500'}`}>
-                  {s.score.toFixed(1)}<span className="text-sm font-normal text-white/30">/4</span>
+                  {s.score.toFixed(1)}<span className="text-sm font-normal text-gray-500">/4</span>
                 </p>
               </div>
             ))}
@@ -287,7 +287,7 @@ export default function SecClimatePanel() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" horizontal={false} />
                 <XAxis type="number" domain={[0, 4]} ticks={[0,1,2,3,4]} tick={{ fontSize: 9, fill: '#ffffff60' }} />
                 <YAxis type="category" dataKey="section" width={120} tick={{ fontSize: 9, fill: '#ffffff60' }} />
-                <Tooltip contentStyle={{ background: '#0d1424', border: '1px solid #ffffff10', borderRadius: 8 }} formatter={v => [`${v}/4`]} />
+                <Tooltip contentStyle={{ background: '#ffffff', border: '1px solid #ffffff10', borderRadius: 8 }} formatter={v => [`${v}/4`]} />
                 <Bar dataKey="score" name="Readiness" radius={[0, 4, 4, 0]}>
                   {result.sectionScores.map((s, i) => (
                     <Cell key={i} fill={s.score >= 3 ? '#10b981' : s.score >= 2 ? '#f59e0b' : '#ef4444'} />
@@ -315,14 +315,14 @@ export default function SecClimatePanel() {
       )}
 
       {/* Methodology */}
-      <Card title="Methodology Reference" className="border-white/[0.03]">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs text-white/50">
-          <div><span className="font-semibold text-white/70">Rule:</span> SEC Release 33-7211 (Mar 2024)</div>
-          <div><span className="font-semibold text-white/70">Reg S-K:</span> Items 1500–1507 (climate disclosures)</div>
-          <div><span className="font-semibold text-white/70">Reg S-X:</span> Art. 14 (financial statement impacts ≥1%)</div>
-          <div><span className="font-semibold text-white/70">GHG Standard:</span> GHG Protocol Corporate Standard</div>
-          <div><span className="font-semibold text-white/70">Scope 3:</span> Removed from final rule (proposed only)</div>
-          <div><span className="font-semibold text-white/70">Status:</span> Voluntarily stayed pending judicial review (2024)</div>
+      <Card title="Methodology Reference" className="border-gray-100">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs text-gray-500">
+          <div><span className="font-semibold text-gray-700">Rule:</span> SEC Release 33-7211 (Mar 2024)</div>
+          <div><span className="font-semibold text-gray-700">Reg S-K:</span> Items 1500–1507 (climate disclosures)</div>
+          <div><span className="font-semibold text-gray-700">Reg S-X:</span> Art. 14 (financial statement impacts ≥1%)</div>
+          <div><span className="font-semibold text-gray-700">GHG Standard:</span> GHG Protocol Corporate Standard</div>
+          <div><span className="font-semibold text-gray-700">Scope 3:</span> Removed from final rule (proposed only)</div>
+          <div><span className="font-semibold text-gray-700">Status:</span> Voluntarily stayed pending judicial review (2024)</div>
         </div>
       </Card>
     </div>

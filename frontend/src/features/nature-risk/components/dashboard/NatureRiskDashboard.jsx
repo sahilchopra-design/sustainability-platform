@@ -84,7 +84,7 @@ export function NatureRiskDashboard() {
     <div className="space-y-6" data-testid="nature-risk-dashboard">
       {/* Header with Export */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-white/90">Nature Risk Overview</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Nature Risk Overview</h2>
         <ExportButton 
           onExport={handleExport}
           label="Export Assessment"
@@ -95,12 +95,12 @@ export function NatureRiskDashboard() {
       
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-[#0d1424] dark:bg-[#111827] border-l-4 border-l-emerald-500">
+        <Card className="bg-white dark:bg-white border-l-4 border-l-emerald-500">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-white/40 dark:text-white/30">Total Assessments</p>
-                <p className="text-3xl font-bold text-white dark:text-white" data-testid="total-assessments">
+                <p className="text-sm text-gray-500 dark:text-gray-500">Total Assessments</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-gray-900" data-testid="total-assessments">
                   {summary?.total_assessments || 0}
                 </p>
               </div>
@@ -111,11 +111,11 @@ export function NatureRiskDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#0d1424] dark:bg-[#111827] border-l-4 border-l-red-500">
+        <Card className="bg-white dark:bg-white border-l-4 border-l-red-500">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-white/40 dark:text-white/30">High Risk Entities</p>
+                <p className="text-sm text-gray-500 dark:text-gray-500">High Risk Entities</p>
                 <p className="text-3xl font-bold text-red-400" data-testid="high-risk-entities">
                   {summary?.high_risk_entities || 0}
                 </p>
@@ -127,14 +127,14 @@ export function NatureRiskDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#0d1424] dark:bg-[#111827] border-l-4 border-l-blue-500">
+        <Card className="bg-white dark:bg-white border-l-4 border-l-blue-500">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-white/40 dark:text-white/30">Water Stress Locations</p>
+                <p className="text-sm text-gray-500 dark:text-gray-500">Water Stress Locations</p>
                 <p className="text-3xl font-bold text-blue-300" data-testid="water-stress-locations">
                   {summary?.water_risk_exposure?.high_stress_locations || 0}
-                  <span className="text-lg text-white/30">/{summary?.water_risk_exposure?.total_locations || 0}</span>
+                  <span className="text-lg text-gray-500">/{summary?.water_risk_exposure?.total_locations || 0}</span>
                 </p>
               </div>
               <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full">
@@ -144,11 +144,11 @@ export function NatureRiskDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#0d1424] dark:bg-[#111827] border-l-4 border-l-purple-500">
+        <Card className="bg-white dark:bg-white border-l-4 border-l-purple-500">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-white/40 dark:text-white/30">Biodiversity Overlaps</p>
+                <p className="text-sm text-gray-500 dark:text-gray-500">Biodiversity Overlaps</p>
                 <p className="text-3xl font-bold text-purple-300" data-testid="biodiversity-overlaps">
                   {(summary?.biodiversity_overlaps?.direct_overlaps || 0) + (summary?.biodiversity_overlaps?.buffer_overlaps || 0)}
                 </p>
@@ -164,10 +164,10 @@ export function NatureRiskDashboard() {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Sector Risk Distribution */}
-        <Card className="bg-[#0d1424] dark:bg-[#111827]">
+        <Card className="bg-white dark:bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-white/60" />
+              <Building2 className="h-5 w-5 text-gray-600" />
               Sector Risk Distribution
             </CardTitle>
             <CardDescription>Average nature risk score by sector</CardDescription>
@@ -188,10 +188,10 @@ export function NatureRiskDashboard() {
         </Card>
 
         {/* GBF Alignment */}
-        <Card className="bg-[#0d1424] dark:bg-[#111827]">
+        <Card className="bg-white dark:bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5 text-white/60" />
+              <Target className="h-5 w-5 text-gray-600" />
               GBF Target Alignment
             </CardTitle>
             <CardDescription>Global Biodiversity Framework compliance status</CardDescription>
@@ -221,14 +221,14 @@ export function NatureRiskDashboard() {
                   <div key={index} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
-                      <span className="text-sm text-white/60 dark:text-white/30">{item.name}</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-500">{item.name}</span>
                     </div>
                     <span className="font-semibold">{item.value}</span>
                   </div>
                 ))}
                 <div className="pt-2 border-t">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-white/60 dark:text-white/30">Total Targets</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-500">Total Targets</span>
                     <span className="font-semibold">{gbfData.total_targets || 23}</span>
                   </div>
                 </div>
@@ -239,10 +239,10 @@ export function NatureRiskDashboard() {
       </div>
 
       {/* Risk Trend */}
-      <Card className="bg-[#0d1424] dark:bg-[#111827]">
+      <Card className="bg-white dark:bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-white/60" />
+            <TrendingUp className="h-5 w-5 text-gray-600" />
             Nature Risk Trend
           </CardTitle>
           <CardDescription>Monthly average risk score trend</CardDescription>
@@ -272,7 +272,7 @@ export function NatureRiskDashboard() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white cursor-pointer hover:from-emerald-600 hover:to-emerald-700 transition-all">
+        <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-gray-900 cursor-pointer hover:from-emerald-600 hover:to-emerald-700 transition-all">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
               <Shield className="h-10 w-10 opacity-80" />
@@ -284,7 +284,7 @@ export function NatureRiskDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white cursor-pointer hover:from-blue-600 hover:to-blue-700 transition-all">
+        <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-gray-900 cursor-pointer hover:from-blue-600 hover:to-blue-700 transition-all">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
               <Droplets className="h-10 w-10 opacity-80" />
@@ -296,7 +296,7 @@ export function NatureRiskDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white cursor-pointer hover:from-purple-600 hover:to-purple-700 transition-all">
+        <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-gray-900 cursor-pointer hover:from-purple-600 hover:to-purple-700 transition-all">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
               <TreePine className="h-10 w-10 opacity-80" />

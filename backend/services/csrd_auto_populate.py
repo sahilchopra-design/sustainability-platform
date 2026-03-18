@@ -3,7 +3,12 @@ CSRD Auto-Population Engine
 =============================
 Automatically populates CSRD / ESRS disclosure data points from existing
 module outputs. Maps calculated KPIs from climate risk, ECL, PCAF, nature
-risk, and other engines into ESRS E1-E5, S1, G1 data point slots.
+risk, supply chain, social registry, and consumer protection modules into
+ESRS E1-E5, S1-S4, G1 data point slots.
+
+Sprint 2 — P1-4: Added ESRS S2 (Workers in Value Chain, 12 DPs),
+S3 (Affected Communities, 8 DPs), S4 (Consumers and End-Users, 6 DPs).
+Source modules: supply_chain, social_registry, consumer_protection.
 
 References:
 - ESRS Implementation Guidance 3 (IG3) — quantitative data points
@@ -127,12 +132,226 @@ ESRS_MAPPINGS: dict[str, dict] = {
         "source_module": "pcaf_calculator",
         "source_field": "waci_tco2e_per_m",
     },
+
+    # ── S2 — Workers in the Value Chain (ESRS S2, EFRAG IG3) ──────────────
+    # S2-1: Policies related to value chain workers
+    "S2-1_policy_coverage_pct": {
+        "esrs": "S2", "dr": "S2-1", "paragraph": "11",
+        "label": "Share of value chain workers covered by supplier code of conduct",
+        "unit": "%",
+        "source_module": "supply_chain",
+        "source_field": "supplier_code_of_conduct_coverage_pct",
+    },
+    "S2-1_audit_coverage_pct": {
+        "esrs": "S2", "dr": "S2-1", "paragraph": "12",
+        "label": "Share of tier-1 suppliers audited on labour standards",
+        "unit": "%",
+        "source_module": "supply_chain",
+        "source_field": "supplier_labour_audit_pct",
+    },
+    # S2-4: Taking action on material impacts — working conditions
+    "S2-4_work_related_injuries": {
+        "esrs": "S2", "dr": "S2-4", "paragraph": "35(a)",
+        "label": "Number of work-related injuries (value chain workers)",
+        "unit": "count",
+        "source_module": "supply_chain",
+        "source_field": "vc_work_related_injuries_count",
+    },
+    "S2-4_injury_rate_per_mhrs": {
+        "esrs": "S2", "dr": "S2-4", "paragraph": "35(b)",
+        "label": "Rate of recordable work-related injuries per million hours worked",
+        "unit": "per million hours",
+        "source_module": "supply_chain",
+        "source_field": "vc_injury_rate_per_m_hours",
+    },
+    "S2-4_work_related_fatalities": {
+        "esrs": "S2", "dr": "S2-4", "paragraph": "35(c)",
+        "label": "Number of work-related fatalities (value chain workers)",
+        "unit": "count",
+        "source_module": "supply_chain",
+        "source_field": "vc_work_related_fatalities",
+    },
+    "S2-4_days_lost_per_injury": {
+        "esrs": "S2", "dr": "S2-4", "paragraph": "35(d)",
+        "label": "Average days lost per work-related injury",
+        "unit": "days",
+        "source_module": "supply_chain",
+        "source_field": "vc_avg_days_lost_per_injury",
+    },
+    "S2-4_contract_worker_pct": {
+        "esrs": "S2", "dr": "S2-4", "paragraph": "36",
+        "label": "Percentage of contract workers in material value chain operations",
+        "unit": "%",
+        "source_module": "supply_chain",
+        "source_field": "vc_contract_worker_pct",
+    },
+    "S2-4_living_wage_coverage_pct": {
+        "esrs": "S2", "dr": "S2-4", "paragraph": "37",
+        "label": "Share of value chain workers earning above living wage",
+        "unit": "%",
+        "source_module": "supply_chain",
+        "source_field": "vc_living_wage_coverage_pct",
+    },
+    # S2-5: Targets — diversity and social dialogue
+    "S2-5_gender_pay_gap_vc": {
+        "esrs": "S2", "dr": "S2-5", "paragraph": "43",
+        "label": "Unadjusted gender pay gap — key value chain categories",
+        "unit": "%",
+        "source_module": "supply_chain",
+        "source_field": "vc_gender_pay_gap_pct",
+    },
+    "S2-5_social_dialogue_coverage_pct": {
+        "esrs": "S2", "dr": "S2-5", "paragraph": "44",
+        "label": "Percentage of value chain workers covered by collective agreements",
+        "unit": "%",
+        "source_module": "supply_chain",
+        "source_field": "vc_collective_agreement_coverage_pct",
+    },
+    # S2-3: Processes for remediation
+    "S2-3_grievance_cases_resolved": {
+        "esrs": "S2", "dr": "S2-3", "paragraph": "25",
+        "label": "Number of grievance cases raised and resolved (value chain)",
+        "unit": "count",
+        "source_module": "supply_chain",
+        "source_field": "vc_grievance_cases_resolved",
+    },
+    "S2-3_grievance_resolution_rate_pct": {
+        "esrs": "S2", "dr": "S2-3", "paragraph": "26",
+        "label": "Grievance resolution rate — value chain workers",
+        "unit": "%",
+        "source_module": "supply_chain",
+        "source_field": "vc_grievance_resolution_rate_pct",
+    },
+
+    # ── S3 — Affected Communities (ESRS S3, EFRAG IG3) ────────────────────
+    # S3-1: Material impacts and dependencies on affected communities
+    "S3-1_significant_ops_pct": {
+        "esrs": "S3", "dr": "S3-1", "paragraph": "15",
+        "label": "Percentage of operations assessed for significant community impact",
+        "unit": "%",
+        "source_module": "social_registry",
+        "source_field": "ops_assessed_community_impact_pct",
+    },
+    "S3-1_indigenous_land_ops_pct": {
+        "esrs": "S3", "dr": "S3-1", "paragraph": "16",
+        "label": "Share of operations on or adjacent to indigenous peoples' land",
+        "unit": "%",
+        "source_module": "social_registry",
+        "source_field": "ops_indigenous_land_pct",
+    },
+    # S3-2: Processes for engaging with affected communities
+    "S3-2_community_engagement_pct": {
+        "esrs": "S3", "dr": "S3-2", "paragraph": "22",
+        "label": "Percentage of affected operations with formal community engagement",
+        "unit": "%",
+        "source_module": "social_registry",
+        "source_field": "community_engagement_ops_pct",
+    },
+    "S3-2_fpic_operations_pct": {
+        "esrs": "S3", "dr": "S3-2", "paragraph": "23",
+        "label": "Share of relevant operations with FPIC processes applied",
+        "unit": "%",
+        "source_module": "social_registry",
+        "source_field": "fpic_operations_pct",
+    },
+    # S3-3: Processes for remediation
+    "S3-3_community_grievances_received": {
+        "esrs": "S3", "dr": "S3-3", "paragraph": "28",
+        "label": "Number of community grievances received in reporting period",
+        "unit": "count",
+        "source_module": "social_registry",
+        "source_field": "community_grievances_received",
+    },
+    "S3-3_community_grievances_resolved": {
+        "esrs": "S3", "dr": "S3-3", "paragraph": "29",
+        "label": "Number of community grievances resolved in reporting period",
+        "unit": "count",
+        "source_module": "social_registry",
+        "source_field": "community_grievances_resolved",
+    },
+    "S3-3_human_rights_incidents": {
+        "esrs": "S3", "dr": "S3-3", "paragraph": "30",
+        "label": "Number of confirmed human rights incidents in communities",
+        "unit": "count",
+        "source_module": "social_registry",
+        "source_field": "community_human_rights_incidents",
+    },
+    # S3-4: Targets related to managing material impacts
+    "S3-4_community_investment_eur": {
+        "esrs": "S3", "dr": "S3-4", "paragraph": "35",
+        "label": "Total community investment / social contributions (EUR)",
+        "unit": "EUR",
+        "source_module": "social_registry",
+        "source_field": "community_investment_eur",
+    },
+
+    # ── S4 — Consumers and End-Users (ESRS S4, EFRAG IG3) ─────────────────
+    # S4-1: Material impacts and dependencies on consumers
+    "S4-1_product_safety_incidents": {
+        "esrs": "S4", "dr": "S4-1", "paragraph": "14",
+        "label": "Number of product safety incidents reported in period",
+        "unit": "count",
+        "source_module": "consumer_protection",
+        "source_field": "product_safety_incidents",
+    },
+    "S4-1_product_recall_events": {
+        "esrs": "S4", "dr": "S4-1", "paragraph": "15",
+        "label": "Number of product recall events",
+        "unit": "count",
+        "source_module": "consumer_protection",
+        "source_field": "product_recall_events",
+    },
+    # S4-2: Processes for engaging with consumers
+    "S4-2_consumer_satisfaction_score": {
+        "esrs": "S4", "dr": "S4-2", "paragraph": "22",
+        "label": "Consumer satisfaction score (NPS or equivalent, 0-100)",
+        "unit": "score",
+        "source_module": "consumer_protection",
+        "source_field": "consumer_satisfaction_score",
+    },
+    # S4-3: Processes for remediation of negative impacts on consumers
+    "S4-3_substantiated_complaints": {
+        "esrs": "S4", "dr": "S4-3", "paragraph": "27",
+        "label": "Number of substantiated consumer complaints in period",
+        "unit": "count",
+        "source_module": "consumer_protection",
+        "source_field": "substantiated_consumer_complaints",
+    },
+    "S4-3_complaint_resolution_rate_pct": {
+        "esrs": "S4", "dr": "S4-3", "paragraph": "28",
+        "label": "Consumer complaint resolution rate",
+        "unit": "%",
+        "source_module": "consumer_protection",
+        "source_field": "consumer_complaint_resolution_rate_pct",
+    },
+    # S4-4: Targets — data privacy and consumer rights
+    "S4-4_data_privacy_breaches": {
+        "esrs": "S4", "dr": "S4-4", "paragraph": "33",
+        "label": "Number of personal data breaches reported to supervisory authority",
+        "unit": "count",
+        "source_module": "consumer_protection",
+        "source_field": "personal_data_breaches_reported",
+    },
+    "S4-4_data_subjects_affected": {
+        "esrs": "S4", "dr": "S4-4", "paragraph": "34",
+        "label": "Number of data subjects affected by personal data breaches",
+        "unit": "count",
+        "source_module": "consumer_protection",
+        "source_field": "data_subjects_affected_by_breach",
+    },
+    "S4-4_regulatory_fines_data_eur": {
+        "esrs": "S4", "dr": "S4-4", "paragraph": "35",
+        "label": "Fines for data protection violations (EUR)",
+        "unit": "EUR",
+        "source_module": "consumer_protection",
+        "source_field": "data_protection_fines_eur",
+    },
 }
 
-# Required minimum DPs for each ESRS standard
+# Required minimum DPs for each ESRS standard (EFRAG IG3 phase-in minimums)
 ESRS_MINIMUMS: dict[str, int] = {
     "E1": 15, "E2": 6, "E3": 5, "E4": 8, "E5": 5,
-    "S1": 10, "G1": 4,
+    "S1": 10, "S2": 12, "S3": 8, "S4": 6, "G1": 4,
 }
 
 

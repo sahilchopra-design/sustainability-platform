@@ -64,7 +64,7 @@ export default function InternalConfigPage() {
   return (
     <div className="p-6 bg-gray-900 min-h-screen text-gray-100">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Internal Configuration</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Internal Configuration</h1>
         <p className="text-gray-400 text-sm mt-1">
           Platform-wide settings for emissions accounting, reporting parameters, and integration defaults.
         </p>
@@ -93,7 +93,7 @@ export default function InternalConfigPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="font-medium text-white text-sm">{item.display_name}</span>
+                          <span className="font-medium text-gray-900 text-sm">{item.display_name}</span>
                           <span className="font-mono text-xs text-gray-500">{item.config_key}</span>
                           <span className="text-xs bg-gray-700 text-gray-400 px-1.5 py-0.5 rounded">{item.data_type}</span>
                         </div>
@@ -110,7 +110,7 @@ export default function InternalConfigPage() {
                           <button
                             onClick={() => handleSave(item.config_key)}
                             disabled={saving[item.config_key]}
-                            className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-xs text-white rounded"
+                            className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-xs text-gray-900 rounded"
                           >
                             {saving[item.config_key] ? 'Saving...' : 'Save'}
                           </button>
@@ -151,14 +151,14 @@ function ConfigInput({ item, value, onChange }) {
     return (
       <input type="number" value={value}
         onChange={e => onChange(e.target.value)}
-        className="bg-gray-700 border border-gray-600 rounded px-3 py-1.5 text-white text-sm w-40
+        className="bg-gray-700 border border-gray-600 rounded px-3 py-1.5 text-gray-900 text-sm w-40
           focus:outline-none focus:border-blue-500" />
     );
   }
   return (
     <input type="text" value={value}
       onChange={e => onChange(e.target.value)}
-      className="bg-gray-700 border border-gray-600 rounded px-3 py-1.5 text-white text-sm w-64
+      className="bg-gray-700 border border-gray-600 rounded px-3 py-1.5 text-gray-900 text-sm w-64
         focus:outline-none focus:border-blue-500" />
   );
 }

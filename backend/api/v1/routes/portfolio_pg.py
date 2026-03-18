@@ -2,7 +2,7 @@
 Unified Portfolio API — PostgreSQL-backed (replaces MongoDB portfolio endpoints).
 """
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from pydantic import BaseModel, Field
@@ -11,6 +11,7 @@ import uuid
 
 from db.base import get_db
 from db.models.portfolio_pg import PortfolioPG, AssetPG, AnalysisRunPG
+from middleware.auth_middleware import apply_org_filter, get_request_org_id
 
 router = APIRouter(prefix="/api/pg", tags=["portfolios-pg"])
 
@@ -44,8 +45,10 @@ class PortfolioUpdate(BaseModel):
 # ---- Portfolio CRUD ----
 
 @router.get("/portfolios")
-def list_portfolios(db: Session = Depends(get_db)):
-    portfolios = db.query(PortfolioPG).order_by(PortfolioPG.created_at.desc()).all()
+def list_portfolios(request: Request, db: Session = Depends(get_db)):
+    q = db.query(PortfolioPG).order_by(PortfolioPG.created_at.desc())
+    q = apply_org_filter(q, PortfolioPG, request)
+    portfolios = q.all()
     return {"portfolios": [{
         "id": p.id, "name": p.name, "description": p.description,
         "num_assets": len(p.assets), "total_exposure": sum(a.exposure for a in p.assets),
@@ -55,8 +58,9 @@ def list_portfolios(db: Session = Depends(get_db)):
 
 
 @router.post("/portfolios", status_code=201)
-def create_portfolio(body: PortfolioCreate, db: Session = Depends(get_db)):
-    p = PortfolioPG(name=body.name, description=body.description)
+def create_portfolio(request: Request, body: PortfolioCreate, db: Session = Depends(get_db)):
+    org_id = get_request_org_id(request)
+    p = PortfolioPG(name=body.name, description=body.description, org_id=org_id)
     db.add(p)
     db.flush()
 
@@ -77,11 +81,19 @@ def create_portfolio(body: PortfolioCreate, db: Session = Depends(get_db)):
     }
 
 
+def _check_portfolio_access(p: PortfolioPG, request: Request) -> None:
+    """P0-2: Raise 404 if the portfolio belongs to a different org than the requester."""
+    org_id = get_request_org_id(request)
+    if org_id and p.org_id and str(p.org_id) != str(org_id):
+        raise HTTPException(404, "Portfolio not found")
+
+
 @router.get("/portfolios/{pid}")
-def get_portfolio(pid: str, db: Session = Depends(get_db)):
+def get_portfolio(pid: str, request: Request, db: Session = Depends(get_db)):
     p = db.get(PortfolioPG, pid)
     if not p:
         raise HTTPException(404, "Portfolio not found")
+    _check_portfolio_access(p, request)
     return {
         "id": p.id, "name": p.name, "description": p.description,
         "assets": [{
@@ -97,10 +109,11 @@ def get_portfolio(pid: str, db: Session = Depends(get_db)):
 
 
 @router.put("/portfolios/{pid}")
-def update_portfolio(pid: str, body: PortfolioUpdate, db: Session = Depends(get_db)):
+def update_portfolio(pid: str, body: PortfolioUpdate, request: Request, db: Session = Depends(get_db)):
     p = db.get(PortfolioPG, pid)
     if not p:
         raise HTTPException(404, "Portfolio not found")
+    _check_portfolio_access(p, request)
     if body.name is not None:
         p.name = body.name
     if body.description is not None:
@@ -110,19 +123,21 @@ def update_portfolio(pid: str, body: PortfolioUpdate, db: Session = Depends(get_
 
 
 @router.delete("/portfolios/{pid}", status_code=204)
-def delete_portfolio(pid: str, db: Session = Depends(get_db)):
+def delete_portfolio(pid: str, request: Request, db: Session = Depends(get_db)):
     p = db.get(PortfolioPG, pid)
     if not p:
         raise HTTPException(404, "Portfolio not found")
+    _check_portfolio_access(p, request)
     db.delete(p)
     db.commit()
 
 
 @router.post("/portfolios/{pid}/assets", status_code=201)
-def add_asset(pid: str, body: AssetCreate, db: Session = Depends(get_db)):
+def add_asset(pid: str, body: AssetCreate, request: Request, db: Session = Depends(get_db)):
     p = db.get(PortfolioPG, pid)
     if not p:
         raise HTTPException(404, "Portfolio not found")
+    _check_portfolio_access(p, request)
     a = AssetPG(
         portfolio_id=pid, asset_type=body.asset_type,
         company_name=body.company_name, company_sector=body.company_sector,

@@ -137,7 +137,7 @@ export function SensitivityAnalysis() {
             <div className="space-y-3">
               {variables.map((v) => (
                 <div key={v.name} className={`flex items-center gap-3 p-3 rounded-lg ${
-                  v.selected ? 'bg-violet-50 border border-violet-200' : 'bg-white/[0.02]'
+                  v.selected ? 'bg-violet-50 border border-violet-200' : 'bg-gray-50'
                 }`}>
                   <Checkbox
                     checked={v.selected}
@@ -153,7 +153,7 @@ export function SensitivityAnalysis() {
                       onChange={(e) => updateVariable(v.name, 'min', e.target.value)}
                       disabled={!v.selected}
                     />
-                    <span className="text-white/30">to</span>
+                    <span className="text-gray-500">to</span>
                     <Input
                       type="number"
                       step="0.001"
@@ -162,7 +162,7 @@ export function SensitivityAnalysis() {
                       onChange={(e) => updateVariable(v.name, 'max', e.target.value)}
                       disabled={!v.selected}
                     />
-                    <span className="text-xs text-white/40">(base: {v.base})</span>
+                    <span className="text-xs text-gray-500">(base: {v.base})</span>
                   </div>
                 </div>
               ))}
@@ -251,7 +251,7 @@ export function SensitivityAnalysis() {
               <div className="mt-4 space-y-2">
                 {tornadoData.slice(0, 3).map((t, idx) => (
                   <div key={idx} className="flex items-center justify-between text-sm">
-                    <span className="text-white/60">{t.variable}</span>
+                    <span className="text-gray-600">{t.variable}</span>
                     <Badge variant="outline" className="bg-violet-50 text-violet-700">
                       Swing: {t.swing.toFixed(1)}%
                     </Badge>
@@ -313,15 +313,15 @@ export function SensitivityAnalysis() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm text-white/40">Base Valuation</div>
-                  <div className="text-2xl font-bold text-white/90">
+                  <div className="text-sm text-gray-500">Base Valuation</div>
+                  <div className="text-2xl font-bold text-gray-900">
                     {formatCurrency(result.base_valuation)}
                   </div>
                 </div>
                 <div className="flex gap-4">
                   {result.tornado_data?.slice(0, 2).map((t, idx) => (
                     <div key={idx} className="text-center">
-                      <div className="text-xs text-white/40 mb-1">{t.variable} Impact</div>
+                      <div className="text-xs text-gray-500 mb-1">{t.variable} Impact</div>
                       <div className="flex gap-2">
                         <Badge className="bg-red-100 text-red-400">
                           <TrendingDown className="h-3 w-3 mr-1" />
@@ -343,8 +343,8 @@ export function SensitivityAnalysis() {
 
       {!result && (
         <Card className="border-dashed">
-          <CardContent className="py-12 text-center text-white/40">
-            <BarChart3 className="h-12 w-12 mx-auto mb-4 text-white/20" />
+          <CardContent className="py-12 text-center text-gray-500">
+            <BarChart3 className="h-12 w-12 mx-auto mb-4 text-gray-400" />
             <p>Select a property and variables to run sensitivity analysis</p>
           </CardContent>
         </Card>

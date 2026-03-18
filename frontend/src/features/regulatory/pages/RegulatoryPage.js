@@ -22,39 +22,39 @@ import {
 const API = process.env.REACT_APP_API_URL || 'http://localhost:8001';
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
-function Badge({ label, color = 'bg-[#0d1424]/[0.06] text-white/40' }) {
+function Badge({ label, color = 'bg-black/[0.04] text-slate-400' }) {
   return <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${color}`}>{label}</span>;
 }
 function Card({ title, subtitle, children, className = '' }) {
   return (
-    <div className={`bg-[#0d1424] rounded-xl border border-white/[0.06] ${className}`}>
+    <div className={`bg-white rounded-xl border border-black/[0.08] ${className}`}>
       {(title || subtitle) && (
-        <div className="px-6 py-4 border-b border-white/[0.05]">
-          {title && <h2 className="text-sm font-semibold text-white/90">{title}</h2>}
-          {subtitle && <p className="text-xs text-white/40 mt-0.5">{subtitle}</p>}
+        <div className="px-6 py-4 border-b border-black/[0.06]">
+          {title && <h2 className="text-sm font-semibold text-slate-900">{title}</h2>}
+          {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
         </div>
       )}
       <div className="p-6">{children}</div>
     </div>
   );
 }
-function StatCard({ label, value, unit, sub, color = 'text-white' }) {
+function StatCard({ label, value, unit, sub, color = 'text-slate-900' }) {
   return (
-    <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-5">
-      <p className="text-xs text-white/40 font-medium mb-1">{label}</p>
+    <div className="bg-white rounded-xl border border-black/[0.08] p-5">
+      <p className="text-xs text-slate-400 font-medium mb-1">{label}</p>
       <p className={`text-2xl font-bold ${color}`}>
-        {value}{unit && <span className="text-sm font-normal text-white/40 ml-1">{unit}</span>}
+        {value}{unit && <span className="text-sm font-normal text-slate-400 ml-1">{unit}</span>}
       </p>
-      {sub && <p className="text-[11px] text-white/30 mt-1">{sub}</p>}
+      {sub && <p className="text-[11px] text-slate-400 mt-1">{sub}</p>}
     </div>
   );
 }
 function Field({ label, hint, children }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-white/60 mb-1">{label}</label>
+      <label className="block text-xs font-medium text-slate-600 mb-1">{label}</label>
       {children}
-      {hint && <p className="text-[10px] text-white/30 mt-0.5">{hint}</p>}
+      {hint && <p className="text-[10px] text-slate-400 mt-0.5">{hint}</p>}
     </div>
   );
 }
@@ -115,80 +115,80 @@ function SFDRPanel() {
     <div className="space-y-6">
       <div className="flex flex-wrap gap-2">
         <Badge label="SFDR Art. 7 / RTS 2023" color="bg-blue-400/10 text-blue-300" />
-        <Badge label="PAI Indicators 1–18" color="bg-cyan-400/10 text-cyan-300" />
+        <Badge label="PAI Indicators 1–18" color="bg-black/[0.05] text-slate-800" />
         <Badge label="PCAF Standard v2.0" color="bg-emerald-400/10 text-emerald-400" />
-        <Badge label="EBA GL/2022/16" color="bg-white/[0.06] text-white/60" />
+        <Badge label="EBA GL/2022/16" color="bg-black/[0.04] text-slate-600" />
       </div>
 
       <Card title="SFDR PAI — Portfolio Setup" subtitle="Principal Adverse Impact indicators per SFDR Annex I, Table 1 (mandatory) + Tables 2 & 3 (optional)">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
             <div>
-              <label className="block text-xs font-medium text-white/60 mb-1">Reporting Year</label>
-              <input type="number" className="border border-white/[0.06] rounded-lg px-3 py-2 text-sm w-28 bg-[#0b1120] text-white/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+              <label className="block text-xs font-medium text-slate-600 mb-1">Reporting Year</label>
+              <input type="number" className="border border-black/[0.08] rounded-lg px-3 py-2 text-sm w-28 bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-2 focus:ring-black/50"
                 value={reportingYear} onChange={e => setReportingYear(parseInt(e.target.value))} />
             </div>
           </div>
           <button onClick={addInvestee}
-            className="text-sm text-cyan-400 hover:text-cyan-300 font-medium border border-cyan-400/20 rounded-lg px-3 py-1.5">
+            className="text-sm text-slate-700 hover:text-slate-800 font-medium border border-black/[0.15] rounded-lg px-3 py-1.5">
             + Add Investee
           </button>
         </div>
 
         <div className="space-y-4">
           {investees.map((inv, idx) => (
-            <div key={idx} className="border border-white/[0.06] rounded-lg p-4 relative">
+            <div key={idx} className="border border-black/[0.08] rounded-lg p-4 relative">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-semibold text-cyan-400">Investee {idx + 1}</span>
+                <span className="text-xs font-semibold text-slate-700">Investee {idx + 1}</span>
                 {investees.length > 1 && (
                   <button onClick={() => removeInvestee(idx)} className="text-red-400 hover:text-red-600 text-xs">Remove</button>
                 )}
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <Field label="Investee ID">
-                  <input className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                  <input className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                     value={inv.investee_id} onChange={e => updateInvestee(idx, 'investee_id', e.target.value)} />
                 </Field>
                 <Field label="Company Name">
-                  <input className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                  <input className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                     value={inv.name || ''} onChange={e => updateInvestee(idx, 'name', e.target.value)} placeholder="Optional" />
                 </Field>
                 <Field label="Sector">
-                  <select className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                  <select className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                     value={inv.sector} onChange={e => updateInvestee(idx, 'sector', e.target.value)}>
                     {SFDR_SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </Field>
                 <Field label="Country (ISO2)">
-                  <input className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                  <input className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                     value={inv.country_iso} onChange={e => updateInvestee(idx, 'country_iso', e.target.value)} />
                 </Field>
                 <Field label="Investment Value (GBP)">
-                  <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                  <input type="number" className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                     value={inv.investment_value_gbp} onChange={e => updateInvestee(idx, 'investment_value_gbp', parseFloat(e.target.value))} />
                 </Field>
                 <Field label="Enterprise Value (EVIC, GBP)">
-                  <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                  <input type="number" className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                     value={inv.enterprise_value_gbp || ''} onChange={e => updateInvestee(idx, 'enterprise_value_gbp', parseFloat(e.target.value) || null)} />
                 </Field>
                 <Field label="Revenue (GBP)">
-                  <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                  <input type="number" className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                     value={inv.revenue_gbp || ''} onChange={e => updateInvestee(idx, 'revenue_gbp', parseFloat(e.target.value) || null)} />
                 </Field>
                 <Field label="Scope 1 (tCO₂e)">
-                  <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                  <input type="number" className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                     value={inv.scope1_tco2e || ''} onChange={e => updateInvestee(idx, 'scope1_tco2e', parseFloat(e.target.value) || null)} placeholder="Optional" />
                 </Field>
                 <Field label="Scope 2 (tCO₂e)">
-                  <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                  <input type="number" className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                     value={inv.scope2_tco2e || ''} onChange={e => updateInvestee(idx, 'scope2_tco2e', parseFloat(e.target.value) || null)} placeholder="Optional" />
                 </Field>
                 <Field label="Scope 3 (tCO₂e)">
-                  <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                  <input type="number" className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                     value={inv.scope3_tco2e || ''} onChange={e => updateInvestee(idx, 'scope3_tco2e', parseFloat(e.target.value) || null)} placeholder="Optional" />
                 </Field>
                 <Field label="PCAF Data Quality (1–5)" hint="1=best, 5=worst">
-                  <select className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                  <select className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                     value={inv.pcaf_data_quality_score} onChange={e => updateInvestee(idx, 'pcaf_data_quality_score', parseInt(e.target.value))}>
                     {[1,2,3,4,5].map(n => <option key={n} value={n}>{n} — {['Company Reported','Company Reported (verified)','Third-Party Estimate','Model-Based','Fallback'][n-1]}</option>)}
                   </select>
@@ -200,7 +200,7 @@ function SFDRPanel() {
 
         <div className="mt-6 flex justify-end">
           <button onClick={handleCalc} disabled={loading}
-            className="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-50 text-[#080e1c] text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors">
+            className="bg-black hover:bg-gray-800 disabled:opacity-50 text-[#ffffff] text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors">
             {loading ? 'Calculating PAI…' : 'Calculate SFDR PAI Indicators'}
           </button>
         </div>
@@ -212,7 +212,7 @@ function SFDRPanel() {
         <div className="space-y-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard label="Mandatory PAI Indicators" value={result.mandatory_indicators?.length || 0}
-              sub="SFDR Annex I Table 1" color="text-cyan-300" />
+              sub="SFDR Annex I Table 1" color="text-slate-800" />
             <StatCard label="Optional PAI Indicators" value={result.optional_indicators?.length || 0}
               sub="Tables 2 & 3" />
             <StatCard label="Overall Data Coverage" value={`${result.overall_data_coverage_pct?.toFixed(0)}%`}
@@ -243,25 +243,25 @@ function SFDRPanel() {
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="border-b border-white/[0.06]">
+                  <tr className="border-b border-black/[0.08]">
                     {['ID','Indicator','Value','Unit','Coverage','Data Quality','Notes'].map(h => (
-                      <th key={h} className="text-left text-white/40 font-semibold py-2 pr-4">{h}</th>
+                      <th key={h} className="text-left text-slate-400 font-semibold py-2 pr-4">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {result.mandatory_indicators?.map((ind, i) => (
-                    <tr key={i} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
-                      <td className="py-2 pr-4 font-mono text-white/40">{ind.indicator_id}</td>
-                      <td className="pr-4 font-medium text-white/70 max-w-[200px]">{ind.indicator_name}</td>
-                      <td className="pr-4 font-mono font-semibold text-cyan-400">
+                    <tr key={i} className="border-b border-black/[0.06] hover:bg-black/[0.02]">
+                      <td className="py-2 pr-4 font-mono text-slate-400">{ind.indicator_id}</td>
+                      <td className="pr-4 font-medium text-slate-700 max-w-[200px]">{ind.indicator_name}</td>
+                      <td className="pr-4 font-mono font-semibold text-slate-700">
                         {ind.value != null ? ind.value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : '—'}
                       </td>
-                      <td className="pr-4 text-white/40">{ind.unit}</td>
+                      <td className="pr-4 text-slate-400">{ind.unit}</td>
                       <td className="pr-4">
                         <div className="flex items-center gap-1.5">
-                          <div className="h-1.5 w-12 bg-white/[0.06] rounded-full">
-                            <div className="h-full bg-cyan-400 rounded-full" style={{ width: `${Math.min(ind.coverage_pct, 100)}%` }} />
+                          <div className="h-1.5 w-12 bg-black/[0.04] rounded-full">
+                            <div className="h-full bg-black rounded-full" style={{ width: `${Math.min(ind.coverage_pct, 100)}%` }} />
                           </div>
                           <span>{ind.coverage_pct?.toFixed(0)}%</span>
                         </div>
@@ -271,7 +271,7 @@ function SFDRPanel() {
                           {(ind.data_quality_score * 100).toFixed(0)}%
                         </span>
                       </td>
-                      <td className="text-white/30 text-[10px] max-w-[180px] truncate">{ind.notes || '—'}</td>
+                      <td className="text-slate-400 text-[10px] max-w-[180px] truncate">{ind.notes || '—'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -356,69 +356,69 @@ function EUTaxonomyPanel() {
         <Badge label="EU Taxonomy Regulation 2020/852" color="bg-emerald-400/10 text-emerald-400" />
         <Badge label="Delegated Acts 2021/2139" color="bg-blue-400/10 text-blue-300" />
         <Badge label="DNSH Criteria" color="bg-amber-500/10 text-amber-700" />
-        <Badge label="Minimum Safeguards" color="bg-white/[0.06] text-white/60" />
+        <Badge label="Minimum Safeguards" color="bg-black/[0.04] text-slate-600" />
       </div>
 
       <Card title="EU Taxonomy — Entity Activity Data"
         subtitle="Map entity economic activities to EU Taxonomy technical screening criteria. Eligible = screened, Aligned = screened + DNSH + minimum safeguards.">
         <div className="flex items-center gap-4 mb-4">
           <div>
-            <label className="block text-xs font-medium text-white/60 mb-1">Reporting Year</label>
-            <input type="number" className="border border-white/[0.06] rounded-lg px-3 py-2 text-sm w-28 bg-[#0b1120] text-white/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <label className="block text-xs font-medium text-slate-600 mb-1">Reporting Year</label>
+            <input type="number" className="border border-black/[0.08] rounded-lg px-3 py-2 text-sm w-28 bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-2 focus:ring-black/50"
               value={reportingYear} onChange={e => setReportingYear(parseInt(e.target.value))} />
           </div>
         </div>
 
         {entities.map((ent, ei) => (
-          <div key={ei} className="border border-white/[0.06] rounded-xl p-5 mb-4">
+          <div key={ei} className="border border-black/[0.08] rounded-xl p-5 mb-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
               <Field label="Entity ID">
-                <input className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                <input className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                   value={ent.entity_id} onChange={e => setEntities(prev => { const a=[...prev]; a[ei]={...a[ei],entity_id:e.target.value}; return a; })} />
               </Field>
               <Field label="Sector">
-                <input className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                <input className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                   value={ent.sector} onChange={e => setEntities(prev => { const a=[...prev]; a[ei]={...a[ei],sector:e.target.value}; return a; })} />
               </Field>
               <Field label="Revenue (GBP)">
-                <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                <input type="number" className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                   value={ent.total_revenue_gbp} onChange={e => setEntities(prev => { const a=[...prev]; a[ei]={...a[ei],total_revenue_gbp:parseFloat(e.target.value)}; return a; })} />
               </Field>
               <Field label="CapEx (GBP)">
-                <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                <input type="number" className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                   value={ent.total_capex_gbp} onChange={e => setEntities(prev => { const a=[...prev]; a[ei]={...a[ei],total_capex_gbp:parseFloat(e.target.value)}; return a; })} />
               </Field>
             </div>
 
-            <p className="text-xs font-semibold text-white/60 mb-2">Economic Activities</p>
+            <p className="text-xs font-semibold text-slate-600 mb-2">Economic Activities</p>
             {ent.activities.map((act, ai) => (
               <div key={ai} className="grid grid-cols-6 gap-2 mb-2 items-center">
-                <input className="border border-white/[0.06] rounded px-2 py-1.5 text-xs focus:outline-none"
+                <input className="border border-black/[0.08] rounded px-2 py-1.5 text-xs focus:outline-none"
                   placeholder="Activity code" value={act.activity_code}
                   onChange={e => updateActivity(ei, ai, 'activity_code', e.target.value)} />
-                <input className="col-span-2 border border-white/[0.06] rounded px-2 py-1.5 text-xs focus:outline-none"
+                <input className="col-span-2 border border-black/[0.08] rounded px-2 py-1.5 text-xs focus:outline-none"
                   placeholder="Activity name" value={act.activity_name}
                   onChange={e => updateActivity(ei, ai, 'activity_name', e.target.value)} />
-                <input type="number" className="border border-white/[0.06] rounded px-2 py-1.5 text-xs focus:outline-none"
+                <input type="number" className="border border-black/[0.08] rounded px-2 py-1.5 text-xs focus:outline-none"
                   placeholder="Turnover %" value={act.turnover_pct}
                   onChange={e => updateActivity(ei, ai, 'turnover_pct', parseFloat(e.target.value))} />
-                <input type="number" className="border border-white/[0.06] rounded px-2 py-1.5 text-xs focus:outline-none"
+                <input type="number" className="border border-black/[0.08] rounded px-2 py-1.5 text-xs focus:outline-none"
                   placeholder="CapEx %" value={act.capex_pct}
                   onChange={e => updateActivity(ei, ai, 'capex_pct', parseFloat(e.target.value))} />
-                <select className="border border-white/[0.06] rounded px-2 py-1.5 text-xs focus:outline-none"
+                <select className="border border-black/[0.08] rounded px-2 py-1.5 text-xs focus:outline-none"
                   value={act.substantial_contribution_objective}
                   onChange={e => updateActivity(ei, ai, 'substantial_contribution_objective', e.target.value)}>
                   {EU_TAX_OBJECTIVES.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
                 </select>
               </div>
             ))}
-            <button onClick={() => addActivity(ei)} className="text-xs text-cyan-400 hover:text-cyan-300 font-medium mt-1">+ Add Activity</button>
+            <button onClick={() => addActivity(ei)} className="text-xs text-slate-700 hover:text-slate-800 font-medium mt-1">+ Add Activity</button>
           </div>
         ))}
 
         <div className="flex justify-end mt-4">
           <button onClick={handleCalc} disabled={loading}
-            className="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-50 text-[#080e1c] text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors">
+            className="bg-black hover:bg-gray-800 disabled:opacity-50 text-[#ffffff] text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors">
             {loading ? 'Assessing…' : 'Calculate EU Taxonomy Alignment'}
           </button>
         </div>
@@ -447,10 +447,10 @@ function EUTaxonomyPanel() {
                     <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: OBJECTIVE_COLORS[i % OBJECTIVE_COLORS.length] }} />
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-0.5">
-                        <span className="text-xs font-medium text-white/70">{obj.objective.replace(/_/g, ' ')}</span>
+                        <span className="text-xs font-medium text-slate-700">{obj.objective.replace(/_/g, ' ')}</span>
                         <span className="text-xs font-bold text-emerald-700">{obj.aligned_turnover_pct?.toFixed(1)}%</span>
                       </div>
-                      <div className="h-1.5 bg-white/[0.06] rounded-full">
+                      <div className="h-1.5 bg-black/[0.04] rounded-full">
                         <div className="h-full bg-emerald-400 rounded-full" style={{ width: `${Math.min(obj.aligned_turnover_pct, 100)}%` }} />
                       </div>
                     </div>
@@ -462,15 +462,15 @@ function EUTaxonomyPanel() {
             <Card title="DNSH Compliance Summary" subtitle="Do Not Significantly Harm checks across 6 environmental objectives">
               {result.per_entity?.map((ent, i) => (
                 <div key={i} className="mb-4">
-                  <p className="text-xs font-semibold text-white/60 mb-2">{ent.entity_id}</p>
+                  <p className="text-xs font-semibold text-slate-600 mb-2">{ent.entity_id}</p>
                   <div className="grid grid-cols-2 gap-2">
                     {ent.activity_results?.map((act, j) => (
                       <div key={j} className={`p-2.5 rounded-lg border ${act.dnsh_compliant ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-red-500/10 border-red-500/20'}`}>
-                        <p className="text-[10px] font-medium text-white/70 truncate">{act.activity_name || act.activity_code}</p>
+                        <p className="text-[10px] font-medium text-slate-700 truncate">{act.activity_name || act.activity_code}</p>
                         <p className={`text-[10px] font-bold ${act.dnsh_compliant ? 'text-emerald-700' : 'text-red-600'}`}>
                           {act.dnsh_compliant ? 'DNSH Compliant' : 'DNSH Non-Compliant'}
                         </p>
-                        <p className="text-[10px] text-white/30">Aligned: T {act.aligned_turnover_pct?.toFixed(0)}% | C {act.aligned_capex_pct?.toFixed(0)}%</p>
+                        <p className="text-[10px] text-slate-400">Aligned: T {act.aligned_turnover_pct?.toFixed(0)}% | C {act.aligned_capex_pct?.toFixed(0)}%</p>
                       </div>
                     ))}
                   </div>
@@ -494,7 +494,7 @@ const TCFD_PILLARS = [
     ],
   },
   {
-    id: 'strategy', label: 'Strategy', color: 'bg-cyan-500/10 border-cyan-500/20 text-cyan-300',
+    id: 'strategy', label: 'Strategy', color: 'bg-black/[0.06] border-black/[0.15] text-slate-800',
     elements: [
       { id: 'climate_risks_opps', label: 'Climate-related risks and opportunities identified' },
       { id: 'impact_on_business', label: 'Impact on business, strategy and financial planning' },
@@ -554,8 +554,8 @@ function TCFDPanel() {
     <div className="space-y-6">
       <div className="flex flex-wrap gap-2">
         <Badge label="TCFD 2023 Recommendations" color="bg-blue-400/10 text-blue-300" />
-        <Badge label="ISSB IFRS S2" color="bg-cyan-400/10 text-cyan-300" />
-        <Badge label="UK TCFD-Aligned Mandate" color="bg-white/[0.06] text-white/60" />
+        <Badge label="ISSB IFRS S2" color="bg-black/[0.05] text-slate-800" />
+        <Badge label="UK TCFD-Aligned Mandate" color="bg-black/[0.04] text-slate-600" />
         <Badge label="SEC Climate Disclosure Rule" color="bg-purple-400/10 text-purple-300" />
       </div>
 
@@ -566,15 +566,15 @@ function TCFDPanel() {
               <h3 className="text-sm font-bold mb-3">{pillar.label}</h3>
               <div className="space-y-3">
                 {pillar.elements.map(el => (
-                  <div key={el.id} className="bg-[#0d1424] rounded-lg p-3 border border-white/50">
-                    <p className="text-xs font-medium text-white/70 mb-2">{el.label}</p>
+                  <div key={el.id} className="bg-white rounded-lg p-3 border border-black/50">
+                    <p className="text-xs font-medium text-slate-700 mb-2">{el.label}</p>
                     <div className="flex items-center gap-3">
-                      <select className="border border-white/[0.06] rounded px-2 py-1 text-xs bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50 w-64"
+                      <select className="border border-black/[0.08] rounded px-2 py-1 text-xs bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50 w-64"
                         value={disclosures[el.id]?.maturity || 0}
                         onChange={e => setDisclosure(el.id, 'maturity', parseInt(e.target.value))}>
                         {MATURITY_LEVELS.map(m => <option key={m.v} value={m.v}>{m.l}</option>)}
                       </select>
-                      <input className="flex-1 border border-white/[0.06] rounded px-2 py-1 text-xs bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                      <input className="flex-1 border border-black/[0.08] rounded px-2 py-1 text-xs bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
                         placeholder="Notes / evidence (optional)"
                         value={disclosures[el.id]?.notes || ''}
                         onChange={e => setDisclosure(el.id, 'notes', e.target.value)} />
@@ -590,7 +590,7 @@ function TCFDPanel() {
         </div>
         <div className="mt-6 flex justify-end">
           <button onClick={computeResult}
-            className="bg-cyan-400 hover:bg-cyan-300 text-[#080e1c] text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors">
+            className="bg-black hover:bg-gray-800 text-[#ffffff] text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors">
             Generate TCFD Assessment
           </button>
         </div>
@@ -599,10 +599,10 @@ function TCFDPanel() {
       {result && (
         <div className="space-y-6">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <div className="col-span-1 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-400/10 rounded-xl p-5 text-white text-center">
-              <p className="text-xs font-medium text-cyan-200/60 mb-1">Overall TCFD Score</p>
-              <p className="text-3xl font-bold">{result.overall.toFixed(1)}<span className="text-lg text-cyan-200/60">/4</span></p>
-              <p className="text-xs text-cyan-200/60 mt-1">
+            <div className="col-span-1 bg-gradient-to-br from-black/20 to-purple-500/20 border border-black/10 rounded-xl p-5 text-slate-900 text-center">
+              <p className="text-xs font-medium text-slate-600 mb-1">Overall TCFD Score</p>
+              <p className="text-3xl font-bold">{result.overall.toFixed(1)}<span className="text-lg text-slate-600">/4</span></p>
+              <p className="text-xs text-slate-600 mt-1">
                 {result.overall >= 3 ? 'Advanced' : result.overall >= 2 ? 'Developing' : 'Initial'}
               </p>
             </div>
@@ -720,7 +720,7 @@ const READINESS_COLOR = {
   planning: 'bg-amber-500/10 text-amber-400 border-amber-200',
   data_collection: 'bg-yellow-50 text-yellow-700 border-yellow-200',
   drafting: 'bg-blue-500/10 text-blue-300 border-blue-500/20',
-  review: 'bg-cyan-400/10 text-cyan-400 border-cyan-400/20',
+  review: 'bg-black/[0.05] text-slate-700 border-black/[0.15]',
   complete: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
 };
 
@@ -750,32 +750,32 @@ function CSRDPanel() {
       <div className="flex flex-wrap gap-2">
         <Badge label="CSRD (EU 2022/2464)" color="bg-emerald-400/10 text-emerald-400" />
         <Badge label="ESRS Set 1 (2023)" color="bg-blue-400/10 text-blue-300" />
-        <Badge label="Double Materiality" color="bg-cyan-400/10 text-cyan-300" />
-        <Badge label="EFRAG Guidance" color="bg-white/[0.06] text-white/60" />
+        <Badge label="Double Materiality" color="bg-black/[0.05] text-slate-800" />
+        <Badge label="EFRAG Guidance" color="bg-black/[0.04] text-slate-600" />
       </div>
 
       <Card title="CSRD Readiness Assessment" subtitle="Track ESRS disclosure readiness across all 11 topic standards. Supports double materiality assessment.">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
           <div>
-            <label className="block text-xs font-medium text-white/60 mb-1">Entity Classification</label>
-            <select className="w-full border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <label className="block text-xs font-medium text-slate-600 mb-1">Entity Classification</label>
+            <select className="w-full border border-black/[0.08] rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-2 focus:ring-black/50"
               value={entitySize} onChange={e => setEntitySize(e.target.value)}>
               {ENTITY_SIZES.map(e => <option key={e.v} value={e.v}>{e.l}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-white/60 mb-1">First Reporting Year</label>
-            <input type="number" className="w-full border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <label className="block text-xs font-medium text-slate-600 mb-1">First Reporting Year</label>
+            <input type="number" className="w-full border border-black/[0.08] rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-2 focus:ring-black/50"
               value={firstYear} onChange={e => setFirstYear(parseInt(e.target.value))} />
           </div>
           <div className="flex items-end gap-4">
-            <div className="text-center p-3 bg-cyan-400/[0.06] rounded-lg flex-1">
-              <p className="text-2xl font-bold text-cyan-300">{completedCount}/{ESRS_STANDARDS.length}</p>
-              <p className="text-xs text-white/40">Standards Complete</p>
+            <div className="text-center p-3 bg-black/[0.06] rounded-lg flex-1">
+              <p className="text-2xl font-bold text-slate-800">{completedCount}/{ESRS_STANDARDS.length}</p>
+              <p className="text-xs text-slate-400">Standards Complete</p>
             </div>
             <div className="text-center p-3 bg-emerald-400/[0.06] rounded-lg flex-1">
               <p className="text-2xl font-bold text-emerald-700">{mandatoryComplete}/{mandatory.length}</p>
-              <p className="text-xs text-white/40">Mandatory Complete</p>
+              <p className="text-xs text-slate-400">Mandatory Complete</p>
             </div>
           </div>
         </div>
@@ -784,18 +784,18 @@ function CSRDPanel() {
           const catStandards = ESRS_STANDARDS.filter(s => s.category === cat);
           return (
             <div key={cat} className="mb-5">
-              <h3 className="text-xs font-bold text-white/40 uppercase tracking-wide mb-2">{cat}</h3>
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">{cat}</h3>
               <div className="space-y-2">
                 {catStandards.map(std => (
-                  <div key={std.code} className="border border-white/[0.06] rounded-lg p-3">
+                  <div key={std.code} className="border border-black/[0.08] rounded-lg p-3">
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0 w-20">
-                        <span className="text-xs font-bold text-cyan-400">{std.code}</span>
-                        {std.mandatory && <Badge label="Mandatory" color="bg-cyan-400/10 text-cyan-400" />}
+                        <span className="text-xs font-bold text-slate-700">{std.code}</span>
+                        {std.mandatory && <Badge label="Mandatory" color="bg-black/[0.05] text-slate-700" />}
                       </div>
                       <div className="flex-1">
-                        <p className="text-xs font-semibold text-white/90">{std.name}</p>
-                        <p className="text-[10px] text-white/30 mb-2">{std.topics.join(' · ')}</p>
+                        <p className="text-xs font-semibold text-slate-900">{std.name}</p>
+                        <p className="text-[10px] text-slate-400 mb-2">{std.topics.join(' · ')}</p>
                         <div className="flex items-center gap-3">
                           <select
                             className={`border rounded px-2 py-1 text-xs focus:outline-none w-48 ${READINESS_COLOR[readiness[std.code]?.status] || ''}`}
@@ -803,7 +803,7 @@ function CSRDPanel() {
                             onChange={e => setStatus(std.code, 'status', e.target.value)}>
                             {READINESS_LEVELS.map(l => <option key={l.v} value={l.v}>{l.l}</option>)}
                           </select>
-                          <input className="flex-1 border border-white/[0.06] rounded px-2 py-1 text-xs focus:outline-none"
+                          <input className="flex-1 border border-black/[0.08] rounded px-2 py-1 text-xs focus:outline-none"
                             placeholder="Notes / gaps / owner"
                             value={readiness[std.code]?.notes || ''}
                             onChange={e => setStatus(std.code, 'notes', e.target.value)} />
@@ -824,20 +824,20 @@ function CSRDPanel() {
           {READINESS_LEVELS.map(level => {
             const count = Object.values(readiness).filter(r => r.status === level.v).length;
             return (
-              <div key={level.v} className={`p-3 rounded-lg border ${READINESS_COLOR[level.v] || 'bg-white/[0.02] border-white/[0.06]'}`}>
+              <div key={level.v} className={`p-3 rounded-lg border ${READINESS_COLOR[level.v] || 'bg-black/[0.02] border-black/[0.08]'}`}>
                 <p className="text-xl font-bold">{count}</p>
                 <p className="text-xs font-medium">{level.l}</p>
               </div>
             );
           })}
         </div>
-        <div className="mt-4 bg-white/[0.02] rounded-lg p-4">
-          <p className="text-xs font-semibold text-white/60 mb-2">Mandatory Standards ({mandatory.length}) — Readiness</p>
-          <div className="h-3 bg-white/[0.06] rounded-full overflow-hidden">
+        <div className="mt-4 bg-black/[0.02] rounded-lg p-4">
+          <p className="text-xs font-semibold text-slate-600 mb-2">Mandatory Standards ({mandatory.length}) — Readiness</p>
+          <div className="h-3 bg-black/[0.04] rounded-full overflow-hidden">
             <div className="h-full bg-emerald-500 rounded-full transition-all"
               style={{ width: `${(mandatoryComplete / mandatory.length) * 100}%` }} />
           </div>
-          <p className="text-xs text-white/40 mt-1">{mandatoryComplete}/{mandatory.length} complete ({((mandatoryComplete / mandatory.length) * 100).toFixed(0)}%)</p>
+          <p className="text-xs text-slate-400 mt-1">{mandatoryComplete}/{mandatory.length} complete ({((mandatoryComplete / mandatory.length) * 100).toFixed(0)}%)</p>
         </div>
       </Card>
     </div>
@@ -916,7 +916,7 @@ const ISSB_S2_DISCLOSURES = [
 
 const ISSB_CATEGORY_COLORS = {
   Governance: 'bg-blue-500/10 border-blue-500/20 text-blue-300',
-  Strategy: 'bg-cyan-500/10 border-cyan-500/20 text-cyan-300',
+  Strategy: 'bg-black/[0.06] border-black/[0.15] text-slate-800',
   'Risk Management': 'bg-purple-500/10 border-purple-500/20 text-purple-300',
   'Metrics & Targets': 'bg-emerald-500/10 border-emerald-500/20 text-emerald-800',
 };
@@ -957,23 +957,23 @@ function ISSBPanel() {
     <div className="space-y-6">
       <div className="flex flex-wrap gap-2">
         <Badge label="IFRS S1 (General Requirements)" color="bg-blue-400/10 text-blue-300" />
-        <Badge label="IFRS S2 (Climate-Related Disclosures)" color="bg-cyan-400/10 text-cyan-300" />
+        <Badge label="IFRS S2 (Climate-Related Disclosures)" color="bg-black/[0.05] text-slate-800" />
         <Badge label="ISSB 2023" color="bg-purple-400/10 text-purple-300" />
         <Badge label="TCFD-Compatible" color="bg-emerald-400/10 text-emerald-400" />
-        <Badge label="IOSCO Endorsed" color="bg-white/[0.06] text-white/60" />
+        <Badge label="IOSCO Endorsed" color="bg-black/[0.04] text-slate-600" />
       </div>
 
       {result && (
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-400/10 rounded-xl p-5 text-white text-center">
+          <div className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-400/10 rounded-xl p-5 text-slate-900 text-center">
             <p className="text-xs text-blue-200 mb-1">IFRS S1 — Sustainability</p>
             <p className="text-3xl font-bold">{result.s1Score.toFixed(1)}<span className="text-lg text-blue-200">/4</span></p>
             <p className="text-xs text-blue-200 mt-1">{result.s1Score >= 3 ? 'Substantially Compliant' : result.s1Score >= 2 ? 'Developing' : 'Early Stage'}</p>
           </div>
-          <div className="bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-400/10 rounded-xl p-5 text-white text-center">
-            <p className="text-xs text-cyan-200/60 mb-1">IFRS S2 — Climate</p>
-            <p className="text-3xl font-bold">{result.s2Score.toFixed(1)}<span className="text-lg text-cyan-200/60">/4</span></p>
-            <p className="text-xs text-cyan-200/60 mt-1">{result.s2Score >= 3 ? 'Substantially Compliant' : result.s2Score >= 2 ? 'Developing' : 'Early Stage'}</p>
+          <div className="bg-gradient-to-br from-black/20 to-purple-500/20 border border-black/10 rounded-xl p-5 text-slate-900 text-center">
+            <p className="text-xs text-slate-600 mb-1">IFRS S2 — Climate</p>
+            <p className="text-3xl font-bold">{result.s2Score.toFixed(1)}<span className="text-lg text-slate-600">/4</span></p>
+            <p className="text-xs text-slate-600 mt-1">{result.s2Score >= 3 ? 'Substantially Compliant' : result.s2Score >= 2 ? 'Developing' : 'Early Stage'}</p>
           </div>
         </div>
       )}
@@ -981,30 +981,30 @@ function ISSBPanel() {
       <Card title="ISSB IFRS Sustainability Disclosure Standards" subtitle="Self-assessment against IFRS S1 (general requirements) and IFRS S2 (climate-specific disclosures). Score 0–4.">
         <div className="flex gap-3 mb-5">
           <button onClick={() => setActiveStd('s1')}
-            className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-all ${activeStd === 's1' ? 'bg-blue-500 text-white border-blue-500' : 'bg-[#0d1424] text-white/60 border-white/[0.06] hover:border-blue-400/50'}`}>
+            className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-all ${activeStd === 's1' ? 'bg-blue-500 text-slate-900 border-blue-500' : 'bg-white text-slate-600 border-black/[0.08] hover:border-blue-400/50'}`}>
             IFRS S1 — General Requirements ({ISSB_S1_DISCLOSURES.flatMap(c=>c.items).length} disclosures)
           </button>
           <button onClick={() => setActiveStd('s2')}
-            className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-all ${activeStd === 's2' ? 'bg-cyan-400 text-[#080e1c] border-cyan-400' : 'bg-[#0d1424] text-white/60 border-white/[0.06] hover:border-cyan-400/50'}`}>
+            className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-all ${activeStd === 's2' ? 'bg-black text-[#ffffff] border-black' : 'bg-white text-slate-600 border-black/[0.08] hover:border-black/50'}`}>
             IFRS S2 — Climate ({ISSB_S2_DISCLOSURES.flatMap(c=>c.items).length} disclosures)
           </button>
         </div>
 
         <div className="space-y-4">
           {activeDisclosures.map(cat => (
-            <div key={cat.category} className={`border rounded-xl p-4 ${ISSB_CATEGORY_COLORS[cat.category] || 'bg-white/[0.02] border-white/[0.06] text-white/90'}`}>
+            <div key={cat.category} className={`border rounded-xl p-4 ${ISSB_CATEGORY_COLORS[cat.category] || 'bg-black/[0.02] border-black/[0.08] text-slate-900'}`}>
               <h3 className="text-xs font-bold mb-3">{cat.category}</h3>
               <div className="space-y-2">
                 {cat.items.map(item => (
-                  <div key={item.id} className="bg-[#0d1424] rounded-lg p-3 border border-white/50">
-                    <p className="text-xs font-medium text-white/70 mb-2">{item.label}</p>
+                  <div key={item.id} className="bg-white rounded-lg p-3 border border-black/50">
+                    <p className="text-xs font-medium text-slate-700 mb-2">{item.label}</p>
                     <div className="flex items-center gap-3">
-                      <select className="border border-white/[0.06] rounded px-2 py-1 text-xs focus:outline-none w-56"
+                      <select className="border border-black/[0.08] rounded px-2 py-1 text-xs focus:outline-none w-56"
                         value={disclosures[item.id]?.maturity || 0}
                         onChange={e => set(item.id, 'maturity', parseInt(e.target.value))}>
                         {ISSB_MATURITY.map(m => <option key={m.v} value={m.v}>{m.l}</option>)}
                       </select>
-                      <input className="flex-1 border border-white/[0.06] rounded px-2 py-1 text-xs focus:outline-none"
+                      <input className="flex-1 border border-black/[0.08] rounded px-2 py-1 text-xs focus:outline-none"
                         placeholder="Evidence / notes"
                         value={disclosures[item.id]?.notes || ''}
                         onChange={e => set(item.id, 'notes', e.target.value)} />
@@ -1020,7 +1020,7 @@ function ISSBPanel() {
         </div>
         <div className="mt-6 flex justify-end">
           <button onClick={compute}
-            className="bg-cyan-400 hover:bg-cyan-300 text-[#080e1c] text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors">
+            className="bg-black hover:bg-gray-800 text-[#ffffff] text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors">
             Score ISSB Assessment
           </button>
         </div>
@@ -1084,7 +1084,7 @@ function BRSRPanel() {
     <div className="space-y-6">
       <div className="flex flex-wrap gap-2">
         <Badge label="SEBI BRSR (2021)" color="bg-blue-400/10 text-blue-300" />
-        <Badge label="BRSR Core (FY2024)" color="bg-cyan-400/10 text-cyan-300" />
+        <Badge label="BRSR Core (FY2024)" color="bg-black/[0.05] text-slate-800" />
         <Badge label="9 Principles / NVGs" color="bg-amber-500/10 text-amber-700" />
         <Badge label="NSE / BSE Listed" color="bg-emerald-400/10 text-emerald-400" />
       </div>
@@ -1092,8 +1092,8 @@ function BRSRPanel() {
       <Card title="Business Responsibility & Sustainability Report (BRSR)" subtitle="SEBI Circular SEBI/HO/CFD/CMD-2/P/CIR/2021/562 — 9 Principles of NVG SEGs. Mandatory for Top 1000 listed companies (by market cap) from FY2022-23.">
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div>
-            <label className="block text-xs font-medium text-white/60 mb-1">Applicability</label>
-            <select className="w-full border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <label className="block text-xs font-medium text-slate-600 mb-1">Applicability</label>
+            <select className="w-full border border-black/[0.08] rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-2 focus:ring-black/50"
               value={applicability} onChange={e => setApplicability(e.target.value)}>
               <option value="top500">Top 500 Listed (by M-Cap)</option>
               <option value="top1000">Top 1000 Listed (by M-Cap)</option>
@@ -1101,37 +1101,37 @@ function BRSRPanel() {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-white/60 mb-1">Reporting Year</label>
-            <input type="number" className="w-full border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <label className="block text-xs font-medium text-slate-600 mb-1">Reporting Year</label>
+            <input type="number" className="w-full border border-black/[0.08] rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-2 focus:ring-black/50"
               value={reportingYear} onChange={e => setReportingYear(parseInt(e.target.value))} />
           </div>
           <div className="flex items-end gap-3">
-            <div className="text-center p-3 bg-cyan-400/[0.06] rounded-lg flex-1">
-              <p className="text-xl font-bold text-cyan-300">{disclosedCount}/{BRSR_PRINCIPLES.length}</p>
-              <p className="text-xs text-white/40">Principles Disclosed</p>
+            <div className="text-center p-3 bg-black/[0.06] rounded-lg flex-1">
+              <p className="text-xl font-bold text-slate-800">{disclosedCount}/{BRSR_PRINCIPLES.length}</p>
+              <p className="text-xs text-slate-400">Principles Disclosed</p>
             </div>
             <div className="text-center p-3 bg-emerald-400/[0.06] rounded-lg flex-1">
               <p className="text-xl font-bold text-emerald-700">{mandatoryDisclosed}/{mandatoryPrinciples.length}</p>
-              <p className="text-xs text-white/40">Mandatory Disclosed</p>
+              <p className="text-xs text-slate-400">Mandatory Disclosed</p>
             </div>
           </div>
         </div>
 
         <div className="space-y-3">
           {BRSR_PRINCIPLES.map(p => (
-            <div key={p.id} className="border border-white/[0.06] rounded-xl p-4">
+            <div key={p.id} className="border border-black/[0.08] rounded-xl p-4">
               <div className="flex items-start gap-3 mb-3">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
                   readiness[p.id]?.status === 'disclosed' ? 'bg-emerald-100 text-emerald-700' :
                   readiness[p.id]?.status === 'in_progress' ? 'bg-blue-400/10 text-blue-300' :
-                  'bg-white/[0.06] text-white/40'
+                  'bg-black/[0.04] text-slate-400'
                 }`}>{p.id.replace('p','')}</div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-semibold text-white/90">{p.label}</span>
-                    {p.mandatory && <Badge label="Mandatory" color="bg-cyan-400/10 text-cyan-400" />}
+                    <span className="text-xs font-semibold text-slate-900">{p.label}</span>
+                    {p.mandatory && <Badge label="Mandatory" color="bg-black/[0.05] text-slate-700" />}
                   </div>
-                  <p className="text-[10px] text-white/30">{p.indicators.join(' · ')}</p>
+                  <p className="text-[10px] text-slate-400">{p.indicators.join(' · ')}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -1140,13 +1140,13 @@ function BRSRPanel() {
                   onChange={e => set(p.id, 'status', e.target.value)}>
                   {BRSR_READINESS.map(r => <option key={r.v} value={r.v}>{r.l}</option>)}
                 </select>
-                <input className="flex-1 border border-white/[0.06] rounded px-2 py-1.5 text-xs focus:outline-none"
+                <input className="flex-1 border border-black/[0.08] rounded px-2 py-1.5 text-xs focus:outline-none"
                   placeholder="Data sources / notes / data gaps"
                   value={readiness[p.id]?.notes || ''}
                   onChange={e => set(p.id, 'notes', e.target.value)} />
                 <div>
-                  <label className="text-[10px] text-white/30 mr-1">Score (0–10)</label>
-                  <input type="number" min="0" max="10" className="border border-white/[0.06] rounded px-2 py-1 text-xs w-14 focus:outline-none"
+                  <label className="text-[10px] text-slate-400 mr-1">Score (0–10)</label>
+                  <input type="number" min="0" max="10" className="border border-black/[0.08] rounded px-2 py-1 text-xs w-14 focus:outline-none"
                     value={readiness[p.id]?.score || 0}
                     onChange={e => set(p.id, 'score', Math.min(10, Math.max(0, parseInt(e.target.value) || 0)))} />
                 </div>
@@ -1173,14 +1173,14 @@ function BRSRPanel() {
             <div key={i} className={`p-3 rounded-lg border ${kpi.category === 'E' ? 'bg-emerald-500/10 border-emerald-500/20' : kpi.category === 'S' ? 'bg-blue-500/10 border-blue-500/20' : 'bg-purple-500/10 border-purple-500/20'}`}>
               <div className="flex items-center gap-2 mb-1">
                 <span className={`text-[10px] font-bold px-1 py-0.5 rounded ${kpi.category === 'E' ? 'bg-emerald-500/20 text-emerald-300' : kpi.category === 'S' ? 'bg-blue-500/20 text-blue-300' : 'bg-purple-500/20 text-purple-300'}`}>{kpi.category}</span>
-                <span className="text-xs font-medium text-white/70">{kpi.label}</span>
+                <span className="text-xs font-medium text-slate-700">{kpi.label}</span>
               </div>
-              <input className="w-full border border-white/50 bg-[#0d1424] rounded px-2 py-1 text-xs focus:outline-none mt-1"
+              <input className="w-full border border-black/50 bg-white rounded px-2 py-1 text-xs focus:outline-none mt-1"
                 placeholder="Enter value or 'N/A'" />
             </div>
           ))}
         </div>
-        <p className="text-xs text-white/40 mt-4">
+        <p className="text-xs text-slate-400 mt-4">
           BRSR Core KPIs require reasonable assurance from an independent third party (SEBI Circular CIR/CFD/CMD1/114/2023).
           Top 150 listed companies (by M-Cap) from FY2023-24, expanding to Top 1000 by FY2026-27.
         </p>
@@ -1265,8 +1265,8 @@ const GLOBAL_TAXONOMIES = [
   },
   {
     id: 'oecd_sustainable', name: 'OECD Sustainable Finance Taxonomy Guidance', jurisdiction: 'International',
-    status: 'Guidance', year: 2020, objectives: null, color: 'bg-white/[0.02] border-white/[0.06]',
-    badge: 'bg-white/[0.06] text-white/60',
+    status: 'Guidance', year: 2020, objectives: null, color: 'bg-black/[0.02] border-black/[0.08]',
+    badge: 'bg-black/[0.04] text-slate-600',
     description: 'International comparability guidance. No binding criteria — framework for national taxonomy design.',
     alignment: ['Paris Agreement', 'SDGs', 'G20 SFWG'],
     url_ref: 'OECD Sustainable Finance Taxonomy 2020',
@@ -1290,7 +1290,7 @@ function SustainableTaxonomyPanel() {
         <Badge label="ASEAN Taxonomy v3" color="bg-teal-50 text-teal-700" />
         <Badge label="Singapore MAS" color="bg-emerald-400/10 text-emerald-400" />
         <Badge label="Common Ground Taxonomy (EU-China)" color="bg-amber-500/10 text-amber-700" />
-        <Badge label="ICMA Green Bond Principles" color="bg-white/[0.06] text-white/60" />
+        <Badge label="ICMA Green Bond Principles" color="bg-black/[0.04] text-slate-600" />
       </div>
 
       <Card title="Global Sustainable Finance Taxonomies — Comparison" subtitle="10 jurisdictions covered. Select a taxonomy for detailed information and self-assessment.">
@@ -1298,30 +1298,30 @@ function SustainableTaxonomyPanel() {
           {GLOBAL_TAXONOMIES.map(tax => (
             <div key={tax.id}
               onClick={() => setSelected(selected?.id === tax.id ? null : tax)}
-              className={`border rounded-xl p-4 cursor-pointer transition-all hover:shadow-md ${tax.color} ${selected?.id === tax.id ? 'ring-2 ring-cyan-400/50' : ''}`}>
+              className={`border rounded-xl p-4 cursor-pointer transition-all hover:shadow-md ${tax.color} ${selected?.id === tax.id ? 'ring-2 ring-black/50' : ''}`}>
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-sm font-bold text-white/90">{tax.name}</span>
+                    <span className="text-sm font-bold text-slate-900">{tax.name}</span>
                     <Badge label={tax.status} color={tax.badge} />
                   </div>
-                  <p className="text-[10px] text-white/40">{tax.jurisdiction} · {tax.year} · {tax.objectives ? `${tax.objectives} objectives` : 'Multi-objective'}</p>
+                  <p className="text-[10px] text-slate-400">{tax.jurisdiction} · {tax.year} · {tax.objectives ? `${tax.objectives} objectives` : 'Multi-objective'}</p>
                 </div>
-                <span className="text-xs text-white/30">{selected?.id === tax.id ? '▲' : '▼'}</span>
+                <span className="text-xs text-slate-400">{selected?.id === tax.id ? '▲' : '▼'}</span>
               </div>
-              <p className="text-xs text-white/60">{tax.description}</p>
+              <p className="text-xs text-slate-600">{tax.description}</p>
 
               {selected?.id === tax.id && (
-                <div className="mt-3 pt-3 border-t border-white/50">
-                  <p className="text-[10px] font-semibold text-white/60 mb-1">Alignment Frameworks:</p>
+                <div className="mt-3 pt-3 border-t border-black/50">
+                  <p className="text-[10px] font-semibold text-slate-600 mb-1">Alignment Frameworks:</p>
                   <div className="flex flex-wrap gap-1 mb-2">
-                    {tax.alignment.map((a, i) => <Badge key={i} label={a} color="bg-[#0d1424]/70 text-white/60" />)}
+                    {tax.alignment.map((a, i) => <Badge key={i} label={a} color="bg-white/70 text-slate-600" />)}
                   </div>
-                  <p className="text-[10px] text-white/40 mb-2">Reference: {tax.url_ref}</p>
+                  <p className="text-[10px] text-slate-400 mb-2">Reference: {tax.url_ref}</p>
                   <div className="flex items-center gap-2">
-                    <label className="text-[10px] text-white/60 font-medium">Portfolio Alignment Score (0–100%):</label>
+                    <label className="text-[10px] text-slate-600 font-medium">Portfolio Alignment Score (0–100%):</label>
                     <input type="number" min="0" max="100"
-                      className="border border-white/50 bg-[#0d1424] rounded px-2 py-1 text-xs w-20 focus:outline-none"
+                      className="border border-black/50 bg-white rounded px-2 py-1 text-xs w-20 focus:outline-none"
                       value={alignmentScores[tax.id] || ''}
                       onChange={e => setScore(tax.id, Math.min(100, Math.max(0, parseFloat(e.target.value) || 0)))}
                       placeholder="%" />
@@ -1335,8 +1335,8 @@ function SustainableTaxonomyPanel() {
 
       <Card title="Portfolio Taxonomy Alignment Assessment" subtitle="Score your portfolio against a selected sustainable finance taxonomy">
         <div className="mb-4">
-          <label className="block text-xs font-medium text-white/60 mb-1">Primary Taxonomy for Portfolio Assessment</label>
-          <select className="border border-white/[0.06] rounded-lg px-3 py-2 text-sm w-72 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+          <label className="block text-xs font-medium text-slate-600 mb-1">Primary Taxonomy for Portfolio Assessment</label>
+          <select className="border border-black/[0.08] rounded-lg px-3 py-2 text-sm w-72 focus:outline-none focus:ring-2 focus:ring-black/50"
             value={portfolioTaxonomy} onChange={e => setPortfolioTaxonomy(e.target.value)}>
             {GLOBAL_TAXONOMIES.map(t => <option key={t.id} value={t.id}>{t.name} ({t.jurisdiction})</option>)}
           </select>
@@ -1344,24 +1344,24 @@ function SustainableTaxonomyPanel() {
 
         {portfolioTax && (
           <div className={`border rounded-xl p-5 ${portfolioTax.color}`}>
-            <h3 className="text-sm font-bold text-white/90 mb-1">{portfolioTax.name}</h3>
-            <p className="text-xs text-white/60 mb-3">{portfolioTax.description}</p>
+            <h3 className="text-sm font-bold text-slate-900 mb-1">{portfolioTax.name}</h3>
+            <p className="text-xs text-slate-600 mb-3">{portfolioTax.description}</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="bg-[#0d1424] rounded-lg p-3 text-center">
-                <p className="text-lg font-bold text-cyan-300">{portfolioTax.year}</p>
-                <p className="text-[10px] text-white/40">Published</p>
+              <div className="bg-white rounded-lg p-3 text-center">
+                <p className="text-lg font-bold text-slate-800">{portfolioTax.year}</p>
+                <p className="text-[10px] text-slate-400">Published</p>
               </div>
-              <div className="bg-[#0d1424] rounded-lg p-3 text-center">
+              <div className="bg-white rounded-lg p-3 text-center">
                 <p className="text-lg font-bold text-emerald-700">{portfolioTax.objectives || 'Multi'}</p>
-                <p className="text-[10px] text-white/40">Objectives</p>
+                <p className="text-[10px] text-slate-400">Objectives</p>
               </div>
-              <div className="bg-[#0d1424] rounded-lg p-3 text-center">
+              <div className="bg-white rounded-lg p-3 text-center">
                 <p className="text-sm font-bold text-blue-300">{portfolioTax.status}</p>
-                <p className="text-[10px] text-white/40">Status</p>
+                <p className="text-[10px] text-slate-400">Status</p>
               </div>
-              <div className="bg-[#0d1424] rounded-lg p-3 text-center">
+              <div className="bg-white rounded-lg p-3 text-center">
                 <p className="text-lg font-bold text-purple-300">{alignmentScores[portfolioTax.id] || 0}%</p>
-                <p className="text-[10px] text-white/40">Portfolio Aligned</p>
+                <p className="text-[10px] text-slate-400">Portfolio Aligned</p>
               </div>
             </div>
           </div>
@@ -1370,15 +1370,15 @@ function SustainableTaxonomyPanel() {
         {/* Cross-taxonomy comparison if multiple scored */}
         {Object.keys(alignmentScores).length > 1 && (
           <div className="mt-5">
-            <p className="text-xs font-semibold text-white/60 mb-3">Cross-Taxonomy Alignment Comparison</p>
+            <p className="text-xs font-semibold text-slate-600 mb-3">Cross-Taxonomy Alignment Comparison</p>
             <div className="space-y-2">
               {GLOBAL_TAXONOMIES.filter(t => alignmentScores[t.id] != null).map(t => (
                 <div key={t.id} className="flex items-center gap-3">
-                  <span className="text-xs text-white/60 w-40 truncate">{t.name}</span>
-                  <div className="flex-1 h-2 bg-white/[0.06] rounded-full">
-                    <div className="h-full bg-cyan-400 rounded-full" style={{ width: `${alignmentScores[t.id]}%` }} />
+                  <span className="text-xs text-slate-600 w-40 truncate">{t.name}</span>
+                  <div className="flex-1 h-2 bg-black/[0.04] rounded-full">
+                    <div className="h-full bg-black rounded-full" style={{ width: `${alignmentScores[t.id]}%` }} />
                   </div>
-                  <span className="text-xs font-bold text-cyan-300 w-10">{alignmentScores[t.id]}%</span>
+                  <span className="text-xs font-bold text-slate-800 w-10">{alignmentScores[t.id]}%</span>
                 </div>
               ))}
             </div>
@@ -1405,10 +1405,10 @@ function ChinaESGPanel() {
     ]).then(([c, s]) => { setCsrdData(c); setScenarioData(s); setLoading(false); });
   }, []);
 
-  if (loading) return <div className="text-center py-12 text-white/30 text-sm">Loading China ESG data…</div>;
+  if (loading) return <div className="text-center py-12 text-slate-400 text-sm">Loading China ESG data…</div>;
 
   const COVERAGE_COLOR = (pct) =>
-    pct >= 80 ? 'text-emerald-400' : pct >= 60 ? 'text-cyan-400' : pct >= 40 ? 'text-amber-400' : 'text-red-400';
+    pct >= 80 ? 'text-emerald-400' : pct >= 60 ? 'text-slate-700' : pct >= 40 ? 'text-amber-400' : 'text-red-400';
 
   const NGFS_COLORS = { 'Net Zero 2050': '#10b981', 'Below 2 Degrees': '#6366f1', 'Delayed Transition': '#f59e0b', 'Current Policies': '#ef4444' };
 
@@ -1417,14 +1417,14 @@ function ChinaESGPanel() {
       {/* Header */}
       <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-base font-bold text-white">China ESG Intelligence</h2>
-          <p className="text-xs text-white/40 mt-0.5">
+          <h2 className="text-base font-bold text-slate-900">China ESG Intelligence</h2>
+          <p className="text-xs text-slate-400 mt-0.5">
             SSE/SZSE 2024 mandatory ESG disclosures mapped to CSRD ESRS E1, SFDR PAI, and ISSB S2
           </p>
         </div>
         <div className="flex gap-2 flex-wrap text-[10px]">
           {["SSE/SZSE 2024","CSRD ESRS E1","SFDR PAI 1-7","ISSB S2","NDRC CETS"].map(b => (
-            <span key={b} className="px-2 py-0.5 bg-cyan-500/10 text-cyan-400 rounded border border-cyan-500/20">{b}</span>
+            <span key={b} className="px-2 py-0.5 bg-black/[0.06] text-slate-700 rounded border border-black/[0.15]">{b}</span>
           ))}
         </div>
       </div>
@@ -1432,25 +1432,25 @@ function ChinaESGPanel() {
       {/* CETS / ESG summary stats */}
       {csrdData && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="bg-[#0d1424] border border-white/[0.06] rounded-xl p-4">
-            <p className="text-xs text-white/40 mb-1">Entities Assessed</p>
-            <p className="text-xl font-bold text-white">{csrdData.entity_count}</p>
-            <p className="text-[10px] text-white/30">SSE/SZSE listed</p>
+          <div className="bg-white border border-black/[0.08] rounded-xl p-4">
+            <p className="text-xs text-slate-400 mb-1">Entities Assessed</p>
+            <p className="text-xl font-bold text-slate-900">{csrdData.entity_count}</p>
+            <p className="text-[10px] text-slate-400">SSE/SZSE listed</p>
           </div>
-          <div className="bg-[#0d1424] border border-white/[0.06] rounded-xl p-4">
-            <p className="text-xs text-white/40 mb-1">Regulation</p>
-            <p className="text-sm font-bold text-cyan-300">SSE/SZSE 2024</p>
-            <p className="text-[10px] text-white/30">Mandatory ESG</p>
+          <div className="bg-white border border-black/[0.08] rounded-xl p-4">
+            <p className="text-xs text-slate-400 mb-1">Regulation</p>
+            <p className="text-sm font-bold text-slate-800">SSE/SZSE 2024</p>
+            <p className="text-[10px] text-slate-400">Mandatory ESG</p>
           </div>
-          <div className="bg-[#0d1424] border border-white/[0.06] rounded-xl p-4">
-            <p className="text-xs text-white/40 mb-1">Key Gaps</p>
+          <div className="bg-white border border-black/[0.08] rounded-xl p-4">
+            <p className="text-xs text-slate-400 mb-1">Key Gaps</p>
             <p className="text-xl font-bold text-amber-400">{csrdData.key_gaps?.length}</p>
-            <p className="text-[10px] text-white/30">vs CSRD requirements</p>
+            <p className="text-[10px] text-slate-400">vs CSRD requirements</p>
           </div>
-          <div className="bg-[#0d1424] border border-white/[0.06] rounded-xl p-4">
-            <p className="text-xs text-white/40 mb-1">Source</p>
-            <p className="text-sm font-bold text-white/70">CSME 2024</p>
-            <p className="text-[10px] text-white/30">Exchange guidelines</p>
+          <div className="bg-white border border-black/[0.08] rounded-xl p-4">
+            <p className="text-xs text-slate-400 mb-1">Source</p>
+            <p className="text-sm font-bold text-slate-700">CSME 2024</p>
+            <p className="text-[10px] text-slate-400">Exchange guidelines</p>
           </div>
         </div>
       )}
@@ -1462,20 +1462,20 @@ function ChinaESGPanel() {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-white/[0.06]">
-                  <th className="text-left py-2 pr-4 text-white/40 font-medium">China Disclosure</th>
-                  <th className="text-left py-2 pr-4 text-white/40 font-medium">CSRD ESRS</th>
-                  <th className="text-left py-2 pr-4 text-white/40 font-medium">SFDR PAI</th>
-                  <th className="text-left py-2 pr-4 text-white/40 font-medium">ISSB S2</th>
-                  <th className="text-right py-2 pr-4 text-white/40 font-medium">Coverage</th>
-                  <th className="text-left py-2 text-white/40 font-medium">Gap</th>
+                <tr className="border-b border-black/[0.08]">
+                  <th className="text-left py-2 pr-4 text-slate-400 font-medium">China Disclosure</th>
+                  <th className="text-left py-2 pr-4 text-slate-400 font-medium">CSRD ESRS</th>
+                  <th className="text-left py-2 pr-4 text-slate-400 font-medium">SFDR PAI</th>
+                  <th className="text-left py-2 pr-4 text-slate-400 font-medium">ISSB S2</th>
+                  <th className="text-right py-2 pr-4 text-slate-400 font-medium">Coverage</th>
+                  <th className="text-left py-2 text-slate-400 font-medium">Gap</th>
                 </tr>
               </thead>
               <tbody>
                 {csrdData.csrd_sfdr_issb_mapping.map((row, i) => (
-                  <tr key={i} className="border-b border-white/[0.02]">
-                    <td className="py-2.5 pr-4 text-white/70">{row.china_disclosure}</td>
-                    <td className="py-2.5 pr-4 text-cyan-300/80 text-[10px] font-mono">{row.csrd_esrs}</td>
+                  <tr key={i} className="border-b border-black/[0.03]">
+                    <td className="py-2.5 pr-4 text-slate-700">{row.china_disclosure}</td>
+                    <td className="py-2.5 pr-4 text-slate-800 text-[10px] font-mono">{row.csrd_esrs}</td>
                     <td className="py-2.5 pr-4 text-blue-300/80 text-[10px]">{row.sfdr_pai}</td>
                     <td className="py-2.5 pr-4 text-purple-300/80 text-[10px]">{row.issb_s2}</td>
                     <td className={`py-2.5 pr-4 text-right font-bold ${COVERAGE_COLOR(row.coverage_pct)}`}>
@@ -1487,8 +1487,8 @@ function ChinaESGPanel() {
               </tbody>
             </table>
           </div>
-          <div className="mt-4 pt-3 border-t border-white/[0.04]">
-            <p className="text-xs text-white/40 font-medium mb-2">Material disclosure gaps (China vs CSRD)</p>
+          <div className="mt-4 pt-3 border-t border-black/[0.06]">
+            <p className="text-xs text-slate-400 font-medium mb-2">Material disclosure gaps (China vs CSRD)</p>
             <div className="flex flex-wrap gap-2">
               {(csrdData.key_gaps || []).map((g, i) => (
                 <span key={i} className="text-[10px] px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded border border-amber-500/20">{g}</span>
@@ -1505,47 +1505,47 @@ function ChinaESGPanel() {
           <div className="overflow-x-auto mb-4">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-white/[0.06]">
-                  <th className="text-left py-2 pr-4 text-white/40 font-medium">NGFS Scenario</th>
-                  <th className="text-right py-2 pr-4 text-white/40 font-medium">2025 (¥)</th>
-                  <th className="text-right py-2 pr-4 text-white/40 font-medium">2030 (¥)</th>
-                  <th className="text-right py-2 pr-4 text-white/40 font-medium">2035 (¥)</th>
-                  <th className="text-right py-2 pr-4 text-white/40 font-medium">2040 (¥)</th>
-                  <th className="text-right py-2 pr-4 text-white/40 font-medium">CBAM Arb. 2030 (€)</th>
-                  <th className="text-left py-2 text-white/40 font-medium">Transition Risk</th>
+                <tr className="border-b border-black/[0.08]">
+                  <th className="text-left py-2 pr-4 text-slate-400 font-medium">NGFS Scenario</th>
+                  <th className="text-right py-2 pr-4 text-slate-400 font-medium">2025 (¥)</th>
+                  <th className="text-right py-2 pr-4 text-slate-400 font-medium">2030 (¥)</th>
+                  <th className="text-right py-2 pr-4 text-slate-400 font-medium">2035 (¥)</th>
+                  <th className="text-right py-2 pr-4 text-slate-400 font-medium">2040 (¥)</th>
+                  <th className="text-right py-2 pr-4 text-slate-400 font-medium">CBAM Arb. 2030 (€)</th>
+                  <th className="text-left py-2 text-slate-400 font-medium">Transition Risk</th>
                 </tr>
               </thead>
               <tbody>
                 {scenarioData.scenarios.map((s, i) => (
-                  <tr key={i} className="border-b border-white/[0.02]">
+                  <tr key={i} className="border-b border-black/[0.03]">
                     <td className="py-2.5 pr-4 font-medium" style={{ color: NGFS_COLORS[s.ngfs_scenario] || '#fff' }}>
                       {s.ngfs_scenario}
                     </td>
-                    <td className="py-2.5 pr-4 text-right text-white/60">¥{s.cets_2025_cny}</td>
-                    <td className="py-2.5 pr-4 text-right text-white/80 font-bold">¥{s.cets_2030_cny}</td>
-                    <td className="py-2.5 pr-4 text-right text-white/60">¥{s.cets_2035_cny}</td>
-                    <td className="py-2.5 pr-4 text-right text-white/60">¥{s.cets_2040_cny}</td>
+                    <td className="py-2.5 pr-4 text-right text-slate-600">¥{s.cets_2025_cny}</td>
+                    <td className="py-2.5 pr-4 text-right text-slate-800 font-bold">¥{s.cets_2030_cny}</td>
+                    <td className="py-2.5 pr-4 text-right text-slate-600">¥{s.cets_2035_cny}</td>
+                    <td className="py-2.5 pr-4 text-right text-slate-600">¥{s.cets_2040_cny}</td>
                     <td className={`py-2.5 pr-4 text-right font-bold ${s.cbam_arbitrage_2030_eur > 30 ? 'text-red-400' : s.cbam_arbitrage_2030_eur > 15 ? 'text-amber-400' : 'text-emerald-400'}`}>
                       €{s.cbam_arbitrage_2030_eur}
                     </td>
-                    <td className="py-2.5 text-white/50 text-[10px]">{s.transition_risk}</td>
+                    <td className="py-2.5 text-slate-500 text-[10px]">{s.transition_risk}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white/[0.02] rounded-lg p-3">
-              <p className="text-[10px] text-white/40 mb-1">China NDC Peak Emissions</p>
-              <p className="text-lg font-bold text-white">{scenarioData.china_ndc_peak_year}</p>
+            <div className="bg-black/[0.02] rounded-lg p-3">
+              <p className="text-[10px] text-slate-400 mb-1">China NDC Peak Emissions</p>
+              <p className="text-lg font-bold text-slate-900">{scenarioData.china_ndc_peak_year}</p>
             </div>
-            <div className="bg-white/[0.02] rounded-lg p-3">
-              <p className="text-[10px] text-white/40 mb-1">Carbon Neutrality Target</p>
-              <p className="text-lg font-bold text-white">{scenarioData.china_ndc_neutrality_year}</p>
+            <div className="bg-black/[0.02] rounded-lg p-3">
+              <p className="text-[10px] text-slate-400 mb-1">Carbon Neutrality Target</p>
+              <p className="text-lg font-bold text-slate-900">{scenarioData.china_ndc_neutrality_year}</p>
             </div>
           </div>
-          <p className="text-[10px] text-white/20 mt-3 pt-2 border-t border-white/[0.04]">
-            Sources: {scenarioData.source} · Full CETS data at <a href="/china-trade" className="text-cyan-400 hover:underline">/china-trade</a>
+          <p className="text-[10px] text-slate-300 mt-3 pt-2 border-t border-black/[0.06]">
+            Sources: {scenarioData.source} · Full CETS data at <a href="/china-trade" className="text-slate-700 hover:underline">/china-trade</a>
           </p>
         </Card>
       )}
@@ -1578,12 +1578,12 @@ export default function RegulatoryPage() {
   const [activePanel, setActivePanel] = useState('sfdr');
 
   return (
-    <div className="flex flex-col h-full bg-white/[0.02]">
-      <div className="bg-[#0d1424] border-b border-white/[0.06] px-8 py-5">
+    <div className="flex flex-col h-full bg-black/[0.02]">
+      <div className="bg-white border-b border-black/[0.08] px-8 py-5">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-xl font-bold text-white">Regulatory Reporting</h1>
-            <p className="text-sm text-white/40 mt-0.5">
+            <h1 className="text-xl font-bold text-slate-900">Regulatory Reporting</h1>
+            <p className="text-sm text-slate-400 mt-0.5">
               SFDR, EU Taxonomy, TCFD, CSRD/ESRS, ISSB S1/S2, BRSR, SEC Climate Rule, UK TCFD, APRA CPG 229, GRI 305, EUDR, EU ETS Phase 4
             </p>
           </div>
@@ -1591,7 +1591,7 @@ export default function RegulatoryPage() {
             <Badge label="SFDR 2019/2088" color="bg-blue-400/10 text-blue-300" />
             <Badge label="EU Taxonomy 2020/852" color="bg-emerald-400/10 text-emerald-400" />
             <Badge label="TCFD 2023" color="bg-purple-400/10 text-purple-300" />
-            <Badge label="CSRD/ESRS" color="bg-cyan-400/10 text-cyan-300" />
+            <Badge label="CSRD/ESRS" color="bg-black/[0.05] text-slate-800" />
             <Badge label="ISSB S1/S2" color="bg-blue-400/10 text-blue-300" />
             <Badge label="BRSR (SEBI)" color="bg-amber-500/10 text-amber-700" />
             <Badge label="SEC 33-7211" color="bg-purple-400/10 text-purple-300" />
@@ -1603,15 +1603,15 @@ export default function RegulatoryPage() {
         </div>
       </div>
 
-      <div className="bg-[#0d1424] border-b border-white/[0.06] px-8 overflow-x-auto">
+      <div className="bg-white border-b border-black/[0.08] px-8 overflow-x-auto">
         <div className="flex gap-0 min-w-max">
           {PANELS.map(p => (
             <button key={p.id} onClick={() => setActivePanel(p.id)}
               className={`px-4 py-3.5 border-b-2 transition-all ${
-                activePanel === p.id ? 'border-cyan-400 text-cyan-400' : 'border-transparent text-white/40 hover:text-white/70 hover:border-white/20'
+                activePanel === p.id ? 'border-black text-slate-700' : 'border-transparent text-slate-400 hover:text-slate-700 hover:border-black/20'
               }`}>
               <span className="text-xs font-semibold block whitespace-nowrap">{p.label}</span>
-              <span className="text-[10px] text-white/30 whitespace-nowrap">{p.sub}</span>
+              <span className="text-[10px] text-slate-400 whitespace-nowrap">{p.sub}</span>
             </button>
           ))}
         </div>

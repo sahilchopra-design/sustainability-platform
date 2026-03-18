@@ -343,7 +343,7 @@ export default function CBAMPage() {
                     placeholder="e.g., 720810" className="text-sm" />
                 </div>
                 <Button onClick={fetchFromChinaTrade} disabled={ctLoading || (!ctEntityName && !ctHsCode)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white">
+                  className="bg-blue-600 hover:bg-blue-700 text-slate-900">
                   {ctLoading ? <><RefreshCw className="h-3 w-3 animate-spin mr-1" />Looking up...</> : 'Look Up from China Trade'}
                 </Button>
               </div>

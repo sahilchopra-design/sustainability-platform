@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -115,6 +116,158 @@ from api.v1.routes.energy_emissions import router as energy_emissions_router
 from api.v1.routes.xbrl_export import router as xbrl_export_router
 from api.v1.routes.disclosure_trends import router as disclosure_trends_router
 from api.v1.routes.entity360 import router as entity360_router
+from api.v1.routes.data_lineage import router as data_lineage_router
+from api.v1.routes.reference_catalog import router as reference_catalog_router
+from api.v1.routes.insurance_risk import router as insurance_risk_router
+from api.v1.routes.banking_risk import router as banking_risk_router
+from api.v1.routes.data_preview import router as data_preview_router
+from api.v1.routes.climate_risk import router as climate_risk_router
+from api.v1.routes.am import router as am_router
+from api.v1.routes.agriculture_expanded import router as agriculture_expanded_router
+from api.v1.routes.factor_overlays import router as factor_overlays_router
+from api.v1.routes.technology import router as technology_router
+from api.v1.routes.residential_re import router as residential_re_router
+from api.v1.routes.rics_esg import router as rics_esg_router
+from api.v1.routes.validation_summary import router as validation_summary_router
+from api.v1.routes.nature_re_integration import router as nature_re_router
+from api.v1.routes.spatial_hazard import router as spatial_hazard_router
+from api.v1.routes.regulatory_reports import router as regulatory_reports_router
+from api.v1.routes.eu_ets import router as eu_ets_router
+from api.v1.routes.eudr import router as eudr_router
+from api.v1.routes.csddd import router as csddd_router
+from api.v1.routes.sovereign_climate_risk import router as sovereign_climate_risk_router
+from api.v1.routes.sec_climate import router as sec_climate_router
+from api.v1.routes.ecl_gar_pillar3 import router as ecl_gar_pillar3_router
+from api.v1.routes.regulatory_calendar import router as regulatory_calendar_router  # E3
+from api.v1.routes.supply_chain_workflow import router as supply_chain_workflow_router  # E5
+from api.v1.routes.stewardship import router as stewardship_router  # E6
+from api.v1.routes.eiopa_stress import router as eiopa_stress_router  # E7
+from api.v1.routes.iorp_pension import router as iorp_pension_router  # E8
+from api.v1.routes.sfdr_annex import router as sfdr_annex_router      # E9
+from api.v1.routes.assurance_readiness import router as assurance_readiness_router  # E10
+from api.v1.routes.uk_sdr import router as uk_sdr_router                            # E11
+from api.v1.routes.spatial import router as spatial_router                          # P1-8 PostGIS
+from api.v1.routes.gri_standards import router as gri_standards_router
+from api.v1.routes.sasb_industry import router as sasb_industry_router
+from api.v1.routes.model_validation import router as model_validation_router
+from api.v1.routes.tnfd_assessment import router as tnfd_assessment_router
+from api.v1.routes.cdp_scoring import router as cdp_scoring_router
+from api.v1.routes.pcaf_quality import router as pcaf_quality_router
+from api.v1.routes.basel_capital import router as basel_capital_router
+from api.v1.routes.eu_taxonomy import router as eu_taxonomy_router
+from api.v1.routes.transition_plan import router as transition_plan_router
+from api.v1.routes.double_materiality import router as double_materiality_router
+from api.v1.routes.sfdr_pai import router as sfdr_pai_router
+# DME (Dynamic Materiality Engine) — integrated modules
+from api.v1.routes.dme_velocity import router as dme_velocity_router
+from api.v1.routes.dme_greenwashing import router as dme_greenwashing_router
+from api.v1.routes.dme_nlp_pulse import router as dme_nlp_pulse_router
+from api.v1.routes.dme_policy_tracker import router as dme_policy_tracker_router
+from api.v1.routes.dme_contagion import router as dme_contagion_router
+from api.v1.routes.dme_alerts import router as dme_alerts_router
+from api.v1.routes.dme_dmi import router as dme_dmi_router
+from api.v1.routes.dme_factor_registry import router as dme_factor_registry_router
+from api.v1.routes.sentiment_analysis import router as sentiment_analysis_router
+from api.v1.routes.pcaf_unified import router as pcaf_unified_router
+from api.v1.routes.dcm import router as dcm_router           # DCM — complete carbon credit methodology engine
+from api.v1.routes.mifid_spt import router as mifid_spt_router        # E12 MiFID II SPT
+from api.v1.routes.tcfd_metrics import router as tcfd_metrics_router   # E13 TCFD Metrics & Targets
+from api.v1.routes.eu_gbs import router as eu_gbs_router               # E14 EU Green Bond Standard
+from api.v1.routes.priips_kid import router as priips_kid_router       # E15 PRIIPs KID ESG
+from api.v1.routes.esma_fund_names import router as esma_fund_names_router  # E16 ESMA Fund Names ESG Guidelines
+from api.v1.routes.sl_finance import router as sl_finance_router             # E17 Sustainability-Linked Finance (SLB/SLL)
+from api.v1.routes.ifrs_s1 import router as ifrs_s1_router                  # E18 IFRS S1 General Sustainability Disclosures
+from api.v1.routes.eu_taxonomy_gar import router as eu_taxonomy_gar_router  # E19 EU Taxonomy GAR/BTAR Reporter
+from api.v1.routes.eba_pillar3 import router as eba_pillar3_router              # E20 EBA Pillar 3 ESG Disclosures
+from api.v1.routes.scope3_categories import router as scope3_categories_router  # E21 Scope 3 Categories Engine
+from api.v1.routes.sfdr_product_reporting import router as sfdr_product_reporting_router  # E22 SFDR Product Periodic Reporting
+from api.v1.routes.biodiversity_finance import router as biodiversity_finance_router      # E23 Biodiversity Finance Metrics
+from api.v1.routes.issb_s2 import router as issb_s2_router                              # E24 ISSB S2 Climate-Related Disclosures
+from api.v1.routes.gri_standards import router as gri_standards_router                  # E25 GRI Universal Standards 2021
+from api.v1.routes.tpt_transition_plan import router as tpt_transition_plan_router      # E26 TPT Transition Plan Framework
+from api.v1.routes.pcaf_sovereign import router as pcaf_sovereign_router                # E27 PCAF Sovereign Bonds Part D
+from api.v1.routes.esrs_e2_e5 import router as esrs_e2_e5_router                        # E28 CSRD ESRS E2-E5 Pollution/Water/Biodiversity/Circular
+from api.v1.routes.greenwashing import router as greenwashing_router                    # E29 Greenwashing Risk & Substantiation
+from api.v1.routes.carbon_credit_quality import router as carbon_credit_quality_router  # E30 Carbon Credit Quality & Integrity (ICVCM CCP)
+from api.v1.routes.climate_stress_test import router as climate_stress_test_router      # E31 Climate Stress Testing ECB/EBA 2022/2023
+from api.v1.routes.tnfd_leap import router as tnfd_leap_router                          # E32 TNFD LEAP Process (Locate/Evaluate/Assess/Prepare)
+from api.v1.routes.net_zero_targets import router as net_zero_targets_router            # E33 Net Zero Target Setting (SBTi/NZBA/NZAMI/NZAOA)
+from api.v1.routes.esg_data_quality import router as esg_data_quality_router            # E34 ESG Data Quality Scoring & Provider Divergence
+from api.v1.routes.regulatory_penalties import router as regulatory_penalties_router    # E35 Regulatory Penalty & Enforcement Calculator
+from api.v1.routes.basel3_liquidity import router as basel3_liquidity_router            # E36 Basel III Liquidity — LCR/NSFR/IRRBB/ALM gap
+from api.v1.routes.social_taxonomy import router as social_taxonomy_router              # E37 Social Taxonomy & Impact — EU Social Tax / IMP / IRIS+
+from api.v1.routes.forced_labour import router as forced_labour_router                  # E38 Forced Labour — EU FLR 2024/3015 / ILO / UK MSA / LkSG
+from api.v1.routes.transition_finance import router as transition_finance_router        # E39 Transition Finance — GFANZ / TPT / ICMA CTF / GAR
+from api.v1.routes.csrd_dma import router as csrd_dma_router                            # E40 CSRD Double Materiality — ESRS 1 DMA impact + financial materiality
+from api.v1.routes.physical_hazard import router as physical_hazard_router              # E41 Physical Climate Hazard — IPCC AR6 flood/wildfire/heat/sea-level
+from api.v1.routes.avoided_emissions import router as avoided_emissions_router          # E42 Scope 4 Avoided Emissions — GHG Protocol 2022 / Article 6 / BVCM
+from api.v1.routes.green_hydrogen_engine import router as green_hydrogen_e43_router    # E43 Green Hydrogen — EU Delegated Act 2023/1184 / LCOH / RFNBO / IRA 45V
+from api.v1.routes.biodiversity_finance_v2 import router as biodiversity_finance_v2_router  # E44 Biodiversity Finance v2 — TNFD LEAP / PBAF / ENCORE / GBF COP15 30×30 / BFFI / BNG
+from api.v1.routes.prudential_climate_risk import router as prudential_climate_risk_router  # E45 Prudential Climate Risk — BOE/PRA BES 2025 / ECB DFAST / NGFS v4 / ICAAP Pillar 2
+from api.v1.routes.carbon_markets_intel import router as carbon_markets_intel_router        # E46 Carbon Markets Intel — Art 6.2/6.4 / VCMI Claims / ICVCM CCP / CORSIA Phase 2
+from api.v1.routes.just_transition_engine import router as just_transition_router           # E47 Just Transition & Social Risk — ILO JT / ESRS S1-S4 / Living Wage / Worker Displacement
+from api.v1.routes.shipping_maritime import router as shipping_maritime_router              # E48 Shipping & Maritime — IMO GHG 2023 / CII A-E / EEXI / Poseidon Principles / FuelEU / EU ETS
+from api.v1.routes.aviation_climate import router as aviation_climate_router                # E49 Aviation Climate Risk — CORSIA Phase 2 / SAF ReFuelEU / IRA 45Z / EU ETS Aviation / IATA NZC
+from api.v1.routes.commercial_re import router as commercial_re_router                      # E50 Commercial RE Net Zero — CRREM 2.0 / EPC / EPBD 2024 / GRESB RE / REFI / NABERS / Retrofit
+from api.v1.routes.infrastructure_finance import router as infrastructure_finance_router    # E51 Infrastructure Climate Finance — EP4 / IFC PS 1-8 / OECD / Paris Alignment / Blended Finance
+from api.v1.routes.nature_based_solutions import router as nbs_router                      # E52 Nature-Based Solutions — IUCN GS v2 / REDD+ / Blue Carbon / Soil Carbon / ARR / AFOLU
+from api.v1.routes.water_risk import router as water_risk_router                            # E53 Water Risk & Security — WRI Aqueduct 4.0 / CDP Water / CSRD ESRS E3 / TNFD Water
+from api.v1.routes.food_system import router as food_system_router                          # E54 Food System & Land Use — SBTi FLAG / FAO Crop Yield / TNFD Food LEAP / EUDR / ICTI
+from api.v1.routes.circular_economy import router as circular_economy_router                # E55 Circular Economy Finance — CSRD ESRS E5 / EMF MCI / WBCSD CTI / EPR / CRM Act 2023
+from api.v1.routes.climate_litigation import router as climate_litigation_router            # E56 Climate Litigation & Legal Risk — TCFD Liability / D&O Exposure / Greenwashing Enforcement / SEC
+from api.v1.routes.esg_ratings import router as esg_ratings_router                        # E57 ESG Ratings Reform — EU ESRA 2024/3005 / MSCI-Sustainalytics Divergence / Bias Analysis
+from api.v1.routes.methane_fugitive import router as methane_fugitive_router               # E58 Methane & Fugitive Emissions — EU Methane Reg 2024/1787 / OGMP 2.0 / Super-emitter / GWP-20
+from api.v1.routes.health_climate import router as health_climate_router                   # E59 Health-Climate Nexus — Heat Stress / Air Quality WHO / Vector Disease / WHO CCS
+from api.v1.routes.maritime import router as maritime_router                               # E60 Maritime & Shipping Decarbonisation — IMO GHG 2023 / CII / EEXI / EU ETS / FuelEU Maritime
+from api.v1.routes.hydrogen import router as hydrogen_router                               # E61 Hydrogen Economy Finance — RFNBO / EU H2 Bank / LCOH / Green-Blue-Grey / Demand Sectors
+from api.v1.routes.just_transition import router as just_transition_finance_router         # E62 Just Transition Finance — ILO Guidelines 2015 / World Bank JT Framework / ICMA SBP / JETP
+from api.v1.routes.cdr import router as cdr_router                                        # E63 Carbon Removal & CDR Finance — IPCC AR6 CDR / BeZero / Oxford Principles / VCMI / Art 6.4
+from api.v1.routes.transition_finance import router as transition_finance_router           # E64 Transition Finance Alignment — GFANZ / SBTi NZ Standard / TPT / CA100+ / PACTA
+from api.v1.routes.biodiversity_credits import router as biodiversity_credits_router       # E65 Biodiversity Credits & Nature Markets — UK BNG / EU NRL / SBTN / TNFD Advanced
+from api.v1.routes.climate_stress_test import router as climate_stress_test_router         # E66 Climate Stress Testing — BCBS 517 / BoE CBES / ECB CST / APRA CLT / NGFS Phase 4
+from api.v1.routes.scope3_analytics import router as scope3_analytics_router               # E67 Scope 3 Deep-Dive — GHG Protocol Cat 1-15 / FLAG / Avoided Emissions / DQS / PCAF
+from api.v1.routes.blue_economy import router as blue_economy_router                       # E68 Blue Economy & Ocean Finance — ICMA Blue Bond / SOF / Blue Carbon / BBNJ 2023
+from api.v1.routes.sovereign_debt_climate import router as sovereign_debt_climate_router   # E69 Climate-Linked Sovereign Debt — CRDC / Debt-for-Nature / IMF RST / Paris Club / SIDS
+from api.v1.routes.loss_damage import router as loss_damage_router                         # E70 Loss & Damage Finance — COP28 FRLD / WIM / Global Shield v2 / V20 / Parametric
+from api.v1.routes.carbon_price_ets import router as carbon_price_ets_router               # E71 Carbon Price & ETS Analytics — EU ETS Phase 4 / UK ETS / California / China / RGGI
+from api.v1.routes.blended_finance import router as blended_finance_router              # E72 Blended Finance & DFI — IFC/MIGA/EBRD/ADB/Convergence/concessional/first-loss
+from api.v1.routes.mrv import router as mrv_router                                      # E73 Climate Data & MRV — ISO 14064-3/satellite/CDP/AI-quality/digital MRV tiers
+from api.v1.routes.real_asset_decarb import router as real_asset_decarb_router          # E74 Real Asset Decarbonisation — CRREM/lock-in risk/capex/brown-to-green/retrofit NPV
+from api.v1.routes.trade_finance_esg import router as trade_finance_esg_router          # E75 Sustainable Trade Finance — EP4/ECA/ICC STF/supply-chain ESG/trade-flow GHG
+from api.v1.routes.crypto_climate import router as crypto_climate_router                # E76 Digital Assets & Crypto Climate — Cambridge CBECI/MiCA 2023/PoW-PoS/PCAF Crypto
+from api.v1.routes.ai_governance import router as ai_governance_router                  # E77 AI Governance ESG — EU AI Act 2024/NIST RMF/OECD AI/AI Energy/Algorithmic Bias
+from api.v1.routes.carbon_accounting_ai import router as carbon_accounting_ai_router    # E78 Carbon Accounting AI — GHG Protocol AI/EF Matching/Scope3 Auto-classify/XBRL
+from api.v1.routes.climate_insurance import router as climate_insurance_router          # E79 Climate Insurance — IAIS AP 2021/Parametric/NatCat/Climate VaR/ORSA
+from api.v1.routes.ai_risk import router as ai_risk_router                          # E76 AI & ML Risk Finance — EU AI Act 2024/1689 / NIST RMF / Bias Detection / AI Liability Directive
+from api.v1.routes.nature_capital import router as nature_capital_router            # E77 Nature Capital Accounting — SEEA EA 2021 / TNFD / ENCORE / TEEB / Natural Capital Balance Sheet
+from api.v1.routes.climate_finance import router as climate_finance_router          # E78 Climate Finance Flows — OECD CRS / UNFCCC Art 2.1(c) / CPI / NCQG $300bn / MDB Tracking
+from api.v1.routes.esg_ma import router as esg_ma_router                            # E79 ESG M&A Due Diligence — UNGP 31 Principles / CSDDD Art 3 / ESG Valuation / Post-Merger Integration
+from api.v1.routes.corporate_nature_strategy import router as corporate_nature_strategy_router  # E80 Corporate Nature Strategy — SBTN v1.0 / TNFD v1.0 / EU NRL 2024/1991 / GBF Target 3 / ENCORE
+from api.v1.routes.green_securitisation import router as green_securitisation_router            # E81 Green Securitisation — EU GBS Art 19 / ABS-RMBS Climate VaR / ECBC Covered Bond / ESRS SPV
+from api.v1.routes.digital_product_passport import router as digital_product_passport_router    # E82 Digital Product Passport — EU ESPR 2024/1781 / Battery Reg 2023/1542 / EPR / LCA / DPP
+from api.v1.routes.adaptation_finance import router as adaptation_finance_router                # E83 Adaptation Finance — GFMA Taxonomy / GARI / MDB Facilities / NAP/NDC / Resilience Delta
+from api.v1.routes.internal_carbon_price import router as internal_carbon_price_router          # E84 Internal Carbon Pricing — SBTi ICP Guidance / EU ETS Phase4+ETS2 / MAC Curve / NZE Economics
+from api.v1.routes.social_bond import router as social_bond_router                              # E85 Social Bond — ICMA SBP 2023 / UN SDG / Social KPIs / Target Population / Impact Finance
+from api.v1.routes.climate_financial_statements import router as climate_financial_statements_router  # E86 Climate Financial Statements — IFRS S2 Effects / IAS36 Impairment / IAS37 Carbon Provision / TCFD
+from api.v1.routes.em_climate_risk import router as em_climate_risk_router                      # E87 EM Climate Risk — IFC PS6 / MSCI EM / GEMS Loss / NDC Gaps / Concessional Finance
+from api.v1.routes.biodiversity_credits import router as biodiversity_credits_router            # E88 Biodiversity Credits — BNG DEFRA Metric 4.0 / Verra VM0033 / TNFD v1 / GBF T15 / Plan Vivo
+from api.v1.routes.just_transition import router as just_transition_router                      # E89 Just Transition Finance — ILO 2015 / EU JTF 2021/1056 / PPCA / CIF / Coal Communities
+from api.v1.routes.carbon_removal import router as carbon_removal_router                        # E90 Carbon Removal — IPCC AR6 CDR / Oxford Principles / Article 6.4 / BECCS/DACS/EW / Frontier
+from api.v1.routes.climate_litigation import router as climate_litigation_router                # E91 Climate Litigation — UNEP v3 / Sabin Center / Duties X / D&O / Attribution Science
+from api.v1.routes.water_stewardship import router as water_stewardship_router                  # E92 Water Risk & Stewardship — WRI AQUEDUCT 4.0 / CDP Water A-List / TNFD E3 / AWS Standard v2 / CEO Water Mandate
+from api.v1.routes.critical_minerals import router as critical_minerals_router                  # E93 Critical Minerals — IEA CRM 2024 / EU CRM Act 2024/1252 / IRMA Standard / OECD DDG / Conflict Minerals DRC
+from api.v1.routes.nbs_finance import router as nbs_finance_router                              # E94 NbS Finance — IUCN NbS Global Standard v2 / ICROA / VCMI Core Claims / REDD+ VCS / GBF KM Target 2
+from api.v1.routes.sfdr_art9 import router as sfdr_art9_router                                  # E95 SFDR Art 9 — RTS 2022/1288 / ESMA SFDR Q&A 2023 / 14 PAI indicators / DNSH all-6 / Art 9 Eligibility
+from api.v1.routes.vcm_integrity import router as vcm_integrity_router                          # E96 VCM Integrity — ICVCM CCP 2023 / VCMI Claims / Oxford Offsetting Principles / Verra GS ACR CAR registries
+from api.v1.routes.social_taxonomy import router as social_taxonomy_router                      # E97 Social Taxonomy — EU SocTax 2022/2023 / ILO 8 core conventions / UNGP HRDD / CSDDD social / Decent Work SDG 8
+from api.v1.routes.green_hydrogen import router as green_hydrogen_router                        # E98 Green Hydrogen — EU Del. Act 2023/1184 RFNBO / GHG <3.38 kg / Additionality / H2 CfD / IEA / REPowerEU
+from api.v1.routes.transition_finance import router as transition_finance_router                # E99 Transition Finance Credibility — GFANZ/TPT / SBTi / Race to Zero / TNFD LEAP / Portfolio temperature
+
+# Sprint 35 — E100–E103
+from api.v1.routes.stress_test_orchestrator import router as stress_test_orchestrator_router    # E100 Multi-Regulatory Stress Test — NGFS Phase IV / ECB/EBA/BoE/APRA/MAS/RBI / CET1 depletion / PD migration
+from api.v1.routes.sscf import router as sscf_router                                            # E101 Sustainable Supply Chain Finance — LMA SSCF / ICC SCF / GSCFF / 40 KPIs / OECD DDG / CSDDD cascade
+from api.v1.routes.double_materiality import router as double_materiality_router                # E102 CSRD Double Materiality — ESRS 1 DMA / IRO identification / materiality matrix / ESRS omissions
+from api.v1.routes.temperature_alignment import router as temperature_alignment_router          # E103 Temperature Alignment — PCAF + SBTi FI / PACTA / WACI / ITR / sector pathways
 
 
 @asynccontextmanager
@@ -291,16 +444,169 @@ app.include_router(energy_emissions_router)        # Methane OGMP 2.0 + Scope 3 
 app.include_router(xbrl_export_router)             # XBRL/iXBRL Export (CSRD/ISSB) + XBRL Ingestion (multi-schema)
 app.include_router(disclosure_trends_router)       # Disclosure Completeness (9 frameworks) + Multi-Year Trend Analytics
 app.include_router(entity360_router)               # Entity 360 Profile + Counterparty Master (dedup, quality scoring)
+app.include_router(data_lineage_router)            # Data Lineage — cross-module dependency graph, gap analysis, quality propagation
+app.include_router(reference_catalog_router)       # Reference Data Catalog — centralized registry, freshness, gap identification
+app.include_router(insurance_risk_router)          # Insurance Risk Engine — Life/P&C/Reinsurance/Health with climate overlays
+app.include_router(banking_risk_router)            # Banking Risk Engine — Credit/Liquidity/Market/OpRisk/AML/Capital Adequacy
+app.include_router(data_preview_router)            # Data Preview — table browser, FK relationships, datapoint mappings
+app.include_router(climate_risk_router)            # Climate Risk Engine — Physical/Transition/Integrated risk + Methodology Manager + Assessment Runner
+app.include_router(am_router)                      # AM Engine — ESG Attribution, Paris Alignment, Green Bond, Climate Spreads, LP Analytics, Optimisation
+app.include_router(agriculture_expanded_router)    # Agriculture Engine (Expanded) — Methane Intensity, Disease Outbreak, Biodiversity Net Gain
+app.include_router(factor_overlays_router)         # Factor Overlay Engine — ESG/Geopolitical/Tech cross-cutting overlays (12 FI×LOB)
+app.include_router(technology_router)              # Technology Sector — Data Centre/Cloud/AI/Semiconductor/E-Waste + EU EED Art.12 + SCI
+app.include_router(residential_re_router)          # Residential RE — Hedonic valuation, mortgage climate risk, decarb pathway
+app.include_router(rics_esg_router)                # RICS Red Book ESG — PS1/PS2/VPS4/VPGA12/VPG3/IVS compliance + narrative
+app.include_router(validation_summary_router)      # Validation Summary — per-calculation audit envelope (BCBS 239)
+app.include_router(nature_re_router)              # Nature-RE Integration — TNFD LEAP/water/biodiversity → RE valuation
+app.include_router(spatial_hazard_router)         # Spatial Hazard — location-based physical risk auto-population
+app.include_router(regulatory_reports_router)     # Regulatory Report Compiler — TCFD/SFDR/GRI305/SEC/ISSB/APRA/BRSR
+app.include_router(eu_ets_router)                 # EU ETS Phase 4 — free allocation, compliance, carbon price, cap trajectory, ETS2
+app.include_router(eudr_router)                   # EUDR 2023/1115 — due diligence, commodity screening, traceability, country risk, compliance gaps
+app.include_router(csddd_router)                  # CSDDD 2024/1760 — scope, adverse impacts, DD compliance, value chain, climate plan
+app.include_router(sovereign_climate_risk_router)  # Sovereign Climate Risk — climate-adjusted ratings, spread delta, portfolio
+app.include_router(sec_climate_router)              # SEC Climate Disclosure — Reg S-K 1500-1505, S-X 14-02, filer assessment, attestation
+app.include_router(ecl_gar_pillar3_router)          # ECL→GAR→Pillar3 orchestration — IFRS9 + EU Taxonomy GAR + CRR Art.449a (E1)
+app.include_router(regulatory_calendar_router)      # Regulatory Obligation Calendar — 13 frameworks, 22+ deadlines, urgency alerts (E3)
+app.include_router(supply_chain_workflow_router)    # Supply Chain Workflow — EUDR+CSDDD+ESRS E4 unified assessment (E5)
+app.include_router(stewardship_router)              # Stewardship Engine — GFANZ/NZAMI/CA100+/NZIF engagement, proxy voting, escalation (E6)
+app.include_router(eiopa_stress_router)             # EIOPA ORSA Climate Stress Test — Solvency II Art 45a, 4 NGFS scenarios, SCR/MCR impact, ORSA checklist (E7)
+app.include_router(iorp_pension_router)             # IORP II Pension Climate Risk — EIOPA stress, ALM, funding ratio, ORA Art 28, SFDR FMP classification (E8)
+app.include_router(sfdr_annex_router)               # SFDR Annex Disclosures — RTS 2022/1288 Annexes I–V pre-contractual + periodic templates, PAI statement, validator (E9)
+app.include_router(assurance_readiness_router)      # Assurance Readiness Dashboard — 26 criteria, 8 domains, ISAE/ISSA/CSRD Art 26a, blocking gap detection (E10)
+app.include_router(uk_sdr_router)                   # UK SDR Engine — FCA PS 23/16, 4 labels, AGR, naming rules, ICIS proxy, SFDR/ISSB cross-mapping (E11)
+app.include_router(spatial_router)                  # Spatial Query Engine — PostGIS P1-8: protected areas, flood zones, wildfire, SLR, EUDR plot overlap
+app.include_router(gri_standards_router)            # GRI Standards 2021 — content index, emissions (305), material topics, SDG/ESRS linkage
+app.include_router(sasb_industry_router)            # SASB Industry Standards — IFRS S1 para 55, SICS sectors, materiality, peer comparison
+app.include_router(model_validation_router)         # Model Validation Framework — BCBS 239, EBA GL/2023/04, backtesting, champion-challenger
+app.include_router(tnfd_assessment_router)           # TNFD Nature-Related Disclosures — LEAP, ENCORE, 14 disclosures, double materiality
+app.include_router(cdp_scoring_router)               # CDP Climate & Water Scoring — 15 climate modules, 9 water modules, A-D grades
+app.include_router(pcaf_quality_router)              # PCAF Data Quality Scoring — DQS 1-5, 6 asset classes, SFDR PAI, confidence bands
+app.include_router(basel_capital_router)              # Basel III/IV Regulatory Capital — CRR Art 92/153, IRB, LCR, NSFR, climate add-ons
+app.include_router(eu_taxonomy_router)               # EU Taxonomy Alignment — Reg 2020/852, 6 objectives, 30+ NACE activities, GAR/BTAR
+app.include_router(transition_plan_router)            # Climate Transition Plan — TPT/GFANZ/IIGCC/CSDDD Art 22/ESRS E1/CDP C4, 50+ datapoint mapping
+app.include_router(double_materiality_router)         # Double Materiality Assessment — CSRD/ESRS impact + financial materiality, DMA matrix
+app.include_router(sfdr_pai_router)                   # SFDR PAI — 18 mandatory + 46 optional indicators, Art 4 disclosure, DNSH, Art 6/8/9 classification
+# DME (Dynamic Materiality Engine) — velocity, greenwashing, NLP pulse, policy tracker, contagion, alerts, DMI
+app.include_router(dme_velocity_router)                # DME Velocity — EWMA 6-stage pipeline, regime classification (NORMAL/ELEVATED/CRITICAL/EXTREME)
+app.include_router(dme_greenwashing_router)            # DME Greenwashing — CUSUM change detection, credibility-weighted divergence, 3-condition trigger
+app.include_router(dme_nlp_pulse_router)               # DME NLP Pulse — sentiment signal processing, source credibility, signal decay
+app.include_router(dme_policy_tracker_router)          # DME Policy Tracker — carbon price / regulatory / enforcement / disclosure velocity
+app.include_router(dme_contagion_router)               # DME Contagion — Hawkes process 3-layer systemic risk, EL/VaR/ES amplification
+app.include_router(dme_alerts_router)                  # DME Alerts — 4-tier framework (WATCH/ELEVATED/CRITICAL/EXTREME), priority scoring
+app.include_router(dme_dmi_router)                     # DME DMI — Dynamic Materiality Index, PCAF confidence, concentration penalty
+app.include_router(dme_factor_registry_router)         # DME Factor Registry — unified 627+31 factor taxonomy
+app.include_router(sentiment_analysis_router)          # Sentiment Analysis — multi-stakeholder signal processing
+app.include_router(pcaf_unified_router)                # PCAF Unified Module — Parts A/B/C orchestrator, regulatory disclosures, DQS, bridges
+app.include_router(dcm_router)                         # DCM — 60+ carbon credit methodologies (CDM/VCS/GS/CDR/Art6.4/CORSIA)
+app.include_router(mifid_spt_router)                   # E12 MiFID II SPT — Art 2(7) sustainability preference categories A/B/C, suitability assessment
+app.include_router(tcfd_metrics_router)                # E13 TCFD Metrics & Targets — 11 recommendations, 4 pillars, sector supplements, maturity scoring
+app.include_router(eu_gbs_router)                      # E14 EU Green Bond Standard — Regulation 2023/2631, GBFS, allocation/impact reports, ER requirements
+app.include_router(priips_kid_router)                  # E15 PRIIPs KID ESG — SRI 1-7, 4 performance scenarios, ESG inserts per SFDR classification
+app.include_router(esma_fund_names_router)             # E16 ESMA Fund Names — ESMA/2024/249, 80% threshold, PAB exclusions, term detection
+app.include_router(sl_finance_router)                  # E17 SL Finance — ICMA SLB + LMA SLL, KPI SMART, SPT calibration, coupon step-up
+app.include_router(ifrs_s1_router)                     # E18 IFRS S1 — General sustainability disclosures, 4 pillars, SASB industry mapping
+app.include_router(eu_taxonomy_gar_router)             # E19 EU Taxonomy GAR — Art 8 Del. Act, GAR/BTAR/BSAR, DNSH 6 objectives, min safeguards
+app.include_router(eba_pillar3_router)                 # E20 EBA Pillar 3 ESG — GL/2022/03, CRR Art 449a, 10 templates, physical risk heatmap
+app.include_router(scope3_categories_router)           # E21 Scope 3 Categories — GHG Protocol 15 categories, FLAG/non-FLAG, SBTi coverage
+app.include_router(sfdr_product_reporting_router)      # E22 SFDR Product Reporting — RTS 2022/1288 Annex III/V periodic reports, PAI product-level
+app.include_router(biodiversity_finance_router)        # E23 Biodiversity Finance — TNFD v1.0, SBTN, CBD GBF Target 15, MSA footprint
+app.include_router(issb_s2_router)                     # E24 ISSB S2 — IFRS S2 climate disclosures, 4 pillars, scenario analysis, SASB industry metrics
+app.include_router(gri_standards_router)               # E25 GRI Standards — GRI 1/2/3 Universal 2021, GRI 300 environment series, content index
+app.include_router(tpt_transition_plan_router)         # E26 TPT — Transition Plan Taskforce 2023, 6 elements, quality tier, interim targets
+app.include_router(pcaf_sovereign_router)              # E27 PCAF Sovereign — Part D sovereign bonds, GDP attribution, NDC alignment
+app.include_router(esrs_e2_e5_router)                  # E28 ESRS E2-E5 — Pollution, Water & Marine, Biodiversity, Circular Economy
+app.include_router(greenwashing_router)                # E29 Greenwashing — EU Reg 2023/2441, FCA Consumer Duty, claim substantiation
+app.include_router(carbon_credit_quality_router)       # E30 Carbon Credit Quality — ICVCM CCP, VCS, Gold Standard, CORSIA, Article 6
+app.include_router(climate_stress_test_router)         # E31 Climate Stress Test — ECB/EBA 2022/2023, 3 scenarios, PD migration, CET1
+app.include_router(tnfd_leap_router)                   # E32 TNFD LEAP — Locate/Evaluate/Assess/Prepare, sector-location screening, ENCORE
+app.include_router(net_zero_targets_router)            # E33 Net Zero Targets — SBTi corporate/FLAG, NZBA, NZAMI, NZAOA, temperature score
+app.include_router(esg_data_quality_router)            # E34 ESG Data Quality — coverage scoring, DQS, provider divergence, BCBS 239
+app.include_router(regulatory_penalties_router)        # E35 Regulatory Penalties — CSRD/SFDR/Taxonomy/EUDR/CSDDD enforcement & fines
+app.include_router(basel3_liquidity_router)            # E36 Basel III Liquidity — LCR/NSFR/IRRBB/ALM gap/climate HQLA haircut
+app.include_router(social_taxonomy_router)             # E37 Social Taxonomy & Impact — EU Social Tax, IMP 5-dim, IRIS+, SFDR Art2(17)
+app.include_router(forced_labour_router)               # E38 Forced Labour — EU FLR 2024/3015, ILO 11 indicators, UK MSA, LkSG
+app.include_router(transition_finance_router)          # E39 Transition Finance — GFANZ 4-category, TPT, ICMA CTF, TFR vs GAR
+app.include_router(csrd_dma_router)                    # E40 CSRD DMA — ESRS 1 §§42-49 impact + financial materiality, stakeholder mapping
+app.include_router(physical_hazard_router)             # E41 Physical Hazard — flood/wildfire/heat/sea-level/cyclone IPCC AR6 asset-level
+app.include_router(avoided_emissions_router)           # E42 Avoided Emissions — Scope 4 enablement/substitution, Article 6 ITMOs, BVCM
+app.include_router(green_hydrogen_e43_router)          # E43 Green Hydrogen — EU Delegated Act 2023/1184, LCOH, RFNBO criteria, IRA 45V
+app.include_router(biodiversity_finance_v2_router)     # E44 Biodiversity Finance v2 — TNFD LEAP, PBAF, ENCORE, GBF COP15 30×30, MSA, BFFI, BNG
+app.include_router(prudential_climate_risk_router)     # E45 Prudential Climate Risk — BOE/PRA BES 2025, ECB DFAST 2024, NGFS v4, ICAAP Pillar 2a/2b
+app.include_router(carbon_markets_intel_router)        # E46 Carbon Markets Intel — Art 6.2/6.4, VCMI Claims Code, ICVCM CCPs, CORSIA Phase 2
+app.include_router(just_transition_router)             # E47 Just Transition — ILO JT Guidelines, ESRS S1-S4, SEC Human Capital, Living Wage, CBI
+app.include_router(shipping_maritime_router)           # E48 Shipping & Maritime — IMO GHG 2023, CII A-E, EEXI, Poseidon Principles, FuelEU Maritime
+app.include_router(aviation_climate_router)            # E49 Aviation Climate — CORSIA Phase 2, SAF mandates, EU ETS Aviation, IATA NZC
+app.include_router(commercial_re_router)               # E50 Commercial RE Net Zero — CRREM 2.0, EPC/EPBD 2024, GRESB RE, REFI, retrofit NPV
+app.include_router(infrastructure_finance_router)      # E51 Infrastructure Climate Finance — EP4, IFC PS 1-8, OECD, Paris Alignment, blended finance
+app.include_router(nbs_router)                         # E52 Nature-Based Solutions — IUCN GS v2.0, REDD+ VM0007, Blue Carbon VM0033, Soil Carbon IPCC, ARR, AFOLU
+app.include_router(water_risk_router)                  # E53 Water Risk & Security — WRI Aqueduct 4.0, CDP Water A-List, CSRD ESRS E3, TNFD Water Dependency
+app.include_router(food_system_router)                 # E54 Food System & Land Use — SBTi FLAG, FAO Crop Yield RCP, TNFD Food LEAP, EUDR, ICTI, FOLU
+app.include_router(circular_economy_router)            # E55 Circular Economy Finance — CSRD ESRS E5, EMF MCI, WBCSD CTI, EPR schemes, EU CRM Act 2023
+app.include_router(climate_litigation_router)          # E56 Climate Litigation & Legal Risk — TCFD liability, greenwashing enforcement, D&O exposure, SEC
+app.include_router(esg_ratings_router)                 # E57 ESG Ratings Reform — EU ESRA 2024/3005, MSCI/Sustainalytics divergence, bias analysis
+app.include_router(methane_fugitive_router)            # E58 Methane & Fugitive Emissions — EU Methane Reg 2024/1787, OGMP 2.0, super-emitter, GWP-20
+app.include_router(health_climate_router)              # E59 Health-Climate Nexus — heat stress, air quality WHO, vector disease, WHO CCS
+app.include_router(maritime_router)                    # E60 Maritime & Shipping Decarbonisation — IMO GHG 2023, CII/EEXI, EU ETS shipping, FuelEU Maritime
+app.include_router(hydrogen_router)                    # E61 Hydrogen Economy Finance — RFNBO Delegated Act, EU H2 Bank, LCOH, green/blue/grey/pink taxonomy
+# Note: E62 just_transition_finance routes registered via line 65 early import (same file as just_transition.py)
+app.include_router(cdr_router)                         # E63 Carbon Removal & CDR Finance — IPCC AR6 CDR, BeZero AAA-CCC, Oxford Principles, VCMI Claims, Art 6.4
+app.include_router(transition_finance_router)          # E64 Transition Finance Alignment — GFANZ, SBTi Net-Zero Standard, TPT Disclosure, CA100+, PACTA
+app.include_router(biodiversity_credits_router)        # E65 Biodiversity Credits & Nature Markets — UK BNG DEFRA 4.0, EU NRL 2024/1991, SBTN v1.1, TNFD Advanced
+app.include_router(climate_stress_test_router)         # E66 Climate Stress Testing — BCBS 517, BoE CBES, ECB CST 2022, APRA CLT, NGFS Phase 4
+app.include_router(scope3_analytics_router)            # E67 Scope 3 Deep-Dive — GHG Protocol Cat 1-15, FLAG, Avoided Emissions, PCAF DQS, SBTi Scope 3
+app.include_router(blue_economy_router)                # E68 Blue Economy & Ocean Finance — ICMA Blue Bond, SOF, Blue Carbon, BBNJ High Seas Treaty 2023
+app.include_router(sovereign_debt_climate_router)      # E69 Climate-Linked Sovereign Debt — CRDC, Debt-for-Nature Swaps, IMF RST, Paris Club, SIDS
+app.include_router(loss_damage_router)                 # E70 Loss & Damage Finance — COP28 FRLD, WIM Santiago Network, Global Shield v2, V20, Parametric
+app.include_router(carbon_price_ets_router)            # E71 Carbon Price & ETS Analytics — EU ETS Phase 4, UK ETS, California, China ETS, RGGI, IEA SDS
+app.include_router(blended_finance_router)           # E72 Blended Finance & DFI
+app.include_router(mrv_router)                       # E73 Climate Data & MRV
+app.include_router(real_asset_decarb_router)         # E74 Real Asset Decarbonisation
+app.include_router(trade_finance_esg_router)         # E75 Sustainable Trade Finance
+app.include_router(crypto_climate_router)            # E76 Digital Assets & Crypto Climate Risk
+app.include_router(ai_governance_router)             # E77 AI Governance & ESG
+app.include_router(carbon_accounting_ai_router)      # E78 Carbon Accounting AI & Automation
+app.include_router(climate_insurance_router)         # E79 Climate Insurance & Parametric Risk
+app.include_router(ai_risk_router)              # E76 AI & ML Risk Finance
+app.include_router(nature_capital_router)       # E77 Nature Capital Accounting
+app.include_router(climate_finance_router)      # E78 Climate Finance Flows
+app.include_router(esg_ma_router)               # E79 ESG M&A Due Diligence
+app.include_router(corporate_nature_strategy_router)   # E80 Corporate Nature Strategy & SBTN
+app.include_router(green_securitisation_router)        # E81 Green Securitisation & ESG Structured Finance
+app.include_router(digital_product_passport_router)    # E82 Digital Product Passport (EU ESPR)
+app.include_router(adaptation_finance_router)          # E83 Adaptation Finance & Resilience Economics
+app.include_router(internal_carbon_price_router)       # E84 Internal Carbon Pricing & Net-Zero Economics
+app.include_router(social_bond_router)                 # E85 Social Bond & Impact Finance
+app.include_router(climate_financial_statements_router) # E86 Climate Financial Statement Adjustments
+app.include_router(em_climate_risk_router)             # E87 EM Climate & Transition Risk
+app.include_router(biodiversity_credits_router)        # E88 Biodiversity Credits & Nature Markets
+app.include_router(just_transition_router)             # E89 Just Transition Finance
+app.include_router(carbon_removal_router)              # E90 Carbon Removal & CDR Finance
+app.include_router(climate_litigation_router)          # E91 Climate Litigation Risk
+app.include_router(water_stewardship_router)           # E92 Water Risk & Stewardship Finance
+app.include_router(critical_minerals_router)           # E93 Critical Minerals & Transition Metals Risk
+app.include_router(nbs_finance_router)                 # E94 Nature-Based Solutions Finance
+app.include_router(sfdr_art9_router)                   # E95 SFDR Article 9 Impact Fund Assessment
+app.include_router(vcm_integrity_router)               # E96 VCM Integrity — ICVCM CCP / VCMI / Oxford Offsetting
+app.include_router(social_taxonomy_router)             # E97 EU Social Taxonomy & HRDD — ILO / UNGP / CSDDD
+app.include_router(green_hydrogen_router)              # E98 Green Hydrogen & RFNBO Compliance
+app.include_router(transition_finance_router)          # E99 Transition Finance Credibility — GFANZ/TPT/SBTi
+app.include_router(stress_test_orchestrator_router)   # E100 Multi-Regulatory Stress Test Orchestrator
+app.include_router(sscf_router)                       # E101 Sustainable Supply Chain Finance
+app.include_router(double_materiality_router)         # E102 CSRD Double Materiality Assessment
+app.include_router(temperature_alignment_router)      # E103 Financed Emissions Temperature Alignment
 
 # ── Global error handlers ─────────────────────────────────────────────────────
 from middleware.error_handler import register_error_handlers
 register_error_handlers(app)
 
 # ── Middleware stack (order matters: outermost = first to execute) ─────────────
-# CORS → RateLimit → RequestLogger → AuditMiddleware → [Route Handlers]
+# CORS → RateLimit → RequestLogger → AuthMiddleware → AuditMiddleware → [Route Handlers]
 
 from middleware.audit_middleware import AuditMiddleware
 app.add_middleware(AuditMiddleware)
+
+from middleware.auth_middleware import AuthMiddleware
+app.add_middleware(AuthMiddleware)
 
 from middleware.request_logger import RequestLoggerMiddleware
 app.add_middleware(RequestLoggerMiddleware)
@@ -309,12 +615,16 @@ from middleware.rate_limiter import RateLimitMiddleware
 app.add_middleware(RateLimitMiddleware)
 
 # CORS — must be outermost so CORS headers reach the client on ALL responses (including 429)
+_cors_origins = os.environ.get(
+    "ALLOWED_ORIGINS",
+    "http://localhost:3000,http://127.0.0.1:3000,http://localhost:4000,http://127.0.0.1:4000"
+).split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[o.strip() for o in _cors_origins],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-Request-ID"],
 )
 
 

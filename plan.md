@@ -248,26 +248,142 @@ Build a comprehensive upload interface for portfolio holdings files with validat
 
 ---
 
+---
+
+### Phase 7: Platform Enhancement Chunks (Status: Completed — Chunks 1-3 + UI)
+
+#### Chunk 1: Data Lineage + Reference Catalog (✅ Completed)
+- `services/data_lineage_service.py` — MODULE_SIGNATURES (I/O metadata for all engines) + MODULE_DEPENDENCIES graph
+- `services/reference_catalog_service.py` — Embedded reference dataset registry across all engines
+- `api/v1/routes/data_lineage.py` + `api/v1/routes/reference_catalog.py`
+- `tests/test_data_lineage.py` + `tests/test_reference_catalog.py`
+
+#### Chunk 2: Insurance Risk Engine + 8 Embedded Reference Datasets (✅ Completed — 187 tests)
+- `services/insurance_risk_engine.py` — IFRS 17 BBA/PAA/VFA, Solvency II SCR, CAT Risk, Claims Analytics
+- `api/v1/routes/insurance_risk.py` — 12 endpoints
+- `tests/test_insurance_risk.py` — 87 tests across 8 test classes
+
+#### Chunk 3: Banking Risk Engine + Data Preview UI (✅ Completed — 289 total tests)
+- `services/banking_risk_engine.py` — IFRS 9 ECL 3-stage, Basel III/IV capital, LCR/NSFR, FRTB market risk, Op risk, AML/CFT
+- `api/v1/routes/banking_risk.py` — 12 endpoints
+- `api/v1/routes/data_preview.py` — 5 endpoints (DB schema introspection)
+- `frontend/src/pages/DataPreviewPage.jsx` — 3-tab data explorer
+- `tests/test_banking_risk.py` — 102 tests across 11 test classes
+
+---
+
+### Phase 8: Climate Physical Risk & ESG Transition Risk Engine (Status: In Progress)
+
+**Spec**: `Climate Physical Risk & ESG Transition Risk Module — Complete Requirements Specification`
+**Scope**: 57 configurable parameters, 5 physical risk stages, 6 transition risk stages, 9 pre-calibrated templates, 4-level entity hierarchy
+
+**Integration map**: See `CLIMATE_RISK_INTEGRATION_PLAN.md` for full module-by-module mapping to existing services.
+
+#### Chunk A: Physical Risk Engine + NACE-CPRS Mapper (⏳ In Progress)
+**New files**:
+- `services/climate_physical_risk_engine.py` (~500 lines) — HEV framework stages 1-4:
+  - Stage 1 Hazard: intensity × frequency × duration per hazard/asset/scenario/horizon (7 acute + 6 chronic hazards)
+  - Stage 2 Exposure: asset value × exposure fraction × concentration factor
+  - Stage 3 Vulnerability: sector base × structural modifiers × adaptation discount × cascading multiplier
+  - Stage 4 Damage/CVaR: Σ(H × E × V × DamageFunc) × weight; Linear/Sigmoid/Exponential/Step curves
+  - 26 configurable params via PhysicalRiskConfig Pydantic model
+  - Embedded: sector vulnerability matrix (20 sectors × 13 hazards), damage function coefficients
+- `services/nace_cprs_mapper.py` (~200 lines) — NACE 4-digit → CPRS → IAM mapping (600+ entries), revenue-weighted multi-activity scoring, GHG intensity bucketing
+- `tests/test_climate_physical_risk.py` (~300 lines, ~50 tests)
+
+#### Chunk B: Transition Risk Engine (⏳ In Progress — parallel with A)
+**New files**:
+- `services/climate_transition_risk_engine.py` (~500 lines) — 6-stage orchestrator:
+  - Stage 1: Sector classification via NACE-CPRS (calls nace_cprs_mapper)
+  - Stage 2: Carbon pricing — Scope1×carbon_price + CBAM_exposure×CBAM_rate + Scope2×elec_uplift
+  - Stage 3: Stranded assets — writedown curves (linear/sigmoid/S-curve/step), residual value floor
+  - Stage 4: Portfolio alignment gap = current_intensity − pathway_target; transition readiness scoring
+  - Stage 5: NGFS scenario stress — TransitionCVaR across 6 Phase 5 scenarios
+  - Stage 6: Composite score = Σ(w_cat × CategoryScore) for Policy/Tech/Market/Reputation
+  - 26 configurable params via TransitionRiskConfig Pydantic model
+  - Embedded: NGFS Phase 5 scenario params, IEA NZE phase-out pathways, TCFD category weights
+- `tests/test_climate_transition_risk.py` (~250 lines, ~45 tests)
+
+#### Chunk C: Integrated Risk + Aggregator + Methodology Manager
+**New files**:
+- `services/climate_integrated_risk.py` (~200 lines) — w_p×Physical + w_t×Transition + α×InteractionTerm; nature risk amplifier
+- `services/climate_risk_aggregator.py` (~250 lines) — Asset→Security→Fund→Portfolio roll-up; diversification benefit; contribution analysis
+- `services/assessment_methodology_manager.py` (~350 lines) — CRUD lifecycle (DRAFT→PUBLISHED→RETIRED→ARCHIVED), 9 pre-calibrated templates, versioning, validation
+- `tests/test_assessment_methodology.py` (~200 lines, ~30 tests)
+- `tests/test_climate_integration.py` (~150 lines, ~25 tests)
+
+#### Chunk D: Assessment Runner + API Routes + DB Migration
+**New files**:
+- `services/assessment_runner.py` (~400 lines) — Orchestrates methodology + entity hierarchy + calculation + storage; batch mode; delta reports
+- `api/v1/routes/climate_risk.py` (~300 lines) — 11 endpoints under `/api/v1/climate-risk/`
+- `alembic/versions/039_add_climate_risk_assessment_tables.py` — 6 new tables
+- Wiring: server.py, data_lineage_service.py updates
+
+#### Chunk E: Frontend Page + Navigation
+**New files**:
+- `frontend/src/pages/ClimateRiskPage.jsx` (~800 lines) — 6-tab layout: Physical Risk / Transition Risk / Integrated View / Methodology Builder / Assessment Runner / Reports
+- App.js wiring: nav entry in "Risk & Sector" group + Route
+
+**Deferred**: PostGIS spatial queries, ML model integration, Celery scheduled runs, Curve/Heatmap editor UI, Geographic Risk Map (Leaflet/Mapbox), auth-gated approval chains
+
+---
+
+### Phase 9: Regulatory & Analytical Engine Expansion (Status: Completed — 2026-03-09)
+**Scope**: Build comprehensive regulatory disclosure engines and analytical modules to achieve institutional-grade coverage across all major sustainability/climate frameworks.
+
+#### Completed Engines (all with services + routes + migrations + data lineage)
+
+| # | Engine | Service File | Lines | Routes | Migration | Key Coverage |
+|---|--------|-------------|-------|--------|-----------|-------------|
+| 1 | EUDR Compliance | eudr_engine.py | ~580 | /api/v1/eudr (13) | 045 | 7 commodities, 63 HS codes, 55 countries, Art 4-12 DD |
+| 2 | EU CSDDD | csddd_engine.py | ~520 | /api/v1/csddd (11) | 046 | Art 2/5-13/14/22/29-33, 18 adverse impacts, 9 DD obligations |
+| 3 | Sovereign Climate Risk | sovereign_climate_risk_engine.py | ~430 | /api/v1/sovereign-climate-risk (5) | 046 | 51 countries, 5 NGFS, notch adjustment, spread delta |
+| 4 | SEC Climate Disclosure | sec_climate_engine.py | ~530 | /api/v1/sec-climate (10) | 047 | Reg S-K 1501-1505, S-X 14-02, filer assessment, attestation |
+| 5 | GRI Standards | gri_standards_engine.py | ~470 | /api/v1/gri (9) | 047 | 18 topic standards, 4 sectors, SDG/ESRS mapping |
+| 6 | SASB Industry Standards | sasb_industry_engine.py | ~580 | /api/v1/sasb (10) | 048 | SICS 7 sectors, 20 industries, ISSB S2/GRI/ESRS mapping |
+| 7 | Model Validation Framework | model_validation_framework.py | ~650 | /api/v1/model-validation (10) | 048 | 17 models, 12 stat tests, BCBS 239/EBA GL, lifecycle |
+| 8 | TNFD Nature Disclosures | tnfd_assessment_engine.py | ~1096 | /api/v1/tnfd (11) | 049 | 14 disclosures, LEAP 16 components, ENCORE 21 services |
+| 9 | CDP Climate & Water Scoring | cdp_scoring_engine.py | ~1023 | /api/v1/cdp (11) | 049 | 15 climate + 9 water modules, A-D grades, 12 activity groups |
+| 10 | PCAF Data Quality Score | pcaf_quality_engine.py | ~1631 | /api/v1/pcaf-quality (11) | 050 | DQS 1-5, 6 asset classes, SFDR PAI 1/2/3, confidence bands |
+| 11 | Basel III/IV Regulatory Capital | basel_capital_engine.py | ~1688 | /api/v1/basel-capital (15) | 050 | CRR Art 92/153, IRB, LCR, NSFR, climate add-ons, BCBS 239 |
+
+**Totals**: ~9,198 lines of engine code, ~116 API endpoints, 6 migrations (045-050), ~55 modules in data lineage graph, ~134 dependency edges
+
+#### Previously Completed Engines (Phase 7-8)
+- Climate Physical Risk (HEV, 1154 lines) + Transition Risk (NGFS P5, 1345 lines)
+- Insurance Risk (IFRS 17 BBA/PAA/VFA, Solvency II SCR, CAT Risk)
+- Banking Risk (IFRS 9 ECL, Basel III, LCR/NSFR, FRTB, AML/CFT)
+- AM Engine (6 sub-modules: ESG attribution, PACTA, green bonds, spreads, LP analytics, optimisation)
+- Agriculture Risk (base + 3 expanded: methane, disease, BNG)
+- Factor Overlay (31 registries, 12 overlay methods)
+- Technology Risk, Residential RE, RICS ESG, EU ETS, Stress Testing
+- Cross-Module Lineage Orchestrator, Regulatory Report Compiler
+
+---
+
+### Phase 10: Remaining Analytical Engines (Status: COMPLETE — 2026-03-09)
+**Scope**: Final analytical engine modules to complete platform coverage.
+
+#### Completed
+- **EU Taxonomy Alignment Engine** — All 4 Delegated Acts (Climate 2021/2139, Complementary 2022/1214, Environmental 2023/2486, Amendments 2023/2485), 80+ NACE activities, 6 environmental objectives, Article 3 three-step test, DNSH 6x6, Minimum Safeguards, GAR/BTAR financial KPIs, 10 cross-framework mappings. Service ~600 lines, 3 POST + 10 GET endpoints, migration 051.
+- **Climate Transition Plan Assessment Engine** — TPT (5 elements, 16 sub-elements), GFANZ (7 components + 4 sub-alliances), IIGCC NZIF v2 (7 steps), CSDDD Art 22 (8 requirements + phase-in), CSRD ESRS E1 (E1-1 to E1-10, ~60 datapoints), CDP C4 (C4.1-C4.5 + C1/C3), 55-datapoint inter-framework cross-mapping, 8 sector pathways. Service ~800 lines, 5 POST + 12 GET endpoints, migration 051.
+
+#### Remaining (Lower Priority)
+- PostGIS spatial queries for nature risk (infrastructure)
+- TimescaleDB hypertables for time-series KPIs (infrastructure)
+- Auth/RBAC enforcement (deferred per Phase 3 decision)
+- Frontend pages for new engines (backend-first approach)
+
+---
+
 ## Next Actions
-1. Phase 3 (now):
-   - Add SQLAlchemy + Alembic dependencies
-   - Add Supabase `DATABASE_URL` (URL-encoded password)
-   - Create SQLAlchemy models + initial migration
-   - Run `pg_poc.py` to validate connectivity + persistence
-2. Implement Upload backend APIs (new):
-   - Add upload storage + parsing (CSV/XLSX)
-   - Add validation pipeline returning structured errors/warnings
-   - Add preview endpoint with pagination + row status
-   - Add import/process endpoint writing holdings to Postgres
-   - Add mapping template endpoints (optional)
-3. Phase 4:
-   - Build repository layer
-   - Migrate endpoints from Mongo/Beanie → Postgres/SQLAlchemy
-   - Run Mongo → Postgres migration script
-4. Phase 5:
-   - Full regression + performance validation
-5. After stabilization:
-   - Revisit authentication
+1. ✅ Phase 7 Chunks 1-3 completed (289 tests passing)
+2. ✅ Phase 8 Chunks A-E completed (climate risk engine — physical, transition, integrated, aggregator, methodology, runner, frontend)
+3. ✅ Phase 9 completed (11 regulatory/analytical engines, 050 migrations, ~55 lineage modules)
+4. ✅ Phase 10 complete (EU Taxonomy + Transition Plan engines — 2026-03-09)
+5. ✅ Phase 11 complete (Double Materiality DMA + SFDR PAI engines + 6 frontend pages wired + digital skeleton theme — 2026-03-09)
+6. Phase 3 (Postgres migration — deferred, DB structure stable)
+7. After stabilization: Revisit authentication
 
 ---
 
@@ -277,4 +393,9 @@ Build a comprehensive upload interface for portfolio holdings files with validat
 - 🔄 Postgres migration POC proves: schema works, queries are efficient, and one analysis can be persisted.
 - 🔜 Full app runs on Postgres with parity for: portfolios, scenario-data, analysis runs, and results retrieval.
 - ✅ Upload UI provides an audit-friendly end-to-end user workflow (upload → map → validate → preview/edit → import) **once backend endpoints are available**, with clear progress feedback and comprehensive `data-testid` coverage.
+- ✅ Platform enhancement chunks 1-3 pass 289 tests (data lineage, insurance risk, banking risk, data preview).
+- ✅ Climate risk engine completed — physical risk (5 stages), transition risk (6 stages), integrated scoring, methodology lifecycle, assessment runner, frontend 6-tab page.
+- ✅ Phase 9 regulatory engines: 11 engines, ~9,198 lines, ~116 endpoints, 6 migrations applied to Supabase.
+- ✅ Phase 10: EU Taxonomy Alignment (~600 lines, 80+ NACE activities, 4 Delegated Acts) + Climate Transition Plan Assessment (~800 lines, 55-datapoint cross-mapping, 6 frameworks). Migration 051 applied. ~57 lineage modules, ~149 dependency edges.
+- ✅ Phase 11: Double Materiality Engine (~1525 lines, 10 ESRS topics, EFRAG IG 1) + SFDR PAI Engine (~2044 lines, 18 mandatory + 38 optional indicators, Art 6/8/9 classification). Migration 052 applied. 6 frontend hub pages wired. Digital skeleton white/black theme across 122+ files. ~59 lineage modules, ~164 dependency edges.
 - Automated tests pass; one end-to-end regression run completes without manual fixes.

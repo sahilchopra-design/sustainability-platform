@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { ExportButton } from '../../../components/shared/ExportButton';
 import { exportPortfolioAnalytics } from '../../../lib/exportUtils';
+import { DataRequiredNotice } from '../../../components/shared/DataRequiredNotice';
 
 const COLORS = ['#0ea5e9', '#8b5cf6', '#22c55e', '#f59e0b', '#ef4444', '#06b6d4'];
 
@@ -51,15 +52,15 @@ function formatValue(value) {
 
 function KPICard({ kpi }) {
   const Icon = ICON_MAP[kpi.icon] || DollarSign;
-  const colorClass = COLOR_MAP[kpi.color] || 'bg-white/[0.06] text-white/70';
+  const colorClass = COLOR_MAP[kpi.color] || 'bg-gray-50 text-gray-700';
   
   return (
-    <Card className="bg-[#0d1424] hover:shadow-md transition-shadow" data-testid={`kpi-${kpi.id}`}>
+    <Card className="bg-white hover:shadow-md transition-shadow" data-testid={`kpi-${kpi.id}`}>
       <CardContent className="pt-4 pb-3">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs text-white/40 mb-1">{kpi.label}</p>
-            <p className="text-xl font-bold text-white">{formatValue(kpi.value)}</p>
+            <p className="text-xs text-gray-500 mb-1">{kpi.label}</p>
+            <p className="text-xl font-bold text-gray-900">{formatValue(kpi.value)}</p>
             {kpi.change !== null && kpi.change !== undefined && (
               <div className="flex items-center gap-1 mt-1">
                 {kpi.trend === 'up' ? (
@@ -67,7 +68,7 @@ function KPICard({ kpi }) {
                 ) : kpi.trend === 'down' ? (
                   <ArrowDown className="h-3 w-3 text-red-500" />
                 ) : null}
-                <span className={`text-xs ${kpi.trend === 'up' ? 'text-emerald-400' : kpi.trend === 'down' ? 'text-red-400' : 'text-white/40'}`}>
+                <span className={`text-xs ${kpi.trend === 'up' ? 'text-emerald-400' : kpi.trend === 'down' ? 'text-red-400' : 'text-gray-500'}`}>
                   {kpi.change > 0 ? '+' : ''}{kpi.change}% {kpi.change_period}
                 </span>
               </div>
@@ -86,9 +87,9 @@ function SectorAllocationChart({ data }) {
   if (!data || data.length === 0) return null;
   
   return (
-    <Card className="bg-[#0d1424]" data-testid="chart-sector-allocation">
+    <Card className="bg-white" data-testid="chart-sector-allocation">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold text-white/70">Sector Allocation</CardTitle>
+        <CardTitle className="text-sm font-semibold text-gray-700">Sector Allocation</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[200px]">
@@ -125,9 +126,9 @@ function GeographicChart({ data }) {
   if (!data || data.length === 0) return null;
   
   return (
-    <Card className="bg-[#0d1424]" data-testid="chart-geographic">
+    <Card className="bg-white" data-testid="chart-geographic">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold text-white/70">Geographic Distribution</CardTitle>
+        <CardTitle className="text-sm font-semibold text-gray-700">Geographic Distribution</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[200px]">
@@ -153,9 +154,9 @@ function RiskDistributionChart({ data }) {
   if (!data || data.length === 0) return null;
   
   return (
-    <Card className="bg-[#0d1424]" data-testid="chart-risk-distribution">
+    <Card className="bg-white" data-testid="chart-risk-distribution">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold text-white/70">Risk Distribution</CardTitle>
+        <CardTitle className="text-sm font-semibold text-gray-700">Risk Distribution</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[200px]">
@@ -196,9 +197,9 @@ function AlertsList({ alerts }) {
   };
   
   return (
-    <Card className="bg-[#0d1424]" data-testid="alerts-list">
+    <Card className="bg-white" data-testid="alerts-list">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold text-white/70 flex items-center gap-2">
+        <CardTitle className="text-sm font-semibold text-gray-700 flex items-center gap-2">
           <AlertTriangle className="h-4 w-4 text-amber-500" />
           Alerts & Notifications
         </CardTitle>
@@ -229,7 +230,7 @@ function AlertsList({ alerts }) {
   );
 }
 
-export function PortfolioDashboard({ dashboard, isLoading }) {
+export function PortfolioDashboard({ dashboard, isLoading, error }) {
   if (isLoading) {
     return (
       <div className="space-y-6" data-testid="dashboard-loading">
@@ -248,24 +249,98 @@ export function PortfolioDashboard({ dashboard, isLoading }) {
       </div>
     );
   }
-  
+
+  if (error) {
+    return (
+      <DataRequiredNotice
+        title="Dashboard Data Error"
+        message={error.message || 'Failed to load dashboard data.'}
+        severity="error"
+        requirements={error.requiredData?.length > 0 ? error.requiredData : [
+          'Portfolio must contain assets in assets_pg table',
+          'Each asset needs: company_name, exposure, sector, country',
+          'Emissions data (scope1/2/3) needed for carbon metrics',
+          'PD/LGD values needed for risk scoring',
+        ]}
+        testId="dashboard-error"
+      />
+    );
+  }
+
   if (!dashboard) {
     return (
-      <Card className="bg-[#0d1424]">
-        <CardContent className="py-12 text-center text-white/40">
-          <p>No dashboard data available. Select a portfolio to view analytics.</p>
-        </CardContent>
-      </Card>
+      <DataRequiredNotice
+        title="No Dashboard Data"
+        message="Select a portfolio from the sidebar to view analytics. The dashboard auto-calculates KPIs, charts, and alerts from your holdings data."
+        severity="info"
+        requirements={[
+          'Select a portfolio from the sidebar',
+          'Portfolio must have assets loaded into assets_pg table',
+          'Missing fields will be estimated from reference data',
+        ]}
+        testId="dashboard-empty"
+      />
     );
   }
   
+  // Data quality report from backend
+  const dqr = dashboard.data_quality_report;
+
   return (
     <div className="space-y-6" data-testid="portfolio-dashboard">
+      {/* Data Quality Banner */}
+      {dqr && dqr.estimated_count > 0 && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4" data-testid="data-quality-banner">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="h-5 w-5 text-amber-400 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <h4 className="text-sm font-semibold text-amber-700 mb-1">
+                Missing Datapoints Detected — {dqr.estimated_count}/{dqr.total_assets} Assets Estimated
+              </h4>
+              <p className="text-xs text-amber-600 mb-2">
+                Estimation method: {dqr.estimation_method || 'Sector reference data'}
+              </p>
+              {/* Missing fields breakdown */}
+              {dqr.missing_fields && Object.keys(dqr.missing_fields).length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {Object.entries(dqr.missing_fields).map(([field, count]) => (
+                    <span key={field} className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700">
+                      {field.replace(/_/g, ' ')}: {count} assets
+                    </span>
+                  ))}
+                </div>
+              )}
+              {/* Recommendations */}
+              {dqr.recommendations?.length > 0 && (
+                <ul className="space-y-1 mt-2">
+                  {dqr.recommendations.map((rec, i) => (
+                    <li key={i} className="text-[10px] text-amber-600 flex items-start gap-1">
+                      <span className="mt-0.5 text-amber-400">→</span> {rec}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <div className="flex gap-3 mt-2 text-[10px]">
+                <span className="text-emerald-600 font-medium">
+                  ● Complete: {dqr.complete_count}
+                </span>
+                <span className="text-amber-600 font-medium">
+                  ● Partial: {dqr.partial_count}
+                </span>
+                <span className="text-red-500 font-medium">
+                  ● Estimated: {dqr.estimated_count}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Portfolio Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-white/90">{dashboard.portfolio_name}</h2>
-          <p className="text-xs text-white/40">
+          <h2 className="text-lg font-semibold text-gray-900">{dashboard.portfolio_name}</h2>
+          <p className="text-xs text-gray-500">
             Last updated: {new Date(dashboard.last_updated).toLocaleString()}
           </p>
         </div>

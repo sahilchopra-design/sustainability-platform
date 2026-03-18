@@ -62,7 +62,7 @@ function ModuleIcon({ module, className }) {
 
 // ── Confidence badge ─────────────────────────────────────────────────────────
 function ConfidenceBadge({ score }) {
-  if (score == null) return <Badge variant="outline" className="text-[10px] text-white/30 border-white/10">N/A</Badge>;
+  if (score == null) return <Badge variant="outline" className="text-[10px] text-gray-500 border-black/10">N/A</Badge>;
   const pct = Math.round(score * 100);
   const color = pct >= 80 ? 'text-emerald-400 border-emerald-400/20 bg-emerald-400/5'
     : pct >= 50 ? 'text-amber-400 border-amber-400/20 bg-amber-400/5'
@@ -100,16 +100,16 @@ function ModuleCoverageTab() {
       {/* Module grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {data.modules?.map(m => (
-          <Card key={m.module} className="bg-[#0d1424] border-white/[0.06]">
+          <Card key={m.module} className="bg-white border-gray-200">
             <CardContent className="p-4">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded bg-white/5">
-                    <ModuleIcon module={m.module} className="h-4 w-4 text-cyan-400" />
+                  <div className="p-1.5 rounded bg-gray-50">
+                    <ModuleIcon module={m.module} className="h-4 w-4 text-gray-700" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-white/80">{m.module.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</p>
-                    <p className="text-[10px] text-white/30">{m.source_count} source{m.source_count !== 1 ? 's' : ''}</p>
+                    <p className="text-sm font-medium text-gray-800">{m.module.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</p>
+                    <p className="text-[10px] text-gray-500">{m.source_count} source{m.source_count !== 1 ? 's' : ''}</p>
                   </div>
                 </div>
                 <Badge variant="outline" className={cn(
@@ -122,7 +122,7 @@ function ModuleCoverageTab() {
                 </Badge>
               </div>
               {/* Progress bar */}
-              <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+              <div className="h-1.5 bg-gray-50 rounded-full overflow-hidden">
                 <div
                   className={cn(
                     'h-full rounded-full transition-all',
@@ -133,7 +133,7 @@ function ModuleCoverageTab() {
                   style={{ width: `${m.coverage_pct}%` }}
                 />
               </div>
-              <p className="text-[10px] text-white/30 mt-1.5">{m.mapped_kpis} / {m.total_kpis} KPIs mapped</p>
+              <p className="text-[10px] text-gray-500 mt-1.5">{m.mapped_kpis} / {m.total_kpis} KPIs mapped</p>
             </CardContent>
           </Card>
         ))}
@@ -187,50 +187,50 @@ function KpiCatalogTab({ onSelectKpi }) {
       {/* Filters */}
       <div className="flex items-center gap-3 flex-wrap">
         <div className="relative flex-1 min-w-[200px] max-w-xs">
-          <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-white/30" />
+          <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-gray-500" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search KPIs..."
-            className="w-full h-8 pl-8 pr-3 bg-[#0d1424] border border-white/[0.06] rounded text-xs text-white/80 placeholder:text-white/20 focus:outline-none focus:border-cyan-500/30"
+            className="w-full h-8 pl-8 pr-3 bg-white border border-gray-200 rounded text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-black/[0.20]"
           />
         </div>
         <Select value={catFilter} onValueChange={setCatFilter}>
-          <SelectTrigger className="w-44 h-8 bg-[#0d1424] border-white/[0.06] text-xs text-white/60">
+          <SelectTrigger className="w-44 h-8 bg-white border-gray-200 text-xs text-gray-600">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
-          <SelectContent className="bg-[#0d1424] border-white/[0.06]">
-            <SelectItem value="__all__" className="text-xs text-white/60">All Categories</SelectItem>
+          <SelectContent className="bg-white border-gray-200">
+            <SelectItem value="__all__" className="text-xs text-gray-600">All Categories</SelectItem>
             {categories.map(c => (
-              <SelectItem key={c.category} value={c.category} className="text-xs text-white/60">
+              <SelectItem key={c.category} value={c.category} className="text-xs text-gray-600">
                 {c.category} ({c.count})
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
         <Select value={moduleFilter} onValueChange={setModuleFilter}>
-          <SelectTrigger className="w-40 h-8 bg-[#0d1424] border-white/[0.06] text-xs text-white/60">
+          <SelectTrigger className="w-40 h-8 bg-white border-gray-200 text-xs text-gray-600">
             <SelectValue placeholder="Module" />
           </SelectTrigger>
-          <SelectContent className="bg-[#0d1424] border-white/[0.06]">
-            <SelectItem value="__all__" className="text-xs text-white/60">All Modules</SelectItem>
+          <SelectContent className="bg-white border-gray-200">
+            <SelectItem value="__all__" className="text-xs text-gray-600">All Modules</SelectItem>
             {modules.map(m => (
-              <SelectItem key={m} value={m} className="text-xs text-white/60">
+              <SelectItem key={m} value={m} className="text-xs text-gray-600">
                 {m.replace(/_/g, ' ')}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <Badge variant="outline" className="text-[10px] text-white/40 border-white/10">
+        <Badge variant="outline" className="text-[10px] text-gray-500 border-black/10">
           {kpis.length} KPI{kpis.length !== 1 ? 's' : ''}
         </Badge>
       </div>
 
       {loading ? <LoadingState label="Loading KPIs..." /> : (
-        <div className="border border-white/[0.06] rounded-lg overflow-hidden">
+        <div className="border border-gray-200 rounded-lg overflow-hidden">
           <table className="w-full text-xs">
             <thead>
-              <tr className="bg-[#0a1020] text-white/40">
+              <tr className="bg-[#f5f6f8] text-gray-500">
                 <th className="text-left px-3 py-2 font-medium">KPI Name</th>
                 <th className="text-left px-3 py-2 font-medium w-28">Category</th>
                 <th className="text-left px-3 py-2 font-medium w-20">Unit</th>
@@ -240,24 +240,24 @@ function KpiCatalogTab({ onSelectKpi }) {
                 <th className="text-right px-3 py-2 font-medium w-20"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.04]">
+            <tbody className="divide-y divide-black/[0.04]">
               {kpis.map(k => (
-                <tr key={k.id} className="hover:bg-white/[0.02] transition-colors">
+                <tr key={k.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-3 py-2">
-                    <p className="text-white/80 font-medium">{k.name}</p>
-                    {k.description && <p className="text-white/30 text-[10px] mt-0.5 line-clamp-1">{k.description}</p>}
+                    <p className="text-gray-800 font-medium">{k.name}</p>
+                    {k.description && <p className="text-gray-500 text-[10px] mt-0.5 line-clamp-1">{k.description}</p>}
                   </td>
-                  <td className="px-3 py-2 text-white/50">{k.category}</td>
-                  <td className="px-3 py-2 text-white/40">{k.unit || '--'}</td>
+                  <td className="px-3 py-2 text-gray-500">{k.category}</td>
+                  <td className="px-3 py-2 text-gray-500">{k.unit || '--'}</td>
                   <td className="px-3 py-2">
                     <div className="flex flex-wrap gap-1">
                       {(k.target_modules || []).slice(0, 3).map(m => (
-                        <Badge key={m} variant="outline" className="text-[9px] text-cyan-400/60 border-cyan-400/10 px-1">
+                        <Badge key={m} variant="outline" className="text-[9px] text-gray-500 border-black/10 px-1">
                           {m}
                         </Badge>
                       ))}
                       {(k.target_modules || []).length > 3 && (
-                        <Badge variant="outline" className="text-[9px] text-white/30 border-white/10 px-1">
+                        <Badge variant="outline" className="text-[9px] text-gray-500 border-black/10 px-1">
                           +{k.target_modules.length - 3}
                         </Badge>
                       )}
@@ -268,7 +268,7 @@ function KpiCatalogTab({ onSelectKpi }) {
                       'text-[10px]',
                       k.mapping_count > 0
                         ? 'text-emerald-400 border-emerald-400/20'
-                        : 'text-white/30 border-white/10'
+                        : 'text-gray-500 border-black/10'
                     )}>
                       {k.mapping_count}
                     </Badge>
@@ -276,13 +276,13 @@ function KpiCatalogTab({ onSelectKpi }) {
                   <td className="px-3 py-2 text-center">
                     {k.is_required
                       ? <CheckCircle2 className="h-3.5 w-3.5 text-amber-400 mx-auto" />
-                      : <Circle className="h-3.5 w-3.5 text-white/15 mx-auto" />}
+                      : <Circle className="h-3.5 w-3.5 text-gray-400 mx-auto" />}
                   </td>
                   <td className="px-3 py-2 text-right">
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-6 px-2 text-[10px] text-cyan-400 hover:text-cyan-300 hover:bg-cyan-400/5"
+                      className="h-6 px-2 text-[10px] text-gray-700 hover:text-gray-800 hover:bg-black/5"
                       onClick={() => onSelectKpi && onSelectKpi(k)}
                     >
                       Map <ArrowRight className="h-3 w-3 ml-1" />
@@ -349,25 +349,25 @@ function SourceBrowserTab() {
   return (
     <div className="flex gap-4 h-[calc(100vh-240px)] min-h-[500px]">
       {/* Left: source list */}
-      <div className="w-80 shrink-0 flex flex-col border border-white/[0.06] rounded-lg overflow-hidden">
-        <div className="p-2 bg-[#0a1020] border-b border-white/[0.04] space-y-2">
+      <div className="w-80 shrink-0 flex flex-col border border-gray-200 rounded-lg overflow-hidden">
+        <div className="p-2 bg-[#f5f6f8] border-b border-gray-200 space-y-2">
           <div className="relative">
-            <Search className="absolute left-2 top-2 h-3.5 w-3.5 text-white/30" />
+            <Search className="absolute left-2 top-2 h-3.5 w-3.5 text-gray-500" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search sources..."
-              className="w-full h-7 pl-7 pr-2 bg-[#0d1424] border border-white/[0.06] rounded text-[11px] text-white/80 placeholder:text-white/20 focus:outline-none focus:border-cyan-500/30"
+              className="w-full h-7 pl-7 pr-2 bg-white border border-gray-200 rounded text-[11px] text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-black/[0.20]"
             />
           </div>
           <Select value={catFilter} onValueChange={setCatFilter}>
-            <SelectTrigger className="w-full h-7 bg-[#0d1424] border-white/[0.06] text-[11px] text-white/60">
+            <SelectTrigger className="w-full h-7 bg-white border-gray-200 text-[11px] text-gray-600">
               <SelectValue placeholder="All categories" />
             </SelectTrigger>
-            <SelectContent className="bg-[#0d1424] border-white/[0.06]">
-              <SelectItem value="__all__" className="text-[11px] text-white/60">All ({sources.length})</SelectItem>
+            <SelectContent className="bg-white border-gray-200">
+              <SelectItem value="__all__" className="text-[11px] text-gray-600">All ({sources.length})</SelectItem>
               {cats.map(c => (
-                <SelectItem key={c} value={c} className="text-[11px] text-white/60">{c}</SelectItem>
+                <SelectItem key={c} value={c} className="text-[11px] text-gray-600">{c}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -378,17 +378,17 @@ function SourceBrowserTab() {
               key={s.id}
               onClick={() => setSelectedSource(s)}
               className={cn(
-                'w-full text-left px-3 py-2 border-b border-white/[0.03] transition-colors',
+                'w-full text-left px-3 py-2 border-b border-black/[0.04] transition-colors',
                 selectedSource?.id === s.id
-                  ? 'bg-cyan-500/10 border-l-2 border-l-cyan-500'
-                  : 'hover:bg-white/[0.02]'
+                  ? 'bg-black/[0.06] border-l-2 border-l-cyan-500'
+                  : 'hover:bg-gray-50'
               )}
             >
-              <p className={cn('text-[11px] font-medium', selectedSource?.id === s.id ? 'text-cyan-300' : 'text-white/70')}>{s.name}</p>
+              <p className={cn('text-[11px] font-medium', selectedSource?.id === s.id ? 'text-gray-800' : 'text-gray-700')}>{s.name}</p>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <Badge variant="outline" className="text-[9px] text-white/30 border-white/[0.06] px-1">{s.category}</Badge>
+                <Badge variant="outline" className="text-[9px] text-gray-500 border-gray-200 px-1">{s.category}</Badge>
                 {s.sync_enabled && <Badge variant="outline" className="text-[9px] text-emerald-400/60 border-emerald-400/10 px-1">sync</Badge>}
-                {s.quality_rating && <Badge variant="outline" className="text-[9px] text-white/25 border-white/[0.06] px-1">{s.quality_rating}</Badge>}
+                {s.quality_rating && <Badge variant="outline" className="text-[9px] text-gray-400 border-gray-200 px-1">{s.quality_rating}</Badge>}
               </div>
             </button>
           ))}
@@ -399,7 +399,7 @@ function SourceBrowserTab() {
       {/* Right: source detail + fields */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {!selectedSource ? (
-          <div className="flex-1 flex items-center justify-center text-white/20 text-sm">
+          <div className="flex-1 flex items-center justify-center text-gray-400 text-sm">
             <div className="text-center">
               <Database className="h-8 w-8 mx-auto mb-2 opacity-30" />
               <p>Select a data source to view its fields</p>
@@ -408,22 +408,22 @@ function SourceBrowserTab() {
         ) : (
           <>
             {/* Source header */}
-            <Card className="bg-[#0d1424] border-white/[0.06] mb-3 shrink-0">
+            <Card className="bg-white border-gray-200 mb-3 shrink-0">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="text-sm font-semibold text-white/90">{selectedSource.name}</h3>
+                    <h3 className="text-sm font-semibold text-gray-900">{selectedSource.name}</h3>
                     <div className="flex items-center gap-2 mt-1">
-                      <Badge variant="outline" className="text-[10px] text-white/40 border-white/10">{selectedSource.category}</Badge>
-                      <Badge variant="outline" className="text-[10px] text-white/40 border-white/10">{selectedSource.access_type}</Badge>
+                      <Badge variant="outline" className="text-[10px] text-gray-500 border-black/10">{selectedSource.category}</Badge>
+                      <Badge variant="outline" className="text-[10px] text-gray-500 border-black/10">{selectedSource.access_type}</Badge>
                       {selectedSource.assessment_score != null && (
-                        <Badge variant="outline" className="text-[10px] text-cyan-400/60 border-cyan-400/15">
+                        <Badge variant="outline" className="text-[10px] text-gray-500 border-black/15">
                           Score: {selectedSource.assessment_score.toFixed(1)}
                         </Badge>
                       )}
                     </div>
                   </div>
-                  <Badge variant="outline" className="text-[10px] text-white/30 border-white/10">
+                  <Badge variant="outline" className="text-[10px] text-gray-500 border-black/10">
                     {fields.length} field{fields.length !== 1 ? 's' : ''}
                   </Badge>
                 </div>
@@ -434,17 +434,17 @@ function SourceBrowserTab() {
             {fieldsLoading ? <LoadingState label="Loading fields..." /> : (
               fields.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center">
-                  <div className="text-center text-white/20 text-sm">
+                  <div className="text-center text-gray-400 text-sm">
                     <AlertTriangle className="h-6 w-6 mx-auto mb-2 opacity-40" />
                     <p>No fields catalogued for this source yet.</p>
                     <p className="text-[10px] mt-1">Fields are registered during ingestion or manually via the mapping editor.</p>
                   </div>
                 </div>
               ) : (
-                <div className="flex-1 overflow-auto border border-white/[0.06] rounded-lg">
+                <div className="flex-1 overflow-auto border border-gray-200 rounded-lg">
                   <table className="w-full text-xs">
-                    <thead className="sticky top-0 bg-[#0a1020]">
-                      <tr className="text-white/40">
+                    <thead className="sticky top-0 bg-[#f5f6f8]">
+                      <tr className="text-gray-500">
                         <th className="text-left px-3 py-2 font-medium">Field Name</th>
                         <th className="text-left px-3 py-2 font-medium w-24">Type</th>
                         <th className="text-left px-3 py-2 font-medium w-20">Unit</th>
@@ -452,14 +452,14 @@ function SourceBrowserTab() {
                         <th className="text-left px-3 py-2 font-medium">Description</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/[0.04]">
+                    <tbody className="divide-y divide-black/[0.04]">
                       {fields.map(f => (
-                        <tr key={f.id} className="hover:bg-white/[0.02]">
-                          <td className="px-3 py-2 text-white/80 font-mono">{f.field_name}</td>
-                          <td className="px-3 py-2 text-white/40">{f.data_type || '--'}</td>
-                          <td className="px-3 py-2 text-white/40">{f.unit || '--'}</td>
-                          <td className="px-3 py-2 text-white/30 font-mono text-[10px]">{f.field_path || '--'}</td>
-                          <td className="px-3 py-2 text-white/30 text-[10px] line-clamp-1">{f.description || '--'}</td>
+                        <tr key={f.id} className="hover:bg-gray-50">
+                          <td className="px-3 py-2 text-gray-800 font-mono">{f.field_name}</td>
+                          <td className="px-3 py-2 text-gray-500">{f.data_type || '--'}</td>
+                          <td className="px-3 py-2 text-gray-500">{f.unit || '--'}</td>
+                          <td className="px-3 py-2 text-gray-500 font-mono text-[10px]">{f.field_path || '--'}</td>
+                          <td className="px-3 py-2 text-gray-500 text-[10px] line-clamp-1">{f.description || '--'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -543,34 +543,34 @@ function MappingEditorTab({ preselectedKpi }) {
       {/* Toolbar */}
       <div className="flex items-center gap-3 flex-wrap">
         <Select value={kpiFilter} onValueChange={setKpiFilter}>
-          <SelectTrigger className="w-56 h-8 bg-[#0d1424] border-white/[0.06] text-xs text-white/60">
+          <SelectTrigger className="w-56 h-8 bg-white border-gray-200 text-xs text-gray-600">
             <SelectValue placeholder="Filter by KPI" />
           </SelectTrigger>
-          <SelectContent className="bg-[#0d1424] border-white/[0.06] max-h-64">
-            <SelectItem value="__all__" className="text-xs text-white/60">All KPIs</SelectItem>
+          <SelectContent className="bg-white border-gray-200 max-h-64">
+            <SelectItem value="__all__" className="text-xs text-gray-600">All KPIs</SelectItem>
             {kpis.map(k => (
-              <SelectItem key={k.id} value={k.id} className="text-xs text-white/60">{k.name}</SelectItem>
+              <SelectItem key={k.id} value={k.id} className="text-xs text-gray-600">{k.name}</SelectItem>
             ))}
           </SelectContent>
         </Select>
         <Select value={sourceFilter} onValueChange={setSourceFilter}>
-          <SelectTrigger className="w-56 h-8 bg-[#0d1424] border-white/[0.06] text-xs text-white/60">
+          <SelectTrigger className="w-56 h-8 bg-white border-gray-200 text-xs text-gray-600">
             <SelectValue placeholder="Filter by source" />
           </SelectTrigger>
-          <SelectContent className="bg-[#0d1424] border-white/[0.06] max-h-64">
-            <SelectItem value="__all__" className="text-xs text-white/60">All Sources</SelectItem>
+          <SelectContent className="bg-white border-gray-200 max-h-64">
+            <SelectItem value="__all__" className="text-xs text-gray-600">All Sources</SelectItem>
             {sources.map(s => (
-              <SelectItem key={s.id} value={s.id} className="text-xs text-white/60">{s.name}</SelectItem>
+              <SelectItem key={s.id} value={s.id} className="text-xs text-gray-600">{s.name}</SelectItem>
             ))}
           </SelectContent>
         </Select>
         <div className="flex-1" />
-        <Badge variant="outline" className="text-[10px] text-white/40 border-white/10">
+        <Badge variant="outline" className="text-[10px] text-gray-500 border-black/10">
           {mappings.length} mapping{mappings.length !== 1 ? 's' : ''}
         </Badge>
         <Button
           size="sm"
-          className="h-8 text-xs bg-cyan-600 hover:bg-cyan-500 text-white gap-1"
+          className="h-8 text-xs bg-gray-900 hover:bg-black text-gray-900 gap-1"
           onClick={() => setShowCreate(true)}
         >
           <Plus className="h-3.5 w-3.5" /> New Mapping
@@ -590,10 +590,10 @@ function MappingEditorTab({ preselectedKpi }) {
 
       {/* Mappings table */}
       {loading ? <LoadingState label="Loading mappings..." /> : (
-        <div className="border border-white/[0.06] rounded-lg overflow-hidden">
+        <div className="border border-gray-200 rounded-lg overflow-hidden">
           <table className="w-full text-xs">
             <thead>
-              <tr className="bg-[#0a1020] text-white/40">
+              <tr className="bg-[#f5f6f8] text-gray-500">
                 <th className="text-left px-3 py-2 font-medium">KPI</th>
                 <th className="text-left px-3 py-2 font-medium">Source</th>
                 <th className="text-left px-3 py-2 font-medium">Field</th>
@@ -604,25 +604,25 @@ function MappingEditorTab({ preselectedKpi }) {
                 <th className="text-right px-3 py-2 font-medium w-20">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.04]">
+            <tbody className="divide-y divide-black/[0.04]">
               {mappings.map(m => (
-                <tr key={m.id} className="hover:bg-white/[0.02] transition-colors">
+                <tr key={m.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-3 py-2">
-                    <p className="text-white/80">{m.kpi_name}</p>
-                    <p className="text-[10px] text-white/25">{m.kpi_category}</p>
+                    <p className="text-gray-800">{m.kpi_name}</p>
+                    <p className="text-[10px] text-gray-400">{m.kpi_category}</p>
                   </td>
-                  <td className="px-3 py-2 text-white/60">{m.source_name}</td>
-                  <td className="px-3 py-2 text-white/50 font-mono text-[10px]">{m.source_field_name || '--'}</td>
-                  <td className="px-3 py-2 text-center text-white/50">{m.priority_order ?? '--'}</td>
+                  <td className="px-3 py-2 text-gray-600">{m.source_name}</td>
+                  <td className="px-3 py-2 text-gray-500 font-mono text-[10px]">{m.source_field_name || '--'}</td>
+                  <td className="px-3 py-2 text-center text-gray-500">{m.priority_order ?? '--'}</td>
                   <td className="px-3 py-2 text-center">
                     <ConfidenceBadge score={m.confidence_score} />
                   </td>
-                  <td className="px-3 py-2 text-white/30 font-mono text-[10px] truncate max-w-[120px]">{m.transform_formula || 'direct'}</td>
+                  <td className="px-3 py-2 text-gray-500 font-mono text-[10px] truncate max-w-[120px]">{m.transform_formula || 'direct'}</td>
                   <td className="px-3 py-2 text-center">
                     <button onClick={() => handleToggleActive(m)} className="inline-flex">
                       {m.is_active
                         ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
-                        : <Circle className="h-3.5 w-3.5 text-white/20" />}
+                        : <Circle className="h-3.5 w-3.5 text-gray-400" />}
                     </button>
                   </td>
                   <td className="px-3 py-2 text-right">
@@ -638,7 +638,7 @@ function MappingEditorTab({ preselectedKpi }) {
             </tbody>
           </table>
           {mappings.length === 0 && (
-            <div className="py-8 text-center text-white/20 text-sm">
+            <div className="py-8 text-center text-gray-400 text-sm">
               <Link2 className="h-6 w-6 mx-auto mb-2 opacity-30" />
               <p>No mappings yet. Click "New Mapping" to start linking data sources to KPIs.</p>
             </div>
@@ -700,10 +700,10 @@ function CreateMappingForm({ kpis, sources, preselectedKpiId, onCreated, onCance
   };
 
   return (
-    <Card className="bg-[#0d1424] border-cyan-500/20">
+    <Card className="bg-white border-black/[0.15]">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm text-white/80 flex items-center gap-2">
-          <Plus className="h-4 w-4 text-cyan-400" /> Create New Mapping
+        <CardTitle className="text-sm text-gray-800 flex items-center gap-2">
+          <Plus className="h-4 w-4 text-gray-700" /> Create New Mapping
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -711,42 +711,42 @@ function CreateMappingForm({ kpis, sources, preselectedKpiId, onCreated, onCance
           <div className="grid grid-cols-2 gap-3">
             {/* KPI */}
             <div>
-              <label className="text-[10px] text-white/40 uppercase tracking-wider block mb-1">Application KPI *</label>
+              <label className="text-[10px] text-gray-500 uppercase tracking-wider block mb-1">Application KPI *</label>
               <Select value={kpiId} onValueChange={setKpiId}>
-                <SelectTrigger className="h-8 bg-[#0a1020] border-white/[0.06] text-xs text-white/60">
+                <SelectTrigger className="h-8 bg-[#f5f6f8] border-gray-200 text-xs text-gray-600">
                   <SelectValue placeholder="Select KPI..." />
                 </SelectTrigger>
-                <SelectContent className="bg-[#0d1424] border-white/[0.06] max-h-64">
+                <SelectContent className="bg-white border-gray-200 max-h-64">
                   {kpis.map(k => (
-                    <SelectItem key={k.id} value={k.id} className="text-xs text-white/60">{k.name}</SelectItem>
+                    <SelectItem key={k.id} value={k.id} className="text-xs text-gray-600">{k.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             {/* Source */}
             <div>
-              <label className="text-[10px] text-white/40 uppercase tracking-wider block mb-1">Data Source *</label>
+              <label className="text-[10px] text-gray-500 uppercase tracking-wider block mb-1">Data Source *</label>
               <Select value={sourceId} onValueChange={v => { setSourceId(v); setFieldId(''); }}>
-                <SelectTrigger className="h-8 bg-[#0a1020] border-white/[0.06] text-xs text-white/60">
+                <SelectTrigger className="h-8 bg-[#f5f6f8] border-gray-200 text-xs text-gray-600">
                   <SelectValue placeholder="Select source..." />
                 </SelectTrigger>
-                <SelectContent className="bg-[#0d1424] border-white/[0.06] max-h-64">
+                <SelectContent className="bg-white border-gray-200 max-h-64">
                   {sources.map(s => (
-                    <SelectItem key={s.id} value={s.id} className="text-xs text-white/60">{s.name}</SelectItem>
+                    <SelectItem key={s.id} value={s.id} className="text-xs text-gray-600">{s.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             {/* Source field */}
             <div>
-              <label className="text-[10px] text-white/40 uppercase tracking-wider block mb-1">Source Field</label>
+              <label className="text-[10px] text-gray-500 uppercase tracking-wider block mb-1">Source Field</label>
               <Select value={fieldId} onValueChange={setFieldId}>
-                <SelectTrigger className="h-8 bg-[#0a1020] border-white/[0.06] text-xs text-white/60">
+                <SelectTrigger className="h-8 bg-[#f5f6f8] border-gray-200 text-xs text-gray-600">
                   <SelectValue placeholder={fields.length ? 'Select field...' : 'No fields catalogued'} />
                 </SelectTrigger>
-                <SelectContent className="bg-[#0d1424] border-white/[0.06] max-h-64">
+                <SelectContent className="bg-white border-gray-200 max-h-64">
                   {fields.map(f => (
-                    <SelectItem key={f.id} value={f.id} className="text-xs text-white/60">
+                    <SelectItem key={f.id} value={f.id} className="text-xs text-gray-600">
                       {f.field_name} {f.data_type ? `(${f.data_type})` : ''}
                     </SelectItem>
                   ))}
@@ -755,28 +755,28 @@ function CreateMappingForm({ kpis, sources, preselectedKpiId, onCreated, onCance
             </div>
             {/* Priority */}
             <div>
-              <label className="text-[10px] text-white/40 uppercase tracking-wider block mb-1">Priority Order</label>
+              <label className="text-[10px] text-gray-500 uppercase tracking-wider block mb-1">Priority Order</label>
               <input
                 value={priority}
                 onChange={e => setPriority(e.target.value)}
                 type="number"
                 min="1"
-                className="w-full h-8 px-2 bg-[#0a1020] border border-white/[0.06] rounded text-xs text-white/80 focus:outline-none focus:border-cyan-500/30"
+                className="w-full h-8 px-2 bg-[#f5f6f8] border border-gray-200 rounded text-xs text-gray-800 focus:outline-none focus:border-black/[0.20]"
               />
             </div>
             {/* Transform */}
             <div>
-              <label className="text-[10px] text-white/40 uppercase tracking-wider block mb-1">Transform Formula</label>
+              <label className="text-[10px] text-gray-500 uppercase tracking-wider block mb-1">Transform Formula</label>
               <input
                 value={transform}
                 onChange={e => setTransform(e.target.value)}
                 placeholder="e.g. value * 1000, log(value)"
-                className="w-full h-8 px-2 bg-[#0a1020] border border-white/[0.06] rounded text-xs text-white/80 placeholder:text-white/20 focus:outline-none focus:border-cyan-500/30 font-mono"
+                className="w-full h-8 px-2 bg-[#f5f6f8] border border-gray-200 rounded text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-black/[0.20] font-mono"
               />
             </div>
             {/* Confidence */}
             <div>
-              <label className="text-[10px] text-white/40 uppercase tracking-wider block mb-1">Confidence (0-1)</label>
+              <label className="text-[10px] text-gray-500 uppercase tracking-wider block mb-1">Confidence (0-1)</label>
               <input
                 value={confidence}
                 onChange={e => setConfidence(e.target.value)}
@@ -785,46 +785,46 @@ function CreateMappingForm({ kpis, sources, preselectedKpiId, onCreated, onCance
                 max="1"
                 step="0.05"
                 placeholder="0.85"
-                className="w-full h-8 px-2 bg-[#0a1020] border border-white/[0.06] rounded text-xs text-white/80 placeholder:text-white/20 focus:outline-none focus:border-cyan-500/30"
+                className="w-full h-8 px-2 bg-[#f5f6f8] border border-gray-200 rounded text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-black/[0.20]"
               />
             </div>
             {/* Unit from/to */}
             <div>
-              <label className="text-[10px] text-white/40 uppercase tracking-wider block mb-1">Unit From</label>
+              <label className="text-[10px] text-gray-500 uppercase tracking-wider block mb-1">Unit From</label>
               <input
                 value={unitFrom}
                 onChange={e => setUnitFrom(e.target.value)}
                 placeholder="e.g. tCO2"
-                className="w-full h-8 px-2 bg-[#0a1020] border border-white/[0.06] rounded text-xs text-white/80 placeholder:text-white/20 focus:outline-none focus:border-cyan-500/30"
+                className="w-full h-8 px-2 bg-[#f5f6f8] border border-gray-200 rounded text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-black/[0.20]"
               />
             </div>
             <div>
-              <label className="text-[10px] text-white/40 uppercase tracking-wider block mb-1">Unit To</label>
+              <label className="text-[10px] text-gray-500 uppercase tracking-wider block mb-1">Unit To</label>
               <input
                 value={unitTo}
                 onChange={e => setUnitTo(e.target.value)}
                 placeholder="e.g. ktCO2e"
-                className="w-full h-8 px-2 bg-[#0a1020] border border-white/[0.06] rounded text-xs text-white/80 placeholder:text-white/20 focus:outline-none focus:border-cyan-500/30"
+                className="w-full h-8 px-2 bg-[#f5f6f8] border border-gray-200 rounded text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-black/[0.20]"
               />
             </div>
           </div>
           {/* Note */}
           <div>
-            <label className="text-[10px] text-white/40 uppercase tracking-wider block mb-1">Change Note</label>
+            <label className="text-[10px] text-gray-500 uppercase tracking-wider block mb-1">Change Note</label>
             <input
               value={note}
               onChange={e => setNote(e.target.value)}
               placeholder="Reason for this mapping..."
-              className="w-full h-8 px-2 bg-[#0a1020] border border-white/[0.06] rounded text-xs text-white/80 placeholder:text-white/20 focus:outline-none focus:border-cyan-500/30"
+              className="w-full h-8 px-2 bg-[#f5f6f8] border border-gray-200 rounded text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-black/[0.20]"
             />
           </div>
           {/* Actions */}
           <div className="flex items-center gap-2 pt-1">
-            <Button type="submit" size="sm" className="h-7 text-xs bg-cyan-600 hover:bg-cyan-500 text-white gap-1" disabled={!kpiId || !sourceId || saving}>
+            <Button type="submit" size="sm" className="h-7 text-xs bg-gray-900 hover:bg-black text-gray-900 gap-1" disabled={!kpiId || !sourceId || saving}>
               {saving ? <RefreshCw className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
               {saving ? 'Saving...' : 'Create Mapping'}
             </Button>
-            <Button type="button" variant="ghost" size="sm" className="h-7 text-xs text-white/40 hover:text-white/60" onClick={onCancel}>
+            <Button type="button" variant="ghost" size="sm" className="h-7 text-xs text-gray-500 hover:text-gray-600" onClick={onCancel}>
               Cancel
             </Button>
           </div>
@@ -838,19 +838,19 @@ function CreateMappingForm({ kpis, sources, preselectedKpiId, onCreated, onCance
 // ── Shared components ────────────────────────────────────────────────────────
 function StatCard({ label, value, icon: Icon, accent }) {
   const colors = {
-    cyan: 'text-cyan-400',
+    cyan: 'text-gray-700',
     violet: 'text-violet-400',
     emerald: 'text-emerald-400',
   };
   return (
-    <Card className="bg-[#0d1424] border-white/[0.06]">
+    <Card className="bg-white border-gray-200">
       <CardContent className="p-4 flex items-center gap-3">
-        <div className="p-2 rounded bg-white/5">
-          <Icon className={cn('h-4 w-4', colors[accent] || 'text-white/40')} />
+        <div className="p-2 rounded bg-gray-50">
+          <Icon className={cn('h-4 w-4', colors[accent] || 'text-gray-500')} />
         </div>
         <div>
-          <p className="text-[10px] text-white/30 uppercase tracking-wider">{label}</p>
-          <p className={cn('text-xl font-semibold', colors[accent] || 'text-white/80')}>{value}</p>
+          <p className="text-[10px] text-gray-500 uppercase tracking-wider">{label}</p>
+          <p className={cn('text-xl font-semibold', colors[accent] || 'text-gray-800')}>{value}</p>
         </div>
       </CardContent>
     </Card>
@@ -859,7 +859,7 @@ function StatCard({ label, value, icon: Icon, accent }) {
 
 function LoadingState({ label }) {
   return (
-    <div className="flex items-center justify-center py-12 text-white/30 text-sm gap-2">
+    <div className="flex items-center justify-center py-12 text-gray-500 text-sm gap-2">
       <RefreshCw className="h-4 w-4 animate-spin" />
       {label}
     </div>
@@ -868,7 +868,7 @@ function LoadingState({ label }) {
 
 function EmptyState({ label }) {
   return (
-    <div className="flex items-center justify-center py-8 text-white/20 text-sm">
+    <div className="flex items-center justify-center py-8 text-gray-400 text-sm">
       {label}
     </div>
   );
@@ -892,13 +892,13 @@ export default function DataMappingPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-white/90">Data Mapping</h1>
-          <p className="text-xs text-white/40 mt-0.5">
+          <h1 className="text-lg font-semibold text-gray-900">Data Mapping</h1>
+          <p className="text-xs text-gray-500 mt-0.5">
             Map external data source fields to application KPIs and platform modules
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-[10px] text-cyan-400/60 border-cyan-400/15 gap-1">
+          <Badge variant="outline" className="text-[10px] text-gray-500 border-black/15 gap-1">
             <Database className="h-3 w-3" /> 103 Sources
           </Badge>
           <Badge variant="outline" className="text-[10px] text-violet-400/60 border-violet-400/15 gap-1">
@@ -907,21 +907,21 @@ export default function DataMappingPage() {
         </div>
       </div>
 
-      <Separator className="bg-white/[0.06]" />
+      <Separator className="bg-gray-50" />
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="bg-[#0a1020] border border-white/[0.06]">
-          <TabsTrigger value="coverage" className="text-xs data-[state=active]:bg-white/5 data-[state=active]:text-cyan-300 text-white/40 gap-1.5">
+        <TabsList className="bg-[#f5f6f8] border border-gray-200">
+          <TabsTrigger value="coverage" className="text-xs data-[state=active]:bg-gray-50 data-[state=active]:text-gray-800 text-gray-500 gap-1.5">
             <Layers className="h-3.5 w-3.5" /> Module Coverage
           </TabsTrigger>
-          <TabsTrigger value="kpis" className="text-xs data-[state=active]:bg-white/5 data-[state=active]:text-cyan-300 text-white/40 gap-1.5">
+          <TabsTrigger value="kpis" className="text-xs data-[state=active]:bg-gray-50 data-[state=active]:text-gray-800 text-gray-500 gap-1.5">
             <Target className="h-3.5 w-3.5" /> KPI Catalog
           </TabsTrigger>
-          <TabsTrigger value="sources" className="text-xs data-[state=active]:bg-white/5 data-[state=active]:text-cyan-300 text-white/40 gap-1.5">
+          <TabsTrigger value="sources" className="text-xs data-[state=active]:bg-gray-50 data-[state=active]:text-gray-800 text-gray-500 gap-1.5">
             <Database className="h-3.5 w-3.5" /> Source Browser
           </TabsTrigger>
-          <TabsTrigger value="editor" className="text-xs data-[state=active]:bg-white/5 data-[state=active]:text-cyan-300 text-white/40 gap-1.5">
+          <TabsTrigger value="editor" className="text-xs data-[state=active]:bg-gray-50 data-[state=active]:text-gray-800 text-gray-500 gap-1.5">
             <Link2 className="h-3.5 w-3.5" /> Mapping Editor
           </TabsTrigger>
         </TabsList>

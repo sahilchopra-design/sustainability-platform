@@ -29,15 +29,15 @@ const ASSESSMENT_COLORS = {
 /* ── Reusable Components ───────────────────────────────────────────────────── */
 function Card({ title, subtitle, badge, children, className = '' }) {
   return (
-    <div className={`bg-[#0d1424] rounded-xl border border-white/[0.06] shadow-sm ${className}`}>
+    <div className={`bg-white rounded-xl border border-gray-200 shadow-sm ${className}`}>
       {(title || subtitle) && (
-        <div className="px-6 py-4 border-b border-white/[0.04] flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <div>
-            {title && <h2 className="text-sm font-semibold text-white/90">{title}</h2>}
-            {subtitle && <p className="text-xs text-white/40 mt-0.5">{subtitle}</p>}
+            {title && <h2 className="text-sm font-semibold text-gray-900">{title}</h2>}
+            {subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}
           </div>
           {badge && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-700 border border-gray-200">
               {badge}
             </span>
           )}
@@ -48,14 +48,14 @@ function Card({ title, subtitle, badge, children, className = '' }) {
   );
 }
 
-function StatCard({ label, value, sub, color = 'text-white' }) {
+function StatCard({ label, value, sub, color = 'text-gray-900' }) {
   return (
-    <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] shadow-sm p-5">
-      <p className="text-xs text-white/40 font-medium mb-1">{label}</p>
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+      <p className="text-xs text-gray-500 font-medium mb-1">{label}</p>
       <p className={`text-2xl font-bold ${color}`}>
         {typeof value === 'number' ? value.toLocaleString() : value}
       </p>
-      {sub && <p className="text-[11px] text-white/30 mt-1">{sub}</p>}
+      {sub && <p className="text-[11px] text-gray-500 mt-1">{sub}</p>}
     </div>
   );
 }
@@ -63,7 +63,7 @@ function StatCard({ label, value, sub, color = 'text-white' }) {
 function Spinner() {
   return (
     <div className="flex items-center justify-center py-20">
-      <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+      <div className="w-8 h-8 border-2 border-black border-t-transparent rounded-full animate-spin" />
     </div>
   );
 }
@@ -85,15 +85,15 @@ const INDICATOR_SHORT = {
 /* ── Tab Pill ───────────────────────────────────────────────────────────── */
 function TabPill({ tabs, active, onChange }) {
   return (
-    <div className="inline-flex bg-[#0a0f1e] rounded-lg p-1 border border-white/[0.06]">
+    <div className="inline-flex bg-[#f0f0f0] rounded-lg p-1 border border-gray-200">
       {tabs.map(t => (
         <button
           key={t.id}
           onClick={() => onChange(t.id)}
           className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${
             active === t.id
-              ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
-              : 'text-white/40 hover:text-white/60'
+              ? 'bg-gray-100 text-gray-700 border border-gray-300'
+              : 'text-gray-500 hover:text-gray-600'
           }`}
         >
           {t.label}
@@ -197,10 +197,10 @@ export default function CA100Page() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-white/90">
+          <h1 className="text-xl font-bold text-gray-900">
             Climate Action 100+ Net Zero Benchmark
           </h1>
-          <p className="text-sm text-white/40 mt-1">
+          <p className="text-sm text-gray-500 mt-1">
             Assessment of {total} focus companies against 10 net-zero indicators
           </p>
         </div>
@@ -222,7 +222,7 @@ export default function CA100Page() {
         <div className="space-y-6">
           {/* KPI Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard label="Total Companies" value={sectors?.total_companies || 0} color="text-cyan-400" />
+            <StatCard label="Total Companies" value={sectors?.total_companies || 0} color="text-gray-700" />
             <StatCard label="Sector Clusters" value={sectors?.sector_clusters?.length || 0} color="text-violet-400" />
             <StatCard
               label="Sectors Covered"
@@ -257,7 +257,7 @@ export default function CA100Page() {
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ background: '#0d1424', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }}
+                    contentStyle={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 8 }}
                     itemStyle={{ color: '#e2e8f0' }}
                   />
                 </PieChart>
@@ -278,7 +278,7 @@ export default function CA100Page() {
                     tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
                   />
                   <Tooltip
-                    contentStyle={{ background: '#0d1424', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }}
+                    contentStyle={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 8 }}
                     itemStyle={{ color: '#e2e8f0' }}
                   />
                   <Bar dataKey="companies" fill="#6366f1" radius={[0, 4, 4, 0]} />
@@ -293,9 +293,9 @@ export default function CA100Page() {
               {(filters?.hq_regions || []).map(reg => {
                 const cnt = companies.length ? '...' : '-';
                 return (
-                  <div key={reg} className="bg-[#080e1c] rounded-lg p-3 border border-white/[0.04] text-center">
-                    <p className="text-[10px] text-white/40 mb-1 truncate">{reg}</p>
-                    <p className="text-lg font-bold text-white/80">{cnt}</p>
+                  <div key={reg} className="bg-white rounded-lg p-3 border border-gray-200 text-center">
+                    <p className="text-[10px] text-gray-500 mb-1 truncate">{reg}</p>
+                    <p className="text-lg font-bold text-gray-800">{cnt}</p>
                   </div>
                 );
               })}
@@ -311,21 +311,21 @@ export default function CA100Page() {
           <Card>
             <div className="flex flex-wrap gap-3 items-end">
               <div className="flex-1 min-w-[200px]">
-                <label className="text-[10px] text-white/40 font-medium block mb-1">Search</label>
+                <label className="text-[10px] text-gray-500 font-medium block mb-1">Search</label>
                 <input
                   type="text"
                   value={searchQ}
                   onChange={e => { setSearchQ(e.target.value); setPage(0); }}
                   placeholder="Company name or ISIN..."
-                  className="w-full bg-[#080e1c] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white/80 placeholder:text-white/20 focus:outline-none focus:border-cyan-500/40"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-blue-500"
                 />
               </div>
               <div className="w-48">
-                <label className="text-[10px] text-white/40 font-medium block mb-1">Sector Cluster</label>
+                <label className="text-[10px] text-gray-500 font-medium block mb-1">Sector Cluster</label>
                 <select
                   value={filterSector}
                   onChange={e => { setFilterSector(e.target.value); setPage(0); }}
-                  className="w-full bg-[#080e1c] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white/80 focus:outline-none focus:border-cyan-500/40"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-blue-500"
                 >
                   <option value="">All Clusters</option>
                   {(filters?.sector_clusters || []).map(sc => (
@@ -334,11 +334,11 @@ export default function CA100Page() {
                 </select>
               </div>
               <div className="w-44">
-                <label className="text-[10px] text-white/40 font-medium block mb-1">Region</label>
+                <label className="text-[10px] text-gray-500 font-medium block mb-1">Region</label>
                 <select
                   value={filterRegion}
                   onChange={e => { setFilterRegion(e.target.value); setPage(0); }}
-                  className="w-full bg-[#080e1c] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white/80 focus:outline-none focus:border-cyan-500/40"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-blue-500"
                 >
                   <option value="">All Regions</option>
                   {(filters?.hq_regions || []).map(r => (
@@ -348,7 +348,7 @@ export default function CA100Page() {
               </div>
               <button
                 onClick={() => { setSearchQ(''); setFilterSector(''); setFilterRegion(''); setPage(0); }}
-                className="px-3 py-2 text-xs text-white/40 hover:text-white/70 border border-white/[0.08] rounded-lg"
+                className="px-3 py-2 text-xs text-gray-500 hover:text-gray-700 border border-gray-300 rounded-lg"
               >
                 Clear
               </button>
@@ -357,21 +357,21 @@ export default function CA100Page() {
 
           {/* Results Count */}
           <div className="flex items-center justify-between">
-            <p className="text-xs text-white/40">
+            <p className="text-xs text-gray-500">
               Showing {page * LIMIT + 1}–{Math.min((page + 1) * LIMIT, total)} of {total} companies
             </p>
             <div className="flex gap-2">
               <button
                 disabled={page === 0}
                 onClick={() => setPage(p => p - 1)}
-                className="px-3 py-1 text-xs rounded bg-white/[0.04] text-white/50 disabled:opacity-30 hover:bg-white/[0.08]"
+                className="px-3 py-1 text-xs rounded bg-gray-50 text-gray-500 disabled:opacity-30 hover:bg-gray-50"
               >
                 Prev
               </button>
               <button
                 disabled={(page + 1) * LIMIT >= total}
                 onClick={() => setPage(p => p + 1)}
-                className="px-3 py-1 text-xs rounded bg-white/[0.04] text-white/50 disabled:opacity-30 hover:bg-white/[0.08]"
+                className="px-3 py-1 text-xs rounded bg-gray-50 text-gray-500 disabled:opacity-30 hover:bg-gray-50"
               >
                 Next
               </button>
@@ -383,27 +383,27 @@ export default function CA100Page() {
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="border-b border-white/[0.06]">
-                    <th className="text-left py-3 px-3 text-white/40 font-medium">Company</th>
-                    <th className="text-left py-3 px-3 text-white/40 font-medium">ISIN</th>
-                    <th className="text-left py-3 px-3 text-white/40 font-medium">Sector</th>
-                    <th className="text-left py-3 px-3 text-white/40 font-medium">Region</th>
-                    <th className="text-left py-3 px-3 text-white/40 font-medium">Assessment</th>
-                    <th className="text-center py-3 px-3 text-white/40 font-medium">Year</th>
-                    <th className="text-center py-3 px-3 text-white/40 font-medium">Detail</th>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-3 text-gray-500 font-medium">Company</th>
+                    <th className="text-left py-3 px-3 text-gray-500 font-medium">ISIN</th>
+                    <th className="text-left py-3 px-3 text-gray-500 font-medium">Sector</th>
+                    <th className="text-left py-3 px-3 text-gray-500 font-medium">Region</th>
+                    <th className="text-left py-3 px-3 text-gray-500 font-medium">Assessment</th>
+                    <th className="text-center py-3 px-3 text-gray-500 font-medium">Year</th>
+                    <th className="text-center py-3 px-3 text-gray-500 font-medium">Detail</th>
                   </tr>
                 </thead>
                 <tbody>
                   {companies.map(c => (
-                    <tr key={c.id} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors">
-                      <td className="py-2.5 px-3 text-white/80 font-medium">{c.company_name}</td>
-                      <td className="py-2.5 px-3 text-white/50 font-mono text-[10px]">{c.isin || '-'}</td>
+                    <tr key={c.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                      <td className="py-2.5 px-3 text-gray-800 font-medium">{c.company_name}</td>
+                      <td className="py-2.5 px-3 text-gray-500 font-mono text-[10px]">{c.isin || '-'}</td>
                       <td className="py-2.5 px-3">
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] bg-violet-500/10 text-violet-400 border border-violet-500/20">
                           {c.sector || c.sector_cluster || '-'}
                         </span>
                       </td>
-                      <td className="py-2.5 px-3 text-white/50">{c.hq_region || '-'}</td>
+                      <td className="py-2.5 px-3 text-gray-500">{c.hq_region || '-'}</td>
                       <td className="py-2.5 px-3">
                         {c.overall_assessment ? (
                           <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] border ${
@@ -416,14 +416,14 @@ export default function CA100Page() {
                             {c.overall_assessment}
                           </span>
                         ) : (
-                          <span className="text-white/20 text-[10px]">Not Assessed</span>
+                          <span className="text-gray-400 text-[10px]">Not Assessed</span>
                         )}
                       </td>
-                      <td className="py-2.5 px-3 text-center text-white/40">{c.assessment_year || '-'}</td>
+                      <td className="py-2.5 px-3 text-center text-gray-500">{c.assessment_year || '-'}</td>
                       <td className="py-2.5 px-3 text-center">
                         <button
                           onClick={() => { loadDetail(c.id); setTab('detail'); }}
-                          className="text-cyan-400 hover:text-cyan-300 text-[10px] font-medium"
+                          className="text-gray-700 hover:text-gray-800 text-[10px] font-medium"
                         >
                           View
                         </button>
@@ -442,7 +442,7 @@ export default function CA100Page() {
         <div className="space-y-6">
           {!companyDetail ? (
             <Card>
-              <p className="text-white/40 text-sm text-center py-12">
+              <p className="text-gray-500 text-sm text-center py-12">
                 Select a company from the Companies tab to view its detailed assessment.
               </p>
             </Card>
@@ -452,15 +452,15 @@ export default function CA100Page() {
               <Card>
                 <div className="flex items-start justify-between">
                   <div>
-                    <h2 className="text-lg font-bold text-white/90">{companyDetail.company_name}</h2>
-                    <div className="flex gap-4 mt-2 text-xs text-white/50">
-                      <span>ISIN: <span className="text-white/70 font-mono">{companyDetail.isin || 'N/A'}</span></span>
-                      <span>HQ: <span className="text-white/70">{companyDetail.hq_location || 'N/A'}</span></span>
-                      <span>Region: <span className="text-white/70">{companyDetail.hq_region || 'N/A'}</span></span>
+                    <h2 className="text-lg font-bold text-gray-900">{companyDetail.company_name}</h2>
+                    <div className="flex gap-4 mt-2 text-xs text-gray-500">
+                      <span>ISIN: <span className="text-gray-700 font-mono">{companyDetail.isin || 'N/A'}</span></span>
+                      <span>HQ: <span className="text-gray-700">{companyDetail.hq_location || 'N/A'}</span></span>
+                      <span>Region: <span className="text-gray-700">{companyDetail.hq_region || 'N/A'}</span></span>
                     </div>
                     <div className="flex gap-3 mt-2">
                       {companyDetail.sector_cluster && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] bg-gray-800/10 text-gray-700 border border-black/20">
                           {companyDetail.sector_cluster}
                         </span>
                       )}
@@ -478,7 +478,7 @@ export default function CA100Page() {
                   </div>
                   <button
                     onClick={() => setTab('companies')}
-                    className="text-xs text-white/40 hover:text-white/70 border border-white/[0.08] rounded-lg px-3 py-1.5"
+                    className="text-xs text-gray-500 hover:text-gray-700 border border-gray-300 rounded-lg px-3 py-1.5"
                   >
                     Back to List
                   </button>
@@ -497,12 +497,12 @@ export default function CA100Page() {
                         ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
                         : score === 'No' || score === 'Not Aligned'
                         ? 'bg-red-500/20 text-red-400 border-red-500/30'
-                        : 'bg-white/[0.04] text-white/40 border-white/[0.06]';
+                        : 'bg-gray-50 text-gray-500 border-gray-200';
                       return (
-                        <div key={key} className="flex items-center justify-between py-2 border-b border-white/[0.03]">
+                        <div key={key} className="flex items-center justify-between py-2 border-b border-gray-100">
                           <div className="flex-1 min-w-0 pr-4">
-                            <p className="text-xs text-white/70 truncate">{ind.label}</p>
-                            <p className="text-[10px] text-white/30">{INDICATOR_SHORT[key]}</p>
+                            <p className="text-xs text-gray-700 truncate">{ind.label}</p>
+                            <p className="text-[10px] text-gray-500">{INDICATOR_SHORT[key]}</p>
                           </div>
                           <span className={`inline-flex items-center px-2.5 py-1 rounded text-[10px] font-medium border ${scoreColor}`}>
                             {score || 'N/A'}
@@ -545,7 +545,7 @@ export default function CA100Page() {
                         strokeWidth={2}
                       />
                       <Tooltip
-                        contentStyle={{ background: '#0d1424', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }}
+                        contentStyle={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 8 }}
                         itemStyle={{ color: '#e2e8f0' }}
                         formatter={v => ['Not Assessed', 'No', 'Partial', 'Yes'][v] || v}
                       />
@@ -557,7 +557,7 @@ export default function CA100Page() {
               {/* Scope 3 & Additional Info */}
               {companyDetail.scope3_category && (
                 <Card title="Scope 3 Category" subtitle="CA100+ material scope 3 classification">
-                  <p className="text-sm text-white/70">{companyDetail.scope3_category}</p>
+                  <p className="text-sm text-gray-700">{companyDetail.scope3_category}</p>
                 </Card>
               )}
             </>

@@ -67,24 +67,24 @@ export function JustTransitionPanel() {
       </div>
 
       {/* Input Form */}
-      <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-white/80 mb-4">Transition Region Parameters</h3>
+      <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <h3 className="text-sm font-semibold text-gray-800 mb-4">Transition Region Parameters</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           <div>
-            <label className="text-xs text-white/40 block mb-1">Region Name</label>
-            <input className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">Region Name</label>
+            <input className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={form.region_name} onChange={e => set("region_name", e.target.value)} />
           </div>
           <div>
-            <label className="text-xs text-white/40 block mb-1">Country Income Group</label>
-            <select className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">Country Income Group</label>
+            <select className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={form.country_income_group} onChange={e => set("country_income_group", e.target.value)}>
               {["HIC", "UMC", "LMC", "LIC"].map(v => <option key={v} value={v}>{v}</option>)}
             </select>
           </div>
           <div>
-            <label className="text-xs text-white/40 block mb-1">Fossil Sector</label>
-            <select className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">Fossil Sector</label>
+            <select className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={form.fossil_sector} onChange={e => set("fossil_sector", e.target.value)}>
               {["coal_mining", "oil_gas", "coal_power", "natural_gas_power", "refinery"].map(v => (
                 <option key={v} value={v}>{v.replace(/_/g, " ")}</option>
@@ -92,32 +92,32 @@ export function JustTransitionPanel() {
             </select>
           </div>
           <div>
-            <label className="text-xs text-white/40 block mb-1">Direct Fossil Jobs</label>
-            <input type="number" className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">Direct Fossil Jobs</label>
+            <input type="number" className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={form.direct_fossil_jobs} onChange={e => set("direct_fossil_jobs", +e.target.value)} />
           </div>
           <div>
-            <label className="text-xs text-white/40 block mb-1">Transition Period (years)</label>
-            <input type="number" className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">Transition Period (years)</label>
+            <input type="number" className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={form.transition_years} onChange={e => set("transition_years", +e.target.value)} />
           </div>
           <div>
-            <label className="text-xs text-white/40 block mb-1">Community Dependency (%)</label>
-            <input type="number" step="0.05" className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">Community Dependency (%)</label>
+            <input type="number" step="0.05" className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={form.community_dependency_pct} onChange={e => set("community_dependency_pct", +e.target.value)} />
           </div>
         </div>
 
-        <h4 className="text-xs font-semibold text-white/50 mt-4 mb-3">Planned Green Investment</h4>
+        <h4 className="text-xs font-semibold text-gray-500 mt-4 mb-3">Planned Green Investment</h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div>
-            <label className="text-xs text-white/40 block mb-1">Renewable MW</label>
-            <input type="number" className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">Renewable MW</label>
+            <input type="number" className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={form.planned_re_mw} onChange={e => set("planned_re_mw", +e.target.value)} />
           </div>
           <div>
-            <label className="text-xs text-white/40 block mb-1">RE Technology</label>
-            <select className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">RE Technology</label>
+            <select className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={form.re_technology} onChange={e => set("re_technology", e.target.value)}>
               {["solar_pv", "onshore_wind", "offshore_wind", "hydro", "geothermal"].map(v => (
                 <option key={v} value={v}>{v.replace(/_/g, " ")}</option>
@@ -125,43 +125,43 @@ export function JustTransitionPanel() {
             </select>
           </div>
           <div>
-            <label className="text-xs text-white/40 block mb-1">EE MW-Equivalent</label>
-            <input type="number" className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">EE MW-Equivalent</label>
+            <input type="number" className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={form.planned_ee_mw_equiv} onChange={e => set("planned_ee_mw_equiv", +e.target.value)} />
           </div>
           <div>
-            <label className="text-xs text-white/40 block mb-1">Green H2 MW (electrolyser)</label>
-            <input type="number" className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">Green H2 MW (electrolyser)</label>
+            <input type="number" className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={form.planned_h2_mw} onChange={e => set("planned_h2_mw", +e.target.value)} />
           </div>
         </div>
 
-        <h4 className="text-xs font-semibold text-white/50 mt-4 mb-3">Social Support Parameters</h4>
+        <h4 className="text-xs font-semibold text-gray-500 mt-4 mb-3">Social Support Parameters</h4>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           <div>
-            <label className="text-xs text-white/40 block mb-1">Income Support (years)</label>
-            <input type="number" className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">Income Support (years)</label>
+            <input type="number" className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={form.income_support_years} onChange={e => set("income_support_years", +e.target.value)} />
           </div>
           <div>
-            <label className="text-xs text-white/40 block mb-1">Retraining Coverage (%)</label>
-            <input type="number" step="0.05" className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">Retraining Coverage (%)</label>
+            <input type="number" step="0.05" className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={form.retraining_coverage_pct} onChange={e => set("retraining_coverage_pct", +e.target.value)} />
           </div>
           <div>
-            <label className="text-xs text-white/40 block mb-1">Existing JT Fund (USD)</label>
-            <input type="number" className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">Existing JT Fund (USD)</label>
+            <input type="number" className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={form.just_transition_fund_usd} onChange={e => set("just_transition_fund_usd", +e.target.value)} />
           </div>
           <div className="flex items-center gap-3 mt-2">
-            <label className="text-xs text-white/40">Include Community Investment</label>
+            <label className="text-xs text-gray-500">Include Community Investment</label>
             <input type="checkbox" checked={form.community_investment_included}
               onChange={e => set("community_investment_included", e.target.checked)} />
           </div>
         </div>
 
         <button onClick={compute} disabled={loading}
-          className="mt-4 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium rounded-lg flex items-center gap-2">
+          className="mt-4 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-gray-900 text-xs font-medium rounded-lg flex items-center gap-2">
           {loading ? <><RefreshCw className="h-3 w-3 animate-spin" /> Computing…</> : <><TrendingDown className="h-3 w-3" /> Compute Just Transition</>}
         </button>
         {error && <div className="mt-2 text-xs text-red-400">Error: {error}</div>}
@@ -189,33 +189,33 @@ export function JustTransitionPanel() {
                 amber: "bg-amber-500/10 text-amber-400", blue: "bg-blue-500/10 text-blue-400",
               };
               return (
-                <div key={label} className="bg-[#111827] border border-white/[0.06] rounded-lg p-3">
+                <div key={label} className="bg-white border border-gray-200 rounded-lg p-3">
                   <div className={`inline-flex p-1.5 rounded mb-2 ${cls[color]}`}><Icon className="h-4 w-4" /></div>
                   <div className={`text-xl font-bold ${cls[color].split(" ")[1]}`}>{val}</div>
-                  <div className="text-xs text-white/30 mt-1">{label}</div>
+                  <div className="text-xs text-gray-500 mt-1">{label}</div>
                 </div>
               );
             })}
           </div>
 
           {/* Social cost breakdown */}
-          <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-            <h3 className="text-sm font-semibold text-white/70 mb-3">Social Cost Breakdown</h3>
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Social Cost Breakdown</h3>
             <div className="grid grid-cols-3 gap-4 text-xs">
               {[
                 ["Income Support", result.social_costs_usd.income_support, "text-blue-400"],
-                ["Retraining", result.social_costs_usd.retraining, "text-indigo-400"],
+                ["Retraining", result.social_costs_usd.retraining, "text-gray-700"],
                 ["Community Investment", result.social_costs_usd.community_investment, "text-purple-400"],
               ].map(([label, val, cls]) => (
                 <div key={label} className="text-center">
                   <div className={`text-lg font-bold ${cls}`}>{fmtM(val)}</div>
-                  <div className="text-white/30 mt-1">{label}</div>
+                  <div className="text-gray-500 mt-1">{label}</div>
                 </div>
               ))}
             </div>
-            <div className="mt-3 pt-3 border-t border-white/[0.06] flex justify-between text-xs">
-              <span className="text-white/40">Cost per displaced worker</span>
-              <span className="text-white/70 font-medium">${fmtN(result.financing.cost_per_worker_usd, 0)}</span>
+            <div className="mt-3 pt-3 border-t border-gray-200 flex justify-between text-xs">
+              <span className="text-gray-500">Cost per displaced worker</span>
+              <span className="text-gray-700 font-medium">${fmtN(result.financing.cost_per_worker_usd, 0)}</span>
             </div>
             {result.financing.fund_gap_usd > 0 && (
               <div className="mt-2 flex justify-between text-xs">
@@ -227,8 +227,8 @@ export function JustTransitionPanel() {
 
           {/* Jobs Ramp Chart */}
           {result.annual_ramp?.length > 0 && (
-            <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-white/70 mb-3">Employment Transition Ramp</h3>
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">Employment Transition Ramp</h3>
               <ResponsiveContainer width="100%" height={220}>
                 <LineChart data={result.annual_ramp} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" />

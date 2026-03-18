@@ -1,7 +1,7 @@
 """038 — PE/VC deal pipeline, screening, portfolio company tables
 
 Revision ID: 038
-Revises: 037
+Revises: 037_add_fund_structure_tables
 """
 from alembic import op
 import sqlalchemy as sa
@@ -9,7 +9,7 @@ from sqlalchemy.dialects.postgresql import UUID, JSONB
 import uuid
 
 revision = "038"
-down_revision = "037"
+down_revision = "037_add_fund_structure_tables"
 branch_labels = None
 depends_on = None
 

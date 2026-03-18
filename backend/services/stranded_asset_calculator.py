@@ -1567,3 +1567,191 @@ class PortfolioStrandingAnalyzer:
             recommendations.append("Portfolio risk profile within acceptable bounds - continue monitoring")
         
         return recommendations
+
+
+# ---------------------------------------------------------------------------
+# Climate Risk Integration Extension — Writedown Curve Library
+# Added for climate_transition_risk_engine.py integration (2026-03-08)
+# ---------------------------------------------------------------------------
+
+import math as _math
+
+
+def stranded_writedown_factor(
+    elapsed_years: float,
+    total_years: float,
+    curve: str = "sigmoid",
+    residual_floor: float = 0.05,
+) -> float:
+    """
+    Compute writedown factor [0, 1] at elapsed_years along a total_years horizon.
+    Factor = fraction of original asset value ALREADY written down (lost).
+
+    Args:
+        elapsed_years: Years since start of phase-out / stranding event
+        total_years: Total phase-out horizon (e.g., 15 years for coal OECD)
+        curve: linear | sigmoid | s_curve | step | front_loaded
+        residual_floor: Minimum remaining value fraction (0.0–0.30)
+
+    Returns:
+        writedown_factor in [0.0, 1.0 - residual_floor]
+    """
+    if total_years <= 0:
+        return 1.0 - residual_floor
+    t = max(0.0, min(elapsed_years / total_years, 1.0))
+
+    if curve == "linear":
+        factor = t
+
+    elif curve == "sigmoid":
+        # Logistic centred at t=0.5, k=8 for smooth S
+        k = 8.0
+        factor = 1.0 / (1.0 + _math.exp(-k * (t - 0.5)))
+        # Rescale so factor(0)=0, factor(1)=1
+        f0 = 1.0 / (1.0 + _math.exp(k * 0.5))
+        f1 = 1.0 / (1.0 + _math.exp(-k * 0.5))
+        factor = (factor - f0) / (f1 - f0)
+
+    elif curve == "s_curve":
+        # Smoothstep: 3t²-2t³
+        factor = 3 * t ** 2 - 2 * t ** 3
+
+    elif curve == "step":
+        # 50% cliff at midpoint, remainder linear
+        factor = 0.5 if t < 0.5 else (0.5 + (t - 0.5) * 2 * 0.5)
+
+    elif curve == "front_loaded":
+        # Quadratic decay: heavy writedowns early
+        factor = 1.0 - (1.0 - t) ** 2
+
+    else:
+        factor = t  # fallback linear
+
+    max_loss = 1.0 - residual_floor
+    return round(max(0.0, min(factor * max_loss, max_loss)), 6)
+
+
+class StrandedAssetTransitionParams:
+    """
+    Configuration bundle for stranded asset assessment within the Transition Risk Engine.
+    Extends the existing calculators without modifying their APIs.
+    """
+    PHASE_OUT_TIMELINES = {
+        # Technology → (IEA NZE phase-out year, NGFS Orderly phase-out year)
+        "coal_power":            (2035, 2040),
+        "oil_upstream":          (2050, 2055),
+        "gas_upstream":          (2050, 2055),
+        "internal_combustion":   (2035, 2040),
+        "aviation_fossil":       (2050, 2055),
+        "steel_blast_furnace":   (2040, 2045),
+        "cement_wet_process":    (2040, 2045),
+        "thermal_power_natural_gas": (2045, 2050),
+        "petrochemicals":        (2050, 2055),
+    }
+
+    TECHNOLOGY_SUBSTITUTION_SPEEDS = {
+        "slow":     0.5,   # 50% faster obsolescence than baseline
+        "moderate": 1.0,   # baseline
+        "fast":     1.5,   # 50% slower (faster tech sub = earlier phase-out)
+        "custom":   None,  # caller supplies speed_factor
+    }
+
+    @staticmethod
+    def phase_out_horizon(
+        technology: str,
+        pathway: str = "IEA_NZE_2050",
+        base_year: int = 2025,
+        tech_sub_speed: str = "moderate",
+        custom_speed_factor: float = 1.0,
+    ) -> float:
+        """
+        Return years until phase-out completion from base_year.
+
+        Args:
+            technology: Key in PHASE_OUT_TIMELINES
+            pathway: IEA_NZE_2050 | NGFS_Orderly
+            base_year: Current year
+            tech_sub_speed: slow | moderate | fast | custom
+            custom_speed_factor: Used if tech_sub_speed='custom'
+
+        Returns:
+            float: years until phase-out from base_year
+        """
+        timelines = StrandedAssetTransitionParams.PHASE_OUT_TIMELINES
+        default_horizon = 25.0
+
+        if technology not in timelines:
+            return default_horizon
+
+        nze_year, ngfs_year = timelines[technology]
+        phase_out_year = nze_year if pathway == "IEA_NZE_2050" else ngfs_year
+
+        speeds = StrandedAssetTransitionParams.TECHNOLOGY_SUBSTITUTION_SPEEDS
+        if tech_sub_speed == "custom":
+            factor = custom_speed_factor
+        else:
+            factor = speeds.get(tech_sub_speed, 1.0)
+
+        # faster substitution (factor > 1) reduces horizon
+        horizon = (phase_out_year - base_year) / factor
+        return max(1.0, round(horizon, 1))
+
+
+def get_stranded_asset_risk_score(
+    asset_value: float,
+    technology: str = "coal_power",
+    asset_age_years: float = 10.0,
+    useful_life_years: float = 40.0,
+    pathway: str = "IEA_NZE_2050",
+    writedown_curve: str = "sigmoid",
+    residual_value_floor: float = 0.05,
+    tech_sub_speed: str = "moderate",
+    base_year: int = 2025,
+    time_horizon: int = 10,
+) -> dict:
+    """
+    Compute stranded asset writedown score for use in transition risk assessment.
+
+    Returns:
+        dict with: writedown_factor, impaired_value_eur, risk_score_0_100,
+                   phase_out_horizon_years, remaining_useful_life
+    """
+    phase_out_horizon = StrandedAssetTransitionParams.phase_out_horizon(
+        technology=technology,
+        pathway=pathway,
+        base_year=base_year,
+        tech_sub_speed=tech_sub_speed,
+    )
+
+    remaining_life = max(0.0, useful_life_years - asset_age_years)
+
+    # Stranding occurs when phase-out horizon < remaining useful life
+    if phase_out_horizon >= remaining_life:
+        # Asset completes life before forced phase-out — minimal stranding
+        elapsed = max(0.0, remaining_life - phase_out_horizon)
+        writedown = 0.0
+    else:
+        # Asset is stranded: compute writedown at assessment horizon
+        elapsed = min(time_horizon, remaining_life - phase_out_horizon)
+        writedown = stranded_writedown_factor(
+            elapsed_years=max(0.0, elapsed),
+            total_years=remaining_life - phase_out_horizon,
+            curve=writedown_curve,
+            residual_floor=residual_value_floor,
+        )
+
+    impaired_value = asset_value * writedown
+    # Map writedown factor → 0-100 risk score
+    risk_score = round(writedown * 100, 2)
+
+    return {
+        "writedown_factor": writedown,
+        "impaired_value_eur": round(impaired_value, 2),
+        "risk_score_0_100": risk_score,
+        "phase_out_horizon_years": phase_out_horizon,
+        "remaining_useful_life_years": remaining_life,
+        "stranding_gap_years": round(remaining_life - phase_out_horizon, 1),
+        "technology": technology,
+        "pathway": pathway,
+        "writedown_curve": writedown_curve,
+    }

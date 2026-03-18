@@ -13,7 +13,7 @@ const CATEGORY_COLORS = {
   ESG: 'bg-emerald-900/60 text-emerald-300',
   Governance: 'bg-purple-900/60 text-purple-300',
   Energy: 'bg-amber-900/60 text-amber-300',
-  'Real Estate': 'bg-cyan-900/60 text-cyan-300',
+  'Real Estate': 'bg-gray-100 text-gray-800',
   Emissions: 'bg-rose-900/60 text-rose-300',
   Social: 'bg-blue-900/60 text-blue-300',
   Platform: 'bg-gray-700 text-gray-300',
@@ -47,7 +47,7 @@ export default function DataIntakeDashboard() {
     <div className="p-6 bg-gray-900 min-h-screen text-gray-100">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Data Intake & Reference Hub</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Data Intake & Reference Hub</h1>
         <p className="text-gray-400 mt-1 text-sm">
           Client proprietary data modules and reference data sources powering analytics.
         </p>
@@ -80,7 +80,7 @@ export default function DataIntakeDashboard() {
           },
         ].map(k => (
           <div key={k.label} className="bg-gray-800 border border-gray-700 rounded-lg p-4">
-            <div className="text-2xl font-bold text-white">{loading ? '--' : k.value}</div>
+            <div className="text-2xl font-bold text-gray-900">{loading ? '--' : k.value}</div>
             <div className="text-xs text-gray-400 mt-1">{k.label}</div>
             {k.pct !== undefined && !loading && (
               <div className="mt-2 w-full bg-gray-700 rounded-full h-1.5">
@@ -155,7 +155,7 @@ export default function DataIntakeDashboard() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {criBreakdown.map(b => (
                 <div key={b.index} className="text-center">
-                  <div className="text-xl font-bold text-white">{b.count.toLocaleString()}</div>
+                  <div className="text-xl font-bold text-gray-900">{b.count.toLocaleString()}</div>
                   <div className="text-xs text-gray-400 mt-1">{CRI_LABELS[b.index] || b.index}</div>
                 </div>
               ))}
@@ -179,13 +179,13 @@ function ModuleCard({ module: m }) {
     <Link to={m.route} className="block">
       <div className="bg-gray-800 border border-gray-700 rounded-lg p-5 hover:border-blue-500 transition-colors">
         <div className="flex items-start justify-between mb-3">
-          <span className="font-semibold text-white">{m.label}</span>
+          <span className="font-semibold text-gray-900">{m.label}</span>
           <span className={`text-xs font-mono px-2 py-0.5 rounded ${STATUS_COLORS[m.status] || STATUS_COLORS.empty}`}>
             {m.status}
           </span>
         </div>
         <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-bold text-white">{m.count.toLocaleString()}</span>
+          <span className="text-2xl font-bold text-gray-900">{m.count.toLocaleString()}</span>
           <span className="text-xs text-gray-400">{m.unit}</span>
         </div>
         {/* Completion indicator */}
@@ -208,13 +208,13 @@ function DataHubCard({ source: d }) {
   return (
     <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 hover:border-gray-600 transition-colors">
       <div className="flex items-start justify-between mb-2">
-        <span className="font-medium text-white text-sm">{d.label}</span>
+        <span className="font-medium text-gray-900 text-sm">{d.label}</span>
         <span className={`text-xs px-2 py-0.5 rounded ${CATEGORY_COLORS[d.category] || CATEGORY_COLORS.Platform}`}>
           {d.category}
         </span>
       </div>
       <div className="flex items-baseline gap-2">
-        <span className="text-xl font-bold text-white">{d.count.toLocaleString()}</span>
+        <span className="text-xl font-bold text-gray-900">{d.count.toLocaleString()}</span>
         <span className="text-xs text-gray-400">{d.unit}</span>
       </div>
       <div className="mt-2 flex items-center justify-between">

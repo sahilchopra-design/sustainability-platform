@@ -17,37 +17,37 @@ const fmt = (v, dp = 1) => v == null ? "—" : Number(v).toFixed(dp);
 const fmtM = (v, currency = "$") => v == null ? "—" : `${currency}${(Number(v) / 1e6).toFixed(2)}M`;
 const fmtPct = (v) => v == null ? "—" : `${(Number(v) * 100).toFixed(1)}%`;
 
-function Badge({ label, color = "bg-white/[0.06] text-white/60" }) {
+function Badge({ label, color = "bg-gray-50 text-gray-600" }) {
   return <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${color}`}>{label}</span>;
 }
 function Card({ title, subtitle, children, className = "" }) {
   return (
-    <div className={`bg-[#0d1424] rounded-xl border border-white/[0.06] ${className}`}>
+    <div className={`bg-white rounded-xl border border-gray-200 ${className}`}>
       {(title || subtitle) && (
-        <div className="px-6 py-4 border-b border-white/[0.04]">
-          {title && <h2 className="text-sm font-semibold text-white/90">{title}</h2>}
-          {subtitle && <p className="text-xs text-white/40 mt-0.5">{subtitle}</p>}
+        <div className="px-6 py-4 border-b border-gray-200">
+          {title && <h2 className="text-sm font-semibold text-gray-900">{title}</h2>}
+          {subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}
         </div>
       )}
       <div className="p-6">{children}</div>
     </div>
   );
 }
-function StatCard({ label, value, sub, color = "text-white" }) {
+function StatCard({ label, value, sub, color = "text-gray-900" }) {
   return (
-    <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-5">
-      <p className="text-xs text-white/40 font-medium mb-1">{label}</p>
+    <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <p className="text-xs text-gray-500 font-medium mb-1">{label}</p>
       <p className={`text-xl font-bold ${color}`}>{value}</p>
-      {sub && <p className="text-[11px] text-white/30 mt-1">{sub}</p>}
+      {sub && <p className="text-[11px] text-gray-500 mt-1">{sub}</p>}
     </div>
   );
 }
 function Field({ label, hint, children }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-white/60 mb-1">{label}</label>
+      <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
       {children}
-      {hint && <p className="text-[10px] text-white/30 mt-0.5">{hint}</p>}
+      {hint && <p className="text-[10px] text-gray-500 mt-0.5">{hint}</p>}
     </div>
   );
 }
@@ -55,14 +55,14 @@ function Input({ value, onChange, type = "text", ...rest }) {
   return (
     <input type={type} value={value}
       onChange={e => onChange(type === "number" ? parseFloat(e.target.value) || 0 : e.target.value)}
-      className="w-full border border-white/[0.06] rounded-lg bg-[#0b1120] text-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+      className="w-full border border-gray-200 rounded-lg bg-[#f5f6f8] text-gray-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/50"
       {...rest} />
   );
 }
 function Sel({ value, onChange, options }) {
   return (
     <select value={value} onChange={e => onChange(e.target.value)}
-      className="w-full border border-white/[0.06] rounded-lg bg-[#0b1120] text-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50">
+      className="w-full border border-gray-200 rounded-lg bg-[#f5f6f8] text-gray-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/50">
       {options.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
     </select>
   );
@@ -165,12 +165,12 @@ export default function MiningPanel() {
     NON_COMPLIANT: "text-red-400 bg-red-500/10 border-red-500/20",
     PARTIAL: "text-amber-400 bg-amber-500/10 border-amber-500/20",
     COMPLIANT: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
-  }[flag] || "text-white/60 bg-white/[0.04] border-white/[0.06]");
+  }[flag] || "text-gray-600 bg-gray-50 border-gray-200");
 
   const concentrationColor = (s) => ({
     EXTREME: "text-red-400", HIGH: "text-red-400",
     MODERATE: "text-amber-400", LOW: "text-emerald-400",
-  }[s] || "text-white/60");
+  }[s] || "text-gray-600");
 
   return (
     <div className="space-y-6">
@@ -178,7 +178,7 @@ export default function MiningPanel() {
         <Badge label="GISTM 2020" color="bg-red-500/10 text-red-300" />
         <Badge label="IEA Critical Minerals 2023" color="bg-blue-500/10 text-blue-300" />
         <Badge label="NGFS Phase 4 Carbon Price" color="bg-purple-500/10 text-purple-300" />
-        <Badge label="ICMM Water Framework" color="bg-cyan-400/10 text-cyan-300" />
+        <Badge label="ICMM Water Framework" color="bg-gray-50 text-gray-800" />
         <Badge label="UNEP FI Stranded Asset" color="bg-amber-500/10 text-amber-400" />
       </div>
 
@@ -263,7 +263,7 @@ export default function MiningPanel() {
 
         <div className="mt-6 flex justify-end">
           <button onClick={handleCalc} disabled={loading}
-            className="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-50 text-white text-sm font-semibold px-8 py-2.5 rounded-lg transition-colors">
+            className="bg-[#164E8A] hover:bg-[#12407A] disabled:opacity-50 text-gray-900 text-sm font-semibold px-8 py-2.5 rounded-lg transition-colors">
             {loading ? "Analysing…" : "Run Mining Risk Assessment"}
           </button>
         </div>
@@ -276,19 +276,19 @@ export default function MiningPanel() {
       {result && (
         <div className="space-y-6">
           {/* Overall Risk Banner */}
-          <div className={`rounded-xl border p-5 ${RISK_BG[result.overall_risk_category] || "bg-white/[0.02] border-white/[0.06]"}`}>
+          <div className={`rounded-xl border p-5 ${RISK_BG[result.overall_risk_category] || "bg-gray-50 border-gray-200"}`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-white/40 mb-1">Overall Mining Climate Risk</p>
-                <p className={`text-2xl font-bold ${RISK_COLORS[result.overall_risk_category] || "text-white"}`}>
+                <p className="text-xs text-gray-500 mb-1">Overall Mining Climate Risk</p>
+                <p className={`text-2xl font-bold ${RISK_COLORS[result.overall_risk_category] || "text-gray-900"}`}>
                   {result.overall_risk_category}
                 </p>
-                <p className="text-xs text-white/40 mt-1">Composite score: {fmt(result.overall_risk_score)}/100</p>
+                <p className="text-xs text-gray-500 mt-1">Composite score: {fmt(result.overall_risk_score)}/100</p>
               </div>
               <div className="text-right">
-                <p className="text-xs text-white/40">Stranded Value at Risk</p>
+                <p className="text-xs text-gray-500">Stranded Value at Risk</p>
                 <p className="text-xl font-bold text-red-400">{fmtM(result.stranded_value_at_risk_usd)}</p>
-                <p className="text-[11px] text-white/30">{fmt(result.stranded_asset_risk_pct, 1)}% stranding probability</p>
+                <p className="text-[11px] text-gray-500">{fmt(result.stranded_asset_risk_pct, 1)}% stranding probability</p>
               </div>
             </div>
           </div>
@@ -315,25 +315,25 @@ export default function MiningPanel() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {/* GISTM Compliance */}
-            <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-5">
-              <p className="text-xs text-white/40 font-medium mb-2">GISTM Compliance</p>
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <p className="text-xs text-gray-500 font-medium mb-2">GISTM Compliance</p>
               <div className={`inline-flex items-center px-3 py-1.5 rounded-lg border text-xs font-bold ${complianceFlagColor(result.tailings_compliance_flag)}`}>
                 {result.tailings_compliance_flag}
               </div>
             </div>
             {/* Critical Minerals */}
-            <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-5">
-              <p className="text-xs text-white/40 font-medium mb-1">Supply Concentration Risk</p>
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <p className="text-xs text-gray-500 font-medium mb-1">Supply Concentration Risk</p>
               <p className={`text-sm font-bold ${concentrationColor(result.supply_concentration_risk)}`}>
                 {result.supply_concentration_risk}
               </p>
-              <p className="text-[11px] text-white/30 mt-1">HHI: {fmt(result.critical_mineral_hhi, 0)}</p>
+              <p className="text-[11px] text-gray-500 mt-1">HHI: {fmt(result.critical_mineral_hhi, 0)}</p>
             </div>
             {/* Transition Demand */}
-            <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-5">
-              <p className="text-xs text-white/40 font-medium mb-1">Transition Demand Exposure</p>
-              <p className="text-sm font-bold text-cyan-400">{result.transition_demand_exposure}</p>
-              <p className="text-[11px] text-white/30 mt-1">IEA NZE EV/RE demand share</p>
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <p className="text-xs text-gray-500 font-medium mb-1">Transition Demand Exposure</p>
+              <p className="text-sm font-bold text-gray-700">{result.transition_demand_exposure}</p>
+              <p className="text-[11px] text-gray-500 mt-1">IEA NZE EV/RE demand share</p>
             </div>
           </div>
 
@@ -352,12 +352,12 @@ export default function MiningPanel() {
 
           {/* Methodology */}
           <Card title="Methodology Reference">
-            <div className="space-y-1 text-[11px] text-white/40">
-              <p><span className="text-white/60 font-medium">GISTM Tailings:</span> Global Industry Standard on Tailings Management (2020) — consequence class maps to annual failure probability (EXTREME: 5×10⁻⁴, VERY HIGH: 10⁻³, HIGH: 2×10⁻³, LOW: 5×10⁻³). Compliance level adjustment: full −50%, partial ±0%, non_compliant +50%.</p>
-              <p><span className="text-white/60 font-medium">Carbon Cost:</span> NGFS Phase 4 (2023) carbon price paths by scenario and year. Scope 1+2 tCO₂e × price = annual carbon cost liability.</p>
-              <p><span className="text-white/60 font-medium">Closure Cost:</span> Engineering closure cost estimate × NPV discount to horizon. Underfunding = NPV of unfunded liability relative to book value.</p>
-              <p><span className="text-white/60 font-medium">Critical Minerals:</span> IEA Critical Minerals 2023 — HHI supply concentration index per commodity. Transition demand exposure from EV/renewables technology demand share (IEA NZE 2050).</p>
-              <p><span className="text-white/60 font-medium">Stranded Asset:</span> Reserve life vs implied regulatory phase-out timeline; residual book value NPV at risk. High scores for thermal coal in OECD regions.</p>
+            <div className="space-y-1 text-[11px] text-gray-500">
+              <p><span className="text-gray-600 font-medium">GISTM Tailings:</span> Global Industry Standard on Tailings Management (2020) — consequence class maps to annual failure probability (EXTREME: 5×10⁻⁴, VERY HIGH: 10⁻³, HIGH: 2×10⁻³, LOW: 5×10⁻³). Compliance level adjustment: full −50%, partial ±0%, non_compliant +50%.</p>
+              <p><span className="text-gray-600 font-medium">Carbon Cost:</span> NGFS Phase 4 (2023) carbon price paths by scenario and year. Scope 1+2 tCO₂e × price = annual carbon cost liability.</p>
+              <p><span className="text-gray-600 font-medium">Closure Cost:</span> Engineering closure cost estimate × NPV discount to horizon. Underfunding = NPV of unfunded liability relative to book value.</p>
+              <p><span className="text-gray-600 font-medium">Critical Minerals:</span> IEA Critical Minerals 2023 — HHI supply concentration index per commodity. Transition demand exposure from EV/renewables technology demand share (IEA NZE 2050).</p>
+              <p><span className="text-gray-600 font-medium">Stranded Asset:</span> Reserve life vs implied regulatory phase-out timeline; residual book value NPV at risk. High scores for thermal coal in OECD regions.</p>
             </div>
           </Card>
         </div>

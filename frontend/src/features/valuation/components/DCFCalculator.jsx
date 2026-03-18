@@ -128,7 +128,7 @@ export function DCFCalculator() {
 
             {/* Growth Rates */}
             <div className="space-y-4">
-              <h4 className="text-sm font-semibold text-white/70 border-b pb-2">
+              <h4 className="text-sm font-semibold text-gray-700 border-b pb-2">
                 Growth Assumptions
               </h4>
               <div className="grid grid-cols-3 gap-3">
@@ -167,7 +167,7 @@ export function DCFCalculator() {
 
             {/* Discount & Terminal */}
             <div className="space-y-4">
-              <h4 className="text-sm font-semibold text-white/70 border-b pb-2">
+              <h4 className="text-sm font-semibold text-gray-700 border-b pb-2">
                 Discount & Exit Assumptions
               </h4>
               <div className="grid grid-cols-3 gap-3">
@@ -206,7 +206,7 @@ export function DCFCalculator() {
 
             {/* Capital Structure */}
             <div className="space-y-4">
-              <h4 className="text-sm font-semibold text-white/70 border-b pb-2">
+              <h4 className="text-sm font-semibold text-gray-700 border-b pb-2">
                 Capital Structure
               </h4>
               <div className="grid grid-cols-2 gap-4">
@@ -305,22 +305,22 @@ export function DCFCalculator() {
                       {formatPercent(result.cash_on_cash_year1)}
                     </p>
                   </div>
-                  <div className="bg-white/[0.02] rounded-lg p-4 text-center">
-                    <p className="text-xs text-white/60 font-medium">Avg Cash-on-Cash</p>
-                    <p className="text-2xl font-bold text-white">
+                  <div className="bg-gray-50 rounded-lg p-4 text-center">
+                    <p className="text-xs text-gray-600 font-medium">Avg Cash-on-Cash</p>
+                    <p className="text-2xl font-bold text-gray-900">
                       {formatPercent(result.average_cash_on_cash)}
                     </p>
                   </div>
                 </div>
 
                 {/* Terminal Value */}
-                <div className="bg-white/[0.02] rounded-lg p-4">
+                <div className="bg-gray-50 rounded-lg p-4">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm text-white/60">Terminal Value</span>
+                    <span className="text-sm text-gray-600">Terminal Value</span>
                     <span className="font-semibold">{formatCurrency(result.terminal_value)}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-white/60">PV of Terminal Value</span>
+                    <span className="text-sm text-gray-600">PV of Terminal Value</span>
                     <span className="font-semibold">{formatCurrency(result.terminal_value_present)}</span>
                   </div>
                 </div>
@@ -336,7 +336,7 @@ export function DCFCalculator() {
                 )}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-12 text-white/30">
+              <div className="flex flex-col items-center justify-center py-12 text-gray-500">
                 <LineChart className="h-16 w-16 mb-4 opacity-50" />
                 <p className="text-sm">Enter inputs and click Run DCF Analysis</p>
               </div>
@@ -350,7 +350,7 @@ export function DCFCalculator() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-white/40" />
+              <TrendingUp className="h-5 w-5 text-gray-500" />
               Projected Cash Flows
             </CardTitle>
           </CardHeader>
@@ -358,19 +358,19 @@ export function DCFCalculator() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/[0.06]">
-                    <th className="text-left py-2 px-3 font-medium text-white/60">Year</th>
-                    <th className="text-right py-2 px-3 font-medium text-white/60">Revenue</th>
-                    <th className="text-right py-2 px-3 font-medium text-white/60">Expenses</th>
-                    <th className="text-right py-2 px-3 font-medium text-white/60">NOI</th>
-                    <th className="text-right py-2 px-3 font-medium text-white/60">Debt Service</th>
-                    <th className="text-right py-2 px-3 font-medium text-white/60">CFADS</th>
-                    <th className="text-right py-2 px-3 font-medium text-white/60">Cumulative</th>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-2 px-3 font-medium text-gray-600">Year</th>
+                    <th className="text-right py-2 px-3 font-medium text-gray-600">Revenue</th>
+                    <th className="text-right py-2 px-3 font-medium text-gray-600">Expenses</th>
+                    <th className="text-right py-2 px-3 font-medium text-gray-600">NOI</th>
+                    <th className="text-right py-2 px-3 font-medium text-gray-600">Debt Service</th>
+                    <th className="text-right py-2 px-3 font-medium text-gray-600">CFADS</th>
+                    <th className="text-right py-2 px-3 font-medium text-gray-600">Cumulative</th>
                   </tr>
                 </thead>
                 <tbody>
                   {result.cash_flows.map((cf) => (
-                    <tr key={cf.year} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
+                    <tr key={cf.year} className="border-b border-gray-200 hover:bg-gray-50">
                       <td className="py-2 px-3 font-medium">Year {cf.year}</td>
                       <td className="py-2 px-3 text-right">{formatCurrency(cf.revenue, true)}</td>
                       <td className="py-2 px-3 text-right text-red-400">({formatCurrency(cf.expenses, true)})</td>
@@ -398,7 +398,7 @@ export function DCFCalculator() {
               <div className="space-y-2">
                 {Object.entries(result.sensitivity_cap_rate).map(([rate, value]) => (
                   <div key={rate} className="flex justify-between items-center">
-                    <span className="text-sm text-white/60">{(parseFloat(rate) * 100).toFixed(1)}%</span>
+                    <span className="text-sm text-gray-600">{(parseFloat(rate) * 100).toFixed(1)}%</span>
                     <span className="font-medium">{formatCurrency(value)}</span>
                   </div>
                 ))}
@@ -413,7 +413,7 @@ export function DCFCalculator() {
               <div className="space-y-2">
                 {Object.entries(result.sensitivity_discount_rate).map(([rate, value]) => (
                   <div key={rate} className="flex justify-between items-center">
-                    <span className="text-sm text-white/60">{(parseFloat(rate) * 100).toFixed(1)}%</span>
+                    <span className="text-sm text-gray-600">{(parseFloat(rate) * 100).toFixed(1)}%</span>
                     <span className="font-medium">{formatCurrency(value)}</span>
                   </div>
                 ))}

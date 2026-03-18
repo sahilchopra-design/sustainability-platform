@@ -36,10 +36,10 @@ const SIDEBAR_TABS = [
 
 function StatusBadge({ status }) {
   const cfg = {
-    draft:     { label: 'Draft',     cls: 'bg-white/8 text-white/50 border-white/15' },
+    draft:     { label: 'Draft',     cls: 'bg-white/8 text-gray-500 border-black/15' },
     published: { label: 'Published', cls: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' },
     review:    { label: 'In Review', cls: 'bg-amber-500/15 text-amber-300 border-amber-500/30' },
-    archived:  { label: 'Archived',  cls: 'bg-white/5 text-white/30 border-white/10' },
+    archived:  { label: 'Archived',  cls: 'bg-gray-50 text-gray-500 border-black/10' },
   };
   const { label, cls } = cfg[status] ?? cfg.draft;
   return (
@@ -53,17 +53,17 @@ function StatusBadge({ status }) {
 
 function PageHeader({ scenario, isDirty, saving, onSave, onPublish, onNew }) {
   return (
-    <div className="h-11 border-b border-white/[0.06] px-4 flex items-center gap-3 shrink-0 bg-[#070d1a]">
+    <div className="h-11 border-b border-gray-200 px-4 flex items-center gap-3 shrink-0 bg-white">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-1.5 text-[11px] text-white/35 min-w-0">
+      <div className="flex items-center gap-1.5 text-[11px] text-gray-500 min-w-0">
         <span
           onClick={onNew}
-          className="hover:text-white/60 cursor-pointer transition-colors"
+          className="hover:text-gray-600 cursor-pointer transition-colors"
         >
           Scenarios
         </span>
         <span>/</span>
-        <span className="text-white/70 font-medium truncate max-w-[200px]">
+        <span className="text-gray-700 font-medium truncate max-w-[200px]">
           {scenario.name || 'Untitled Scenario'}
         </span>
       </div>
@@ -83,21 +83,21 @@ function PageHeader({ scenario, isDirty, saving, onSave, onPublish, onNew }) {
         <button
           onClick={onSave}
           disabled={saving || !isDirty}
-          className="text-[11px] px-3 py-1.5 rounded border border-white/12 text-white/55 hover:border-cyan-500/30 hover:text-cyan-300 transition-colors disabled:opacity-30"
+          className="text-[11px] px-3 py-1.5 rounded border border-black/12 text-gray-500 hover:border-gray-300 hover:text-gray-800 transition-colors disabled:opacity-30"
         >
           {saving ? 'Saving…' : 'Save Draft'}
         </button>
         <button
           onClick={onPublish}
           disabled={saving}
-          className="text-[11px] px-3 py-1.5 rounded bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/25 transition-colors disabled:opacity-30 font-semibold"
+          className="text-[11px] px-3 py-1.5 rounded bg-gray-200 border border-gray-300 text-gray-800 hover:bg-gray-300 transition-colors disabled:opacity-30 font-semibold"
         >
           Publish
         </button>
-        <div className="w-px h-4 bg-white/10" />
+        <div className="w-px h-4 bg-gray-100" />
         <button
           onClick={onNew}
-          className="text-[11px] px-3 py-1.5 rounded border border-white/10 text-white/45 hover:text-white/70 hover:border-white/20 transition-colors"
+          className="text-[11px] px-3 py-1.5 rounded border border-black/10 text-gray-500 hover:text-gray-700 hover:border-black/20 transition-colors"
         >
           + New
         </button>
@@ -112,17 +112,17 @@ function RightSidebar({ scenario, onRestoreVersion, onImportVariable }) {
   const [activeTab, setActiveTab] = useState('history');
 
   return (
-    <aside className="w-80 shrink-0 border-l border-white/[0.06] bg-[#060c18] flex flex-col overflow-hidden">
+    <aside className="w-80 shrink-0 border-l border-gray-200 bg-white flex flex-col overflow-hidden">
       {/* Tab bar */}
-      <div className="flex shrink-0 border-b border-white/[0.06]">
+      <div className="flex shrink-0 border-b border-gray-200">
         {SIDEBAR_TABS.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex-1 flex flex-col items-center gap-0.5 py-2 text-[9px] font-semibold transition-colors border-b-2 ${
               activeTab === tab.id
-                ? 'border-cyan-500 text-cyan-300'
-                : 'border-transparent text-white/30 hover:text-white/55'
+                ? 'border-black text-gray-800'
+                : 'border-transparent text-gray-500 hover:text-gray-500'
             }`}
             title={tab.label}
           >
@@ -160,8 +160,8 @@ function RightSidebar({ scenario, onRestoreVersion, onImportVariable }) {
 
 function PublishSuccessOverlay({ scenarioName, onDismiss, onViewGallery }) {
   return (
-    <div className="absolute inset-0 bg-[#060c18]/90 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-[#0d1526] border border-white/10 rounded-xl p-8 max-w-sm w-full text-center shadow-2xl">
+    <div className="absolute inset-0 bg-white/90 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white border border-black/10 rounded-xl p-8 max-w-sm w-full text-center shadow-2xl">
         {/* Success icon */}
         <div className="w-14 h-14 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mx-auto mb-4">
           <svg className="h-7 w-7 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -169,22 +169,22 @@ function PublishSuccessOverlay({ scenarioName, onDismiss, onViewGallery }) {
           </svg>
         </div>
 
-        <h3 className="text-base font-semibold text-white/90 mb-1">Scenario Published</h3>
-        <p className="text-[12px] text-white/45 mb-6 leading-relaxed">
-          <span className="text-cyan-300">"{scenarioName}"</span> is now available in the
+        <h3 className="text-base font-semibold text-gray-900 mb-1">Scenario Published</h3>
+        <p className="text-[12px] text-gray-500 mb-6 leading-relaxed">
+          <span className="text-gray-800">"{scenarioName}"</span> is now available in the
           Scenario Gallery and can be used in portfolio analyses.
         </p>
 
         <div className="flex gap-3 justify-center">
           <button
             onClick={onDismiss}
-            className="text-[12px] px-4 py-2 rounded border border-white/12 text-white/55 hover:text-white/75 transition-colors"
+            className="text-[12px] px-4 py-2 rounded border border-black/12 text-gray-500 hover:text-gray-700 transition-colors"
           >
             Continue Editing
           </button>
           <button
             onClick={onViewGallery}
-            className="text-[12px] px-4 py-2 rounded bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/25 transition-colors font-semibold"
+            className="text-[12px] px-4 py-2 rounded bg-gray-200 border border-gray-300 text-gray-800 hover:bg-gray-300 transition-colors font-semibold"
           >
             View Gallery
           </button>

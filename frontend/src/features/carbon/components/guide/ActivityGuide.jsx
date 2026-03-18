@@ -92,7 +92,7 @@ const stepSub = {
 const btnPrimary = {
   padding: '10px 24px',
   background: '#3498db',
-  color: '#fff',
+  color: '#111',
   border: 'none',
   borderRadius: 8,
   fontSize: 14,
@@ -518,7 +518,7 @@ const ActivityGuide = () => {
                       padding: '2px 8px',
                       borderRadius: 4,
                       background: SCALE_COLORS[a.scale] || '#999',
-                      color: '#fff',
+                      color: '#111',
                       fontSize: 10,
                       fontWeight: 700,
                       marginLeft: 8,

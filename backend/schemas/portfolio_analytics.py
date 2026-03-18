@@ -79,16 +79,16 @@ class PortfolioUpdate(BaseModel):
 
 
 class PortfolioResponse(PortfolioBase):
-    id: UUID
-    owner_id: Optional[UUID] = None
+    id: str
+    owner_id: Optional[str] = None
     created_at: datetime
     updated_at: datetime
-    
+
     # Summary stats (computed)
     total_properties: Optional[int] = 0
     total_value: Optional[Decimal] = None
     total_income: Optional[Decimal] = None
-    
+
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -100,7 +100,7 @@ class PortfolioListResponse(BaseModel):
 # ============ Holdings Schemas ============
 
 class HoldingBase(BaseModel):
-    property_id: UUID
+    property_id: str
     acquisition_date: Optional[date] = None
     acquisition_cost: Optional[Decimal] = Field(None, ge=0)
     current_value: Optional[Decimal] = Field(None, ge=0)
@@ -113,13 +113,17 @@ class HoldingCreate(HoldingBase):
 
 
 class HoldingResponse(HoldingBase):
-    id: UUID
-    portfolio_id: UUID
+    id: str
+    portfolio_id: str
     unrealized_gain_loss: Optional[Decimal] = None
     property_name: Optional[str] = None
     property_type: Optional[str] = None
     property_location: Optional[str] = None
-    
+    # Data quality tracking — which fields were auto-estimated
+    estimated_fields: Optional[List[str]] = None
+    data_quality: Optional[str] = None  # 'complete', 'partial', 'estimated'
+    estimation_method: Optional[str] = None
+
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -178,13 +182,13 @@ class ConcentrationAnalysis(BaseModel):
 
 
 class PortfolioAnalyticsRequest(BaseModel):
-    scenario_id: Optional[UUID] = None
+    scenario_id: Optional[str] = None
     time_horizon: int = Field(10, ge=1, le=30)
     as_of_date: Optional[date] = None
 
 
 class PortfolioAnalyticsResponse(BaseModel):
-    portfolio_id: UUID
+    portfolio_id: str
     calculation_date: date
     scenario_name: Optional[str] = None
     
@@ -198,12 +202,12 @@ class PortfolioAnalyticsResponse(BaseModel):
 # ============ Scenario Comparison Schemas ============
 
 class ScenarioComparisonRequest(BaseModel):
-    scenario_ids: List[UUID] = Field(..., min_length=1)
+    scenario_ids: List[str] = Field(..., min_length=1)
     time_horizon: int = Field(10, ge=1, le=30)
 
 
 class ScenarioComparisonRow(BaseModel):
-    scenario_id: UUID
+    scenario_id: str
     scenario_name: str
     total_value: Decimal
     value_change: Decimal
@@ -215,7 +219,7 @@ class ScenarioComparisonRow(BaseModel):
 
 
 class ScenarioComparisonResult(BaseModel):
-    portfolio_id: UUID
+    portfolio_id: str
     base_value: Decimal
     comparison_table: List[ScenarioComparisonRow]
     best_scenario: str
@@ -229,7 +233,7 @@ class ScenarioComparisonResult(BaseModel):
 class ReportGenerateRequest(BaseModel):
     report_type: ReportType
     format: ReportFormat = ReportFormat.JSON
-    scenario_id: Optional[UUID] = None
+    scenario_id: Optional[str] = None
     time_horizon: int = Field(10, ge=1, le=30)
     include_charts: bool = True
     include_property_details: bool = False
@@ -237,8 +241,8 @@ class ReportGenerateRequest(BaseModel):
 
 
 class ReportResponse(BaseModel):
-    report_id: UUID
-    portfolio_id: UUID
+    report_id: str
+    portfolio_id: str
     report_type: ReportType
     format: ReportFormat
     status: str  # 'pending', 'processing', 'completed', 'failed'
@@ -249,7 +253,7 @@ class ReportResponse(BaseModel):
 
 
 class ReportContent(BaseModel):
-    report_id: UUID
+    report_id: str
     report_type: ReportType
     generated_at: datetime
     
@@ -295,37 +299,50 @@ class Alert(BaseModel):
     severity: str  # 'info', 'warning', 'critical'
     title: str
     message: str
-    property_id: Optional[UUID] = None
+    property_id: Optional[str] = None
     property_name: Optional[str] = None
     action_required: bool = False
     created_at: datetime
 
 
 class DashboardRequest(BaseModel):
-    scenario_id: Optional[UUID] = None
+    scenario_id: Optional[str] = None
     time_horizon: int = Field(10, ge=1, le=30)
 
 
+class DataQualityReport(BaseModel):
+    total_assets: int = 0
+    complete_count: int = 0
+    partial_count: int = 0
+    estimated_count: int = 0
+    missing_fields: Dict[str, int] = {}
+    estimation_method: Optional[str] = None
+    recommendations: List[str] = []
+
+
 class DashboardResponse(BaseModel):
-    portfolio_id: UUID
+    portfolio_id: str
     portfolio_name: str
     last_updated: datetime
-    
+
     kpi_cards: List[KPICard]
     charts: Dict[str, ChartData]
     alerts: List[Alert]
-    
+
     # Quick stats
     total_aum: Decimal
     property_count: int
     avg_risk_score: Decimal
     sustainability_score: Optional[Decimal] = None
 
+    # Data quality tracking — tells frontend which fields were estimated
+    data_quality_report: Optional[DataQualityReport] = None
+
 
 # ============ Property Summary for Holdings ============
 
 class PropertySummary(BaseModel):
-    id: UUID
+    id: str
     name: str
     property_type: str
     location: str

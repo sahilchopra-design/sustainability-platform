@@ -30,9 +30,9 @@ ESRS_XBRL_TAXONOMY: dict[str, dict] = {
         "concept": "esrs:GrossScope1GHGEmissions",
         "esrs": "E1", "dr": "E1-6", "paragraph": "44(a)",
         "label": "Gross Scope 1 GHG emissions",
-        "unit": "tCO2e", "xbrl_unit": "iso4217:EUR",
-        "data_type": "monetaryItemType",
-        "balance": "debit",
+        "unit": "tCO2e", "xbrl_unit": "xbrli:pure",  # tCO2e is non-monetary; iso4217:EUR caused ESMA ESEF rejection
+        "data_type": "decimalItemType",               # was incorrectly monetaryItemType
+        "balance": None,
         "period_type": "duration",
     },
     "E1-6_scope2_location": {
@@ -247,11 +247,53 @@ class XBRLExportResult:
     errors_count: int
     warnings_count: int
     coverage_by_esrs: dict[str, int]  # {esrs: count of tagged facts}
+    metadata: dict = field(default_factory=dict)  # E2: pipeline provenance
 
 
 # ---------------------------------------------------------------------------
 # Engine
 # ---------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------
+# E2: CSRD Auto-Populate → XBRL Key Bridge Map
+# ---------------------------------------------------------------------------
+# Maps csrd_auto_populate.py dp_id keys → ESRS_XBRL_TAXONOMY keys.
+# Only numeric data points are included (qualitative/narrative DPs have no XBRL tag).
+
+CSRD_TO_XBRL_BRIDGE: dict[str, str] = {
+    # E1-6 GHG emissions
+    "E1-6_GHG_scope1":              "E1-6_scope1_gross",
+    "E1-6_GHG_scope2_lb":           "E1-6_scope2_location",
+    "E1-6_GHG_scope2_mb":           "E1-6_scope2_market",
+    "E1-6_GHG_scope3_total":        "E1-6_scope3_total",
+    "E1-6_GHG_intensity_revenue":   "E1-6_ghg_intensity_revenue",
+    # E1-5 Energy
+    "E1-5_energy_total_mwh":        "E1-5_energy_consumption_total",
+    "E1-5_renewable_share_pct":     "E1-5_renewable_share",
+    # E1-9 Financial effects
+    "E1-9_carbon_price_internal":   "E1-9_internal_carbon_price",
+    "E1-9_transition_risk_eur":     "E1-9_transition_risk_amount",
+    "E1-9_physical_risk_eur":       "E1-9_physical_risk_amount",
+    # E1 total
+    "E1_financed_emissions":        "E1-6_scope3_total",   # financed ≈ Scope 3 Cat 15
+    # E2 Pollution
+    "E2-4_pollutant_air":           "E2-4_pollutants_air",
+    # E3 Water
+    "E3-4_water_consumption":       "E3-4_water_consumption",
+    # E4 Biodiversity
+    "E4-5_land_use_change":         "E4-5_land_use_change",
+    # E5 Circular
+    "E5-5_waste_generated":         "E5-5_waste_generated",
+    # S1 Workforce
+    "S1-6_employee_count":          "S1-6_total_employees",
+    "S1-6_female_employee_pct":     "S1-6_female_share",
+    "S1-16_gender_pay_gap_pct":     "S1-16_gender_pay_gap",
+    "S1-14_work_accidents":         "S1-14_recordable_injuries",
+    # G1 Governance
+    "G1-1_policy_count":            "G1-1_policies_count",
+}
+
 
 class XBRLExportEngine:
     """XBRL/iXBRL export engine for CSRD and ISSB filings."""
@@ -327,6 +369,82 @@ class XBRLExportEngine:
             warnings_count=0,
             coverage_by_esrs=coverage,
         )
+
+    def export_from_csrd_auto_populate(
+        self,
+        auto_populate_result,
+        entity_lei: str,
+        period_start: str = "2024-01-01",
+        period_end: str = "2024-12-31",
+        currency: str = "EUR",
+        decimals: int = 0,
+    ) -> "XBRLExportResult":
+        """E2 pipeline: CSRD auto-populate output → XBRL iXBRL / XML.
+
+        Accepts either an `AutoPopulateResult` dataclass (from csrd_auto_populate.py)
+        or a plain dict with a `"populated_dps"` list of dicts/dataclasses.
+
+        Applies CSRD_TO_XBRL_BRIDGE mapping to translate dp_ids, then calls
+        self.export() with the translated data_points dict.
+
+        Args:
+            auto_populate_result:  AutoPopulateResult or dict from csrd_auto_populate.auto_populate()
+            entity_lei:            LEI of the reporting entity (20-char alphanumeric)
+            period_start:          ISO date string for reporting period start
+            period_end:            ISO date string for reporting period end
+            currency:              Reporting currency (default EUR)
+            decimals:              XBRL decimals attribute (0 = exact; -3 = thousands)
+
+        Returns:
+            XBRLExportResult with iXBRL HTML, XBRL XML, validation results, and coverage.
+        """
+        # Normalise input: accept dataclass or dict
+        if hasattr(auto_populate_result, "populated_dps"):
+            populated_dps = auto_populate_result.populated_dps
+            entity_name = getattr(auto_populate_result, "entity_name", "")
+        else:
+            populated_dps = auto_populate_result.get("populated_dps", [])
+            entity_name = auto_populate_result.get("entity_name", "")
+
+        # Build data_points dict using CSRD_TO_XBRL_BRIDGE
+        data_points: dict[str, float] = {}
+        unmapped: list[str] = []
+        for dp in populated_dps:
+            if hasattr(dp, "dp_id"):
+                dp_id, value = dp.dp_id, dp.value
+            else:
+                dp_id, value = dp.get("dp_id", ""), dp.get("value")
+
+            xbrl_key = CSRD_TO_XBRL_BRIDGE.get(dp_id)
+            if xbrl_key and value is not None:
+                data_points[xbrl_key] = float(value)
+            elif xbrl_key is None:
+                unmapped.append(dp_id)
+
+        result = self.export(
+            entity_name=entity_name,
+            entity_lei=entity_lei,
+            period_start=period_start,
+            period_end=period_end,
+            data_points=data_points,
+            currency=currency,
+            decimals=decimals,
+        )
+
+        # Attach pipeline provenance to the result metadata
+        result.metadata = getattr(result, "metadata", {}) or {}
+        result.metadata.update({
+            "pipeline": "csrd_auto_populate → xbrl_export",
+            "bridge_version": "E2-v1.0",
+            "csrd_dps_received": len(populated_dps),
+            "csrd_dps_mapped": len(data_points),
+            "csrd_dps_unmapped": unmapped,
+            "unmapped_note": (
+                "Unmapped DPs are qualitative/narrative — no numeric XBRL concept available. "
+                "Submit them as narrative footnotes in the iXBRL document."
+            ),
+        })
+        return result
 
     def _generate_ixbrl(
         self, name: str, lei: str, start: str, end: str,

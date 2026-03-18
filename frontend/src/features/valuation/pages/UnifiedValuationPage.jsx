@@ -28,9 +28,9 @@ const ASSET_CLASSES = [
     label: "Infrastructure",
     icon: Layers,
     color: "#6366f1",
-    bg: "bg-cyan-400/10",
-    border: "border-cyan-400/20",
-    text: "text-cyan-300",
+    bg: "bg-gray-50",
+    border: "border-gray-200",
+    text: "text-gray-800",
     desc: "Regulated utilities, toll roads, rail, ports, airports, social infra",
     subtypes: [
       { v: "regulated_utility", l: "Regulated Utility (Water/Gas/Electricity)" },
@@ -348,11 +348,11 @@ const confidenceColor = (c) => ({
   high: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
   medium: "text-amber-400 bg-amber-500/10 border-amber-500/20",
   low: "text-red-500 bg-red-500/10 border-red-500/20",
-}[c] || "text-white/40 bg-white/[0.02] border-white/[0.06]");
+}[c] || "text-gray-500 bg-gray-50 border-gray-200");
 
 // ─── Input form component ─────────────────────────────────────────────────
 function InputField({ field, value, onChange }) {
-  const cls = "w-full px-3 py-1.5 text-sm border border-white/[0.06] rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-400/50 bg-[#0d1424]";
+  const cls = "w-full px-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black/50 bg-white";
   if (field.type === "boolean") {
     return (
       <div className="flex items-center gap-2">
@@ -363,14 +363,14 @@ function InputField({ field, value, onChange }) {
           onChange={(e) => onChange(field.k, e.target.checked)}
           className="w-4 h-4 accent-indigo-600"
         />
-        <label htmlFor={field.k} className="text-sm text-white/60">{field.l}</label>
+        <label htmlFor={field.k} className="text-sm text-gray-600">{field.l}</label>
       </div>
     );
   }
   if (field.type === "select") {
     return (
       <div>
-        <label className="block text-xs font-medium text-white/40 mb-1">{field.l}</label>
+        <label className="block text-xs font-medium text-gray-500 mb-1">{field.l}</label>
         <select value={value ?? ""} onChange={(e) => onChange(field.k, e.target.value)} className={cls}>
           {field.opts.map(o => <option key={o} value={o}>{o || "(none)"}</option>)}
         </select>
@@ -379,10 +379,10 @@ function InputField({ field, value, onChange }) {
   }
   return (
     <div>
-      <label className="block text-xs font-medium text-white/40 mb-1">
-        {field.l} {field.unit && <span className="text-white/30">({field.unit})</span>}
+      <label className="block text-xs font-medium text-gray-500 mb-1">
+        {field.l} {field.unit && <span className="text-gray-500">({field.unit})</span>}
       </label>
-      {field.hint && <p className="text-xs text-white/30 mb-1">{field.hint}</p>}
+      {field.hint && <p className="text-xs text-gray-500 mb-1">{field.hint}</p>}
       <input
         type="number"
         value={value ?? ""}
@@ -398,15 +398,15 @@ function InputField({ field, value, onChange }) {
 function Section({ title, children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border border-white/[0.06] rounded-lg overflow-hidden mb-4">
+    <div className="border border-gray-200 rounded-lg overflow-hidden mb-4">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-white/[0.02] hover:bg-white/[0.06] transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-50 transition-colors"
       >
-        <span className="font-medium text-sm text-white/70">{title}</span>
-        {open ? <ChevronUp className="h-4 w-4 text-white/30" /> : <ChevronDown className="h-4 w-4 text-white/30" />}
+        <span className="font-medium text-sm text-gray-700">{title}</span>
+        {open ? <ChevronUp className="h-4 w-4 text-gray-500" /> : <ChevronDown className="h-4 w-4 text-gray-500" />}
       </button>
-      {open && <div className="p-4 bg-[#0d1424]">{children}</div>}
+      {open && <div className="p-4 bg-white">{children}</div>}
     </div>
   );
 }
@@ -415,32 +415,32 @@ function Section({ title, children, defaultOpen = true }) {
 function MethodCard({ method, value, weight, confidence, narrative, basis, currency, isReconciled = false }) {
   const [expanded, setExpanded] = useState(false);
   return (
-    <div className={`border rounded-lg p-4 ${isReconciled ? "border-cyan-400/20 bg-cyan-400/10" : "border-white/[0.06] bg-[#0d1424]"}`}>
+    <div className={`border rounded-lg p-4 ${isReconciled ? "border-gray-200 bg-gray-50" : "border-gray-200 bg-white"}`}>
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <span className={`text-xs font-semibold px-2 py-0.5 rounded border ${confidenceColor(confidence)}`}>
               {confidence?.toUpperCase()}
             </span>
-            <span className="text-sm font-medium text-white/70">
+            <span className="text-sm font-medium text-gray-700">
               {isReconciled ? "Reconciled Value" : (METHOD_LABELS[method] || method)}
             </span>
             {!isReconciled && (
-              <span className="text-xs text-white/30">Weight: {(weight * 100).toFixed(0)}%</span>
+              <span className="text-xs text-gray-500">Weight: {(weight * 100).toFixed(0)}%</span>
             )}
           </div>
-          <div className="text-xl font-bold text-white mt-1">{fmtCcy(value, currency)}</div>
+          <div className="text-xl font-bold text-gray-900 mt-1">{fmtCcy(value, currency)}</div>
         </div>
         {narrative && (
-          <button onClick={() => setExpanded(!expanded)} className="text-white/30 hover:text-white/60 mt-1">
+          <button onClick={() => setExpanded(!expanded)} className="text-gray-500 hover:text-gray-600 mt-1">
             {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </button>
         )}
       </div>
       {expanded && (
-        <div className="mt-3 pt-3 border-t border-white/[0.06] text-xs text-white/60 space-y-1">
+        <div className="mt-3 pt-3 border-t border-gray-200 text-xs text-gray-600 space-y-1">
           {narrative && <p>{narrative}</p>}
-          {basis && <p className="text-white/30 italic">Basis: {basis}</p>}
+          {basis && <p className="text-gray-500 italic">Basis: {basis}</p>}
         </div>
       )}
     </div>
@@ -573,35 +573,35 @@ export default function UnifiedValuationPage() {
   };
 
   const esgAdjPct = result?.esg_adjustment_pct ?? 0;
-  const esgColor = esgAdjPct > 0 ? "text-emerald-400" : esgAdjPct < 0 ? "text-red-500" : "text-white/40";
+  const esgColor = esgAdjPct > 0 ? "text-emerald-400" : esgAdjPct < 0 ? "text-red-500" : "text-gray-500";
 
   return (
-    <div className="min-h-screen bg-white/[0.02]">
+    <div className="min-h-screen bg-gray-50">
       {/* ── Header ── */}
-      <div className="bg-[#0d1424] border-b border-white/[0.06] px-6 py-4">
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-cyan-400/10 rounded-lg">
-              <Scale className="h-6 w-6 text-cyan-400" />
+            <div className="p-2 bg-gray-50 rounded-lg">
+              <Scale className="h-6 w-6 text-gray-700" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white">Unified Asset Valuation Engine</h1>
-              <p className="text-sm text-white/40">
+              <h1 className="text-xl font-bold text-gray-900">Unified Asset Valuation Engine</h1>
+              <p className="text-sm text-gray-500">
                 All asset classes · RICS Red Book PS1/VPS4 · IVS 2024 · USPAP · TEGoVA EVS · ESG Climate Overlay
               </p>
             </div>
           </div>
           <div className="flex gap-2 flex-wrap">
             {["RICS PS1/VPS4", "IVS 2024", "ESG Overlay", "CRREM v2"].map(b => (
-              <span key={b} className="text-xs px-2 py-1 bg-cyan-400/10 text-cyan-300 border border-cyan-400/20 rounded-full font-medium">{b}</span>
+              <span key={b} className="text-xs px-2 py-1 bg-gray-50 text-gray-800 border border-gray-200 rounded-full font-medium">{b}</span>
             ))}
           </div>
         </div>
       </div>
 
       {/* ── Asset Class Selector ── */}
-      <div className="bg-[#0d1424] border-b border-white/[0.06] px-6 py-3">
-        <p className="text-xs font-medium text-white/30 mb-2 uppercase tracking-wide">Select Asset Class</p>
+      <div className="bg-white border-b border-gray-200 px-6 py-3">
+        <p className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">Select Asset Class</p>
         <div className="flex gap-2 flex-wrap">
           {ASSET_CLASSES.map(ac => {
             const Icon = ac.icon;
@@ -613,7 +613,7 @@ export default function UnifiedValuationPage() {
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-all ${
                   active
                     ? `${ac.bg} ${ac.text} ${ac.border} `
-                    : "bg-[#0d1424] text-white/60 border-white/[0.06] hover:bg-white/[0.02]"
+                    : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -623,12 +623,12 @@ export default function UnifiedValuationPage() {
           })}
         </div>
         {acMeta && (
-          <p className="text-xs text-white/30 mt-2">{acMeta.desc}</p>
+          <p className="text-xs text-gray-500 mt-2">{acMeta.desc}</p>
         )}
       </div>
 
       {/* ── Tab Nav ── */}
-      <div className="bg-[#0d1424] border-b border-white/[0.06] px-6">
+      <div className="bg-white border-b border-gray-200 px-6">
         <div className="flex gap-0">
           {[
             { id: "inputs", label: "Input Parameters" },
@@ -641,10 +641,10 @@ export default function UnifiedValuationPage() {
               onClick={() => !tab.disabled && setActiveTab(tab.id)}
               className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab.id
-                  ? "border-cyan-400/20 text-cyan-400"
+                  ? "border-gray-200 text-gray-700"
                   : tab.disabled
-                  ? "border-transparent text-white/20 cursor-not-allowed"
-                  : "border-transparent text-white/40 hover:text-white/70 hover:border-white/[0.08]"
+                  ? "border-transparent text-gray-400 cursor-not-allowed"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
               {tab.label}
@@ -663,20 +663,20 @@ export default function UnifiedValuationPage() {
               <Section title="Asset Identification" defaultOpen={true}>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   <div className="col-span-2 md:col-span-1">
-                    <label className="block text-xs font-medium text-white/40 mb-1">Asset Name</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Asset Name</label>
                     <input
                       type="text"
                       value={meta.assetName}
                       onChange={e => handleMetaChange("assetName", e.target.value)}
-                      className="w-full px-3 py-1.5 text-sm border border-white/[0.06] rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+                      className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black/50"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-white/40 mb-1">Subtype</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Subtype</label>
                     <select
                       value={meta.subtype}
                       onChange={e => handleMetaChange("subtype", e.target.value)}
-                      className="w-full px-3 py-1.5 text-sm border border-white/[0.06] rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+                      className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black/50"
                     >
                       {acMeta?.subtypes.map(s => (
                         <option key={s.v} value={s.v}>{s.l}</option>
@@ -684,21 +684,21 @@ export default function UnifiedValuationPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-white/40 mb-1">Country</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Country</label>
                     <select
                       value={meta.countryIso}
                       onChange={e => handleMetaChange("countryIso", e.target.value)}
-                      className="w-full px-3 py-1.5 text-sm border border-white/[0.06] rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+                      className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black/50"
                     >
                       {COUNTRY_OPTIONS.map(c => <option key={c.v} value={c.v}>{c.l}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-white/40 mb-1">Currency</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Currency</label>
                     <select
                       value={meta.currency}
                       onChange={e => handleMetaChange("currency", e.target.value)}
-                      className="w-full px-3 py-1.5 text-sm border border-white/[0.06] rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+                      className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black/50"
                     >
                       <option value="GBP">GBP £</option>
                       <option value="USD">USD $</option>
@@ -707,11 +707,11 @@ export default function UnifiedValuationPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-white/40 mb-1">Valuation Standard</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Valuation Standard</label>
                     <select
                       value={meta.valuationStandard}
                       onChange={e => handleMetaChange("valuationStandard", e.target.value)}
-                      className="w-full px-3 py-1.5 text-sm border border-white/[0.06] rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+                      className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black/50"
                     >
                       <option value="RICS_Red_Book">RICS Red Book (PS1/VPS4)</option>
                       <option value="IVS_2024">IVS 2024 (IVSC)</option>
@@ -740,33 +740,33 @@ export default function UnifiedValuationPage() {
             {/* Right: Run panel + methodology info */}
             <div className="space-y-4">
               {/* Run Valuation */}
-              <div className="bg-[#0d1424] border border-white/[0.06] rounded-xl p-5 ">
-                <h3 className="font-semibold text-white/90 mb-3 flex items-center gap-2">
-                  <Calculator className="h-4 w-4 text-cyan-400" />
+              <div className="bg-white border border-gray-200 rounded-xl p-5 ">
+                <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <Calculator className="h-4 w-4 text-gray-700" />
                   Run Valuation
                 </h3>
-                <p className="text-xs text-white/40 mb-4">
+                <p className="text-xs text-gray-500 mb-4">
                   The engine will apply all standard methodologies for the selected asset class,
                   reconcile results by weight, and apply the ESG climate overlay.
                 </p>
 
                 {/* ESG quick preview */}
-                <div className="bg-white/[0.02] rounded-lg p-3 mb-4 text-xs space-y-1">
+                <div className="bg-gray-50 rounded-lg p-3 mb-4 text-xs space-y-1">
                   <div className="flex justify-between">
-                    <span className="text-white/40">EPC Rating</span>
-                    <span className="font-medium text-white/70">{esgInputs.epc_rating}</span>
+                    <span className="text-gray-500">EPC Rating</span>
+                    <span className="font-medium text-gray-700">{esgInputs.epc_rating}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-white/40">Flood Risk</span>
-                    <span className="font-medium text-white/70 capitalize">{esgInputs.flood_risk}</span>
+                    <span className="text-gray-500">Flood Risk</span>
+                    <span className="font-medium text-gray-700 capitalize">{esgInputs.flood_risk}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-white/40">Climate Scenario</span>
-                    <span className="font-medium text-white/70">{SCENARIO_LABELS[esgInputs.climate_scenario]}</span>
+                    <span className="text-gray-500">Climate Scenario</span>
+                    <span className="font-medium text-gray-700">{SCENARIO_LABELS[esgInputs.climate_scenario]}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-white/40">Green Cert.</span>
-                    <span className="font-medium text-white/70">
+                    <span className="text-gray-500">Green Cert.</span>
+                    <span className="font-medium text-gray-700">
                       {esgInputs.has_green_certification ? (esgInputs.certification_type || "Yes") : "None"}
                     </span>
                   </div>
@@ -775,7 +775,7 @@ export default function UnifiedValuationPage() {
                 <button
                   onClick={runValuation}
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-cyan-400 hover:bg-cyan-300 disabled:bg-cyan-400/40 text-white text-sm font-semibold rounded-lg transition-colors shadow"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#164E8A] hover:bg-[#12407A] disabled:bg-gray-400 text-gray-900 text-sm font-semibold rounded-lg transition-colors shadow"
                 >
                   {loading ? (
                     <><RefreshCw className="h-4 w-4 animate-spin" /> Calculating...</>
@@ -794,10 +794,10 @@ export default function UnifiedValuationPage() {
                   <div className="mt-3 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-center">
                     <div className="text-xs text-emerald-400 font-medium mb-1">Reconciled Value</div>
                     <div className="text-2xl font-bold text-emerald-400">{fmtCcy(result.final_value, result.currency)}</div>
-                    <div className="text-xs text-white/40 mt-1">
+                    <div className="text-xs text-gray-500 mt-1">
                       Range: {fmtCcy(result.value_range_low, result.currency)} – {fmtCcy(result.value_range_high, result.currency)}
                     </div>
-                    <button onClick={() => setActiveTab("results")} className="mt-2 text-xs text-cyan-400 hover:underline font-medium">
+                    <button onClick={() => setActiveTab("results")} className="mt-2 text-xs text-gray-700 hover:underline font-medium">
                       View Full Results →
                     </button>
                   </div>
@@ -805,62 +805,62 @@ export default function UnifiedValuationPage() {
               </div>
 
               {/* Methodology Info */}
-              <div className="bg-[#0d1424] border border-white/[0.06] rounded-xl p-5">
-                <h3 className="font-semibold text-white/90 mb-3 flex items-center gap-2">
+              <div className="bg-white border border-gray-200 rounded-xl p-5">
+                <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                   <Info className="h-4 w-4 text-blue-500" />
                   Methodologies Applied
                 </h3>
-                <div className="space-y-2 text-xs text-white/60">
+                <div className="space-y-2 text-xs text-gray-600">
                   {selectedClass === "infrastructure" && (
                     <>
-                      <p><span className="font-medium text-white/70">Regulated Asset Base (RAB):</span> WACC-based valuation using regulator-allowed returns, regulatory period, and depreciation of RAB.</p>
-                      <p><span className="font-medium text-white/70">Income DCF:</span> 30-year discounted cashflow with EBITDA-style revenues, capex, depreciation, and Gordon growth terminal.</p>
-                      <p><span className="font-medium text-white/70">Replacement Cost:</span> Depreciated replacement cost based on asset age and useful life. Verification method.</p>
+                      <p><span className="font-medium text-gray-700">Regulated Asset Base (RAB):</span> WACC-based valuation using regulator-allowed returns, regulatory period, and depreciation of RAB.</p>
+                      <p><span className="font-medium text-gray-700">Income DCF:</span> 30-year discounted cashflow with EBITDA-style revenues, capex, depreciation, and Gordon growth terminal.</p>
+                      <p><span className="font-medium text-gray-700">Replacement Cost:</span> Depreciated replacement cost based on asset age and useful life. Verification method.</p>
                     </>
                   )}
                   {selectedClass === "project" && (
                     <>
-                      <p><span className="font-medium text-white/70">Project Finance DCF:</span> Equity IRR analysis with DSCR validation, construction ramp-up, concession term, senior/mezzanine debt waterfall.</p>
-                      <p><span className="font-medium text-white/70">Replacement Cost:</span> Total project cost less depreciation as verification.</p>
+                      <p><span className="font-medium text-gray-700">Project Finance DCF:</span> Equity IRR analysis with DSCR validation, construction ramp-up, concession term, senior/mezzanine debt waterfall.</p>
+                      <p><span className="font-medium text-gray-700">Replacement Cost:</span> Total project cost less depreciation as verification.</p>
                     </>
                   )}
                   {selectedClass === "energy" && (
                     <>
-                      <p><span className="font-medium text-white/70">Energy Yield DCF:</span> PPA blended merchant revenue model with annual generation, degradation factor, OPEX escalation, EU ETS carbon cost for thermal, decommissioning.</p>
-                      <p><span className="font-medium text-white/70">Replacement Cost:</span> $/kW construction cost with age depreciation.</p>
-                      <p><span className="font-medium text-white/70">NAV (EV/EBITDA):</span> Sector multiple valuation using industry EV/EBITDA multiples by technology type.</p>
+                      <p><span className="font-medium text-gray-700">Energy Yield DCF:</span> PPA blended merchant revenue model with annual generation, degradation factor, OPEX escalation, EU ETS carbon cost for thermal, decommissioning.</p>
+                      <p><span className="font-medium text-gray-700">Replacement Cost:</span> $/kW construction cost with age depreciation.</p>
+                      <p><span className="font-medium text-gray-700">NAV (EV/EBITDA):</span> Sector multiple valuation using industry EV/EBITDA multiples by technology type.</p>
                     </>
                   )}
                   {selectedClass === "commercial" && (
                     <>
-                      <p><span className="font-medium text-white/70">Direct Capitalisation:</span> NOI ÷ Cap Rate. JLL/CBRE Q1-2024 market yields used if none provided.</p>
-                      <p><span className="font-medium text-white/70">Income DCF:</span> 10-year rent cashflow model with lease renewal cycles, void periods, rent-free incentives, exit yield terminal.</p>
-                      <p><span className="font-medium text-white/70">Replacement Cost:</span> BCIS/RS Means build cost per m² × age depreciation + land value.</p>
+                      <p><span className="font-medium text-gray-700">Direct Capitalisation:</span> NOI ÷ Cap Rate. JLL/CBRE Q1-2024 market yields used if none provided.</p>
+                      <p><span className="font-medium text-gray-700">Income DCF:</span> 10-year rent cashflow model with lease renewal cycles, void periods, rent-free incentives, exit yield terminal.</p>
+                      <p><span className="font-medium text-gray-700">Replacement Cost:</span> BCIS/RS Means build cost per m² × age depreciation + land value.</p>
                     </>
                   )}
                   {selectedClass === "residential" && (
                     <>
-                      <p><span className="font-medium text-white/70">Direct Capitalisation:</span> Annual gross rent ÷ gross market yield. BTR/PRS market standards.</p>
-                      <p><span className="font-medium text-white/70">Income DCF:</span> 10-year net rental income with exit yield capitalisation.</p>
-                      <p><span className="font-medium text-white/70">Sales Comparison:</span> Adjusted comparable transactions (if provided).</p>
+                      <p><span className="font-medium text-gray-700">Direct Capitalisation:</span> Annual gross rent ÷ gross market yield. BTR/PRS market standards.</p>
+                      <p><span className="font-medium text-gray-700">Income DCF:</span> 10-year net rental income with exit yield capitalisation.</p>
+                      <p><span className="font-medium text-gray-700">Sales Comparison:</span> Adjusted comparable transactions (if provided).</p>
                     </>
                   )}
                   {selectedClass === "agricultural" && (
                     <>
-                      <p><span className="font-medium text-white/70">Income DCF:</span> 20-year crop revenue less OPEX, adjusted for soil quality score (CAAV methodology).</p>
-                      <p><span className="font-medium text-white/70">Comparable Sales:</span> CAAV/APHA $/ha evidence by land class and country.</p>
-                      <p><span className="font-medium text-white/70">Timber + Carbon:</span> Standing timber valuation + capitalised carbon credit income (Woodland Carbon Code / REDD+).</p>
+                      <p><span className="font-medium text-gray-700">Income DCF:</span> 20-year crop revenue less OPEX, adjusted for soil quality score (CAAV methodology).</p>
+                      <p><span className="font-medium text-gray-700">Comparable Sales:</span> CAAV/APHA $/ha evidence by land class and country.</p>
+                      <p><span className="font-medium text-gray-700">Timber + Carbon:</span> Standing timber valuation + capitalised carbon credit income (Woodland Carbon Code / REDD+).</p>
                     </>
                   )}
                   {selectedClass === "land" && (
                     <>
-                      <p><span className="font-medium text-white/70">Residual Land Value:</span> GDV − Build Cost − Developer Profit − Finance Cost − Remediation, PV'd at development start.</p>
-                      <p><span className="font-medium text-white/70">Comparable Sales:</span> Land sales £/ha evidence.</p>
-                      <p><span className="font-medium text-white/70">Planning Uplift:</span> Existing Use Value × planning uplift multiple (RICS Hope Value / NPPF).</p>
-                      <p><span className="font-medium text-white/70">Carbon Land:</span> Capitalised annual carbon sequestration revenue (peatland / rewilding).</p>
+                      <p><span className="font-medium text-gray-700">Residual Land Value:</span> GDV − Build Cost − Developer Profit − Finance Cost − Remediation, PV'd at development start.</p>
+                      <p><span className="font-medium text-gray-700">Comparable Sales:</span> Land sales £/ha evidence.</p>
+                      <p><span className="font-medium text-gray-700">Planning Uplift:</span> Existing Use Value × planning uplift multiple (RICS Hope Value / NPPF).</p>
+                      <p><span className="font-medium text-gray-700">Carbon Land:</span> Capitalised annual carbon sequestration revenue (peatland / rewilding).</p>
                     </>
                   )}
-                  <div className="mt-3 pt-2 border-t border-white/[0.04] text-white/30">
+                  <div className="mt-3 pt-2 border-t border-gray-200 text-gray-500">
                     ESG Climate Overlay applied to all methods per RICS VPS4 / IVS ESG guidance.
                   </div>
                 </div>
@@ -883,32 +883,32 @@ export default function UnifiedValuationPage() {
               <Section title="Assessment Timeline" defaultOpen={true}>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-white/40 mb-1">Assessment Year</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Assessment Year</label>
                     <input type="number" value={esgInputs.assessment_year} onChange={e => handleEsgChange("assessment_year", parseInt(e.target.value))}
-                      className="w-full px-3 py-1.5 text-sm border border-white/[0.06] rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-400/50" />
+                      className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black/50" />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-white/40 mb-1">Target Year (ESG horizon)</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Target Year (ESG horizon)</label>
                     <input type="number" value={esgInputs.target_year} onChange={e => handleEsgChange("target_year", parseInt(e.target.value))}
-                      className="w-full px-3 py-1.5 text-sm border border-white/[0.06] rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-400/50" />
+                      className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-black/50" />
                   </div>
                 </div>
               </Section>
             </div>
             <div>
-              <div className="bg-[#0d1424] border border-white/[0.06] rounded-xl p-5">
-                <h3 className="font-semibold text-white/90 mb-3 flex items-center gap-2">
+              <div className="bg-white border border-gray-200 rounded-xl p-5">
+                <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                   <Leaf className="h-4 w-4 text-emerald-500" />
                   ESG Overlay Logic
                 </h3>
-                <div className="space-y-2 text-xs text-white/60">
+                <div className="space-y-2 text-xs text-gray-600">
                   <p><span className="font-medium text-emerald-400">Green Premiums:</span> BREEAM Outstanding +10%, Excellent +7%, VeryGood +4%; LEED Platinum +10%, Gold +7%; NABERS 5+ +8%; GreenStar 6 +9%.</p>
                   <p><span className="font-medium text-red-400">EPC Brown Discounts:</span> A −5%, B −2%, C 0%, D +2%, E +5%, F +8%, G +10% above baseline.</p>
                   <p><span className="font-medium text-orange-400">Flood Risk Discounts:</span> Low −2%, Medium −5%, High −12%, Extreme −20%.</p>
                   <p><span className="font-medium text-amber-400">Physical Risk:</span> Score-based discount up to −15% for extreme risk under NGFS 3°C+ scenario.</p>
                   <p><span className="font-medium text-blue-300">Transition Risk:</span> Penalty for high transition risk per CRREM stranding analysis.</p>
                   <p><span className="font-medium text-lime-600">Biodiversity:</span> Up to +3% premium for low biodiversity sensitivity (green certification); discount for critical.</p>
-                  <p className="mt-2 text-white/30 italic">Sources: MSCI Real Estate Green Premium Report 2023; RICS VPS4 (2024); CRREM v2.0</p>
+                  <p className="mt-2 text-gray-500 italic">Sources: MSCI Real Estate Green Premium Report 2023; RICS VPS4 (2024); CRREM v2.0</p>
                 </div>
               </div>
             </div>
@@ -919,12 +919,12 @@ export default function UnifiedValuationPage() {
         {activeTab === "results" && result && (
           <div className="space-y-6">
             {/* Hero card */}
-            <div className="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-2xl p-6 text-white shadow-lg">
+            <div className="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-2xl p-6 text-gray-900 shadow-lg">
               <div className="flex items-start justify-between flex-wrap gap-4">
                 <div>
-                  <p className="text-cyan-200/60 text-sm mb-1">{result.asset_name} · {result.asset_class?.toUpperCase()} · {result.currency}</p>
+                  <p className="text-gray-600 text-sm mb-1">{result.asset_name} · {result.asset_class?.toUpperCase()} · {result.currency}</p>
                   <div className="text-4xl font-bold">{fmtCcy(result.final_value, result.currency)}</div>
-                  <p className="text-cyan-200/60 text-sm mt-1">
+                  <p className="text-gray-600 text-sm mt-1">
                     Value Range: {fmtCcy(result.value_range_low, result.currency)} – {fmtCcy(result.value_range_high, result.currency)}
                   </p>
                   {result.material_uncertainty && (
@@ -935,54 +935,54 @@ export default function UnifiedValuationPage() {
                 </div>
                 <div className="space-y-2 text-sm min-w-40">
                   <div className="flex justify-between gap-4">
-                    <span className="text-cyan-200/60">Pre-ESG Value</span>
+                    <span className="text-gray-600">Pre-ESG Value</span>
                     <span className="font-semibold">{fmtCcy(result.reconciled_value_pre_esg, result.currency)}</span>
                   </div>
                   <div className="flex justify-between gap-4">
-                    <span className="text-cyan-200/60">ESG Adjustment</span>
+                    <span className="text-gray-600">ESG Adjustment</span>
                     <span className={`font-semibold ${esgAdjPct >= 0 ? "text-emerald-300" : "text-red-300"}`}>
                       {esgAdjPct >= 0 ? "+" : ""}{fmt(esgAdjPct, 2)}%
                     </span>
                   </div>
                   {result.value_per_m2 != null && (
                     <div className="flex justify-between gap-4">
-                      <span className="text-cyan-200/60">Per m²</span>
+                      <span className="text-gray-600">Per m²</span>
                       <span className="font-semibold">{fmtCcy(result.value_per_m2, result.currency)}</span>
                     </div>
                   )}
                   {result.value_per_unit != null && (
                     <div className="flex justify-between gap-4">
-                      <span className="text-cyan-200/60">Per Unit</span>
+                      <span className="text-gray-600">Per Unit</span>
                       <span className="font-semibold">{fmtCcy(result.value_per_unit, result.currency)}</span>
                     </div>
                   )}
                   {result.value_per_ha != null && (
                     <div className="flex justify-between gap-4">
-                      <span className="text-cyan-200/60">Per Hectare</span>
+                      <span className="text-gray-600">Per Hectare</span>
                       <span className="font-semibold">{fmtCcy(result.value_per_ha, result.currency)}</span>
                     </div>
                   )}
                   {result.value_per_kw != null && (
                     <div className="flex justify-between gap-4">
-                      <span className="text-cyan-200/60">Per kW</span>
+                      <span className="text-gray-600">Per kW</span>
                       <span className="font-semibold">{fmtCcy(result.value_per_kw, result.currency)}</span>
                     </div>
                   )}
                   {result.yield_pct != null && (
                     <div className="flex justify-between gap-4">
-                      <span className="text-cyan-200/60">Implied Yield</span>
+                      <span className="text-gray-600">Implied Yield</span>
                       <span className="font-semibold">{fmt(result.yield_pct, 2)}%</span>
                     </div>
                   )}
                   {result.irr_pct != null && (
                     <div className="flex justify-between gap-4">
-                      <span className="text-cyan-200/60">Project IRR</span>
+                      <span className="text-gray-600">Project IRR</span>
                       <span className="font-semibold">{fmt(result.irr_pct, 2)}%</span>
                     </div>
                   )}
                   {result.dscr != null && (
                     <div className="flex justify-between gap-4">
-                      <span className="text-cyan-200/60">DSCR</span>
+                      <span className="text-gray-600">DSCR</span>
                       <span className="font-semibold">{fmt(result.dscr, 2)}×</span>
                     </div>
                   )}
@@ -990,7 +990,7 @@ export default function UnifiedValuationPage() {
               </div>
               <div className="mt-4 flex items-center gap-2">
                 <Shield className="h-4 w-4 text-emerald-300" />
-                <span className="text-xs text-cyan-200/60">
+                <span className="text-xs text-gray-600">
                   {result.validation_summary?.compliance?.standard} · RICS PS1 Compliant ·
                   ESG Addressed per VPS4 · Valuation Date: {result.valuation_date}
                 </span>
@@ -1000,8 +1000,8 @@ export default function UnifiedValuationPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Method results */}
               <div>
-                <h3 className="font-semibold text-white/90 mb-3 text-sm flex items-center gap-2">
-                  <BarChart2 className="h-4 w-4 text-cyan-400" />
+                <h3 className="font-semibold text-gray-900 mb-3 text-sm flex items-center gap-2">
+                  <BarChart2 className="h-4 w-4 text-gray-700" />
                   Method Comparison
                 </h3>
                 <MethodComparisonChart
@@ -1035,7 +1035,7 @@ export default function UnifiedValuationPage() {
 
               {/* ESG breakdown */}
               <div>
-                <h3 className="font-semibold text-white/90 mb-3 text-sm flex items-center gap-2">
+                <h3 className="font-semibold text-gray-900 mb-3 text-sm flex items-center gap-2">
                   <Leaf className="h-4 w-4 text-emerald-500" />
                   ESG Adjustment Waterfall
                 </h3>
@@ -1047,16 +1047,16 @@ export default function UnifiedValuationPage() {
                 />
 
                 {/* ESG breakdown table */}
-                <div className="mt-4 border border-white/[0.06] rounded-lg overflow-hidden">
+                <div className="mt-4 border border-gray-200 rounded-lg overflow-hidden">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-white/[0.02] border-b border-white/[0.06]">
-                        <th className="text-left px-4 py-2 text-xs font-medium text-white/40">ESG Factor</th>
-                        <th className="text-right px-4 py-2 text-xs font-medium text-white/40">Impact (%)</th>
-                        <th className="text-right px-4 py-2 text-xs font-medium text-white/40">Value Impact</th>
+                      <tr className="bg-gray-50 border-b border-gray-200">
+                        <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">ESG Factor</th>
+                        <th className="text-right px-4 py-2 text-xs font-medium text-gray-500">Impact (%)</th>
+                        <th className="text-right px-4 py-2 text-xs font-medium text-gray-500">Value Impact</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-gray-100">
                       {[
                         { l: "Green Premium", v: result.esg_breakdown.green_premium_pct, pos: true, icon: Leaf, color: "text-emerald-400" },
                         { l: "EPC/Brown Discount", v: result.esg_breakdown.brown_discount_pct, pos: false, icon: Flame, color: "text-red-500" },
@@ -1067,21 +1067,21 @@ export default function UnifiedValuationPage() {
                         const Icon = row.icon;
                         const impact = (result.reconciled_value_pre_esg * row.v) / 100;
                         return (
-                          <tr key={row.l} className="hover:bg-white/[0.02]">
-                            <td className="px-4 py-2 flex items-center gap-2 text-white/70">
+                          <tr key={row.l} className="hover:bg-gray-50">
+                            <td className="px-4 py-2 flex items-center gap-2 text-gray-700">
                               <Icon className={`h-3.5 w-3.5 ${row.color}`} />{row.l}
                             </td>
-                            <td className={`px-4 py-2 text-right font-medium ${row.v > 0 ? "text-emerald-400" : row.v < 0 ? "text-red-500" : "text-white/30"}`}>
+                            <td className={`px-4 py-2 text-right font-medium ${row.v > 0 ? "text-emerald-400" : row.v < 0 ? "text-red-500" : "text-gray-500"}`}>
                               {row.v >= 0 ? "+" : ""}{fmt(row.v, 2)}%
                             </td>
-                            <td className={`px-4 py-2 text-right font-medium ${impact > 0 ? "text-emerald-400" : impact < 0 ? "text-red-500" : "text-white/30"}`}>
+                            <td className={`px-4 py-2 text-right font-medium ${impact > 0 ? "text-emerald-400" : impact < 0 ? "text-red-500" : "text-gray-500"}`}>
                               {fmtCcy(Math.abs(impact), result.currency)}
                             </td>
                           </tr>
                         );
                       })}
-                      <tr className="bg-white/[0.02] font-semibold">
-                        <td className="px-4 py-2 text-white/90">Net ESG Adjustment</td>
+                      <tr className="bg-gray-50 font-semibold">
+                        <td className="px-4 py-2 text-gray-900">Net ESG Adjustment</td>
                         <td className={`px-4 py-2 text-right ${esgAdjPct >= 0 ? "text-emerald-400" : "text-red-500"}`}>
                           {esgAdjPct >= 0 ? "+" : ""}{fmt(esgAdjPct, 2)}%
                         </td>
@@ -1103,16 +1103,16 @@ export default function UnifiedValuationPage() {
                 {/* Key metrics */}
                 {result.method_results.length > 0 && (
                   <div className="mt-4">
-                    <h4 className="text-sm font-medium text-white/70 mb-2">Key Metrics by Method</h4>
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Key Metrics by Method</h4>
                     <div className="space-y-2">
                       {result.method_results.map(m => (
-                        <div key={m.method} className="bg-[#0d1424] border border-white/[0.06] rounded-lg p-3">
-                          <div className="text-xs font-medium text-white/60 mb-2">{METHOD_LABELS[m.method] || m.method}</div>
+                        <div key={m.method} className="bg-white border border-gray-200 rounded-lg p-3">
+                          <div className="text-xs font-medium text-gray-600 mb-2">{METHOD_LABELS[m.method] || m.method}</div>
                           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
                             {Object.entries(m.key_metrics || {}).map(([k, v]) => (
                               <div key={k} className="flex justify-between gap-2">
-                                <span className="text-white/30 truncate">{k.replace(/_/g, " ")}</span>
-                                <span className="text-white/70 font-medium whitespace-nowrap">
+                                <span className="text-gray-500 truncate">{k.replace(/_/g, " ")}</span>
+                                <span className="text-gray-700 font-medium whitespace-nowrap">
                                   {typeof v === "number" ? (v > 1000 ? fmtCcy(v, result.currency) : fmt(v, 2)) : String(v)}
                                 </span>
                               </div>
@@ -1131,12 +1131,12 @@ export default function UnifiedValuationPage() {
         {/* ── VALIDATION SUMMARY TAB ── */}
         {activeTab === "validation" && result && (
           <div className="space-y-4 max-w-4xl">
-            <div className="bg-[#0d1424] border border-white/[0.06] rounded-xl p-6">
+            <div className="bg-white border border-gray-200 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-4">
                 <CheckCircle className="h-5 w-5 text-emerald-500" />
-                <h2 className="text-lg font-semibold text-white/90">Valuation Validation Summary</h2>
+                <h2 className="text-lg font-semibold text-gray-900">Valuation Validation Summary</h2>
               </div>
-              <p className="text-sm text-white/40 mb-5">
+              <p className="text-sm text-gray-500 mb-5">
                 This validation summary documents the methodology, inputs, outputs, and compliance status in accordance with RICS PS2 (Inspections), RICS VPS4 (ESG), and IVS 103 (Reporting).
               </p>
 
@@ -1174,34 +1174,34 @@ export default function UnifiedValuationPage() {
                   ["Final Value", fmtCcy(result.final_value, result.currency)],
                   ["Value Range", `${fmtCcy(result.value_range_low, result.currency)} – ${fmtCcy(result.value_range_high, result.currency)}`],
                 ].map(([k, v]) => (
-                  <div key={k} className="flex justify-between border-b border-white/[0.04] pb-2">
-                    <span className="text-white/40">{k}</span>
-                    <span className="font-medium text-white/90 text-right max-w-xs truncate">{v ?? "—"}</span>
+                  <div key={k} className="flex justify-between border-b border-gray-200 pb-2">
+                    <span className="text-gray-500">{k}</span>
+                    <span className="font-medium text-gray-900 text-right max-w-xs truncate">{v ?? "—"}</span>
                   </div>
                 ))}
               </div>
 
               {/* Method details */}
-              <h4 className="font-semibold text-white/70 mb-3">Method Detail</h4>
+              <h4 className="font-semibold text-gray-700 mb-3">Method Detail</h4>
               <div className="space-y-3 mb-6">
                 {result.validation_summary?.method_details?.map(m => (
-                  <div key={m.method} className="border border-white/[0.06] rounded-lg p-4">
+                  <div key={m.method} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium text-white/70">{METHOD_LABELS[m.method] || m.method}</span>
+                      <span className="font-medium text-gray-700">{METHOD_LABELS[m.method] || m.method}</span>
                       <div className="flex items-center gap-2">
                         <span className={`text-xs px-2 py-0.5 rounded border font-medium ${confidenceColor(m.confidence)}`}>
                           {m.confidence?.toUpperCase()}
                         </span>
-                        <span className="text-xs text-white/30">Weight: {fmt(m.weight * 100, 0)}%</span>
-                        <span className="text-sm font-bold text-white/90">{fmtCcy(m.indicated_value, result.currency)}</span>
+                        <span className="text-xs text-gray-500">Weight: {fmt(m.weight * 100, 0)}%</span>
+                        <span className="text-sm font-bold text-gray-900">{fmtCcy(m.indicated_value, result.currency)}</span>
                       </div>
                     </div>
-                    <p className="text-xs text-white/30 italic mb-2">Basis: {m.basis}</p>
+                    <p className="text-xs text-gray-500 italic mb-2">Basis: {m.basis}</p>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
                       {Object.entries(m.key_metrics || {}).map(([k, v]) => (
-                        <div key={k} className="bg-white/[0.02] px-2 py-1 rounded">
-                          <span className="text-white/30">{k.replace(/_/g, " ")}: </span>
-                          <span className="font-medium text-white/70">
+                        <div key={k} className="bg-gray-50 px-2 py-1 rounded">
+                          <span className="text-gray-500">{k.replace(/_/g, " ")}: </span>
+                          <span className="font-medium text-gray-700">
                             {typeof v === "number" ? (v > 1000 ? fmtCcy(v, result.currency) : fmt(v, 2)) : String(v)}
                           </span>
                         </div>
@@ -1212,10 +1212,10 @@ export default function UnifiedValuationPage() {
               </div>
 
               {/* Data sources */}
-              <h4 className="font-semibold text-white/70 mb-2">Data Sources & References</h4>
+              <h4 className="font-semibold text-gray-700 mb-2">Data Sources & References</h4>
               <ul className="space-y-1">
                 {result.validation_summary?.data_sources?.map(ds => (
-                  <li key={ds} className="flex items-start gap-2 text-xs text-white/60">
+                  <li key={ds} className="flex items-start gap-2 text-xs text-gray-600">
                     <CheckCircle className="h-3 w-3 text-emerald-400 mt-0.5 flex-shrink-0" />
                     {ds}
                   </li>
@@ -1244,11 +1244,11 @@ export default function UnifiedValuationPage() {
 
         {/* No results yet placeholder */}
         {(activeTab === "results" || activeTab === "validation") && !result && (
-          <div className="text-center py-20 text-white/30">
+          <div className="text-center py-20 text-gray-500">
             <Calculator className="h-12 w-12 mx-auto mb-4 opacity-30" />
             <p className="text-lg font-medium">No valuation run yet</p>
             <p className="text-sm mt-1">Complete the input parameters and click "Run Valuation"</p>
-            <button onClick={() => setActiveTab("inputs")} className="mt-4 px-4 py-2 bg-cyan-400 text-white text-sm rounded-lg hover:bg-cyan-300 transition-colors">
+            <button onClick={() => setActiveTab("inputs")} className="mt-4 px-4 py-2 bg-[#164E8A] text-white text-sm rounded-lg hover:bg-gray-800 transition-colors">
               Go to Inputs
             </button>
           </div>

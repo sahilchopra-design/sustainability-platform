@@ -135,7 +135,7 @@ const GeographicMapInner = ({
 
       const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
         <div style="padding: 8px; min-width: 160px;">
-          <h4 style="font-weight: 600; color: #1e293b; font-size: 13px; margin-bottom: 4px;">${project.name}</h4>
+          <h4 style="font-weight: 600; color: #f0f0f0; font-size: 13px; margin-bottom: 4px;">${project.name}</h4>
           <div style="font-size: 11px; color: #64748b;">
             <p><strong>Type:</strong> ${project.project_type?.replace(/_/g, ' ')}</p>
             <p><strong>Credits:</strong> ${project.annual_credits?.toLocaleString()} tCO2e/yr</p>
@@ -159,19 +159,19 @@ const GeographicMapInner = ({
   }, [mapLoaded, markers, onProjectClick]);
 
   return (
-    <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6" data-testid="geographic-map">
-      <h3 className="text-lg font-semibold text-white mb-4">
+    <div className="bg-white rounded-xl border border-gray-200 p-6" data-testid="geographic-map">
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">
         Project Locations
       </h3>
       
       <div 
         ref={mapContainer} 
-        className="rounded-lg overflow-hidden border border-white/[0.06]" 
+        className="rounded-lg overflow-hidden border border-gray-200" 
         style={{ height }}
       />
       
       {/* Legend */}
-      <div className="mt-4 flex items-center gap-4 text-xs text-white/40">
+      <div className="mt-4 flex items-center gap-4 text-xs text-gray-500">
         <span className="font-medium">Risk Level:</span>
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded-full bg-emerald-500" />
@@ -189,13 +189,13 @@ const GeographicMapInner = ({
       
       {/* Distribution summary */}
       {geoDistribution.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-white/[0.04]">
-          <p className="text-xs font-medium text-white/40 mb-2">Distribution by Country</p>
+        <div className="mt-4 pt-4 border-t border-gray-200">
+          <p className="text-xs font-medium text-gray-500 mb-2">Distribution by Country</p>
           <div className="flex flex-wrap gap-2">
             {geoDistribution.map((geo) => (
               <div 
                 key={geo.country_code}
-                className="px-2 py-1 bg-white/[0.06] rounded text-xs"
+                className="px-2 py-1 bg-gray-50 rounded text-xs"
               >
                 <span className="font-medium">{geo.country_code}:</span>{' '}
                 {geo.project_count} project{geo.project_count !== 1 ? 's' : ''} ({geo.total_credits?.toLocaleString()} tCO2e)

@@ -35,7 +35,7 @@ const fmt = {
 
 function KpiCard({ label, value, unit = '', color = 'cyan', sub }) {
   const colors = {
-    cyan:   'text-cyan-400',
+    cyan:   'text-gray-700',
     green:  'text-emerald-400',
     amber:  'text-amber-400',
     red:    'text-red-400',
@@ -43,28 +43,28 @@ function KpiCard({ label, value, unit = '', color = 'cyan', sub }) {
     purple: 'text-purple-400',
   };
   return (
-    <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
-      <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">{label}</p>
+    <div className="bg-white border border-gray-200 rounded-lg p-4">
+      <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">{label}</p>
       <p className={`text-2xl font-mono font-bold ${colors[color] || colors.cyan}`}>
-        {value}<span className="text-sm text-slate-400 ml-1">{unit}</span>
+        {value}<span className="text-sm text-gray-500 ml-1">{unit}</span>
       </p>
-      {sub && <p className="text-xs text-slate-500 mt-1">{sub}</p>}
+      {sub && <p className="text-xs text-gray-500 mt-1">{sub}</p>}
     </div>
   );
 }
 
 function DataRow({ label, value, highlight }) {
   return (
-    <div className={`flex justify-between items-start py-2 border-b border-slate-700/50 ${highlight ? 'bg-slate-800/30 px-2 rounded' : ''}`}>
-      <span className="text-xs text-slate-400 w-1/2">{label}</span>
-      <span className="text-xs text-slate-200 text-right w-1/2 font-mono">{value}</span>
+    <div className={`flex justify-between items-start py-2 border-b border-gray-200 ${highlight ? 'bg-gray-50 px-2 rounded' : ''}`}>
+      <span className="text-xs text-gray-500 w-1/2">{label}</span>
+      <span className="text-xs text-gray-300 text-right w-1/2 font-mono">{value}</span>
     </div>
   );
 }
 
 function SectionHeading({ children }) {
   return (
-    <h3 className="text-xs font-semibold text-cyan-400 uppercase tracking-widest mt-6 mb-3 border-b border-slate-700 pb-1">
+    <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-widest mt-6 mb-3 border-b border-gray-200 pb-1">
       {children}
     </h3>
   );
@@ -72,12 +72,12 @@ function SectionHeading({ children }) {
 
 function Badge({ label, variant = 'default' }) {
   const v = {
-    default: 'bg-slate-700 text-slate-300',
+    default: 'bg-gray-200 text-gray-400',
     green:   'bg-emerald-900/60 text-emerald-300 border border-emerald-700',
     amber:   'bg-amber-900/60 text-amber-300 border border-amber-700',
     red:     'bg-red-900/60 text-red-300 border border-red-700',
     blue:    'bg-blue-900/60 text-blue-300 border border-blue-700',
-    cyan:    'bg-cyan-900/60 text-cyan-300 border border-cyan-700',
+    cyan:    'bg-gray-100 text-gray-800 border border-gray-300',
     purple:  'bg-purple-900/60 text-purple-300 border border-purple-700',
   };
   return (
@@ -101,7 +101,7 @@ function MembershipBadges({ p }) {
     { key: 'equator_principles',label: 'Equator',  variant: 'blue' },
   ];
   const active = items.filter(i => p[i.key]);
-  if (!active.length) return <span className="text-xs text-slate-500">None recorded</span>;
+  if (!active.length) return <span className="text-xs text-gray-500">None recorded</span>;
   return <div>{active.map(i => <Badge key={i.key} label={i.label} variant={i.variant} />)}</div>;
 }
 
@@ -223,7 +223,7 @@ function PrudentialTab({ p }) {
       <DataRow label="Nat-Cat Climate Exposure" value={fmt.eur_bn(p.climate_nat_cat_exposure_eur_bn)} />
       {p.sfcr_report_url && (
         <a href={p.sfcr_report_url} target="_blank" rel="noopener noreferrer"
-           className="inline-block mt-2 text-xs text-cyan-400 hover:text-cyan-300 underline">
+           className="inline-block mt-2 text-xs text-gray-700 hover:text-gray-800 underline">
           SFCR Report
         </a>
       )}
@@ -249,7 +249,7 @@ function Pillar3Tab({ p }) {
       {p.p3_report_url && (
         <div className="mt-1 mb-2">
           <a href={p.p3_report_url} target="_blank" rel="noopener noreferrer"
-             className="text-xs text-cyan-400 hover:text-cyan-300 underline">
+             className="text-xs text-gray-700 hover:text-gray-800 underline">
             Pillar 3 Report {p.p3_report_date ? `(${p.p3_report_date})` : ''}
           </a>
         </div>
@@ -321,7 +321,7 @@ function ClimateTab({ p }) {
       <DataRow label="Assurance Level"                value={fmt.text(p.assurance_level)} />
       {p.transition_plan_url && (
         <a href={p.transition_plan_url} target="_blank" rel="noopener noreferrer"
-           className="inline-block mt-2 text-xs text-cyan-400 hover:text-cyan-300 underline">
+           className="inline-block mt-2 text-xs text-gray-700 hover:text-gray-800 underline">
           Transition Plan
         </a>
       )}
@@ -404,7 +404,7 @@ function MembershipsTab({ p }) {
       <DataRow label="Last Updated"    value={p.updated_at ? new Date(p.updated_at).toLocaleDateString() : '—'} />
       {p.sustainability_report_url && (
         <a href={p.sustainability_report_url} target="_blank" rel="noopener noreferrer"
-           className="inline-block mt-2 text-xs text-cyan-400 hover:text-cyan-300 underline">
+           className="inline-block mt-2 text-xs text-gray-700 hover:text-gray-800 underline">
           Sustainability Report
         </a>
       )}
@@ -432,13 +432,13 @@ function ProfileDetailPanel({ profile, onClose }) {
       <div className="flex-1 bg-black/60" onClick={onClose} />
 
       {/* Panel */}
-      <div className="w-full max-w-xl bg-slate-900 border-l border-slate-700 flex flex-col overflow-hidden shadow-2xl">
+      <div className="w-full max-w-xl bg-white border-l border-gray-200 flex flex-col overflow-hidden shadow-2xl">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-700 bg-slate-800/60">
+        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-base font-bold text-slate-100">{p.legal_name}</h2>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <h2 className="text-base font-bold text-gray-900">{p.legal_name}</h2>
+              <p className="text-xs text-gray-500 mt-0.5">
                 {[p.institution_type, p.headquarters_country, p.entity_lei].filter(Boolean).join(' · ')}
               </p>
               <div className="mt-2 flex flex-wrap gap-1">
@@ -452,7 +452,7 @@ function ProfileDetailPanel({ profile, onClose }) {
                 <Badge label={p.data_source === 'csrd_report' ? 'Real Data' : 'Analyst Estimate'} variant={p.data_source === 'csrd_report' ? 'cyan' : 'default'} />
               </div>
             </div>
-            <button onClick={onClose} className="text-slate-500 hover:text-slate-300 ml-4 text-xl leading-none">&times;</button>
+            <button onClick={onClose} className="text-gray-500 hover:text-gray-400 ml-4 text-xl leading-none">&times;</button>
           </div>
 
           {/* Tabs */}
@@ -463,8 +463,8 @@ function ProfileDetailPanel({ profile, onClose }) {
                 onClick={() => setActiveTab(t.id)}
                 className={`px-3 py-1.5 text-xs font-medium rounded whitespace-nowrap transition-colors ${
                   activeTab === t.id
-                    ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-gray-100 text-gray-800 border border-gray-400'
+                    : 'text-gray-500 hover:text-gray-300'
                 }`}
               >
                 {t.label}
@@ -493,21 +493,21 @@ function ProfileCard({ profile, onClick }) {
   const typeColor = {
     'Bank':           'bg-blue-900/40 text-blue-300',
     'Insurance':      'bg-purple-900/40 text-purple-300',
-    'Asset Manager':  'bg-cyan-900/40 text-cyan-300',
+    'Asset Manager':  'bg-gray-100 text-gray-800',
     'Energy':         'bg-amber-900/40 text-amber-300',
     'Technology':     'bg-green-900/40 text-green-300',
-    'Corporate':      'bg-slate-700/60 text-slate-300',
-  }[p.institution_type] || 'bg-slate-700/60 text-slate-300';
+    'Corporate':      'bg-gray-200 text-gray-400',
+  }[p.institution_type] || 'bg-gray-200 text-gray-400';
 
   return (
     <div
       onClick={onClick}
-      className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 cursor-pointer hover:border-cyan-500/50 hover:bg-slate-800 transition-all"
+      className="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-gray-400 hover:bg-white transition-all"
     >
       <div className="flex items-start justify-between mb-2">
         <div>
-          <p className="text-sm font-semibold text-slate-100 leading-tight">{p.legal_name}</p>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-sm font-semibold text-gray-900 leading-tight">{p.legal_name}</p>
+          <p className="text-xs text-gray-500 mt-0.5">
             {[p.headquarters_city, p.headquarters_country].filter(Boolean).join(', ')}
           </p>
         </div>
@@ -517,18 +517,18 @@ function ProfileCard({ profile, onClick }) {
       </div>
 
       {/* Key metrics row */}
-      <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-700/50">
+      <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-gray-200">
         <div>
-          <p className="text-[9px] text-slate-500 uppercase">Assets</p>
-          <p className="text-xs font-mono text-slate-300">{fmt.eur_bn(p.total_assets_eur_bn)}</p>
+          <p className="text-[9px] text-gray-500 uppercase">Assets</p>
+          <p className="text-xs font-mono text-gray-400">{fmt.eur_bn(p.total_assets_eur_bn)}</p>
         </div>
         <div>
-          <p className="text-[9px] text-slate-500 uppercase">CET1</p>
-          <p className="text-xs font-mono text-slate-300">{fmt.pct(p.cet1_ratio_pct)}</p>
+          <p className="text-[9px] text-gray-500 uppercase">CET1</p>
+          <p className="text-xs font-mono text-gray-400">{fmt.pct(p.cet1_ratio_pct)}</p>
         </div>
         <div>
-          <p className="text-[9px] text-slate-500 uppercase">GAR</p>
-          <p className="text-xs font-mono text-slate-300">{fmt.pct(p.p3_gar_pct)}</p>
+          <p className="text-[9px] text-gray-500 uppercase">GAR</p>
+          <p className="text-xs font-mono text-gray-400">{fmt.pct(p.p3_gar_pct)}</p>
         </div>
       </div>
 
@@ -638,11 +638,11 @@ export default function CompanyProfilesPage() {
   const sbtiCount  = profiles.filter(p => p.sbti_status === 'Approved').length;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-6">
+    <div className="min-h-screen bg-[#F3F4F6] text-gray-900 p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-100">Company Profiles</h1>
-        <p className="text-sm text-slate-400 mt-1">
+        <h1 className="text-2xl font-bold text-gray-900">Company Profiles</h1>
+        <p className="text-sm text-gray-500 mt-1">
           Entity identity, sector classification, Basel III prudential metrics, Pillar 3 ESG disclosures,
           Solvency II, and climate commitments — {total} entities
         </p>
@@ -661,7 +661,7 @@ export default function CompanyProfilesPage() {
         <button
           onClick={handleExtract}
           disabled={extracting}
-          className="px-4 py-2 text-sm bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 rounded-lg font-medium transition-colors"
+          className="px-4 py-2 text-sm bg-gray-900 hover:bg-gray-900 disabled:opacity-50 rounded-lg font-medium transition-colors"
           data-testid="extract-from-reports-btn"
         >
           {extracting ? 'Extracting...' : 'Extract from CSRD Reports'}
@@ -669,7 +669,7 @@ export default function CompanyProfilesPage() {
         <button
           onClick={handleSeed}
           disabled={seeding}
-          className="px-4 py-2 text-sm bg-slate-700 hover:bg-slate-600 disabled:opacity-50 rounded-lg font-medium transition-colors"
+          className="px-4 py-2 text-sm bg-gray-200 hover:bg-gray-300 disabled:opacity-50 rounded-lg font-medium transition-colors"
           data-testid="seed-from-engine-btn"
         >
           {seeding ? 'Seeding...' : 'Seed from Peer Engine'}
@@ -693,27 +693,27 @@ export default function CompanyProfilesPage() {
           placeholder="Search by name, LEI, ISIN, ticker..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="flex-1 min-w-48 bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+          className="flex-1 min-w-48 bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
           data-testid="company-search"
         />
         <select
           value={sector}
           onChange={e => setSector(e.target.value)}
-          className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500"
+          className="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500"
         >
           {SECTOR_OPTIONS.map(s => <option key={s} value={s}>{s === 'All' ? 'All Sectors' : s}</option>)}
         </select>
         <select
           value={instType}
           onChange={e => setInstType(e.target.value)}
-          className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500"
+          className="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500"
         >
           {TYPE_OPTIONS.map(t => <option key={t} value={t}>{t === 'All' ? 'All Types' : t}</option>)}
         </select>
         <select
           value={isFI === null ? 'all' : isFI ? 'fi' : 'non-fi'}
           onChange={e => setIsFI(e.target.value === 'all' ? null : e.target.value === 'fi')}
-          className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500"
+          className="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500"
         >
           <option value="all">All Entities</option>
           <option value="fi">Financial Institutions</option>
@@ -725,25 +725,25 @@ export default function CompanyProfilesPage() {
       {loading ? (
         <div className="grid grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-40 bg-slate-800/50 border border-slate-700 rounded-lg animate-pulse" />
+            <div key={i} className="h-40 bg-white border border-gray-200 rounded-lg animate-pulse" />
           ))}
         </div>
       ) : error ? (
         <div className="text-center py-16">
-          <p className="text-slate-400 mb-2">Could not load company profiles</p>
-          <p className="text-xs text-slate-500 mb-4">{error}</p>
-          <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-6 max-w-md mx-auto text-left">
-            <p className="text-sm font-semibold text-slate-300 mb-2">Populate company profiles:</p>
-            <ol className="text-xs text-slate-400 space-y-1 list-decimal list-inside">
-              <li>Click <strong className="text-cyan-400">Extract from CSRD Reports</strong> to load real data from the 8 processed annual reports</li>
-              <li>Click <strong className="text-cyan-400">Seed from Peer Engine</strong> to add analyst estimates for all 61 benchmark institutions</li>
+          <p className="text-gray-500 mb-2">Could not load company profiles</p>
+          <p className="text-xs text-gray-500 mb-4">{error}</p>
+          <div className="bg-white border border-gray-200 rounded-lg p-6 max-w-md mx-auto text-left">
+            <p className="text-sm font-semibold text-gray-400 mb-2">Populate company profiles:</p>
+            <ol className="text-xs text-gray-500 space-y-1 list-decimal list-inside">
+              <li>Click <strong className="text-gray-700">Extract from CSRD Reports</strong> to load real data from the 8 processed annual reports</li>
+              <li>Click <strong className="text-gray-700">Seed from Peer Engine</strong> to add analyst estimates for all 61 benchmark institutions</li>
             </ol>
           </div>
         </div>
       ) : profiles.length === 0 ? (
         <div className="text-center py-16">
-          <p className="text-slate-400 mb-2">No company profiles found</p>
-          <p className="text-xs text-slate-500 mb-4">
+          <p className="text-gray-500 mb-2">No company profiles found</p>
+          <p className="text-xs text-gray-500 mb-4">
             {search || sector !== 'All' || instType !== 'All'
               ? 'Try clearing the filters'
               : 'Use the buttons above to populate profiles'}
@@ -751,11 +751,11 @@ export default function CompanyProfilesPage() {
           {!search && sector === 'All' && instType === 'All' && (
             <div className="flex gap-3 justify-center">
               <button onClick={handleExtract} disabled={extracting}
-                className="px-4 py-2 text-sm bg-cyan-600 hover:bg-cyan-500 rounded-lg">
+                className="px-4 py-2 text-sm bg-gray-900 hover:bg-gray-800 rounded-lg">
                 Extract from CSRD Reports
               </button>
               <button onClick={handleSeed} disabled={seeding}
-                className="px-4 py-2 text-sm bg-slate-700 hover:bg-slate-600 rounded-lg">
+                className="px-4 py-2 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg">
                 Seed from Peer Engine
               </button>
             </div>

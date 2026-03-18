@@ -169,7 +169,7 @@ export default function NGFSScenariosPage() {
             <>
               <div className="flex flex-wrap gap-1.5">
                 {compareData.scenarios?.map((sc, i) => (
-                  <Badge key={sc.id} style={{ backgroundColor: COLORS[i % COLORS.length], color: 'white' }} className="text-xs">{sc.name}</Badge>
+                  <Badge key={sc.id} style={{ backgroundColor: COLORS[i % COLORS.length], color: '#111' }} className="text-xs">{sc.name}</Badge>
                 ))}
               </div>
               {Object.entries(compareData.metrics || {}).map(([metric, mdata]) => (

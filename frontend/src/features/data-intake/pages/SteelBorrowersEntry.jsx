@@ -109,7 +109,7 @@ export default function SteelBorrowersEntry() {
   return (
     <div className="p-6 bg-gray-900 min-h-screen text-gray-100">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Steel Borrowers</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Steel Borrowers</h1>
         <p className="text-gray-400 text-sm mt-1">
           Production route blend and CO2 intensity per steel borrower. Blended intensity = weighted average of BF-BOF, EAF, DRI.
         </p>
@@ -121,7 +121,7 @@ export default function SteelBorrowersEntry() {
           <div className="p-3 border-b border-gray-700 flex items-center justify-between">
             <span className="text-sm font-semibold text-gray-300">Borrowers ({borrowers.length})</span>
             <button onClick={newBorrower}
-              className="text-xs px-2 py-1 bg-blue-700 hover:bg-blue-600 text-white rounded">
+              className="text-xs px-2 py-1 bg-blue-700 hover:bg-blue-600 text-gray-900 rounded">
               + New
             </button>
           </div>
@@ -134,7 +134,7 @@ export default function SteelBorrowersEntry() {
                   onClick={() => selectBorrower(b)}
                   className={`p-3 cursor-pointer hover:bg-gray-700 ${selected === b.borrower_id ? 'bg-blue-900/30 border-l-2 border-blue-500' : ''}`}
                 >
-                  <div className="font-medium text-sm text-white">{b.borrower_name || b.borrower_id}</div>
+                  <div className="font-medium text-sm text-gray-900">{b.borrower_name || b.borrower_id}</div>
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-xs text-gray-400">{b.country_iso2}</span>
                     <span className="text-xs text-blue-300 font-mono">
@@ -159,23 +159,23 @@ export default function SteelBorrowersEntry() {
             <Field label="Borrower ID *">
               <input value={form.borrower_id} onChange={e => set('borrower_id', e.target.value)}
                 disabled={!!selected}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white text-sm disabled:opacity-60" />
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900 text-sm disabled:opacity-60" />
             </Field>
             <Field label="Name">
               <input value={form.borrower_name} onChange={e => set('borrower_name', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white text-sm" />
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900 text-sm" />
             </Field>
             <Field label="Country (ISO2)">
               <input value={form.country_iso2} onChange={e => set('country_iso2', e.target.value.toUpperCase())}
-                maxLength={2} className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white text-sm" />
+                maxLength={2} className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900 text-sm" />
             </Field>
             <Field label="Crude Steel Production (Mt/yr)">
               <input type="number" value={form.crude_steel_production_mt} onChange={e => set('crude_steel_production_mt', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white text-sm" />
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900 text-sm" />
             </Field>
             <Field label="Data Year">
               <select value={form.data_year} onChange={e => set('data_year', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white text-sm">
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900 text-sm">
                 {[2024, 2023, 2022, 2021, 2020].map(y => <option key={y} value={y}>{y}</option>)}
               </select>
             </Field>
@@ -210,7 +210,7 @@ export default function SteelBorrowersEntry() {
               <div className="text-xs text-gray-400 mt-1">Blended CO2 Intensity (tCO2/tCS)</div>
             </div>
             <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
-              <div className="text-xl font-bold text-white">
+              <div className="text-xl font-bold text-gray-900">
                 {totalCo2Estimate ? Number(totalCo2Estimate).toLocaleString() : '—'}
               </div>
               <div className="text-xs text-gray-400 mt-1">Estimated Total CO2 (tCO2e/yr)</div>
@@ -232,7 +232,7 @@ export default function SteelBorrowersEntry() {
 
           <Field label="Notes">
             <textarea value={form.notes} onChange={e => set('notes', e.target.value)} rows={2}
-              className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white text-sm" />
+              className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900 text-sm" />
           </Field>
 
           {error && <div className="p-3 bg-red-900/30 border border-red-700 rounded text-red-300 text-sm">{error}</div>}
@@ -240,12 +240,12 @@ export default function SteelBorrowersEntry() {
 
           <div className="flex gap-3">
             <button onClick={handleSave} disabled={saving || !form.borrower_id || totalShare > 100.1}
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-sm text-white rounded">
+              className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-sm text-gray-900 rounded">
               {saving ? 'Saving...' : selected ? 'Update' : 'Save'}
             </button>
             {selected && (
               <button onClick={() => handleDelete(form.borrower_id)}
-                className="px-5 py-2 bg-red-800 hover:bg-red-700 text-sm text-white rounded">
+                className="px-5 py-2 bg-red-800 hover:bg-red-700 text-sm text-gray-900 rounded">
                 Delete
               </button>
             )}

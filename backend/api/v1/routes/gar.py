@@ -444,3 +444,63 @@ async def get_rating_scale() -> Dict[str, Any]:
 async def get_scoring_weights() -> Dict[str, Any]:
     """Return default scoring weights."""
     return {"weights": CounterpartyClimateScorer.get_default_weights()}
+
+
+# ---------------------------------------------------------------------------
+# DB-POWERED GAR AUTO-CALCULATION ENDPOINTS
+# ---------------------------------------------------------------------------
+
+
+def _get_gar_db_service():
+    """Lazy-load GARDBService with DB engine."""
+    from services.gar_db_service import GARDBService
+    from db.base import engine as db_engine
+    return GARDBService(db_engine)
+
+
+@router.get(
+    "/auto-calculate/{entity_id}",
+    summary="Auto-calculate GAR from DB data for an FI entity",
+)
+async def auto_calculate_gar(
+    entity_id: str,
+    reporting_year: int = Query(2024, description="Reporting year"),
+    persist: bool = Query(True, description="Persist results to fi_eu_taxonomy_kpis"),
+) -> Dict[str, Any]:
+    """
+    Auto-calculate Green Asset Ratio by pulling data from:
+    - eu_taxonomy_assessments + eu_taxonomy_activities (alignment data)
+    - fi_loan_books (exposure amounts / sector breakdown)
+
+    Results are persisted to fi_eu_taxonomy_kpis unless persist=false.
+    No manual exposure input required.
+    """
+    svc = _get_gar_db_service()
+    return svc.calculate_gar_for_entity(
+        entity_id=entity_id,
+        reporting_year=reporting_year,
+        persist=persist,
+    )
+
+
+@router.get(
+    "/auto-calculate/by-lei/{lei}",
+    summary="Auto-calculate GAR by LEI",
+)
+async def auto_calculate_gar_by_lei(
+    lei: str,
+    reporting_year: int = Query(2024, description="Reporting year"),
+    persist: bool = Query(True, description="Persist results to fi_eu_taxonomy_kpis"),
+) -> Dict[str, Any]:
+    """
+    Auto-calculate GAR by LEI — resolves to fi_entities, gathers taxonomy
+    and loan book data, computes GAR, and persists results.
+    """
+    if len(lei) != 20:
+        raise HTTPException(400, "LEI must be exactly 20 characters")
+    svc = _get_gar_db_service()
+    return svc.calculate_gar_by_lei(
+        lei=lei,
+        reporting_year=reporting_year,
+        persist=persist,
+    )

@@ -73,18 +73,18 @@ export function PageShell({ title, subtitle, badge, actions, children }) {
   return (
     <div className="flex flex-col h-full min-h-0">
       {/* Page header */}
-      <div className="px-6 py-4 border-b border-white/[0.06] bg-[#070d1a] shrink-0">
+      <div className="px-6 py-4 border-b border-black/[0.08] bg-white shrink-0">
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-0.5">
-              <h1 className="text-sm font-semibold text-white/90">{title}</h1>
+              <h1 className="text-sm font-semibold text-slate-900">{title}</h1>
               {badge && (
-                <span className="text-[9px] font-mono font-bold text-cyan-400/70 bg-cyan-400/10 border border-cyan-400/20 px-1.5 py-0.5 rounded uppercase tracking-wide">
+                <span className="text-[9px] font-mono font-bold text-slate-700 bg-black/[0.05] border border-black/[0.15] px-1.5 py-0.5 rounded uppercase tracking-wide">
                   {badge}
                 </span>
               )}
             </div>
-            {subtitle && <p className="text-[11px] text-white/35">{subtitle}</p>}
+            {subtitle && <p className="text-[11px] text-slate-400">{subtitle}</p>}
           </div>
           {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}
         </div>
@@ -101,7 +101,7 @@ export function PageShell({ title, subtitle, badge, actions, children }) {
 
 export function KpiCard({ label, value, sub, delta, deltaLabel, color = 'cyan', icon, loading, size = 'md' }) {
   const accentMap = {
-    cyan:   { border: 'border-cyan-500/20',   icon: 'text-cyan-400',    bg: 'bg-cyan-400/8' },
+    cyan:   { border: 'border-black/[0.15]',   icon: 'text-slate-700',    bg: 'bg-black/8' },
     green:  { border: 'border-emerald-500/20', icon: 'text-emerald-400', bg: 'bg-emerald-400/8' },
     amber:  { border: 'border-amber-500/20',   icon: 'text-amber-400',  bg: 'bg-amber-400/8' },
     red:    { border: 'border-red-500/20',     icon: 'text-red-400',    bg: 'bg-red-400/8' },
@@ -112,9 +112,9 @@ export function KpiCard({ label, value, sub, delta, deltaLabel, color = 'cyan', 
   const valueSize = size === 'lg' ? 'text-3xl' : 'text-xl';
 
   return (
-    <div className={`bg-[#0d1424] border ${a.border} rounded-lg p-4 flex flex-col gap-2`}>
+    <div className={`bg-white border ${a.border} rounded-lg p-4 flex flex-col gap-2`}>
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-semibold text-white/40 uppercase tracking-[0.1em]">{label}</span>
+        <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.1em]">{label}</span>
         {icon && (
           <div className={`${a.bg} ${a.icon} rounded p-1.5`}>
             {icon}
@@ -122,22 +122,22 @@ export function KpiCard({ label, value, sub, delta, deltaLabel, color = 'cyan', 
         )}
       </div>
       {loading ? (
-        <div className="h-7 w-28 bg-white/5 rounded animate-pulse" />
+        <div className="h-7 w-28 bg-black/[0.03] rounded animate-pulse" />
       ) : (
-        <span className={`${valueSize} font-bold text-white mono-num leading-none`}>{value}</span>
+        <span className={`${valueSize} font-bold text-slate-900 mono-num leading-none`}>{value}</span>
       )}
       <div className="flex items-center gap-2">
         {delta != null && (
           <span className={`text-[10px] font-mono font-semibold px-1 py-0.5 rounded ${
             delta > 0 ? 'text-red-400 bg-red-400/10' :
             delta < 0 ? 'text-emerald-400 bg-emerald-400/10' :
-                        'text-white/30 bg-white/5'
+                        'text-slate-400 bg-black/[0.03]'
           }`}>
             {delta > 0 ? '+' : ''}{delta.toFixed(1)}%
           </span>
         )}
-        {sub && <span className="text-[10px] text-white/30">{sub}</span>}
-        {deltaLabel && <span className="text-[10px] text-white/25">{deltaLabel}</span>}
+        {sub && <span className="text-[10px] text-slate-400">{sub}</span>}
+        {deltaLabel && <span className="text-[10px] text-slate-300">{deltaLabel}</span>}
       </div>
     </div>
   );
@@ -147,12 +147,12 @@ export function KpiCard({ label, value, sub, delta, deltaLabel, color = 'cyan', 
 
 export function Section({ title, subtitle, actions, children, className = '' }) {
   return (
-    <div className={`bg-[#0d1424] border border-white/[0.06] rounded-lg overflow-hidden ${className}`}>
+    <div className={`bg-white border border-black/[0.08] rounded-lg overflow-hidden ${className}`}>
       {(title || actions) && (
-        <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.05]">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-black/[0.06]">
           <div>
-            <p className="text-xs font-semibold text-white/80">{title}</p>
-            {subtitle && <p className="text-[10px] text-white/35 mt-0.5">{subtitle}</p>}
+            <p className="text-xs font-semibold text-slate-800">{title}</p>
+            {subtitle && <p className="text-[10px] text-slate-400 mt-0.5">{subtitle}</p>}
           </div>
           {actions && <div className="flex items-center gap-2">{actions}</div>}
         </div>
@@ -170,11 +170,11 @@ export function DataTable({ columns, rows, loading, emptyText = 'No data', maxRo
     <div className="overflow-auto">
       <table className="w-full text-[11px]">
         <thead>
-          <tr className="border-b border-white/[0.06]">
+          <tr className="border-b border-black/[0.08]">
             {columns.map(col => (
               <th
                 key={col.key}
-                className={`pb-2 text-[9px] font-semibold text-white/30 uppercase tracking-[0.1em] whitespace-nowrap ${
+                className={`pb-2 text-[9px] font-semibold text-slate-400 uppercase tracking-[0.1em] whitespace-nowrap ${
                   col.align === 'right' ? 'text-right pr-3' : col.align === 'center' ? 'text-center' : 'text-left pl-0'
                 }`}
               >
@@ -186,24 +186,24 @@ export function DataTable({ columns, rows, loading, emptyText = 'No data', maxRo
         <tbody>
           {loading ? (
             Array.from({ length: 5 }).map((_, i) => (
-              <tr key={i} className="border-b border-white/[0.03]">
+              <tr key={i} className="border-b border-black/[0.04]">
                 {columns.map(col => (
                   <td key={col.key} className="py-2 pr-3">
-                    <div className="h-3 bg-white/5 rounded animate-pulse" style={{ width: `${40 + Math.random() * 50}%` }} />
+                    <div className="h-3 bg-black/[0.03] rounded animate-pulse" style={{ width: `${40 + Math.random() * 50}%` }} />
                   </td>
                 ))}
               </tr>
             ))
           ) : data?.length ? (
             data.map((row, ri) => (
-              <tr key={ri} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors">
+              <tr key={ri} className="border-b border-black/[0.04] hover:bg-black/[0.02] transition-colors">
                 {columns.map(col => (
                   <td
                     key={col.key}
                     className={`py-2 whitespace-nowrap ${
-                      col.align === 'right' ? 'text-right pr-3 mono-num text-white/70' :
-                      col.align === 'center' ? 'text-center text-white/70' :
-                      'text-left text-white/70'
+                      col.align === 'right' ? 'text-right pr-3 mono-num text-slate-700' :
+                      col.align === 'center' ? 'text-center text-slate-700' :
+                      'text-left text-slate-700'
                     }`}
                   >
                     {col.render ? col.render(row[col.key], row) : row[col.key]}
@@ -213,7 +213,7 @@ export function DataTable({ columns, rows, loading, emptyText = 'No data', maxRo
             ))
           ) : (
             <tr>
-              <td colSpan={columns.length} className="py-8 text-center text-white/25">{emptyText}</td>
+              <td colSpan={columns.length} className="py-8 text-center text-slate-300">{emptyText}</td>
             </tr>
           )}
         </tbody>
@@ -232,16 +232,16 @@ export function StatusBadge({ value, labels = {} }) {
     critical:  'text-rose-400 bg-rose-400/10 border-rose-400/20',
     pass:      'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
     fail:      'text-red-400 bg-red-400/10 border-red-400/20',
-    aligned:   'text-cyan-400 bg-cyan-400/10 border-cyan-400/20',
+    aligned:   'text-slate-700 bg-black/[0.05] border-black/[0.15]',
     partial:   'text-amber-400 bg-amber-400/10 border-amber-400/20',
     not_aligned:'text-red-400 bg-red-400/10 border-red-400/20',
     completed: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
     pending:   'text-amber-400 bg-amber-400/10 border-amber-400/20',
-    running:   'text-cyan-400 bg-cyan-400/10 border-cyan-400/20',
+    running:   'text-slate-700 bg-black/[0.05] border-black/[0.15]',
     error:     'text-red-400 bg-red-400/10 border-red-400/20',
   };
   const key = (value || '').toLowerCase().replace(' ', '_');
-  const cls = map[key] || 'text-white/40 bg-white/5 border-white/10';
+  const cls = map[key] || 'text-slate-400 bg-black/[0.03] border-black/10';
   const label = labels[key] || value;
   return (
     <span className={`inline-flex items-center text-[9px] font-mono font-bold uppercase tracking-wide border px-1.5 py-0.5 rounded ${cls}`}>
@@ -260,10 +260,10 @@ export function RiskBar({ value, max = 100, label, colorFn }) {
   return (
     <div className="space-y-1">
       <div className="flex justify-between items-center">
-        <span className="text-[10px] text-white/50">{label}</span>
-        <span className="text-[10px] font-mono text-white/70">{value.toFixed(1)}</span>
+        <span className="text-[10px] text-slate-500">{label}</span>
+        <span className="text-[10px] font-mono text-slate-700">{value.toFixed(1)}</span>
       </div>
-      <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+      <div className="h-1.5 bg-black/[0.04] rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-500"
           style={{ width: `${pct}%`, backgroundColor: color }}
@@ -277,20 +277,20 @@ export function RiskBar({ value, max = 100, label, colorFn }) {
 
 export function TabBar({ tabs, active, onChange }) {
   return (
-    <div className="flex items-center gap-0.5 border-b border-white/[0.06] px-4">
+    <div className="flex items-center gap-0.5 border-b border-black/[0.08] px-4">
       {tabs.map(tab => (
         <button
           key={tab.id}
           onClick={() => onChange(tab.id)}
           className={`px-3 py-2.5 text-[11px] font-medium border-b-2 transition-colors whitespace-nowrap ${
             active === tab.id
-              ? 'border-cyan-400 text-cyan-300'
-              : 'border-transparent text-white/40 hover:text-white/70'
+              ? 'border-black text-slate-800'
+              : 'border-transparent text-slate-400 hover:text-slate-700'
           }`}
         >
           {tab.label}
           {tab.count != null && (
-            <span className="ml-1.5 text-[9px] font-mono text-white/25">{tab.count}</span>
+            <span className="ml-1.5 text-[9px] font-mono text-slate-300">{tab.count}</span>
           )}
         </button>
       ))}
@@ -302,8 +302,8 @@ export function TabBar({ tabs, active, onChange }) {
 
 export function ActionButton({ onClick, disabled, loading, variant = 'primary', size = 'sm', children }) {
   const variants = {
-    primary: 'bg-cyan-500/20 border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/30',
-    ghost:   'bg-transparent border-white/10 text-white/50 hover:bg-white/5 hover:text-white/80',
+    primary: 'bg-black/[0.08] border-black/[0.20] text-slate-800 hover:bg-black/30',
+    ghost:   'bg-transparent border-black/10 text-slate-500 hover:bg-black/[0.03] hover:text-slate-800',
     danger:  'bg-red-500/15 border-red-500/25 text-red-400 hover:bg-red-500/25',
     success: 'bg-emerald-500/15 border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/25',
   };
@@ -336,11 +336,11 @@ export function ValidationPanel({ checks }) {
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 mb-3">
-        <span className="text-[10px] text-white/40">Compliance</span>
-        <span className="text-[10px] font-mono font-bold text-white/60">{passed}/{checks.length}</span>
-        <div className="flex-1 h-1 bg-white/[0.06] rounded-full overflow-hidden">
+        <span className="text-[10px] text-slate-400">Compliance</span>
+        <span className="text-[10px] font-mono font-bold text-slate-600">{passed}/{checks.length}</span>
+        <div className="flex-1 h-1 bg-black/[0.04] rounded-full overflow-hidden">
           <div
-            className="h-full bg-cyan-400 rounded-full transition-all"
+            className="h-full bg-black rounded-full transition-all"
             style={{ width: `${(passed / checks.length) * 100}%` }}
           />
         </div>
@@ -358,8 +358,8 @@ export function ValidationPanel({ checks }) {
             </svg>
           </div>
           <div>
-            <p className="text-[10px] font-medium text-white/70">{c.label}</p>
-            {c.detail && <p className="text-[9px] text-white/30 mt-0.5">{c.detail}</p>}
+            <p className="text-[10px] font-medium text-slate-700">{c.label}</p>
+            {c.detail && <p className="text-[9px] text-slate-400 mt-0.5">{c.detail}</p>}
           </div>
         </div>
       ))}
@@ -372,15 +372,15 @@ export function ValidationPanel({ checks }) {
 export function ChartTooltip({ active, payload, label, formatter }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#0d1424] border border-white/10 rounded-lg p-3 shadow-xl text-[11px] min-w-[140px]">
-      {label && <p className="text-white/50 text-[10px] mb-2 font-mono">{label}</p>}
+    <div className="bg-white border border-black/10 rounded-lg p-3 shadow-xl text-[11px] min-w-[140px]">
+      {label && <p className="text-slate-500 text-[10px] mb-2 font-mono">{label}</p>}
       {payload.map((p, i) => (
         <div key={i} className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full" style={{ background: p.color }} />
-            <span className="text-white/60">{p.name}</span>
+            <span className="text-slate-600">{p.name}</span>
           </div>
-          <span className="text-white/90 font-mono font-semibold">
+          <span className="text-slate-900 font-mono font-semibold">
             {formatter ? formatter(p.value, p.name) : p.value}
           </span>
         </div>

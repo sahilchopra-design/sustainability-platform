@@ -67,7 +67,7 @@ export function AlertFeed({ alerts = [], onMarkRead, onMarkAll, loading = false 
     return (
       <div className="space-y-2">
         {[1, 2, 3].map(i => (
-          <div key={i} className="h-16 rounded-lg bg-white/5 animate-pulse" />
+          <div key={i} className="h-16 rounded-lg bg-gray-50 animate-pulse" />
         ))}
       </div>
     );
@@ -75,7 +75,7 @@ export function AlertFeed({ alerts = [], onMarkRead, onMarkAll, loading = false 
 
   if (alerts.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-white/30">
+      <div className="flex flex-col items-center justify-center py-12 text-gray-500">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mb-3 opacity-40">
           <path d="M22 11.08V12a10 10 0 11-5.93-9.14M22 4L12 14.01l-3-3"/>
         </svg>
@@ -88,7 +88,7 @@ export function AlertFeed({ alerts = [], onMarkRead, onMarkAll, loading = false 
     <div data-testid="alert-feed">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs text-white/40 font-medium uppercase tracking-wider">
+        <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">
           {alerts.filter(a => !a.is_read).length} unread
         </span>
         {onMarkAll && alerts.some(a => !a.is_read) && (
@@ -129,7 +129,7 @@ export function AlertFeed({ alerts = [], onMarkRead, onMarkAll, loading = false 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
-                    <p className="text-xs font-semibold text-white leading-snug truncate">
+                    <p className="text-xs font-semibold text-gray-900 leading-snug truncate">
                       {alert.title}
                     </p>
                     <div className="flex items-center gap-1.5 flex-shrink-0">
@@ -140,12 +140,12 @@ export function AlertFeed({ alerts = [], onMarkRead, onMarkAll, loading = false 
                           style={{ background: cfg.colour }}
                         />
                       )}
-                      <span className="text-[10px] text-white/30 tabular-nums">
+                      <span className="text-[10px] text-gray-500 tabular-nums">
                         {timeAgo(alert.created_at)}
                       </span>
                     </div>
                   </div>
-                  <p className="text-[11px] text-white/50 leading-relaxed mt-0.5 line-clamp-2">
+                  <p className="text-[11px] text-gray-500 leading-relaxed mt-0.5 line-clamp-2">
                     {alert.message}
                   </p>
                 </div>

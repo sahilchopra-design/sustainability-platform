@@ -81,7 +81,7 @@ const ERMTab = () => {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-xs text-gray-400 mb-1">Overall ERM Compliance Score</div>
-              <div className="text-3xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              <div className="text-3xl font-bold text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                 {assessmentResult.score_pct}%
               </div>
               <div className={`text-sm font-medium mt-1 ${ragInfo?.text}`}>{assessmentResult.status}</div>
@@ -93,7 +93,7 @@ const ERMTab = () => {
             </div>
           </div>
           {assessmentResult.gaps?.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-white/10">
+            <div className="mt-3 pt-3 border-t border-black/10">
               <div className="text-xs text-gray-400 mb-2">Priority Gaps:</div>
               {assessmentResult.gaps.map(g => (
                 <div key={g.id} className="text-xs text-red-300 mb-1">• {g.title}: {g.description}</div>
@@ -106,10 +106,10 @@ const ERMTab = () => {
       {/* Principles checklist */}
       <div className="space-y-3">
         {principles.map(p => (
-          <div key={p.id} className="rounded-lg border border-white/10 bg-white/3 p-3">
+          <div key={p.id} className="rounded-lg border border-black/10 bg-white/3 p-3">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1">
-                <div className="text-sm font-medium text-white">{p.section}. {p.title}</div>
+                <div className="text-sm font-medium text-gray-900">{p.section}. {p.title}</div>
                 <div className="text-xs text-gray-500 mt-0.5">{p.description}</div>
               </div>
               <select
@@ -129,7 +129,7 @@ const ERMTab = () => {
       </div>
 
       <button onClick={handleSubmit} disabled={loading}
-        className="w-full py-3 rounded-lg text-sm font-semibold text-white disabled:opacity-50"
+        className="w-full py-3 rounded-lg text-sm font-semibold text-gray-900 disabled:opacity-50"
         style={{ background: 'linear-gradient(135deg, hsl(199,89%,40%), hsl(199,89%,30%))' }}
         data-testid="mas-erm-submit-btn">
         {loading ? 'Calculating...' : 'Calculate Compliance Score'}
@@ -157,11 +157,11 @@ const Notice637Tab = () => {
         These form part of the ICAAP / ILAAP and annual SREP assessment.
       </p>
       {items.map(item => (
-        <div key={item.id} className="rounded-lg border border-white/10 bg-white/3 p-4">
+        <div key={item.id} className="rounded-lg border border-black/10 bg-white/3 p-4">
           <div className="flex items-start justify-between gap-3 mb-2">
             <span className="text-xs bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded px-2 py-0.5">{item.pillar}</span>
           </div>
-          <div className="text-sm font-medium text-white">{item.item}</div>
+          <div className="text-sm font-medium text-gray-900">{item.item}</div>
           <div className="text-xs text-gray-400 mt-1">{item.requirement}</div>
         </div>
       ))}
@@ -208,13 +208,13 @@ const SGTTab = () => {
       </p>
 
       {/* Activity checker */}
-      <div className="rounded-lg border border-cyan-500/20 bg-cyan-500/5 p-4">
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
         <SectionTitle>Activity Eligibility Check</SectionTitle>
         <div className="grid grid-cols-3 gap-3 mb-3">
           <div>
             <label className="block text-xs text-gray-400 mb-1">Sector</label>
             <select value={check.sector} onChange={e => setCheck(p => ({ ...p, sector: e.target.value }))}
-              className="w-full bg-white/5 border border-white/15 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/60">
+              className="w-full bg-gray-50 border border-black/15 rounded px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-black/60">
               {sectors.map(s => <option key={s.sector} value={s.sector}>{s.sector}</option>)}
             </select>
           </div>
@@ -222,17 +222,17 @@ const SGTTab = () => {
             <label className="block text-xs text-gray-400 mb-1">Activity</label>
             <input type="text" value={check.activity} onChange={e => setCheck(p => ({ ...p, activity: e.target.value }))}
               placeholder="e.g. Solar PV generation"
-              className="w-full bg-white/5 border border-white/15 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/60" />
+              className="w-full bg-gray-50 border border-black/15 rounded px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-black/60" />
           </div>
           <div>
             <label className="block text-xs text-gray-400 mb-1">Entity Name</label>
             <input type="text" value={check.entity_name} onChange={e => setCheck(p => ({ ...p, entity_name: e.target.value }))}
               placeholder="Company name"
-              className="w-full bg-white/5 border border-white/15 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/60" />
+              className="w-full bg-gray-50 border border-black/15 rounded px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-black/60" />
           </div>
         </div>
         <button onClick={handleCheck}
-          className="px-4 py-2 rounded text-sm font-medium text-white border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20"
+          className="px-4 py-2 rounded text-sm font-medium text-gray-900 border border-gray-300 bg-gray-100 hover:bg-gray-100"
           data-testid="sgt-check-btn">
           Check Eligibility
         </button>
@@ -246,9 +246,9 @@ const SGTTab = () => {
       {/* Sectors accordion */}
       <div className="space-y-2">
         {sectors.map(s => (
-          <div key={s.sector} className="rounded-lg border border-white/10 overflow-hidden">
+          <div key={s.sector} className="rounded-lg border border-black/10 overflow-hidden">
             <button
-              className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-white hover:bg-white/3 text-left"
+              className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-900 hover:bg-white/3 text-left"
               onClick={() => toggleSector(s.sector)}>
               {s.sector}
               <span className="text-gray-500">{expandedSectors.has(s.sector) ? '▲' : '▼'}</span>
@@ -256,7 +256,7 @@ const SGTTab = () => {
             {expandedSectors.has(s.sector) && (
               <div className="px-4 pb-3 flex flex-wrap gap-1.5">
                 {s.activities.map(a => (
-                  <span key={a} className="inline-block bg-white/5 text-gray-300 border border-white/10 rounded px-2 py-0.5 text-xs">{a}</span>
+                  <span key={a} className="inline-block bg-gray-50 text-gray-300 border border-black/10 rounded px-2 py-0.5 text-xs">{a}</span>
                 ))}
               </div>
             )}
@@ -317,16 +317,16 @@ const SLGSTab = () => {
             <div key={s.stage} className="flex items-start" style={{ minWidth: '140px' }}>
               <div className="flex flex-col items-center">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 ${
-                  form.current_stage >= s.stage ? 'bg-cyan-500/30 border-cyan-400 text-cyan-400' : 'bg-white/5 border-white/20 text-gray-500'
+                  form.current_stage >= s.stage ? 'bg-gray-300 border-black text-gray-700' : 'bg-gray-50 border-black/20 text-gray-500'
                 }`}>
                   {s.stage}
                 </div>
                 {i < stages.length - 1 && (
-                  <div className={`w-full h-0.5 mt-4 ${form.current_stage > s.stage ? 'bg-cyan-500/40' : 'bg-white/10'}`} style={{ width: '100px' }} />
+                  <div className={`w-full h-0.5 mt-4 ${form.current_stage > s.stage ? 'bg-gray-400' : 'bg-gray-100'}`} style={{ width: '100px' }} />
                 )}
               </div>
               <div className="ml-2 mt-1">
-                <div className="text-xs font-medium text-white">{s.name}</div>
+                <div className="text-xs font-medium text-gray-900">{s.name}</div>
                 <div className="text-xs text-gray-500 mt-0.5 pr-4">{s.description}</div>
               </div>
             </div>
@@ -340,12 +340,12 @@ const SLGSTab = () => {
           <label className="block text-xs text-gray-400 mb-1">Entity Name</label>
           <input type="text" value={form.entity_name} onChange={e => setForm(p => ({ ...p, entity_name: e.target.value }))}
             placeholder="Your FI name"
-            className="w-full bg-white/5 border border-white/15 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/60" />
+            className="w-full bg-gray-50 border border-black/15 rounded px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-black/60" />
         </div>
         <div>
           <label className="block text-xs text-gray-400 mb-1">Current Stage</label>
           <select value={form.current_stage} onChange={e => setForm(p => ({ ...p, current_stage: e.target.value }))}
-            className="w-full bg-white/5 border border-white/15 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/60">
+            className="w-full bg-gray-50 border border-black/15 rounded px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-black/60">
             {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>Stage {n}</option>)}
           </select>
         </div>
@@ -353,44 +353,44 @@ const SLGSTab = () => {
           <label className="block text-xs text-gray-400 mb-1">TCFD Report Year</label>
           <input type="number" value={form.tcfd_report_year} onChange={e => setForm(p => ({ ...p, tcfd_report_year: e.target.value }))}
             placeholder="e.g. 2023" min={2019} max={2030}
-            className="w-full bg-white/5 border border-white/15 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+            className="w-full bg-gray-50 border border-black/15 rounded px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-black/60"
             style={{ fontFamily: 'IBM Plex Mono, monospace' }} />
         </div>
         <div>
           <label className="block text-xs text-gray-400 mb-1">Financed Emissions Baseline Year</label>
           <input type="number" value={form.financed_emissions_baseline_year} onChange={e => setForm(p => ({ ...p, financed_emissions_baseline_year: e.target.value }))}
             placeholder="e.g. 2022" min={2018} max={2025}
-            className="w-full bg-white/5 border border-white/15 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+            className="w-full bg-gray-50 border border-black/15 rounded px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-black/60"
             style={{ fontFamily: 'IBM Plex Mono, monospace' }} />
         </div>
         <div>
           <label className="block text-xs text-gray-400 mb-1">Net-Zero Commitment Year</label>
           <input type="number" value={form.net_zero_commitment_year} onChange={e => setForm(p => ({ ...p, net_zero_commitment_year: e.target.value }))}
             placeholder="e.g. 2050" min={2035} max={2060}
-            className="w-full bg-white/5 border border-white/15 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+            className="w-full bg-gray-50 border border-black/15 rounded px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-black/60"
             style={{ fontFamily: 'IBM Plex Mono, monospace' }} />
         </div>
       </div>
 
       <button onClick={handleTrack}
-        className="w-full py-3 rounded-lg text-sm font-semibold text-white"
+        className="w-full py-3 rounded-lg text-sm font-semibold text-gray-900"
         style={{ background: 'linear-gradient(135deg, hsl(199,89%,40%), hsl(199,89%,30%))' }}
         data-testid="slgs-track-btn">
         Track Application Progress
       </button>
 
       {trackResult && (
-        <div className="rounded-lg border border-white/10 p-4 space-y-3">
+        <div className="rounded-lg border border-black/10 p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <div className="text-sm font-semibold text-white">{trackResult.entity_name || 'Application Status'}</div>
-            <div className="text-sm font-bold text-cyan-400" style={{ fontFamily: 'IBM Plex Mono' }}>{trackResult.completion_pct}% complete</div>
+            <div className="text-sm font-semibold text-gray-900">{trackResult.entity_name || 'Application Status'}</div>
+            <div className="text-sm font-bold text-gray-700" style={{ fontFamily: 'IBM Plex Mono' }}>{trackResult.completion_pct}% complete</div>
           </div>
-          <div className="w-full bg-white/10 rounded-full h-2">
-            <div className="bg-cyan-500 h-2 rounded-full transition-all" style={{ width: `${trackResult.completion_pct}%` }} />
+          <div className="w-full bg-gray-100 rounded-full h-2">
+            <div className="bg-[#164E8A] h-2 rounded-full transition-all" style={{ width: `${trackResult.completion_pct}%` }} />
           </div>
           {trackResult.next_stage && (
             <div className="text-xs text-gray-400">
-              Next: <span className="text-white font-medium">Stage {trackResult.next_stage.stage} — {trackResult.next_stage.name}</span>
+              Next: <span className="text-gray-900 font-medium">Stage {trackResult.next_stage.stage} — {trackResult.next_stage.name}</span>
             </div>
           )}
           {trackResult.outstanding_checklist?.length > 0 && (
@@ -433,7 +433,7 @@ export default function MASPanel() {
   return (
     <div className="space-y-5">
       <div>
-        <h2 className="text-lg font-semibold text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>MAS Regulatory</h2>
+        <h2 className="text-lg font-semibold text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>MAS Regulatory</h2>
         <p className="text-sm text-gray-400 mt-0.5">
           Monetary Authority of Singapore — ERM Guidelines, Notice 637, Singapore Green Taxonomy, SLGS programme
         </p>
@@ -449,12 +449,12 @@ export default function MASPanel() {
               onClick={() => setActiveTab(tab.id)}
               className={`rounded-lg p-3 text-left border transition-all ${
                 activeTab === tab.id
-                  ? 'border-cyan-500/50 bg-cyan-500/10'
-                  : 'border-white/10 bg-white/3 hover:border-white/20'
+                  ? 'border-black/50 bg-gray-100'
+                  : 'border-black/10 bg-white/3 hover:border-black/20'
               }`}
               data-testid={`mas-tab-${tab.id}`}
             >
-              <div className="text-sm font-medium text-white">{tab.label}</div>
+              <div className="text-sm font-medium text-gray-900">{tab.label}</div>
               <div className="text-xs text-gray-500 mt-0.5">{tab.subtitle}</div>
               <div className="mt-1.5">
                 <StatusBadge status={tabStatus[tab.id]} />
@@ -465,7 +465,7 @@ export default function MASPanel() {
       </div>
 
       {/* Tab content */}
-      <div className="rounded-xl border border-white/10 p-5" style={{ background: 'hsl(222,35%,9%)' }}>
+      <div className="rounded-xl border border-black/10 p-5" style={{ background: 'hsl(222,35%,9%)' }}>
         {activeTab === 'erm' && <ERMTab />}
         {activeTab === 'notice637' && <Notice637Tab />}
         {activeTab === 'sgt' && <SGTTab />}

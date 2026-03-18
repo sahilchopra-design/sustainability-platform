@@ -37,7 +37,7 @@ function ParameterRow({ param, ngfsFamily, onChangeValue, onReset }) {
     <div className="group" data-testid={`param-row-${param.id}`}>
       <div className="flex items-center justify-between mb-1.5">
         <div className="flex items-center gap-2 min-w-0">
-          <span className="text-[12px] font-medium text-white/80 truncate">{param.label}</span>
+          <span className="text-[12px] font-medium text-gray-800 truncate">{param.label}</span>
           {isModified && (
             <span className={`text-[9px] font-semibold px-1 py-0.5 rounded ${
               delta > 0
@@ -58,16 +58,16 @@ function ParameterRow({ param, ngfsFamily, onChangeValue, onReset }) {
             max={param.max}
             step={param.step}
             onChange={handleInput}
-            className="w-20 text-right text-[11px] bg-white/5 border border-white/10 rounded px-1.5 py-0.5 text-white/80 focus:outline-none focus:border-cyan-500/40"
+            className="w-20 text-right text-[11px] bg-gray-50 border border-black/10 rounded px-1.5 py-0.5 text-gray-800 focus:outline-none focus:border-blue-500"
           />
-          <span className="text-[10px] text-white/30 min-w-[32px]">{param.unit}</span>
+          <span className="text-[10px] text-gray-500 min-w-[32px]">{param.unit}</span>
 
           {/* Reset */}
           {isModified && (
             <button
               onClick={() => onReset(param.id)}
               title="Reset to NGFS baseline"
-              className="opacity-0 group-hover:opacity-100 transition-opacity text-white/30 hover:text-white/70 p-0.5 rounded"
+              className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-500 hover:text-gray-700 p-0.5 rounded"
             >
               <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -81,7 +81,7 @@ function ParameterRow({ param, ngfsFamily, onChangeValue, onReset }) {
       <div className="relative mb-1">
         {/* NGFS target marker */}
         <div
-          className="absolute top-0 bottom-0 w-0.5 bg-cyan-400/40 rounded pointer-events-none"
+          className="absolute top-0 bottom-0 w-0.5 bg-gray-400 rounded pointer-events-none"
           style={{
             left: `${((ngfsTarget - param.min) / (param.max - param.min)) * 100}%`,
           }}
@@ -98,7 +98,7 @@ function ParameterRow({ param, ngfsFamily, onChangeValue, onReset }) {
             [&::-webkit-slider-thumb]:w-3
             [&::-webkit-slider-thumb]:h-3
             [&::-webkit-slider-thumb]:rounded-full
-            [&::-webkit-slider-thumb]:bg-cyan-400
+            [&::-webkit-slider-thumb]:bg-[#164E8A]
             [&::-webkit-slider-thumb]:shadow-[0_0_4px_rgba(34,211,238,0.6)]"
           style={{
             background: `linear-gradient(to right, rgba(34,211,238,0.5) 0%, rgba(34,211,238,0.5) ${
@@ -111,15 +111,15 @@ function ParameterRow({ param, ngfsFamily, onChangeValue, onReset }) {
       </div>
 
       {/* Range labels + NGFS reference */}
-      <div className="flex items-center justify-between text-[9px] text-white/25 mb-0.5">
+      <div className="flex items-center justify-between text-[9px] text-gray-400 mb-0.5">
         <span>{param.min} {param.unit}</span>
-        <span className="text-cyan-400/50">NGFS {ngfsFamily}: {ngfsTarget}</span>
+        <span className="text-gray-500">NGFS {ngfsFamily}: {ngfsTarget}</span>
         <span>{param.max} {param.unit}</span>
       </div>
 
       {/* Description (tooltip on hover) */}
       {param.description && (
-        <p className="text-[10px] text-white/25 leading-relaxed hidden group-hover:block transition-all">
+        <p className="text-[10px] text-gray-400 leading-relaxed hidden group-hover:block transition-all">
           {param.description}
         </p>
       )}
@@ -139,17 +139,17 @@ function ParameterGroup({ group, parameters, ngfsFamily, onChangeValue, onReset 
   });
 
   return (
-    <div className="border border-white/8 rounded-lg overflow-hidden mb-2" data-testid={`param-group-${group.id}`}>
+    <div className="border border-gray-200 rounded-lg overflow-hidden mb-2" data-testid={`param-group-${group.id}`}>
       {/* Group header */}
       <button
         onClick={() => setExpanded(v => !v)}
-        className="w-full flex items-center justify-between px-3.5 py-2.5 bg-white/[0.03] hover:bg-white/[0.05] transition-colors"
+        className="w-full flex items-center justify-between px-3.5 py-2.5 bg-gray-50 hover:bg-white/[0.05] transition-colors"
       >
         <div className="flex items-center gap-2">
           <svg className="h-3.5 w-3.5 shrink-0" style={{ color: group.color }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
             <path strokeLinecap="round" strokeLinejoin="round" d={iconPath} />
           </svg>
-          <span className="text-[12px] font-semibold text-white/80">{group.label}</span>
+          <span className="text-[12px] font-semibold text-gray-800">{group.label}</span>
           {hasModified && (
             <span className="text-[9px] text-amber-400/70 bg-amber-500/10 px-1.5 py-0.5 rounded">
               Modified
@@ -157,7 +157,7 @@ function ParameterGroup({ group, parameters, ngfsFamily, onChangeValue, onReset 
           )}
         </div>
         <svg
-          className={`h-3.5 w-3.5 text-white/30 transition-transform ${expanded ? 'rotate-180' : ''}`}
+          className={`h-3.5 w-3.5 text-gray-500 transition-transform ${expanded ? 'rotate-180' : ''}`}
           fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -166,7 +166,7 @@ function ParameterGroup({ group, parameters, ngfsFamily, onChangeValue, onReset 
 
       {/* Parameters */}
       {expanded && (
-        <div className="px-3.5 py-3 space-y-4 bg-[#080e1c]/60">
+        <div className="px-3.5 py-3 space-y-4 bg-white/60">
           {parameters.map(param => (
             <ParameterRow
               key={param.id}
@@ -190,10 +190,10 @@ export function ParameterConfigurator({ scenario, onChangeValue, onReset, onChan
   return (
     <div className="flex flex-col h-full" data-testid="parameter-configurator">
       {/* Controls row */}
-      <div className="flex flex-wrap items-center gap-2 mb-4 pb-3 border-b border-white/8">
+      <div className="flex flex-wrap items-center gap-2 mb-4 pb-3 border-b border-gray-200">
         {/* NGFS Family */}
         <div className="flex items-center gap-1.5">
-          <span className="text-[11px] text-white/40">Base scenario:</span>
+          <span className="text-[11px] text-gray-500">Base scenario:</span>
           <div className="flex gap-1">
             {['Orderly', 'Disorderly', 'Hot house world'].map(fam => {
               const m = NGFS_FAMILY_META[fam];
@@ -205,7 +205,7 @@ export function ParameterConfigurator({ scenario, onChangeValue, onReset, onChan
                   className={`text-[10px] font-semibold px-2 py-1 rounded border transition-colors ${
                     active
                       ? `${m.bgClass} ${m.textClass} ${m.borderClass}`
-                      : 'bg-white/5 text-white/40 border-white/10 hover:border-white/20'
+                      : 'bg-gray-50 text-gray-500 border-black/10 hover:border-black/20'
                   }`}
                 >
                   {fam === 'Hot house world' ? 'Hot House' : fam}
@@ -217,15 +217,15 @@ export function ParameterConfigurator({ scenario, onChangeValue, onReset, onChan
 
         {/* Time horizon */}
         <div className="flex items-center gap-1.5 ml-auto">
-          <span className="text-[11px] text-white/40">Horizon:</span>
+          <span className="text-[11px] text-gray-500">Horizon:</span>
           {[2030, 2040, 2050].map(yr => (
             <button
               key={yr}
               onClick={() => onChangeHorizon(yr)}
               className={`text-[10px] font-semibold px-2 py-1 rounded border transition-colors ${
                 scenario.timeHorizon === yr
-                  ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30'
-                  : 'bg-white/5 text-white/40 border-white/10 hover:border-white/20'
+                  ? 'bg-gray-200 text-gray-800 border-gray-300'
+                  : 'bg-gray-50 text-gray-500 border-black/10 hover:border-black/20'
               }`}
             >
               {yr}
@@ -253,13 +253,13 @@ export function ParameterConfigurator({ scenario, onChangeValue, onReset, onChan
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-3 pt-3 mt-2 border-t border-white/8 text-[10px] text-white/30">
+      <div className="flex items-center gap-3 pt-3 mt-2 border-t border-gray-200 text-[10px] text-gray-500">
         <div className="flex items-center gap-1">
-          <div className="w-4 h-0.5 bg-cyan-400/40" />
+          <div className="w-4 h-0.5 bg-gray-400" />
           <span>NGFS baseline</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-cyan-400 shadow-[0_0_4px_rgba(34,211,238,0.6)]" />
+          <div className="w-3 h-3 rounded-full bg-[#164E8A] shadow-[0_0_4px_rgba(34,211,238,0.6)]" />
           <span>Current value</span>
         </div>
       </div>

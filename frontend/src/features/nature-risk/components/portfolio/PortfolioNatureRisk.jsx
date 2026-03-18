@@ -18,12 +18,12 @@ import { natureRiskApi } from '../../api/natureRiskApi';
 
 const getRiskBadgeColor = (rating) => {
   switch (rating) {
-    case 'critical': return 'bg-red-600 text-white';
-    case 'high': return 'bg-orange-500 text-white';
-    case 'medium-high': return 'bg-yellow-500 text-white';
-    case 'medium': return 'bg-blue-500 text-white';
-    case 'medium-low': return 'bg-green-400 text-white';
-    default: return 'bg-green-500 text-white';
+    case 'critical': return 'bg-red-600 text-gray-900';
+    case 'high': return 'bg-orange-500 text-gray-900';
+    case 'medium-high': return 'bg-yellow-500 text-gray-900';
+    case 'medium': return 'bg-blue-500 text-gray-900';
+    case 'medium-low': return 'bg-green-400 text-gray-900';
+    default: return 'bg-green-500 text-gray-900';
   }
 };
 
@@ -85,7 +85,7 @@ export function PortfolioNatureRisk() {
   return (
     <div className="space-y-6" data-testid="portfolio-nature-risk">
       {/* Configuration Panel */}
-      <Card className="bg-[#0d1424] dark:bg-[#111827]">
+      <Card className="bg-white dark:bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Leaf className="h-5 w-5 text-emerald-400" />
@@ -161,9 +161,9 @@ export function PortfolioNatureRisk() {
         <>
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="bg-[#0d1424] dark:bg-[#111827]">
+            <Card className="bg-white dark:bg-white">
               <CardContent className="pt-6">
-                <div className="flex items-center gap-2 text-white/40 mb-2">
+                <div className="flex items-center gap-2 text-gray-500 mb-2">
                   <Building2 className="h-4 w-4" />
                   <span className="text-sm">Holdings Analyzed</span>
                 </div>
@@ -173,9 +173,9 @@ export function PortfolioNatureRisk() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[#0d1424] dark:bg-[#111827]">
+            <Card className="bg-white dark:bg-white">
               <CardContent className="pt-6">
-                <div className="flex items-center gap-2 text-white/40 mb-2">
+                <div className="flex items-center gap-2 text-gray-500 mb-2">
                   <Target className="h-4 w-4" />
                   <span className="text-sm">Avg LEAP Score</span>
                 </div>
@@ -185,9 +185,9 @@ export function PortfolioNatureRisk() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[#0d1424] dark:bg-[#111827]">
+            <Card className="bg-white dark:bg-white">
               <CardContent className="pt-6">
-                <div className="flex items-center gap-2 text-white/40 mb-2">
+                <div className="flex items-center gap-2 text-gray-500 mb-2">
                   <AlertTriangle className="h-4 w-4" />
                   <span className="text-sm">High Risk Holdings</span>
                 </div>
@@ -197,9 +197,9 @@ export function PortfolioNatureRisk() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[#0d1424] dark:bg-[#111827]">
+            <Card className="bg-white dark:bg-white">
               <CardContent className="pt-6">
-                <div className="flex items-center gap-2 text-white/40 mb-2">
+                <div className="flex items-center gap-2 text-gray-500 mb-2">
                   <DollarSign className="h-4 w-4" />
                   <span className="text-sm">Exposure at Risk</span>
                 </div>
@@ -213,7 +213,7 @@ export function PortfolioNatureRisk() {
           {/* Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* LEAP Scores */}
-            <Card className="bg-[#0d1424] dark:bg-[#111827]">
+            <Card className="bg-white dark:bg-white">
               <CardHeader>
                 <CardTitle>LEAP Score Distribution</CardTitle>
                 <CardDescription>Average scores across TNFD LEAP phases</CardDescription>
@@ -234,7 +234,7 @@ export function PortfolioNatureRisk() {
             </Card>
 
             {/* Dependencies Radar */}
-            <Card className="bg-[#0d1424] dark:bg-[#111827]">
+            <Card className="bg-white dark:bg-white">
               <CardHeader>
                 <CardTitle>Key Dependencies</CardTitle>
                 <CardDescription>Portfolio dependency on ecosystem services</CardDescription>
@@ -258,7 +258,7 @@ export function PortfolioNatureRisk() {
                       </RadarChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="flex items-center justify-center h-full text-white/40">
+                    <div className="flex items-center justify-center h-full text-gray-500">
                       No dependency data available
                     </div>
                   )}
@@ -268,7 +268,7 @@ export function PortfolioNatureRisk() {
           </div>
 
           {/* Holdings Table */}
-          <Card className="bg-[#0d1424] dark:bg-[#111827]">
+          <Card className="bg-white dark:bg-white">
             <CardHeader>
               <CardTitle>Holding Details</CardTitle>
               <CardDescription>Individual holding nature risk assessment</CardDescription>
@@ -278,14 +278,14 @@ export function PortfolioNatureRisk() {
                 {analysisResults.holding_results?.map((holding, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-4 bg-white/[0.02] dark:bg-[#0d1424]/50 rounded-lg hover:bg-white/[0.06] dark:hover:bg-[#1a2234] transition-colors"
+                    className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-500 rounded-lg hover:bg-gray-50 dark:hover:bg-[#1a2234] transition-colors"
                     data-testid={`holding-${index}`}
                   >
                     <div className="flex-1">
-                      <p className="font-medium text-white dark:text-white">
+                      <p className="font-medium text-gray-900 dark:text-gray-900">
                         {holding.entity_name}
                       </p>
-                      <p className="text-sm text-white/40">
+                      <p className="text-sm text-gray-500">
                         {holding.sector} • ${(holding.exposure_usd / 1e6).toFixed(1)}M exposure
                       </p>
                       <div className="flex gap-2 mt-2">
@@ -300,7 +300,7 @@ export function PortfolioNatureRisk() {
                       <Badge className={getRiskBadgeColor(holding.risk_rating)}>
                         {holding.risk_rating}
                       </Badge>
-                      <p className="text-sm text-white/40 mt-1">
+                      <p className="text-sm text-gray-500 mt-1">
                         LEAP: {holding.leap_scores?.overall?.toFixed(2)}
                       </p>
                       {holding.financial_impact?.estimated_impact_usd > 0 && (
@@ -309,7 +309,7 @@ export function PortfolioNatureRisk() {
                         </p>
                       )}
                     </div>
-                    <ChevronRight className="h-5 w-5 text-white/30 ml-4" />
+                    <ChevronRight className="h-5 w-5 text-gray-500 ml-4" />
                   </div>
                 ))}
               </div>

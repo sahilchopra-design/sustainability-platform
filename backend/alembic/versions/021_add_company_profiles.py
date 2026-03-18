@@ -1,7 +1,7 @@
 """Add company_profiles — comprehensive entity identity, sector, prudential and Pillar 3 datapoints
 
 Revision ID: 021
-Revises: 016
+Revises: 019
 Create Date: 2026-03-04
 
 Covers:
@@ -21,7 +21,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 revision = "021_add_company_profiles"
-down_revision = "016_add_csrd_report_uploads"
+down_revision = "019_extend_assets_pcaf"
 branch_labels = None
 depends_on = None
 

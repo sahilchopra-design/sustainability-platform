@@ -260,12 +260,12 @@ function computeEligibility(activity_key, instrument, capex_m) {
 }
 
 // ── KPI card ──────────────────────────────────────────────────────────────────
-function KpiCard({ label, value, sub, color = "text-white" }) {
+function KpiCard({ label, value, sub, color = "text-gray-900" }) {
   return (
-    <div className="bg-[#0d1424] border border-white/[0.06] rounded-lg p-3">
+    <div className="bg-white border border-gray-200 rounded-lg p-3">
       <div className={`text-xl font-bold ${color}`}>{value}</div>
-      <div className="text-xs text-white/40 mt-0.5">{label}</div>
-      {sub && <div className="text-[11px] text-white/20 mt-0.5">{sub}</div>}
+      <div className="text-xs text-gray-500 mt-0.5">{label}</div>
+      {sub && <div className="text-[11px] text-gray-400 mt-0.5">{sub}</div>}
     </div>
   );
 }
@@ -312,12 +312,12 @@ export function TransitionFinancePanel() {
     ? result.overall_label === "Not Eligible" ? "text-red-400"
     : result.overall_label === "Transition Finance" ? "text-amber-400"
     : "text-emerald-400"
-    : "text-white";
+    : "text-gray-900";
 
   return (
     <div className="space-y-6">
       {/* Methodology note */}
-      <div className="p-3 bg-indigo-500/5 border border-indigo-500/20 rounded-lg text-xs text-indigo-300 flex items-start gap-2">
+      <div className="p-3 bg-gray-800/5 border border-black/20 rounded-lg text-xs text-gray-600 flex items-start gap-2">
         <Info className="h-4 w-4 mt-0.5 shrink-0" />
         <span>
           Multi-framework eligibility engine: EU Taxonomy (2020/852 + Delegated Acts), ICMA Green Bond Principles 2021,
@@ -328,18 +328,18 @@ export function TransitionFinancePanel() {
 
       {/* Inputs */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4 space-y-3">
-          <h3 className="text-sm font-semibold text-white/80">Project Parameters</h3>
+        <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-3">
+          <h3 className="text-sm font-semibold text-gray-800">Project Parameters</h3>
 
           <div>
-            <label className="text-xs text-white/40 block mb-1">Project Name</label>
-            <input className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">Project Name</label>
+            <input className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={params.project_name} onChange={e => set("project_name", e.target.value)} />
           </div>
 
           <div>
-            <label className="text-xs text-white/40 block mb-1">Activity / Asset Type</label>
-            <select className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">Activity / Asset Type</label>
+            <select className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={params.activity} onChange={e => set("activity", e.target.value)}>
               {Object.keys(ACTIVITIES).map(a => (
                 <option key={a} value={a}>{a}</option>
@@ -348,8 +348,8 @@ export function TransitionFinancePanel() {
           </div>
 
           <div>
-            <label className="text-xs text-white/40 block mb-1">Financial Instrument</label>
-            <select className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">Financial Instrument</label>
+            <select className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={params.instrument} onChange={e => set("instrument", e.target.value)}>
               {INSTRUMENT_TYPES.map(i => (
                 <option key={i} value={i}>{i}</option>
@@ -358,29 +358,29 @@ export function TransitionFinancePanel() {
           </div>
 
           <div>
-            <label className="text-xs text-white/40 block mb-1">Capex / Use of Proceeds (M USD)</label>
-            <input type="number" step="10" className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">Capex / Use of Proceeds (M USD)</label>
+            <input type="number" step="10" className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={params.capex_m} onChange={e => set("capex_m", +e.target.value)} />
           </div>
 
           <div>
-            <label className="text-xs text-white/40 block mb-1">Country / Jurisdiction</label>
-            <input className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">Country / Jurisdiction</label>
+            <input className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={params.country} onChange={e => set("country", e.target.value)} />
           </div>
 
           {result && (
-            <div className="mt-2 p-2 bg-[#0d1424] border border-white/[0.06] rounded text-xs space-y-1">
+            <div className="mt-2 p-2 bg-white border border-gray-200 rounded text-xs space-y-1">
               <div className="flex justify-between">
-                <span className="text-white/40">NACE Code</span>
-                <span className="text-white/70 font-mono">{result.nace}</span>
+                <span className="text-gray-500">NACE Code</span>
+                <span className="text-gray-700 font-mono">{result.nace}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-white/40">Sector</span>
-                <span className="text-white/70">{result.sector}</span>
+                <span className="text-gray-500">Sector</span>
+                <span className="text-gray-700">{result.sector}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-white/40">Transition Activity</span>
+                <span className="text-gray-500">Transition Activity</span>
                 <span className={result.transition ? "text-amber-400" : "text-emerald-400"}>
                   {result.transition ? "Yes" : "No"}
                 </span>
@@ -410,7 +410,7 @@ export function TransitionFinancePanel() {
                 label="Use of Proceeds (M USD)"
                 value={`$${params.capex_m}M`}
                 sub={`${result.eligibleCount > 0 ? "~" + (result.icma_gbp_pct || 100) + "% eligible" : "0% eligible"}`}
-                color="text-indigo-400"
+                color="text-gray-700"
               />
               <KpiCard
                 label="Frameworks Eligible"
@@ -447,25 +447,25 @@ export function TransitionFinancePanel() {
 
       {/* Framework-by-framework breakdown */}
       {result && (
-        <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-          <h3 className="text-sm font-semibold text-white/70 mb-4">
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <h3 className="text-sm font-semibold text-gray-700 mb-4">
             Framework Eligibility — {params.project_name}
           </h3>
           <div className="space-y-3">
             {result.frameworks.map(fw => (
-              <div key={fw.id} className="border border-white/[0.06] rounded-lg p-3">
+              <div key={fw.id} className="border border-gray-200 rounded-lg p-3">
                 <div className="flex items-center justify-between mb-2">
                   <div>
-                    <span className="text-sm font-semibold text-white/80">{fw.name}</span>
-                    <span className="ml-2 text-[10px] text-white/30">{fw.ref}</span>
+                    <span className="text-sm font-semibold text-gray-800">{fw.name}</span>
+                    <span className="ml-2 text-[10px] text-gray-500">{fw.ref}</span>
                   </div>
                   <EligBadge badge={fw.badge} />
                 </div>
-                <p className="text-xs text-white/50 mb-2">{fw.details}</p>
+                <p className="text-xs text-gray-500 mb-2">{fw.details}</p>
                 {fw.criteria.length > 0 && (
                   <div className="space-y-1">
                     {fw.criteria.map((c, i) => (
-                      <div key={i} className="flex items-start gap-1.5 text-xs text-white/40">
+                      <div key={i} className="flex items-start gap-1.5 text-xs text-gray-500">
                         <CheckCircle className="h-3 w-3 text-emerald-500/60 shrink-0 mt-0.5" />
                         {c}
                       </div>
@@ -480,8 +480,8 @@ export function TransitionFinancePanel() {
 
       {/* Required documentation checklist */}
       {result && result.eligibleCount > 0 && (
-        <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-          <h3 className="text-sm font-semibold text-white/70 mb-3">Pre-Issuance Documentation Checklist</h3>
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">Pre-Issuance Documentation Checklist</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
             {[
               ["Green/Sustainability Finance Framework", "Required for all labelled instruments — aligned to relevant GBP/GLP"],
@@ -493,11 +493,11 @@ export function TransitionFinancePanel() {
               ["CBI Pre-Issuance Certification", "Required if CBI Climate Bonds label is targeted"],
               ["EU Taxonomy Alignment Assessment", "DNSH criteria, Minimum Social Safeguards, TSC per activity"],
             ].map(([item, desc]) => (
-              <div key={item} className="flex items-start gap-2 p-2 bg-[#0d1424] border border-white/[0.04] rounded">
-                <CheckCircle className="h-3.5 w-3.5 text-indigo-400/60 shrink-0 mt-0.5" />
+              <div key={item} className="flex items-start gap-2 p-2 bg-white border border-gray-200 rounded">
+                <CheckCircle className="h-3.5 w-3.5 text-gray-600 shrink-0 mt-0.5" />
                 <div>
-                  <div className="text-white/60 font-medium">{item}</div>
-                  <div className="text-white/30 mt-0.5">{desc}</div>
+                  <div className="text-gray-600 font-medium">{item}</div>
+                  <div className="text-gray-500 mt-0.5">{desc}</div>
                 </div>
               </div>
             ))}

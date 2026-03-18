@@ -4,6 +4,7 @@
  * Steps: Locate -> Evaluate -> Assess -> Prepare
  */
 import React, { useState, useEffect } from 'react';
+import { usePersonaDefaults } from '../../../../context/PersonaContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../../components/ui/card';
 import { Button } from '../../../../components/ui/button';
 import { Badge } from '../../../../components/ui/badge';
@@ -44,37 +45,58 @@ const ECOSYSTEM_SERVICES = [
 ];
 
 export function LEAPAssessmentWizard({ onComplete }) {
+  const nr = usePersonaDefaults('nature_risk');
+  const cr = usePersonaDefaults('climate_risk');
+  // Map country ISO2 → ISO3-ish code for LEAP
+  const countryCode = cr.country || '';
+  const physExposure = cr.physicalRiskScore != null ? Math.round(cr.physicalRiskScore * 10) : 50;
+  const transExposure = cr.transitionRiskScore != null ? Math.round(cr.transitionRiskScore * 10) : 50;
+
   const [currentStep, setCurrentStep] = useState(0);
   const [isCalculating, setIsCalculating] = useState(false);
   const [result, setResult] = useState(null);
-  
+
   // Form state for each step
   const [formData, setFormData] = useState({
     // Locate
-    entity_name: '',
+    entity_name: nr.entity || '',
     entity_type: 'COMPANY',
-    sector: '',
-    site_name: '',
+    sector: (nr.exposedSectors && nr.exposedSectors[0]) || '',
+    site_name: nr.entity || '',
     site_type: 'OPERATIONS',
-    latitude: '',
-    longitude: '',
-    country_code: '',
-    
+    latitude: cr.latitude != null ? String(cr.latitude) : '',
+    longitude: cr.longitude != null ? String(cr.longitude) : '',
+    country_code: countryCode,
+
     // Evaluate
     dependencies: [],
     impacts: [],
     ecosystem_services: [],
-    
+
     // Assess
     scenario_id: '',
-    transition_risk_exposure: 50,
-    physical_risk_exposure: 50,
-    
+    transition_risk_exposure: transExposure,
+    physical_risk_exposure: physExposure,
+
     // Prepare
     mitigation_strategies: [],
     disclosure_ready: false,
     notes: '',
   });
+  useEffect(() => {
+    if (!nr.entity && !cr.country) return;
+    setFormData(prev => ({
+      ...prev,
+      entity_name: nr.entity || prev.entity_name,
+      sector: (nr.exposedSectors && nr.exposedSectors[0]) || prev.sector,
+      site_name: nr.entity || prev.site_name,
+      latitude: cr.latitude != null ? String(cr.latitude) : prev.latitude,
+      longitude: cr.longitude != null ? String(cr.longitude) : prev.longitude,
+      country_code: cr.country || prev.country_code,
+      transition_risk_exposure: cr.transitionRiskScore != null ? Math.round(cr.transitionRiskScore * 10) : prev.transition_risk_exposure,
+      physical_risk_exposure: cr.physicalRiskScore != null ? Math.round(cr.physicalRiskScore * 10) : prev.physical_risk_exposure,
+    }));
+  }, [nr.entity, cr.country]); // eslint-disable-line
 
   const [scenarios, setScenarios] = useState([]);
   const [encoreData, setEncoreData] = useState([]);
@@ -207,11 +229,11 @@ export function LEAPAssessmentWizard({ onComplete }) {
               <div 
                 key={step.id}
                 className={`flex flex-col items-center gap-1 transition-colors ${
-                  isActive ? 'text-emerald-400' : isComplete ? 'text-emerald-500' : 'text-white/30'
+                  isActive ? 'text-emerald-400' : isComplete ? 'text-emerald-500' : 'text-gray-500'
                 }`}
               >
                 <div className={`p-2 rounded-full ${
-                  isActive ? 'bg-emerald-100' : isComplete ? 'bg-emerald-500/10' : 'bg-white/[0.06]'
+                  isActive ? 'bg-emerald-100' : isComplete ? 'bg-emerald-500/10' : 'bg-gray-50'
                 }`}>
                   {isComplete ? (
                     <CheckCircle className="h-5 w-5" />
@@ -388,12 +410,12 @@ function EvaluateStep({ formData, updateForm, toggleArrayItem, encoreData }) {
       
       <div className="space-y-4">
         <h4 className="font-medium">Ecosystem Service Dependencies</h4>
-        <p className="text-sm text-white/40">Select the ecosystem services your operations depend on</p>
+        <p className="text-sm text-gray-500">Select the ecosystem services your operations depend on</p>
         <div className="grid grid-cols-3 gap-3">
           {ECOSYSTEM_SERVICES.map(service => (
             <div 
               key={service}
-              className="flex items-center gap-2 p-2 rounded border hover:bg-white/[0.02] cursor-pointer"
+              className="flex items-center gap-2 p-2 rounded border hover:bg-gray-50 cursor-pointer"
               onClick={() => toggleArrayItem('ecosystem_services', service)}
             >
               <Checkbox 
@@ -408,7 +430,7 @@ function EvaluateStep({ formData, updateForm, toggleArrayItem, encoreData }) {
       
       <div className="border-t pt-4">
         <h4 className="font-medium mb-2">ENCORE Dependencies</h4>
-        <p className="text-sm text-white/40 mb-4">
+        <p className="text-sm text-gray-500 mb-4">
           Based on sector: {formData.sector || 'Not selected'}
         </p>
         
@@ -420,7 +442,7 @@ function EvaluateStep({ formData, updateForm, toggleArrayItem, encoreData }) {
               .map((dep, idx) => (
                 <div 
                   key={idx}
-                  className="flex items-center justify-between p-2 bg-white/[0.02] rounded"
+                  className="flex items-center justify-between p-2 bg-gray-50 rounded"
                 >
                   <span className="text-sm">{dep.ecosystem_service}</span>
                   <Badge variant="outline" className={
@@ -434,7 +456,7 @@ function EvaluateStep({ formData, updateForm, toggleArrayItem, encoreData }) {
               ))}
           </div>
         ) : (
-          <p className="text-sm text-white/30 italic">
+          <p className="text-sm text-gray-500 italic">
             Select a sector in the Locate step to see ENCORE dependencies
           </p>
         )}
@@ -486,7 +508,7 @@ function AssessStep({ formData, updateForm, scenarios }) {
                 {formData.transition_risk_exposure}%
               </span>
             </div>
-            <p className="text-xs text-white/40">
+            <p className="text-xs text-gray-500">
               Policy, technology, and market changes related to nature
             </p>
           </div>
@@ -506,7 +528,7 @@ function AssessStep({ formData, updateForm, scenarios }) {
                 {formData.physical_risk_exposure}%
               </span>
             </div>
-            <p className="text-xs text-white/40">
+            <p className="text-xs text-gray-500">
               Acute and chronic nature degradation impacts
             </p>
           </div>
@@ -540,7 +562,7 @@ function PrepareStep({ formData, updateForm, toggleArrayItem, result, isCalculat
           {MITIGATION_STRATEGIES.map(strategy => (
             <div 
               key={strategy}
-              className="flex items-center gap-2 p-2 rounded border hover:bg-white/[0.02] cursor-pointer"
+              className="flex items-center gap-2 p-2 rounded border hover:bg-gray-50 cursor-pointer"
               onClick={() => toggleArrayItem('mitigation_strategies', strategy)}
             >
               <Checkbox 

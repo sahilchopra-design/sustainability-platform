@@ -973,3 +973,112 @@ class InteractiveScenarioEngine:
     
     def list_scenarios(self) -> List[Dict]:
         return list_scenarios()
+
+
+# ---------------------------------------------------------------------------
+# Climate Risk Integration Extension — NGFS Phase 5 Parameters
+# Added for climate_transition_risk_engine.py integration (2026-03-08)
+# ---------------------------------------------------------------------------
+
+# NGFS Phase 5 (2023) — 6 scenarios with key macro + carbon price parameters
+# Source: NGFS Scenarios Portal https://www.ngfs.net/ngfs-scenarios-portal
+# Variables: carbon_price (USD/tCO2), gdp_loss_pct (vs baseline), temp_2100_C
+NGFS_PHASE5_SCENARIOS = {
+    "Net Zero 2050": {
+        "description": "Limits warming to 1.5°C with no or limited overshoot. Requires immediate, rapid decarbonisation.",
+        "temp_2100_c": 1.5,
+        "carbon_price": {2025: 65, 2030: 140, 2035: 220, 2040: 330, 2045: 440, 2050: 590},
+        "gdp_loss_2050_pct": -0.5,   # relative to baseline
+        "orderly": True,
+        "physical_severity": "low",
+        "transition_severity": "high",
+        "ngfs_category": "orderly",
+    },
+    "Below 2°C": {
+        "description": "Limits warming to below 2°C with >67% probability. Transition policy phased in.",
+        "temp_2100_c": 1.8,
+        "carbon_price": {2025: 55, 2030: 120, 2035: 200, 2040: 290, 2045: 380, 2050: 490},
+        "gdp_loss_2050_pct": -0.2,
+        "orderly": True,
+        "physical_severity": "low-moderate",
+        "transition_severity": "moderate-high",
+        "ngfs_category": "orderly",
+    },
+    "Divergent Net Zero": {
+        "description": "1.5°C achieved via divergent policies across regions, leading to higher energy costs.",
+        "temp_2100_c": 1.5,
+        "carbon_price": {2025: 85, 2030: 185, 2035: 300, 2040: 430, 2045: 560, 2050: 700},
+        "gdp_loss_2050_pct": -1.2,
+        "orderly": False,
+        "physical_severity": "low",
+        "transition_severity": "very high",
+        "ngfs_category": "disorderly",
+    },
+    "Delayed Transition": {
+        "description": "2°C achieved but via late, abrupt policy action after 2030, causing carbon price shock.",
+        "temp_2100_c": 1.8,
+        "carbon_price": {2025: 30, 2030: 70, 2035: 200, 2040: 400, 2045: 530, 2050: 640},
+        "gdp_loss_2050_pct": -1.5,
+        "orderly": False,
+        "physical_severity": "moderate",
+        "transition_severity": "very high",
+        "ngfs_category": "disorderly",
+    },
+    "Nationally Determined Contributions (NDCs)": {
+        "description": "Only current NDC pledges implemented. Warming reaches ~2.5°C by 2100.",
+        "temp_2100_c": 2.5,
+        "carbon_price": {2025: 25, 2030: 35, 2035: 50, 2040: 65, 2045: 80, 2050: 95},
+        "gdp_loss_2050_pct": -2.5,
+        "orderly": False,
+        "physical_severity": "high",
+        "transition_severity": "low-moderate",
+        "ngfs_category": "hot_house",
+    },
+    "Current Policies": {
+        "description": "No additional climate policy beyond current legislation. Warming ~3°C+ by 2100.",
+        "temp_2100_c": 3.0,
+        "carbon_price": {2025: 20, 2030: 28, 2035: 38, 2040: 50, 2045: 65, 2050: 80},
+        "gdp_loss_2050_pct": -4.2,
+        "orderly": False,
+        "physical_severity": "very high",
+        "transition_severity": "low",
+        "ngfs_category": "hot_house",
+    },
+}
+
+
+def get_ngfs_phase5_scenario(scenario_name: str) -> dict:
+    """Return NGFS Phase 5 parameters for a named scenario."""
+    return NGFS_PHASE5_SCENARIOS.get(scenario_name, NGFS_PHASE5_SCENARIOS["Below 2°C"])
+
+
+def get_ngfs_carbon_price(scenario_name: str, year: int) -> float:
+    """Interpolate NGFS Phase 5 carbon price (USD/tCO2e) for a given year."""
+    scenario = get_ngfs_phase5_scenario(scenario_name)
+    prices = scenario["carbon_price"]
+    years = sorted(prices.keys())
+    if year <= years[0]:
+        return float(prices[years[0]])
+    if year >= years[-1]:
+        return float(prices[years[-1]])
+    for i in range(len(years) - 1):
+        y0, y1 = years[i], years[i + 1]
+        if y0 <= year <= y1:
+            t = (year - y0) / (y1 - y0)
+            return round(float(prices[y0]) + t * (float(prices[y1]) - float(prices[y0])), 2)
+    return 50.0
+
+
+def list_ngfs_phase5_scenarios() -> list[dict]:
+    """Return summary list of all 6 NGFS Phase 5 scenarios."""
+    return [
+        {
+            "name": name,
+            "description": params["description"],
+            "temp_2100_c": params["temp_2100_c"],
+            "category": params["ngfs_category"],
+            "physical_severity": params["physical_severity"],
+            "transition_severity": params["transition_severity"],
+        }
+        for name, params in NGFS_PHASE5_SCENARIOS.items()
+    ]

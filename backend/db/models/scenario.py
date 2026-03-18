@@ -30,13 +30,21 @@ class ScenarioApprovalStatus(str, enum.Enum):
 
 
 class NGFSScenarioType(str, enum.Enum):
-    """NGFS scenario types."""
+    """NGFS scenario types.
+
+    Phase IV (original 6): NET_ZERO_2050, DELAYED_TRANSITION, BELOW_2C,
+        NATIONALLY_DETERMINED_CONTRIBUTIONS, CURRENT_POLICIES, FRAGMENTED_WORLD
+    Phase V (2024, added): LOW_DEMAND, DIVERGENT_NET_ZERO
+    """
     NET_ZERO_2050 = "net_zero_2050"
     DELAYED_TRANSITION = "delayed_transition"
     BELOW_2C = "below_2c"
     NATIONALLY_DETERMINED_CONTRIBUTIONS = "ndc"
     CURRENT_POLICIES = "current_policies"
     FRAGMENTED_WORLD = "fragmented_world"
+    # ── NGFS Phase V (2024) additions ─────────────────────────────────────
+    LOW_DEMAND = "low_demand"                # demand-side mitigation, <1.5°C
+    DIVERGENT_NET_ZERO = "divergent_net_zero"  # heterogeneous action, ~1.5°C
 
 
 class Scenario(Base):

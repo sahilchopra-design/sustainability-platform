@@ -286,14 +286,14 @@ function AssetMapInner({
             </div>
             <div>
               <CardTitle className="text-lg">{title}</CardTitle>
-              <p className="text-sm text-white/40">{subtitle}</p>
+              <p className="text-sm text-gray-500">{subtitle}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="outline">{filteredCount} / {assets.length} assets</Badge>
             <button
               onClick={() => setIsFullscreen(!isFullscreen)}
-              className="p-2 hover:bg-white/[0.06] dark:hover:bg-[#111827] rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-50 dark:hover:bg-white rounded-lg transition-colors"
             >
               {isFullscreen ? <X className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
             </button>
@@ -304,20 +304,20 @@ function AssetMapInner({
       <CardContent className="p-0">
         {/* Filters */}
         {showFilters && (
-          <div className="px-4 py-3 border-b bg-white/[0.02] dark:bg-[#0d1424]/60">
+          <div className="px-4 py-3 border-b bg-gray-50 dark:bg-white/60">
             <div className="flex flex-wrap items-center gap-4">
               {/* Asset Type Filters */}
               <div className="flex items-center gap-2">
-                <Layers className="h-4 w-4 text-white/30" />
-                <span className="text-xs text-white/40 mr-1">Type:</span>
+                <Layers className="h-4 w-4 text-gray-500" />
+                <span className="text-xs text-gray-500 mr-1">Type:</span>
                 {Object.entries(ASSET_TYPE_CONFIG).map(([type, config]) => (
                   <button
                     key={type}
                     onClick={() => toggleAssetType(type)}
                     className={`px-2 py-1 rounded-full text-xs font-medium transition-all ${
                       filters.assetTypes.includes(type)
-                        ? 'text-white '
-                        : 'bg-white/[0.08] dark:bg-[#1a2234] text-white/40'
+                        ? 'text-gray-900 '
+                        : 'bg-black/[0.05] dark:bg-[#1a2234] text-gray-500'
                     }`}
                     style={filters.assetTypes.includes(type) ? { backgroundColor: config.color } : {}}
                   >
@@ -328,16 +328,16 @@ function AssetMapInner({
 
               {/* Risk Level Filters */}
               <div className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-white/30" />
-                <span className="text-xs text-white/40 mr-1">Risk:</span>
+                <AlertTriangle className="h-4 w-4 text-gray-500" />
+                <span className="text-xs text-gray-500 mr-1">Risk:</span>
                 {Object.entries(RISK_COLORS).filter(([k]) => k !== 'default').map(([level, color]) => (
                   <button
                     key={level}
                     onClick={() => toggleRiskLevel(level)}
                     className={`px-2 py-1 rounded-full text-xs font-medium capitalize transition-all ${
                       filters.riskLevels.includes(level)
-                        ? 'text-white '
-                        : 'bg-white/[0.08] dark:bg-[#1a2234] text-white/40'
+                        ? 'text-gray-900 '
+                        : 'bg-black/[0.05] dark:bg-[#1a2234] text-gray-500'
                     }`}
                     style={filters.riskLevels.includes(level) ? { backgroundColor: color } : {}}
                   >
@@ -354,26 +354,26 @@ function AssetMapInner({
           <div ref={mapContainer} className="absolute inset-0" />
           
           {/* Custom Zoom Controls */}
-          <div className="absolute top-4 left-4 flex flex-col gap-1 bg-[#0d1424] dark:bg-[#111827] rounded-lg shadow-lg overflow-hidden">
+          <div className="absolute top-4 left-4 flex flex-col gap-1 bg-white dark:bg-white rounded-lg shadow-lg overflow-hidden">
             <button
               onClick={handleZoomIn}
-              className="p-2 hover:bg-white/[0.06] dark:hover:bg-[#1a2234] transition-colors"
+              className="p-2 hover:bg-gray-50 dark:hover:bg-[#1a2234] transition-colors"
               title="Zoom In"
             >
               <ZoomIn className="h-4 w-4" />
             </button>
-            <div className="h-px bg-white/[0.08] dark:bg-[#1a2234]" />
+            <div className="h-px bg-black/[0.05] dark:bg-[#1a2234]" />
             <button
               onClick={handleZoomOut}
-              className="p-2 hover:bg-white/[0.06] dark:hover:bg-[#1a2234] transition-colors"
+              className="p-2 hover:bg-gray-50 dark:hover:bg-[#1a2234] transition-colors"
               title="Zoom Out"
             >
               <ZoomOut className="h-4 w-4" />
             </button>
-            <div className="h-px bg-white/[0.08] dark:bg-[#1a2234]" />
+            <div className="h-px bg-black/[0.05] dark:bg-[#1a2234]" />
             <button
               onClick={handleResetView}
-              className="p-2 hover:bg-white/[0.06] dark:hover:bg-[#1a2234] transition-colors"
+              className="p-2 hover:bg-gray-50 dark:hover:bg-[#1a2234] transition-colors"
               title="Reset View"
             >
               <MapPin className="h-4 w-4" />
@@ -382,8 +382,8 @@ function AssetMapInner({
 
           {/* Legend */}
           {showLegend && (
-            <div className="absolute bottom-4 left-4 bg-[#0d1424] dark:bg-[#111827] rounded-lg shadow-lg p-3">
-              <p className="text-xs font-medium text-white/40 mb-2">Risk Level</p>
+            <div className="absolute bottom-4 left-4 bg-white dark:bg-white rounded-lg shadow-lg p-3">
+              <p className="text-xs font-medium text-gray-500 mb-2">Risk Level</p>
               <div className="space-y-1">
                 {Object.entries(RISK_COLORS).filter(([k]) => k !== 'default').map(([level, color]) => (
                   <div key={level} className="flex items-center gap-2">
@@ -392,7 +392,7 @@ function AssetMapInner({
                       style={{ backgroundColor: color }}
                     />
                     <span className="text-xs capitalize">{level}</span>
-                    <span className="text-xs text-white/30">({riskStats[level]})</span>
+                    <span className="text-xs text-gray-500">({riskStats[level]})</span>
                   </div>
                 ))}
               </div>
@@ -400,15 +400,15 @@ function AssetMapInner({
           )}
 
           {/* Stats Panel */}
-          <div className="absolute top-4 right-16 bg-[#0d1424] dark:bg-[#111827] rounded-lg shadow-lg p-3">
+          <div className="absolute top-4 right-16 bg-white dark:bg-white rounded-lg shadow-lg p-3">
             <div className="grid grid-cols-2 gap-3 text-center">
               <div>
                 <p className="text-lg font-bold text-red-500">{riskStats.critical + riskStats.high}</p>
-                <p className="text-xs text-white/40">High Risk</p>
+                <p className="text-xs text-gray-500">High Risk</p>
               </div>
               <div>
                 <p className="text-lg font-bold text-emerald-500">{riskStats.low + riskStats.medium}</p>
-                <p className="text-xs text-white/40">Lower Risk</p>
+                <p className="text-xs text-gray-500">Lower Risk</p>
               </div>
             </div>
           </div>
@@ -416,7 +416,7 @@ function AssetMapInner({
 
         {/* Selected Asset Detail */}
         {selectedAsset && (
-          <div className="px-4 py-3 border-t bg-white/[0.02] dark:bg-[#0d1424]/60">
+          <div className="px-4 py-3 border-t bg-gray-50 dark:bg-white/60">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div 
@@ -425,25 +425,25 @@ function AssetMapInner({
                 />
                 <div>
                   <p className="font-medium">{selectedAsset.name}</p>
-                  <p className="text-xs text-white/40">
+                  <p className="text-xs text-gray-500">
                     {selectedAsset.location} • {selectedAsset.counterparty}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
                 <div className="text-right">
-                  <p className="text-xs text-white/40">Risk Score</p>
+                  <p className="text-xs text-gray-500">Risk Score</p>
                   <p className="font-bold">{((selectedAsset.risk_score || 0) * 100).toFixed(0)}%</p>
                 </div>
                 {selectedAsset.capacity && (
                   <div className="text-right">
-                    <p className="text-xs text-white/40">Capacity</p>
+                    <p className="text-xs text-gray-500">Capacity</p>
                     <p className="font-bold">{selectedAsset.capacity}</p>
                   </div>
                 )}
                 <button
                   onClick={() => setSelectedAsset(null)}
-                  className="p-1 hover:bg-white/[0.08] dark:hover:bg-[#1a2234] rounded"
+                  className="p-1 hover:bg-black/[0.05] dark:hover:bg-[#1a2234] rounded"
                 >
                   <X className="h-4 w-4" />
                 </button>

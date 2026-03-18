@@ -38,6 +38,7 @@ from services.nature_risk_calculator import (
     BiodiversityOverlapCalculator,
     PortfolioNatureRiskCalculator
 )
+from services.nature_risk_spatial import NatureRiskSpatialService
 from services.nature_risk_seed_data import (
     get_encore_dependencies_by_sector,
     get_all_encore_sectors,
@@ -444,6 +445,69 @@ async def calculate_biodiversity_overlaps(request: BiodiversityOverlapRequest):
         "asset_count": len(sample_assets),
         "site_count": len(sites),
         "results": results
+    }
+
+
+# ============ PostGIS Spatial Biodiversity Overlap Route ============
+
+@router.post("/biodiversity/spatial-overlaps")
+async def spatial_biodiversity_overlaps(
+    lat: float = Query(..., description="WGS84 latitude"),
+    lng: float = Query(..., description="WGS84 longitude"),
+    radius_km: float = Query(10.0, ge=0.1, le=200.0, description="Search radius km"),
+    include_flood: bool = Query(True),
+    include_wildfire: bool = Query(True),
+    include_slr: bool = Query(True),
+    db: Session = Depends(get_db),
+):
+    """
+    PostGIS-backed spatial hazard overlap query for a single lat/lng point.
+
+    Queries ref_protected_areas (WDPA), ref_flood_zones, ref_wildfire_zones,
+    and ref_sea_level_zones using ST_DWithin / ST_Within PostGIS predicates.
+
+    Falls back gracefully when the DB is unavailable or the ref tables are empty.
+    Source field in response: 'postgis' | 'none' | 'error'.
+    """
+    svc = NatureRiskSpatialService(db=db)
+    result = svc.get_spatial_overlaps(
+        lat=lat,
+        lng=lng,
+        radius_km=radius_km,
+        include_flood=include_flood,
+        include_wildfire=include_wildfire,
+        include_slr=include_slr,
+    )
+    return svc.to_dict(result)
+
+
+@router.post("/biodiversity/spatial-overlaps/batch")
+async def spatial_biodiversity_overlaps_batch(
+    assets: List[Dict[str, Any]],
+    radius_km: float = Query(10.0, ge=0.1, le=200.0, description="Search radius km"),
+    lat_key: str = Query("latitude", description="Key name for latitude in asset dicts"),
+    lng_key: str = Query("longitude", description="Key name for longitude in asset dicts"),
+    db: Session = Depends(get_db),
+):
+    """
+    Batch PostGIS spatial hazard overlap query for multiple assets.
+
+    Each asset dict must contain lat/lng fields (default keys: 'latitude', 'longitude').
+    Returns a dict keyed by asset id (or index) → spatial overlap result.
+    """
+    svc = NatureRiskSpatialService(db=db)
+    batch_results = svc.batch_get_spatial_overlaps(
+        assets=assets,
+        radius_km=radius_km,
+        lat_key=lat_key,
+        lng_key=lng_key,
+    )
+    return {
+        "asset_count": len(batch_results),
+        "radius_km": radius_km,
+        "results": {
+            key: svc.to_dict(r) for key, r in batch_results.items()
+        },
     }
 
 

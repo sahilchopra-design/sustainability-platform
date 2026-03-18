@@ -291,7 +291,7 @@ export function ValueImpactCalculator() {
                   <div className="text-4xl font-bold text-emerald-400">
                     {formatCurrency(result.estimated_value_increase)}
                   </div>
-                  <div className="text-sm text-white/40">
+                  <div className="text-sm text-gray-500">
                     Estimated value uplift from{' '}
                     <Badge variant="outline" className="ml-1">
                       {result.certification_type?.toUpperCase()} {result.certification_level?.replace('_', ' ')}
@@ -334,7 +334,7 @@ export function ValueImpactCalculator() {
                 <div className="space-y-3">
                   {result.estimated_rent_premium_psf && (
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-white/60">Rent Premium per SF</span>
+                      <span className="text-sm text-gray-600">Rent Premium per SF</span>
                       <span className="font-medium text-emerald-400">
                         +${parseFloat(result.estimated_rent_premium_psf).toFixed(2)}/SF
                       </span>
@@ -342,34 +342,34 @@ export function ValueImpactCalculator() {
                   )}
                   {result.estimated_annual_rent_increase && (
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-white/60">Annual Rent Increase</span>
+                      <span className="text-sm text-gray-600">Annual Rent Increase</span>
                       <span className="font-medium text-emerald-400">
                         {formatCurrency(result.estimated_annual_rent_increase)}
                       </span>
                     </div>
                   )}
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-white/60">Cap Rate Compression</span>
+                    <span className="text-sm text-gray-600">Cap Rate Compression</span>
                     <span className="font-medium text-violet-600">
                       {result.cap_rate_compression_bps} bps
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-white/60">Operating Cost Savings</span>
+                    <span className="text-sm text-gray-600">Operating Cost Savings</span>
                     <span className="font-medium text-blue-300">
                       {parseFloat(result.estimated_operating_cost_savings_percent || 0).toFixed(1)}%
                     </span>
                   </div>
                   {result.estimated_annual_cost_savings && (
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-white/60">Annual Cost Savings</span>
+                      <span className="text-sm text-gray-600">Annual Cost Savings</span>
                       <span className="font-medium text-emerald-400">
                         {formatCurrency(result.estimated_annual_cost_savings)}
                       </span>
                     </div>
                   )}
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-white/60">Regional Adjustment</span>
+                    <span className="text-sm text-gray-600">Regional Adjustment</span>
                     <span className="font-medium">
                       {parseFloat(result.regional_adjustment || 1).toFixed(2)}x
                     </span>
@@ -382,13 +382,13 @@ export function ValueImpactCalculator() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <BookOpen className="h-4 w-4 text-white/60" />
+                  <BookOpen className="h-4 w-4 text-gray-600" />
                   Research Sources
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm text-white/60">Data Reliability</span>
+                  <span className="text-sm text-gray-600">Data Reliability</span>
                   <Badge
                     variant="outline"
                     className={
@@ -400,10 +400,10 @@ export function ValueImpactCalculator() {
                     {result.data_reliability}
                   </Badge>
                 </div>
-                <ul className="space-y-1 text-xs text-white/60">
+                <ul className="space-y-1 text-xs text-gray-600">
                   {(result.source_studies || []).slice(0, 4).map((source, idx) => (
                     <li key={idx} className="flex items-start gap-1">
-                      <span className="text-white/30">•</span>
+                      <span className="text-gray-500">•</span>
                       {source}
                     </li>
                   ))}
@@ -415,8 +415,8 @@ export function ValueImpactCalculator() {
 
         {!result && (
           <Card className="border-dashed">
-            <CardContent className="py-12 text-center text-white/40">
-              <Building2 className="h-12 w-12 mx-auto mb-4 text-white/20" />
+            <CardContent className="py-12 text-center text-gray-500">
+              <Building2 className="h-12 w-12 mx-auto mb-4 text-gray-400" />
               <p>Select certification type and enter property financials to estimate value impact</p>
             </CardContent>
           </Card>

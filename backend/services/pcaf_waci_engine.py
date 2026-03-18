@@ -519,10 +519,24 @@ class PCAFWACIEngine:
             else Decimal("0")
         )
         
-        ac_dqs: Dict[str, list] = {}
+        # P1-5 fix: exposure-weighted DQS per asset class (PCAF Standard v2.0 §4.3)
+        # Simple average previously used — replaced with Σ(exposure_i × DQS_i) / Σ(exposure_i)
+        ac_dqs_weighted: Dict[str, list] = {}   # list of (exposure, dqs) tuples
         for inv in investees:
-            ac_dqs.setdefault(inv.asset_class.value, []).append(inv.data_quality.value)
-        avg_dqs_by_ac = {ac: round(sum(v)/len(v), 2) for ac, v in ac_dqs.items()}
+            ac = inv.asset_class.value
+            ac_dqs_weighted.setdefault(ac, []).append(
+                (float(inv.outstanding_amount_eur), inv.data_quality.value)
+            )
+        avg_dqs_by_ac: Dict[str, float] = {}
+        for ac, pairs in ac_dqs_weighted.items():
+            total_exp = sum(exp for exp, _ in pairs)
+            if total_exp > 0:
+                avg_dqs_by_ac[ac] = round(
+                    sum(exp * dqs for exp, dqs in pairs) / total_exp, 2
+                )
+            else:
+                # Fallback to simple average if all exposures are zero
+                avg_dqs_by_ac[ac] = round(sum(dqs for _, dqs in pairs) / len(pairs), 2)
         
         return {
             "pai_1_ghg_emissions_tco2e": {

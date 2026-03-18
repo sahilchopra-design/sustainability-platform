@@ -1,5 +1,8 @@
 """
 Report Generator — creates professional PDF and Excel reports for impact analysis.
+
+Narrative sections use `narrative_templates.render_section()` so that all
+boilerplate prose is maintained in a single place (narrative_templates.py).
 """
 
 import os
@@ -7,8 +10,52 @@ import uuid
 from datetime import datetime, timezone
 from typing import Dict, Any, List
 
+from services.narrative_templates import render_section
+
 REPORTS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "reports_output")
 os.makedirs(REPORTS_DIR, exist_ok=True)
+
+
+def _build_narrative_data(impact_data: dict, portfolio_data: dict, scenario_data: dict) -> dict:
+    """Build the template data dict from raw report inputs."""
+    horizons = impact_data.get("horizons", [])
+    sc = scenario_data or {}
+
+    # Find worst / best scenarios from horizons list
+    sorted_h = sorted(horizons, key=lambda h: h.get("expected_loss", 0), reverse=True)
+    worst = sorted_h[0] if sorted_h else {}
+    best = sorted_h[-1] if sorted_h else {}
+
+    sector_bd = portfolio_data.get("sectorBreakdown") or portfolio_data.get("sector_breakdown") or {}
+    top_sector = max(sector_bd, key=sector_bd.get, default="N/A") if sector_bd else "N/A"
+    top_sector_val = sector_bd.get(top_sector, 0)
+    total_exp = portfolio_data.get("total_exposure", 1) or 1
+
+    return {
+        "portfolio_name": portfolio_data.get("name", "Portfolio"),
+        "num_assets": portfolio_data.get("num_assets", 0),
+        "currency": "$",
+        "total_exposure": portfolio_data.get("total_exposure", 0),
+        "num_scenarios": len(set(h.get("scenario_name", "") for h in horizons)),
+        "horizons": ", ".join(str(h.get("horizon", "")) for h in horizons),
+        "worst_scenario": impact_data.get("scenario_name", "Delayed Transition"),
+        "worst_el": worst.get("expected_loss", 0),
+        "worst_horizon": worst.get("horizon", 2050),
+        "worst_el_pct": worst.get("expected_loss_pct", 0) * 100,
+        "worst_pd_change": worst.get("avg_pd_change_pct", 0),
+        "worst_var95": worst.get("var_95", 0),
+        "best_scenario": impact_data.get("best_scenario_name", "Net Zero 2050"),
+        "best_el": best.get("expected_loss", 0),
+        "best_horizon": best.get("horizon", 2050),
+        "best_el_pct": best.get("expected_loss_pct", 0) * 100,
+        "top_sector": top_sector,
+        "top_sector_pct": (top_sector_val / total_exp * 100) if total_exp else 0,
+        "top_country": portfolio_data.get("top_country", "Germany"),
+        "top_country_pct": portfolio_data.get("top_country_pct", 30),
+        "top_country_hazard": portfolio_data.get("top_country_hazard", "riverine flooding"),
+        "entity_name": portfolio_data.get("entity_name", portfolio_data.get("name", "the entity")),
+        "reporting_year": datetime.now(timezone.utc).year,
+    }
 
 
 def generate_pdf_report(impact_data: dict, portfolio_data: dict, scenario_data: dict) -> str:
@@ -113,6 +160,20 @@ def generate_pdf_report(impact_data: dict, portfolio_data: dict, scenario_data: 
             ("TOPPADDING", (0, 0), (-1, -1), 6),
         ]))
         elements.append(t)
+
+    # ---- Narrative Summary (template-driven) ----
+    try:
+        narrative_data = _build_narrative_data(impact_data, portfolio_data, scenario_data)
+        narrative_text = render_section("CLIMATE_RISK_IMPACT", narrative_data)
+        elements.append(Paragraph("1a. Analytical Narrative", h2))
+        for line in narrative_text.strip().split("\n"):
+            if line.startswith("EXECUTIVE SUMMARY"):
+                continue  # already have cover heading
+            if line.strip():
+                elements.append(Paragraph(line.strip(), body))
+                elements.append(Spacer(1, 3))
+    except Exception:
+        pass  # narrative is best-effort — never block report generation
 
     # ---- Portfolio Overview ----
     elements.append(Paragraph("2. Portfolio Overview", h1))

@@ -3,7 +3,7 @@ Portfolio Aggregation and Reporting Module API Routes
 Consolidates property valuations into portfolio-level analytics
 """
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
 from typing import Optional, List
 from datetime import date
 from uuid import UUID, uuid4, uuid5, NAMESPACE_DNS
@@ -23,6 +23,7 @@ from services.portfolio_analytics_engine_v2 import (
     get_portfolio, get_holdings, save_portfolio, save_holding,
     remove_holding, list_portfolios, get_report, init_sample_data
 )
+from middleware.auth_middleware import get_request_org_id
 
 
 router = APIRouter(prefix="/api/v1/portfolio-analytics", tags=["Portfolio Analytics"])
@@ -35,6 +36,7 @@ engine = PortfolioAggregationEngine()
 
 @router.get("/portfolios", response_model=PortfolioListResponse)
 async def list_all_portfolios(
+    request: Request,
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     portfolio_type: Optional[PortfolioType] = None,
@@ -42,10 +44,12 @@ async def list_all_portfolios(
 ):
     """
     List all portfolios with optional filtering.
-    
+
+    P0-2: Results are scoped to the requesting user's organisation.
     Returns paginated list of portfolios with summary metrics.
     """
-    all_portfolios = list_portfolios()
+    org_id = get_request_org_id(request)
+    all_portfolios = list_portfolios(org_id=org_id)
     
     # Apply filters
     if portfolio_type:
@@ -64,13 +68,9 @@ async def list_all_portfolios(
         total_value = sum(Decimal(str(h.get("current_value", 0))) for h in holdings)
         total_income = sum(Decimal(str(h.get("annual_income", 0))) for h in holdings)
         
-        # portfolios_pg uses string IDs (e.g. "demo-eu-banking-sfdr") — normalise to UUID
-        try:
-            p_uuid = UUID(p["id"])
-        except (ValueError, AttributeError):
-            p_uuid = uuid5(NAMESPACE_DNS, p["id"])
+        # Use the actual string ID from portfolios_pg — no UUID synthesis
         items.append(PortfolioResponse(
-            id=p_uuid,
+            id=p["id"],
             name=p["name"],
             description=p.get("description"),
             portfolio_type=PortfolioType(p.get("portfolio_type", "fund")),
@@ -120,7 +120,7 @@ async def create_portfolio(data: PortfolioCreate):
     save_portfolio(portfolio_id, portfolio_data)
     
     return PortfolioResponse(
-        id=UUID(portfolio_id),
+        id=portfolio_id,
         name=data.name,
         description=data.description,
         portfolio_type=data.portfolio_type,
@@ -135,53 +135,64 @@ async def create_portfolio(data: PortfolioCreate):
     )
 
 
-@router.get("/portfolios/{portfolio_id}", response_model=PortfolioResponse)
-async def get_portfolio_by_id(portfolio_id: str):
+@router.get("/portfolios/{portfolio_id}")
+async def get_portfolio_by_id(portfolio_id: str, request: Request):
     """
     Get portfolio details by ID.
-    
+
+    P0-2: Returns 404 if the portfolio belongs to a different organisation.
     Returns portfolio information with calculated metrics.
     """
-    portfolio = get_portfolio(portfolio_id)
-    if not portfolio:
-        raise HTTPException(status_code=404, detail=f"Portfolio {portfolio_id} not found")
-    
-    holdings = get_holdings(portfolio_id)
-    total_value = sum(Decimal(str(h.get("current_value", 0))) for h in holdings)
-    total_income = sum(Decimal(str(h.get("annual_income", 0))) for h in holdings)
-    
-    return PortfolioResponse(
-        id=UUID(portfolio["id"]),
-        name=portfolio["name"],
-        description=portfolio.get("description"),
-        portfolio_type=PortfolioType(portfolio.get("portfolio_type", "fund")),
-        investment_strategy=InvestmentStrategy(portfolio.get("investment_strategy", "core")) if portfolio.get("investment_strategy") else None,
-        target_return=Decimal(str(portfolio.get("target_return", 0))) if portfolio.get("target_return") else None,
-        aum=Decimal(str(portfolio.get("aum", 0))),
-        currency=portfolio.get("currency", "USD"),
-        inception_date=portfolio.get("inception_date"),
-        owner_id=UUID(portfolio["owner_id"]) if portfolio.get("owner_id") else None,
-        created_at=portfolio["created_at"],
-        updated_at=portfolio["updated_at"],
-        total_properties=len(holdings),
-        total_value=total_value,
-        total_income=total_income,
-    )
+    try:
+        org_id = get_request_org_id(request)
+        portfolio = get_portfolio(portfolio_id, org_id=org_id)
+        if not portfolio:
+            raise HTTPException(status_code=404, detail=f"Portfolio {portfolio_id} not found")
+
+        holdings = get_holdings(portfolio_id)
+        total_value = sum(Decimal(str(h.get("current_value", 0))) for h in holdings)
+        total_income = sum(Decimal(str(h.get("annual_income", 0))) for h in holdings)
+
+        return PortfolioResponse(
+            id=portfolio["id"],
+            name=portfolio["name"],
+            description=portfolio.get("description"),
+            portfolio_type=PortfolioType(portfolio.get("portfolio_type", "fund")),
+            investment_strategy=InvestmentStrategy(portfolio.get("investment_strategy", "core")) if portfolio.get("investment_strategy") else None,
+            target_return=Decimal(str(portfolio.get("target_return", 0))) if portfolio.get("target_return") else None,
+            aum=Decimal(str(portfolio.get("aum", 0))),
+            currency=portfolio.get("currency", "USD"),
+            inception_date=portfolio.get("inception_date"),
+            owner_id=portfolio.get("owner_id"),
+            created_at=portfolio["created_at"],
+            updated_at=portfolio.get("updated_at", portfolio["created_at"]),
+            total_properties=len(holdings),
+            total_value=total_value,
+            total_income=total_income,
+        ).model_dump()
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Portfolio detail error: {type(e).__name__}: {str(e)[:300]}")
 
 
 @router.patch("/portfolios/{portfolio_id}", response_model=PortfolioResponse)
-async def update_portfolio(portfolio_id: str, data: PortfolioUpdate):
+async def update_portfolio(portfolio_id: str, data: PortfolioUpdate, request: Request):
     """
     Update portfolio information.
-    
+
+    P0-2: Returns 404 if portfolio belongs to a different organisation.
     Only provided fields will be updated.
     """
     from datetime import datetime, timezone
-    
-    portfolio = get_portfolio(portfolio_id)
+
+    org_id = get_request_org_id(request)
+    portfolio = get_portfolio(portfolio_id, org_id=org_id)
     if not portfolio:
         raise HTTPException(status_code=404, detail=f"Portfolio {portfolio_id} not found")
-    
+
     # Update fields
     if data.name is not None:
         portfolio["name"] = data.name
@@ -195,16 +206,16 @@ async def update_portfolio(portfolio_id: str, data: PortfolioUpdate):
         portfolio["target_return"] = data.target_return
     if data.aum is not None:
         portfolio["aum"] = data.aum
-    
+
     portfolio["updated_at"] = datetime.now(timezone.utc)
     save_portfolio(portfolio_id, portfolio)
-    
+
     holdings = get_holdings(portfolio_id)
     total_value = sum(Decimal(str(h.get("current_value", 0))) for h in holdings)
     total_income = sum(Decimal(str(h.get("annual_income", 0))) for h in holdings)
-    
+
     return PortfolioResponse(
-        id=UUID(portfolio["id"]),
+        id=portfolio["id"],
         name=portfolio["name"],
         description=portfolio.get("description"),
         portfolio_type=PortfolioType(portfolio.get("portfolio_type", "fund")),
@@ -213,7 +224,7 @@ async def update_portfolio(portfolio_id: str, data: PortfolioUpdate):
         aum=Decimal(str(portfolio.get("aum", 0))),
         currency=portfolio.get("currency", "USD"),
         inception_date=portfolio.get("inception_date"),
-        owner_id=UUID(portfolio["owner_id"]) if portfolio.get("owner_id") else None,
+        owner_id=portfolio.get("owner_id"),
         created_at=portfolio["created_at"],
         updated_at=portfolio["updated_at"],
         total_properties=len(holdings),
@@ -225,33 +236,47 @@ async def update_portfolio(portfolio_id: str, data: PortfolioUpdate):
 # ============ Holdings ============
 
 @router.get("/portfolios/{portfolio_id}/holdings", response_model=HoldingListResponse)
-async def list_holdings(portfolio_id: str):
+async def list_holdings(portfolio_id: str, request: Request):
     """
     Get all holdings for a portfolio.
-    
+
+    P0-2: Scoped to requesting organisation.
     Returns list of property holdings with their details.
     """
-    portfolio = get_portfolio(portfolio_id)
+    org_id = get_request_org_id(request)
+    portfolio = get_portfolio(portfolio_id, org_id=org_id)
     if not portfolio:
         raise HTTPException(status_code=404, detail=f"Portfolio {portfolio_id} not found")
     
     holdings = get_holdings(portfolio_id)
-    total_value = sum(Decimal(str(h.get("current_value", 0))) for h in holdings)
-    
+
+    # Engine may return value/current_value/exposure — normalize
+    def _val(h, *keys):
+        for k in keys:
+            v = h.get(k)
+            if v is not None:
+                return Decimal(str(v))
+        return Decimal("0")
+
+    total_value = sum(_val(h, "current_value", "value", "exposure") for h in holdings)
+
     items = [
         HoldingResponse(
-            id=UUID(h["id"]) if isinstance(h["id"], str) and len(h["id"]) == 36 else uuid4(),
-            portfolio_id=UUID(portfolio_id),
-            property_id=UUID(h.get("property_id", str(uuid4()))),
+            id=h["id"],
+            portfolio_id=portfolio_id,
+            property_id=h.get("property_id", h["id"]),
             acquisition_date=h.get("acquisition_date"),
-            acquisition_cost=Decimal(str(h.get("acquisition_cost", 0))) if h.get("acquisition_cost") else None,
-            current_value=Decimal(str(h.get("current_value", 0))) if h.get("current_value") else None,
+            acquisition_cost=_val(h, "acquisition_cost") or None,
+            current_value=_val(h, "current_value", "value", "exposure") or None,
             ownership_percentage=Decimal(str(h.get("ownership_percentage", 1))),
-            annual_income=Decimal(str(h.get("annual_income", 0))) if h.get("annual_income") else None,
-            unrealized_gain_loss=Decimal(str(h.get("unrealized_gain_loss", 0))) if h.get("unrealized_gain_loss") else None,
-            property_name=h.get("property_name"),
-            property_type=h.get("property_type"),
-            property_location=h.get("property_location"),
+            annual_income=_val(h, "annual_income") or None,
+            unrealized_gain_loss=_val(h, "unrealized_gain_loss") or None,
+            property_name=h.get("property_name") or h.get("asset_name") or h.get("company_name"),
+            property_type=h.get("property_type") or h.get("asset_type") or h.get("sector"),
+            property_location=h.get("property_location") or h.get("region") or h.get("country"),
+            estimated_fields=h.get("estimated_fields") or None,
+            data_quality=h.get("data_quality"),
+            estimation_method=h.get("estimation_method"),
         )
         for h in holdings
     ]
@@ -260,13 +285,15 @@ async def list_holdings(portfolio_id: str):
 
 
 @router.post("/portfolios/{portfolio_id}/holdings", response_model=HoldingResponse, status_code=201)
-async def add_holding(portfolio_id: str, data: HoldingCreate):
+async def add_holding(portfolio_id: str, data: HoldingCreate, request: Request):
     """
     Add a new holding to the portfolio.
-    
+
+    P0-2: Rejects if portfolio belongs to a different organisation.
     Returns the created holding.
     """
-    portfolio = get_portfolio(portfolio_id)
+    org_id = get_request_org_id(request)
+    portfolio = get_portfolio(portfolio_id, org_id=org_id)
     if not portfolio:
         raise HTTPException(status_code=404, detail=f"Portfolio {portfolio_id} not found")
     
@@ -285,8 +312,8 @@ async def add_holding(portfolio_id: str, data: HoldingCreate):
     save_holding(portfolio_id, holding_data)
     
     return HoldingResponse(
-        id=UUID(holding_id),
-        portfolio_id=UUID(portfolio_id),
+        id=holding_id,
+        portfolio_id=portfolio_id,
         property_id=data.property_id,
         acquisition_date=data.acquisition_date,
         acquisition_cost=data.acquisition_cost,
@@ -297,11 +324,13 @@ async def add_holding(portfolio_id: str, data: HoldingCreate):
 
 
 @router.delete("/portfolios/{portfolio_id}/holdings/{property_id}", status_code=204)
-async def delete_holding(portfolio_id: str, property_id: str):
+async def delete_holding(portfolio_id: str, property_id: str, request: Request):
     """
     Remove a holding from the portfolio.
+    P0-2: Rejects if portfolio belongs to a different organisation.
     """
-    portfolio = get_portfolio(portfolio_id)
+    org_id = get_request_org_id(request)
+    portfolio = get_portfolio(portfolio_id, org_id=org_id)
     if not portfolio:
         raise HTTPException(status_code=404, detail=f"Portfolio {portfolio_id} not found")
     
@@ -507,25 +536,36 @@ async def run_pcaf_for_portfolio(portfolio_id: str):
 @router.get("/{portfolio_id}/pcaf-results")
 async def get_pcaf_results(portfolio_id: str):
     """
-    Return the latest PCAF metrics for a portfolio.
+    Return full PCAF metrics for a portfolio — auto-calculates on first call.
 
-    Uses cached pcaf_time_series records if available.
-    Runs the engine on-demand if no cached data exists (first call).
-
-    Response includes:
+    Always returns the rich format including:
       portfolio_summary  — WACI, ITR, coverage, DQS
       dqs_distribution   — count of assets per DQS tier (1-5)
       sector_breakdown   — per-sector WACI contribution
-      from_cache         — true if data came from pcaf_time_series
+      investee_results   — per-investee attribution
+      pai_indicators     — SFDR PAI metrics
     """
-    from services.portfolio_analytics_engine import get_latest_pcaf_results
+    from services.portfolio_analytics_engine import run_pcaf_calculation
 
     try:
-        result = get_latest_pcaf_results(portfolio_id)
+        result = run_pcaf_calculation(portfolio_id)
     except Exception as exc:
         raise HTTPException(
             status_code=500,
             detail=f"PCAF results fetch failed: {str(exc)}",
+        )
+
+    if result.get("error") and not result.get("data_available"):
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "message": result["error"],
+                "required_data": [
+                    "Assets must exist in assets_pg table for this portfolio",
+                    "Each asset needs: company_name, exposure/market_value, sector",
+                    "Emissions data (scope1/2/3) improves DQS quality scores",
+                ],
+            },
         )
 
     return result

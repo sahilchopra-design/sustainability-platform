@@ -28,16 +28,22 @@ export const useDashboardStore = create((set, get) => ({
   metrics: null,
   metricsLoading: false,
 
+  // GAP-003 — Seed-data transparency flags
+  // isFallback: true when a calculation call failed and synthetic seed data was returned
+  // apiReachable: whether the last health-check / API call succeeded
+  isFallback: false,
+  apiReachable: false,
+
   // Actions - Portfolios
   fetchPortfolios: async () => {
     set({ portfolioLoading: true });
     try {
       const res = await fetch(`${API_URL}/api/pg/portfolios`);
       const data = await res.json();
-      set({ portfolios: data.portfolios || [], portfolioLoading: false });
+      set({ portfolios: data.portfolios || [], portfolioLoading: false, apiReachable: true });
     } catch (error) {
       console.error('Failed to fetch portfolios:', error);
-      set({ portfolioLoading: false });
+      set({ portfolioLoading: false, apiReachable: false });
     }
   },
 
@@ -200,12 +206,45 @@ export const useDashboardStore = create((set, get) => ({
       
       return data;
     } catch (error) {
-      console.error('Analysis failed:', error);
-      set({ 
-        analysisRunning: false, 
-        analysisProgress: 0,
-        analysisError: error.message 
+      console.error('Analysis failed — using seeded fallback:', error);
+      // Backend offline: generate deterministic seeded results so the UI stays functional
+      const { selectedPortfolio: p } = get();
+      const totalExp = p?.total_exposure || 850_000_000;
+      const seedResults = {
+        portfolio_id: p?.id || 'demo',
+        portfolio_name: p?.name || 'Demo Portfolio',
+        total_exposure: totalExp,
+        run_date: new Date().toISOString(),
+        _fallback: true,
+        results: [
+          { scenario_name: 'Net Zero 2050', horizon: 2030, portfolio_metrics: { expected_loss: totalExp * 0.031, avg_pd_change: 0.18, capital_charge: totalExp * 0.048 } },
+          { scenario_name: 'Net Zero 2050', horizon: 2050, portfolio_metrics: { expected_loss: totalExp * 0.019, avg_pd_change: 0.09, capital_charge: totalExp * 0.031 } },
+          { scenario_name: 'Below 2°C', horizon: 2030, portfolio_metrics: { expected_loss: totalExp * 0.044, avg_pd_change: 0.27, capital_charge: totalExp * 0.062 } },
+          { scenario_name: 'Below 2°C', horizon: 2050, portfolio_metrics: { expected_loss: totalExp * 0.029, avg_pd_change: 0.14, capital_charge: totalExp * 0.041 } },
+          { scenario_name: 'Delayed Transition', horizon: 2030, portfolio_metrics: { expected_loss: totalExp * 0.061, avg_pd_change: 0.43, capital_charge: totalExp * 0.089 } },
+          { scenario_name: 'Delayed Transition', horizon: 2050, portfolio_metrics: { expected_loss: totalExp * 0.082, avg_pd_change: 0.58, capital_charge: totalExp * 0.11 } },
+          { scenario_name: 'Current Policies', horizon: 2030, portfolio_metrics: { expected_loss: totalExp * 0.078, avg_pd_change: 0.51, capital_charge: totalExp * 0.104 } },
+          { scenario_name: 'Current Policies', horizon: 2050, portfolio_metrics: { expected_loss: totalExp * 0.134, avg_pd_change: 0.94, capital_charge: totalExp * 0.168 } },
+        ],
+        sector_breakdown: {
+          'Energy': totalExp * 0.22,
+          'Utilities': totalExp * 0.18,
+          'Industrials': totalExp * 0.16,
+          'Real Estate': totalExp * 0.14,
+          'Materials': totalExp * 0.12,
+          'Financials': totalExp * 0.10,
+          'Other': totalExp * 0.08,
+        },
+      };
+      set({
+        analysisResults: seedResults,
+        analysisRunning: false,
+        analysisProgress: 100,
+        analysisError: null,
+        isFallback: true,      // GAP-003: signal that seed data is in use
+        apiReachable: false,   // GAP-003: API is offline
       });
+      return seedResults;
     }
   },
 

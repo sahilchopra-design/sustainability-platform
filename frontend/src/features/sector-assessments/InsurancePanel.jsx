@@ -18,37 +18,37 @@ const fmt = (v, dp = 1) => v == null ? "—" : Number(v).toFixed(dp);
 const fmtM = (v) => v == null ? "—" : `€${(Number(v) / 1e6).toFixed(2)}M`;
 const fmtPct = (v) => v == null ? "—" : `${(Number(v) * 100).toFixed(1)}%`;
 
-function Badge({ label, color = "bg-white/[0.06] text-white/60" }) {
+function Badge({ label, color = "bg-gray-50 text-gray-600" }) {
   return <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${color}`}>{label}</span>;
 }
 function Card({ title, subtitle, children, className = "" }) {
   return (
-    <div className={`bg-[#0d1424] rounded-xl border border-white/[0.06] ${className}`}>
+    <div className={`bg-white rounded-xl border border-gray-200 ${className}`}>
       {(title || subtitle) && (
-        <div className="px-6 py-4 border-b border-white/[0.04]">
-          {title && <h2 className="text-sm font-semibold text-white/90">{title}</h2>}
-          {subtitle && <p className="text-xs text-white/40 mt-0.5">{subtitle}</p>}
+        <div className="px-6 py-4 border-b border-gray-200">
+          {title && <h2 className="text-sm font-semibold text-gray-900">{title}</h2>}
+          {subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}
         </div>
       )}
       <div className="p-6">{children}</div>
     </div>
   );
 }
-function StatCard({ label, value, sub, color = "text-white" }) {
+function StatCard({ label, value, sub, color = "text-gray-900" }) {
   return (
-    <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-5">
-      <p className="text-xs text-white/40 font-medium mb-1">{label}</p>
+    <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <p className="text-xs text-gray-500 font-medium mb-1">{label}</p>
       <p className={`text-xl font-bold ${color}`}>{value}</p>
-      {sub && <p className="text-[11px] text-white/30 mt-1">{sub}</p>}
+      {sub && <p className="text-[11px] text-gray-500 mt-1">{sub}</p>}
     </div>
   );
 }
 function Field({ label, hint, children }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-white/60 mb-1">{label}</label>
+      <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
       {children}
-      {hint && <p className="text-[10px] text-white/30 mt-0.5">{hint}</p>}
+      {hint && <p className="text-[10px] text-gray-500 mt-0.5">{hint}</p>}
     </div>
   );
 }
@@ -56,14 +56,14 @@ function Input({ value, onChange, type = "text", ...rest }) {
   return (
     <input type={type} value={value}
       onChange={e => onChange(type === "number" ? parseFloat(e.target.value) || 0 : e.target.value)}
-      className="w-full border border-white/[0.06] rounded-lg bg-[#0b1120] text-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+      className="w-full border border-gray-200 rounded-lg bg-[#f5f6f8] text-gray-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/50"
       {...rest} />
   );
 }
 function Sel({ value, onChange, options }) {
   return (
     <select value={value} onChange={e => onChange(e.target.value)}
-      className="w-full border border-white/[0.06] rounded-lg bg-[#0b1120] text-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50">
+      className="w-full border border-gray-200 rounded-lg bg-[#f5f6f8] text-gray-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/50">
       {options.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
     </select>
   );
@@ -174,16 +174,16 @@ export default function InsurancePanel() {
     SUFFICIENT: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
     MARGINAL: "text-amber-400 bg-amber-500/10 border-amber-500/20",
     INSUFFICIENT: "text-red-400 bg-red-500/10 border-red-500/20",
-  }[s] || "text-white/60");
+  }[s] || "text-gray-600");
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-2">
         <Badge label="Solvency II Art. 44a" color="bg-purple-500/10 text-purple-300" />
         <Badge label="EIOPA ORSA Climate 2022" color="bg-blue-500/10 text-blue-300" />
-        <Badge label="Swiss Re sigma 2023" color="bg-cyan-400/10 text-cyan-300" />
+        <Badge label="Swiss Re sigma 2023" color="bg-gray-50 text-gray-800" />
         <Badge label="Lloyd's RDS" color="bg-amber-500/10 text-amber-400" />
-        <Badge label="IPCC AR6 Physical Risk" color="bg-white/[0.06] text-white/60" />
+        <Badge label="IPCC AR6 Physical Risk" color="bg-gray-50 text-gray-600" />
       </div>
 
       <Card title="Insurance Entity Parameters"
@@ -223,14 +223,14 @@ export default function InsurancePanel() {
         </div>
 
         <div className="mt-5">
-          <p className="text-xs font-medium text-white/60 mb-2">Perils Exposed</p>
+          <p className="text-xs font-medium text-gray-600 mb-2">Perils Exposed</p>
           <div className="flex flex-wrap gap-2">
             {PERILS.map(p => (
               <button key={p.v} onClick={() => togglePeril(p.v)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
                   form.perils_exposed.includes(p.v)
-                    ? "bg-cyan-400/10 border-cyan-400/30 text-cyan-300"
-                    : "bg-white/[0.02] border-white/[0.06] text-white/40 hover:text-white/60"
+                    ? "bg-gray-50 border-gray-300 text-gray-800"
+                    : "bg-gray-50 border-gray-200 text-gray-500 hover:text-gray-600"
                 }`}>
                 {p.l}
               </button>
@@ -240,7 +240,7 @@ export default function InsurancePanel() {
 
         <div className="mt-6 flex justify-end">
           <button onClick={handleCalc} disabled={loading}
-            className="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-50 text-white text-sm font-semibold px-8 py-2.5 rounded-lg transition-colors">
+            className="bg-[#164E8A] hover:bg-[#12407A] disabled:opacity-50 text-gray-900 text-sm font-semibold px-8 py-2.5 rounded-lg transition-colors">
             {loading ? "Computing…" : "Run Insurance Climate Risk Assessment"}
           </button>
         </div>
@@ -279,8 +279,8 @@ export default function InsurancePanel() {
             <StatCard label="Net 1-in-250 (Climate)"
               value={fmtM(result.net_cat_loss_1in250_climate)}
               sub={`Gross: ${fmtM(result.gross_cat_loss_1in250_climate)}`} />
-            <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-5">
-              <p className="text-xs text-white/40 font-medium mb-1">Reinsurance Sufficiency</p>
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <p className="text-xs text-gray-500 font-medium mb-1">Reinsurance Sufficiency</p>
               <div className={`inline-flex items-center px-3 py-1.5 rounded-lg border text-sm font-bold mt-1 ${rsSufStyle(result.reinsurance_sufficiency)}`}>
                 {result.reinsurance_sufficiency}
               </div>
@@ -331,11 +331,11 @@ export default function InsurancePanel() {
 
           {/* Methodology note */}
           <Card title="Methodology Reference">
-            <div className="space-y-1 text-[11px] text-white/40">
-              <p><span className="text-white/60 font-medium">CAT Loss Multipliers:</span> Swiss Re sigma 2023 / EIOPA CCRST 2022 / Lloyd's Market Risk Committee — peril × scenario scaling factors applied to current-climate baseline losses.</p>
-              <p><span className="text-white/60 font-medium">TP Uplift:</span> EIOPA Supervisory Statement on Climate Risk 2024 — additional % loading on technical provisions: +4% (1.5°C), +9% (2°C), +18% (3°C).</p>
-              <p><span className="text-white/60 font-medium">SCR CAT Add-on:</span> Solvency II Delegated Regulation (EU) 2015/35, Annex XIII — per-peril shock factors applied to gross written premium as Pillar 2 buffer.</p>
-              <p><span className="text-white/60 font-medium">Protection Gap:</span> Economic loss estimated at 2.5× insured loss (Lloyd's / Swiss Re global sigma ratio); protection gap = 1 − (insured / economic).</p>
+            <div className="space-y-1 text-[11px] text-gray-500">
+              <p><span className="text-gray-600 font-medium">CAT Loss Multipliers:</span> Swiss Re sigma 2023 / EIOPA CCRST 2022 / Lloyd's Market Risk Committee — peril × scenario scaling factors applied to current-climate baseline losses.</p>
+              <p><span className="text-gray-600 font-medium">TP Uplift:</span> EIOPA Supervisory Statement on Climate Risk 2024 — additional % loading on technical provisions: +4% (1.5°C), +9% (2°C), +18% (3°C).</p>
+              <p><span className="text-gray-600 font-medium">SCR CAT Add-on:</span> Solvency II Delegated Regulation (EU) 2015/35, Annex XIII — per-peril shock factors applied to gross written premium as Pillar 2 buffer.</p>
+              <p><span className="text-gray-600 font-medium">Protection Gap:</span> Economic loss estimated at 2.5× insured loss (Lloyd's / Swiss Re global sigma ratio); protection gap = 1 − (insured / economic).</p>
             </div>
           </Card>
         </div>

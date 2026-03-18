@@ -108,7 +108,7 @@ export function WhatIfAnalysis() {
               <RefreshCw className="h-4 w-4 text-amber-400" />
               <div>
                 <div className="text-sm font-medium">Cascade Effects</div>
-                <div className="text-xs text-white/40">Include secondary impacts</div>
+                <div className="text-xs text-gray-500">Include secondary impacts</div>
               </div>
             </div>
             <Switch
@@ -132,7 +132,7 @@ export function WhatIfAnalysis() {
             </div>
 
             {changes.map((change, idx) => (
-              <div key={idx} className="p-3 bg-white/[0.02] rounded-lg space-y-2">
+              <div key={idx} className="p-3 bg-gray-50 rounded-lg space-y-2">
                 <div className="flex items-center gap-2">
                   <Select 
                     value={change.parameter} 
@@ -171,7 +171,7 @@ export function WhatIfAnalysis() {
                     placeholder="0.1"
                   />
 
-                  <span className="text-xs text-white/40">
+                  <span className="text-xs text-gray-500">
                     {change.change_type === 'percentage' ? '(e.g., 0.1 = +10%)' : '(absolute)'}
                   </span>
 
@@ -218,16 +218,16 @@ export function WhatIfAnalysis() {
               <CardContent>
                 <div className="flex items-center justify-center gap-6 py-4">
                   <div className="text-center">
-                    <div className="text-xs text-white/40 mb-1">Base Value</div>
-                    <div className="text-xl font-bold text-white/70">
+                    <div className="text-xs text-gray-500 mb-1">Base Value</div>
+                    <div className="text-xl font-bold text-gray-700">
                       {formatCurrency(result.base_valuation)}
                     </div>
                   </div>
                   
-                  <ArrowRight className="h-6 w-6 text-white/30" />
+                  <ArrowRight className="h-6 w-6 text-gray-500" />
                   
                   <div className="text-center">
-                    <div className="text-xs text-white/40 mb-1">Adjusted Value</div>
+                    <div className="text-xs text-gray-500 mb-1">Adjusted Value</div>
                     <div className={`text-xl font-bold ${
                       parseFloat(result.total_change_pct) > 0 ? 'text-emerald-400' : 'text-red-400'
                     }`}>
@@ -265,7 +265,7 @@ export function WhatIfAnalysis() {
               <CardContent>
                 <div className="space-y-3">
                   {result.change_breakdown?.map((cb, idx) => (
-                    <div key={idx} className="p-3 bg-white/[0.02] rounded-lg">
+                    <div key={idx} className="p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-medium text-sm">
                           {getParameterLabel(cb.parameter)}
@@ -279,10 +279,10 @@ export function WhatIfAnalysis() {
                           {formatCurrency(cb.total_impact)}
                         </Badge>
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-white/40">
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
                         <span>{cb.old_value?.toFixed(4)}</span>
                         <ArrowRight className="h-3 w-3" />
-                        <span className="font-medium text-white/70">{cb.new_value?.toFixed(4)}</span>
+                        <span className="font-medium text-gray-700">{cb.new_value?.toFixed(4)}</span>
                       </div>
                       {parseFloat(cb.cascading_impacts) !== 0 && (
                         <div className="mt-2 text-xs text-amber-400">
@@ -300,8 +300,8 @@ export function WhatIfAnalysis() {
 
         {!result && (
           <Card className="border-dashed">
-            <CardContent className="py-12 text-center text-white/40">
-              <Zap className="h-12 w-12 mx-auto mb-4 text-white/20" />
+            <CardContent className="py-12 text-center text-gray-500">
+              <Zap className="h-12 w-12 mx-auto mb-4 text-gray-400" />
               <p>Add parameter changes to see their impact on valuation</p>
               <div className="mt-4 flex items-center justify-center gap-2 text-xs">
                 <HelpCircle className="h-3 w-3" />

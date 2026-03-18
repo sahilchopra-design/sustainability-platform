@@ -12,16 +12,16 @@ import {
 } from 'recharts';
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
-function Badge({ label, color = 'bg-[#0d1424]/[0.06] text-white/40' }) {
+function Badge({ label, color = 'bg-gray-50 text-gray-500' }) {
   return <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${color}`}>{label}</span>;
 }
 function Card({ title, subtitle, children, className = '' }) {
   return (
-    <div className={`bg-[#0d1424] rounded-xl border border-white/[0.06] ${className}`}>
+    <div className={`bg-white rounded-xl border border-gray-200 ${className}`}>
       {(title || subtitle) && (
-        <div className="px-6 py-4 border-b border-white/[0.05]">
-          {title && <h2 className="text-sm font-semibold text-white/90">{title}</h2>}
-          {subtitle && <p className="text-xs text-white/40 mt-0.5">{subtitle}</p>}
+        <div className="px-6 py-4 border-b border-gray-200">
+          {title && <h2 className="text-sm font-semibold text-gray-900">{title}</h2>}
+          {subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}
         </div>
       )}
       <div className="p-6">{children}</div>
@@ -56,7 +56,7 @@ const UK_TCFD_PILLARS = [
     ],
   },
   {
-    id: 'strategy', label: 'Strategy', color: 'border-cyan-500/20 bg-cyan-500/[0.04]',
+    id: 'strategy', label: 'Strategy', color: 'border-gray-200 bg-gray-50',
     elements: [
       {
         id: 'str_1', code: 'S-A',
@@ -161,7 +161,7 @@ export default function UkTcfdPanel() {
       <div className="flex flex-wrap gap-2">
         <Badge label="FCA PS21/23" color="bg-red-500/10 text-red-700" />
         <Badge label="LR 9.8.6R / DTR 7.2" color="bg-blue-400/10 text-blue-300" />
-        <Badge label="Companies Act s.414CB" color="bg-cyan-400/10 text-cyan-300" />
+        <Badge label="Companies Act s.414CB" color="bg-gray-50 text-gray-800" />
         <Badge label="TCFD 2023 Recommendations" color="bg-purple-400/10 text-purple-300" />
         <Badge label="UK Green Finance Strategy" color="bg-emerald-400/10 text-emerald-400" />
       </div>
@@ -172,9 +172,9 @@ export default function UkTcfdPanel() {
       >
         {/* Entity Setup */}
         <div className="mb-6">
-          <label className="block text-xs font-medium text-white/60 mb-1">Entity / Registrant Type</label>
+          <label className="block text-xs font-medium text-gray-600 mb-1">Entity / Registrant Type</label>
           <select
-            className="w-full md:w-1/2 border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            className="w-full md:w-1/2 border border-gray-200 rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-gray-700 focus:outline-none focus:ring-2 focus:ring-black/50"
             value={entityType} onChange={e => setEntityType(e.target.value)}
           >
             {ENTITY_TYPES.map(t => <option key={t.v} value={t.v}>{t.l}</option>)}
@@ -185,27 +185,27 @@ export default function UkTcfdPanel() {
         <div className="space-y-5">
           {UK_TCFD_PILLARS.map(pillar => (
             <div key={pillar.id} className={`border rounded-xl p-4 ${pillar.color}`}>
-              <h3 className="text-sm font-bold text-white/80 mb-3">{pillar.label}</h3>
+              <h3 className="text-sm font-bold text-gray-800 mb-3">{pillar.label}</h3>
               <div className="space-y-3">
                 {pillar.elements.map(el => (
-                  <div key={el.id} className="bg-[#0d1424] rounded-lg p-3 border border-white/[0.04]">
+                  <div key={el.id} className="bg-white rounded-lg p-3 border border-gray-200">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <Badge label={el.code} color="bg-white/[0.06] text-white/50" />
-                        <p className="text-xs text-white/70">{el.label}</p>
+                        <Badge label={el.code} color="bg-gray-50 text-gray-500" />
+                        <p className="text-xs text-gray-700">{el.label}</p>
                       </div>
                     </div>
-                    <p className="text-[10px] text-cyan-300/50 mb-2 italic">{el.uk_note}</p>
+                    <p className="text-[10px] text-gray-700 mb-2 italic">{el.uk_note}</p>
                     <div className="flex items-center gap-3">
                       <select
-                        className="border border-white/[0.06] rounded px-2 py-1 text-xs bg-[#0b1120] text-white/70 focus:outline-none w-56"
+                        className="border border-gray-200 rounded px-2 py-1 text-xs bg-[#f5f6f8] text-gray-700 focus:outline-none w-56"
                         value={disclosures[el.id]?.maturity || 0}
                         onChange={e => set(el.id, 'maturity', parseInt(e.target.value))}
                       >
                         {MATURITY_LEVELS.map(m => <option key={m.v} value={m.v}>{m.l}</option>)}
                       </select>
                       <input
-                        className="flex-1 border border-white/[0.06] rounded px-2 py-1 text-xs bg-[#0b1120] text-white/40 focus:outline-none"
+                        className="flex-1 border border-gray-200 rounded px-2 py-1 text-xs bg-[#f5f6f8] text-gray-500 focus:outline-none"
                         placeholder="Evidence / notes / where disclosed"
                         value={disclosures[el.id]?.notes || ''}
                         onChange={e => set(el.id, 'notes', e.target.value)}
@@ -224,7 +224,7 @@ export default function UkTcfdPanel() {
         <div className="mt-6 flex justify-end">
           <button
             onClick={compute}
-            className="bg-cyan-400 hover:bg-cyan-300 text-[#080e1c] text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors"
+            className="bg-[#164E8A] hover:bg-[#12407A] text-[#ffffff] text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors"
           >
             Generate UK TCFD Assessment
           </button>
@@ -237,16 +237,16 @@ export default function UkTcfdPanel() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div className="col-span-2 md:col-span-1 bg-gradient-to-br from-red-500/20 to-blue-500/20 border border-red-400/10 rounded-xl p-5 text-center">
               <p className="text-xs text-red-200/60 mb-1">Overall UK TCFD Score</p>
-              <p className="text-3xl font-bold text-white">{result.overall.toFixed(1)}<span className="text-lg text-white/40">/4</span></p>
+              <p className="text-3xl font-bold text-gray-900">{result.overall.toFixed(1)}<span className="text-lg text-gray-500">/4</span></p>
               <p className="text-xs text-red-200/60 mt-1">
                 {result.overall >= 3 ? 'Advanced' : result.overall >= 2 ? 'Developing' : 'Initial'}
               </p>
             </div>
             {result.pillarScores.map((p, i) => (
-              <div key={i} className="bg-[#0d1424] border border-white/[0.06] rounded-xl p-4">
-                <p className="text-xs text-white/40 mb-1">{p.pillar}</p>
+              <div key={i} className="bg-white border border-gray-200 rounded-xl p-4">
+                <p className="text-xs text-gray-500 mb-1">{p.pillar}</p>
                 <p className={`text-xl font-bold ${p.score >= 3 ? 'text-emerald-400' : p.score >= 2 ? 'text-amber-400' : 'text-red-500'}`}>
-                  {p.score.toFixed(1)}<span className="text-xs text-white/30">/4</span>
+                  {p.score.toFixed(1)}<span className="text-xs text-gray-500">/4</span>
                 </p>
               </div>
             ))}
@@ -272,7 +272,7 @@ export default function UkTcfdPanel() {
                   <div key={i} className="border border-amber-200 bg-amber-500/10 rounded-lg p-3">
                     <div className="flex items-center gap-2 mb-1">
                       <Badge label={g.code} color="bg-amber-500/20 text-amber-400" />
-                      <Badge label={g.pillar} color="bg-white/[0.06] text-white/40" />
+                      <Badge label={g.pillar} color="bg-gray-50 text-gray-500" />
                       <span className={`text-xs font-bold ml-auto ${maturityColor(g.maturity)}`}>{g.maturity}/4</span>
                     </div>
                     <p className="text-xs text-amber-700">{g.label}</p>
@@ -290,7 +290,7 @@ export default function UkTcfdPanel() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
                 <XAxis dataKey="pillar" tick={{ fontSize: 9, fill: '#ffffff60' }} />
                 <YAxis domain={[0, 4]} ticks={[0,1,2,3,4]} tick={{ fontSize: 9, fill: '#ffffff60' }} />
-                <Tooltip contentStyle={{ background: '#0d1424', border: '1px solid #ffffff10', borderRadius: 8 }} formatter={v => [`${v}/4`]} />
+                <Tooltip contentStyle={{ background: '#ffffff', border: '1px solid #ffffff10', borderRadius: 8 }} formatter={v => [`${v}/4`]} />
                 <Bar dataKey="score" name="Maturity Score" radius={[4, 4, 0, 0]}>
                   {result.pillarScores.map((p, i) => (
                     <Cell key={i} fill={p.score >= 3 ? '#10b981' : p.score >= 2 ? '#f59e0b' : '#ef4444'} />
@@ -304,14 +304,14 @@ export default function UkTcfdPanel() {
       )}
 
       {/* Methodology */}
-      <Card title="Methodology Reference" className="border-white/[0.03]">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs text-white/50">
-          <div><span className="font-semibold text-white/70">Listed:</span> FCA LR 9.8.6R (from 1 Jan 2021)</div>
-          <div><span className="font-semibold text-white/70">Asset Mgrs:</span> FCA PS21/23 (from Jun 2022)</div>
-          <div><span className="font-semibold text-white/70">Large Co:</span> Companies Act 2006 s.414CB (FY2022)</div>
-          <div><span className="font-semibold text-white/70">Framework:</span> TCFD 2023 Recommendations</div>
-          <div><span className="font-semibold text-white/70">Scenarios:</span> NGFS, IEA WEO/NZE required</div>
-          <div><span className="font-semibold text-white/70">GHG:</span> SECR (Scope 1+2) + Scope 3 encouraged</div>
+      <Card title="Methodology Reference" className="border-gray-100">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs text-gray-500">
+          <div><span className="font-semibold text-gray-700">Listed:</span> FCA LR 9.8.6R (from 1 Jan 2021)</div>
+          <div><span className="font-semibold text-gray-700">Asset Mgrs:</span> FCA PS21/23 (from Jun 2022)</div>
+          <div><span className="font-semibold text-gray-700">Large Co:</span> Companies Act 2006 s.414CB (FY2022)</div>
+          <div><span className="font-semibold text-gray-700">Framework:</span> TCFD 2023 Recommendations</div>
+          <div><span className="font-semibold text-gray-700">Scenarios:</span> NGFS, IEA WEO/NZE required</div>
+          <div><span className="font-semibold text-gray-700">GHG:</span> SECR (Scope 1+2) + Scope 3 encouraged</div>
         </div>
       </Card>
     </div>

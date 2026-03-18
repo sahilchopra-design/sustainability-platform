@@ -33,8 +33,8 @@ export const MetricCard = ({
       default:
         return {
           icon: Minus,
-          color: 'text-white/40',
-          bgColor: 'bg-white/[0.02]'
+          color: 'text-gray-500',
+          bgColor: 'bg-gray-50'
         };
     }
   };
@@ -45,7 +45,7 @@ export const MetricCard = ({
   return (
     <div
       className={`
-        bg-[#0d1424] rounded-xl border border-white/[0.06] p-6
+        bg-white rounded-xl border border-gray-200 p-6
         cursor-pointer transition-all duration-200
         hover:shadow-md hover:-translate-y-0.5
         ${className}
@@ -66,10 +66,10 @@ export const MetricCard = ({
       </div>
 
       <div className="space-y-1">
-        <p className="text-sm font-medium text-white/40">{title}</p>
+        <p className="text-sm font-medium text-gray-500">{title}</p>
         <div className="flex items-baseline gap-1.5">
-          <span className="text-3xl font-bold text-white tabular-nums">{value}</span>
-          {unit && <span className="text-sm text-white/40">{unit}</span>}
+          <span className="text-3xl font-bold text-gray-900 tabular-nums">{value}</span>
+          {unit && <span className="text-sm text-gray-500">{unit}</span>}
         </div>
       </div>
     </div>

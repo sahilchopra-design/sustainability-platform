@@ -267,7 +267,7 @@ export function ScheduledReportsManager() {
                     onChange={e => setFormData({...formData, recipients: e.target.value})}
                     data-testid="schedule-recipients-input"
                   />
-                  <p className="text-xs text-white/40">
+                  <p className="text-xs text-gray-500">
                     Enter email addresses separated by commas
                   </p>
                 </div>
@@ -288,12 +288,12 @@ export function ScheduledReportsManager() {
       
       <CardContent>
         {loading ? (
-          <div className="text-center py-8 text-white/40">Loading...</div>
+          <div className="text-center py-8 text-gray-500">Loading...</div>
         ) : reports.length === 0 ? (
-          <div className="text-center py-12 bg-white/[0.02] rounded-lg">
-            <Calendar className="h-12 w-12 mx-auto text-white/20 mb-4" />
-            <p className="text-white/60 font-medium">No scheduled reports yet</p>
-            <p className="text-sm text-white/40 mt-1">
+          <div className="text-center py-12 bg-gray-50 rounded-lg">
+            <Calendar className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+            <p className="text-gray-600 font-medium">No scheduled reports yet</p>
+            <p className="text-sm text-gray-500 mt-1">
               Create your first automated report schedule
             </p>
           </div>
@@ -328,23 +328,23 @@ export function ScheduledReportsManager() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1 text-sm">
-                      <Clock className="h-3 w-3 text-white/30" />
+                      <Clock className="h-3 w-3 text-gray-500" />
                       {getFrequencyLabel(report.frequency)}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1 text-sm">
-                      <Mail className="h-3 w-3 text-white/30" />
+                      <Mail className="h-3 w-3 text-gray-500" />
                       {report.recipients.length} recipient(s)
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm text-white/60">
+                  <TableCell className="text-sm text-gray-600">
                     {report.next_run 
                       ? new Date(report.next_run).toLocaleDateString()
                       : '-'}
                   </TableCell>
                   <TableCell>
-                    <Badge className={report.is_active ? 'bg-green-100 text-green-300' : 'bg-white/[0.06] text-white/60'}>
+                    <Badge className={report.is_active ? 'bg-green-100 text-green-300' : 'bg-gray-50 text-gray-600'}>
                       {report.is_active ? 'Active' : 'Paused'}
                     </Badge>
                   </TableCell>

@@ -9,7 +9,7 @@ PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
 BACKEND_DIR="$PROJECT_ROOT/backend"
 FRONTEND_DIR="$PROJECT_ROOT/frontend"
 BACKEND_PORT=8001
-FRONTEND_PORT=3000
+FRONTEND_PORT=4000
 
 echo ""
 echo "  ============================================"
@@ -54,7 +54,7 @@ done
 # ── Start frontend ────────────────────────────────────────────────────────────
 echo "[4/4] Starting frontend on port $FRONTEND_PORT..."
 cd "$FRONTEND_DIR"
-BROWSER=none npm start &
+PORT=4000 BROWSER=none REACT_APP_BACKEND_URL=http://localhost:8001 npm start &
 FRONTEND_PID=$!
 
 echo ""

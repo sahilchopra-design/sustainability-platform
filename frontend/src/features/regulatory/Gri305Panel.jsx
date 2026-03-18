@@ -11,30 +11,30 @@ import {
 } from 'recharts';
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
-function Badge({ label, color = 'bg-[#0d1424]/[0.06] text-white/40' }) {
+function Badge({ label, color = 'bg-gray-50 text-gray-500' }) {
   return <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${color}`}>{label}</span>;
 }
 function Card({ title, subtitle, children, className = '' }) {
   return (
-    <div className={`bg-[#0d1424] rounded-xl border border-white/[0.06] ${className}`}>
+    <div className={`bg-white rounded-xl border border-gray-200 ${className}`}>
       {(title || subtitle) && (
-        <div className="px-6 py-4 border-b border-white/[0.05]">
-          {title && <h2 className="text-sm font-semibold text-white/90">{title}</h2>}
-          {subtitle && <p className="text-xs text-white/40 mt-0.5">{subtitle}</p>}
+        <div className="px-6 py-4 border-b border-gray-200">
+          {title && <h2 className="text-sm font-semibold text-gray-900">{title}</h2>}
+          {subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}
         </div>
       )}
       <div className="p-6">{children}</div>
     </div>
   );
 }
-function StatCard({ label, value, unit, sub, color = 'text-white' }) {
+function StatCard({ label, value, unit, sub, color = 'text-gray-900' }) {
   return (
-    <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-4">
-      <p className="text-xs text-white/40 mb-1">{label}</p>
+    <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <p className="text-xs text-gray-500 mb-1">{label}</p>
       <p className={`text-2xl font-bold ${color}`}>
-        {value}{unit && <span className="text-xs text-white/30 ml-1">{unit}</span>}
+        {value}{unit && <span className="text-xs text-gray-500 ml-1">{unit}</span>}
       </p>
-      {sub && <p className="text-[10px] text-white/30 mt-1">{sub}</p>}
+      {sub && <p className="text-[10px] text-gray-500 mt-1">{sub}</p>}
     </div>
   );
 }
@@ -159,31 +159,31 @@ export default function Gri305Panel() {
       <div className="flex flex-wrap gap-2">
         <Badge label="GRI 305: Emissions (2016)" color="bg-emerald-400/10 text-emerald-400" />
         <Badge label="GHG Protocol Corporate Standard" color="bg-blue-400/10 text-blue-300" />
-        <Badge label="ISO 14064-1:2018" color="bg-cyan-400/10 text-cyan-300" />
+        <Badge label="ISO 14064-1:2018" color="bg-gray-50 text-gray-800" />
         <Badge label="ESRS E1 Cross-Reference" color="bg-purple-400/10 text-purple-300" />
-        <Badge label="SBTi Compatible" color="bg-white/[0.06] text-white/60" />
+        <Badge label="SBTi Compatible" color="bg-gray-50 text-gray-600" />
       </div>
 
       {/* 305-1 Scope 1 */}
       <Card title="GRI 305-1 — Direct (Scope 1) GHG Emissions" subtitle="Total gross Scope 1 GHG emissions in metric tonnes CO₂e. Report by GHG type if applicable.">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-xs text-white/40 mb-1">Reporting Year</label>
-            <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0b1120] text-white/70 focus:outline-none"
+            <label className="block text-xs text-gray-500 mb-1">Reporting Year</label>
+            <input type="number" className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-[#f5f6f8] text-gray-700 focus:outline-none"
               value={reportingYear} onChange={e => setReportingYear(parseInt(e.target.value))} />
           </div>
           <div>
-            <label className="block text-xs text-white/40 mb-1">Base Year</label>
-            <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0b1120] text-white/70 focus:outline-none"
+            <label className="block text-xs text-gray-500 mb-1">Base Year</label>
+            <input type="number" className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-[#f5f6f8] text-gray-700 focus:outline-none"
               value={baseYear} onChange={e => setBaseYear(parseInt(e.target.value))} />
           </div>
           <div>
-            <label className="block text-xs text-white/40 mb-1">Scope 1 Total (tCO₂e)</label>
-            <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0b1120] text-white/70 focus:outline-none"
+            <label className="block text-xs text-gray-500 mb-1">Scope 1 Total (tCO₂e)</label>
+            <input type="number" className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-[#f5f6f8] text-gray-700 focus:outline-none"
               value={scope1Total} onChange={e => setScope1Total(e.target.value)} placeholder="e.g. 15000" />
           </div>
           <div>
-            <label className="block text-xs text-white/40 mb-1">Verification Status</label>
+            <label className="block text-xs text-gray-500 mb-1">Verification Status</label>
             <select className={`w-full border rounded px-2 py-1.5 text-xs focus:outline-none ${STATUS_COLOR[scope1Status]}`}
               value={scope1Status} onChange={e => setScope1Status(e.target.value)}>
               {DISCLOSURE_STATUS.map(s => <option key={s.v} value={s.v}>{s.l}</option>)}
@@ -192,9 +192,9 @@ export default function Gri305Panel() {
         </div>
         <div className="flex flex-wrap gap-2 mt-3">
           {GHG_GASES.map(g => (
-            <Badge key={g} label={g} color="bg-white/[0.04] text-white/40" />
+            <Badge key={g} label={g} color="bg-gray-50 text-gray-500" />
           ))}
-          <span className="text-[10px] text-white/30 self-center">Break down by GHG type if material</span>
+          <span className="text-[10px] text-gray-500 self-center">Break down by GHG type if material</span>
         </div>
       </Card>
 
@@ -202,17 +202,17 @@ export default function Gri305Panel() {
       <Card title="GRI 305-2 — Energy Indirect (Scope 2) GHG Emissions" subtitle="Both location-based AND market-based methods required under GRI 305-2.">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs text-white/40 mb-1">Scope 2 Market-Based (tCO₂e)</label>
-            <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0b1120] text-white/70 focus:outline-none"
+            <label className="block text-xs text-gray-500 mb-1">Scope 2 Market-Based (tCO₂e)</label>
+            <input type="number" className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-[#f5f6f8] text-gray-700 focus:outline-none"
               value={scope2Market} onChange={e => setScope2Market(e.target.value)} placeholder="Using contractual instruments" />
           </div>
           <div>
-            <label className="block text-xs text-white/40 mb-1">Scope 2 Location-Based (tCO₂e)</label>
-            <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0b1120] text-white/70 focus:outline-none"
+            <label className="block text-xs text-gray-500 mb-1">Scope 2 Location-Based (tCO₂e)</label>
+            <input type="number" className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-[#f5f6f8] text-gray-700 focus:outline-none"
               value={scope2Location} onChange={e => setScope2Location(e.target.value)} placeholder="Using grid average EFs" />
           </div>
           <div>
-            <label className="block text-xs text-white/40 mb-1">Verification Status</label>
+            <label className="block text-xs text-gray-500 mb-1">Verification Status</label>
             <select className={`w-full border rounded px-2 py-1.5 text-xs focus:outline-none ${STATUS_COLOR[scope2Status]}`}
               value={scope2Status} onChange={e => setScope2Status(e.target.value)}>
               {DISCLOSURE_STATUS.map(s => <option key={s.v} value={s.v}>{s.l}</option>)}
@@ -225,16 +225,16 @@ export default function Gri305Panel() {
       <Card title="GRI 305-3 — Other Indirect (Scope 3) GHG Emissions" subtitle="15 Scope 3 categories per GHG Protocol Corporate Value Chain Standard. Mark material categories.">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {SCOPE3_CATEGORIES.map(cat => (
-            <div key={cat.id} className={`border rounded-lg p-3 ${scope3[cat.id]?.material ? 'border-cyan-400/20 bg-cyan-400/[0.03]' : 'border-white/[0.04]'}`}>
+            <div key={cat.id} className={`border rounded-lg p-3 ${scope3[cat.id]?.material ? 'border-gray-200 bg-gray-50' : 'border-gray-200'}`}>
               <div className="flex items-center gap-2 mb-2">
                 <input type="checkbox" checked={scope3[cat.id]?.material || false}
                   onChange={e => setScope3Field(cat.id, 'material', e.target.checked)} className="accent-cyan-400" />
-                <Badge label={`Cat ${cat.cat}`} color="bg-white/[0.06] text-white/40" />
-                <span className="text-xs text-white/60">{cat.label}</span>
+                <Badge label={`Cat ${cat.cat}`} color="bg-gray-50 text-gray-500" />
+                <span className="text-xs text-gray-600">{cat.label}</span>
               </div>
               {scope3[cat.id]?.material && (
                 <div className="flex gap-2">
-                  <input type="number" className="flex-1 border border-white/[0.06] rounded px-2 py-1 text-xs bg-[#0b1120] text-white/70 focus:outline-none"
+                  <input type="number" className="flex-1 border border-gray-200 rounded px-2 py-1 text-xs bg-[#f5f6f8] text-gray-700 focus:outline-none"
                     placeholder="tCO₂e" value={scope3[cat.id]?.value || ''}
                     onChange={e => setScope3Field(cat.id, 'value', e.target.value)} />
                   <select className={`border rounded px-2 py-1 text-xs focus:outline-none w-36 ${STATUS_COLOR[scope3[cat.id]?.status]}`}
@@ -254,8 +254,8 @@ export default function Gri305Panel() {
         <Card title="GRI 305-4 — GHG Emissions Intensity" subtitle="tCO₂e per unit of organizational metric.">
           <div className="space-y-3">
             <div>
-              <label className="block text-xs text-white/40 mb-1">Intensity Denominator Type</label>
-              <select className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0b1120] text-white/70 focus:outline-none"
+              <label className="block text-xs text-gray-500 mb-1">Intensity Denominator Type</label>
+              <select className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-[#f5f6f8] text-gray-700 focus:outline-none"
                 value={intensityDenominator} onChange={e => setIntensityDenominator(e.target.value)}>
                 <option value="revenue">Net Revenue (USD/GBP/EUR)</option>
                 <option value="fte">Full-Time Equivalent (FTEs)</option>
@@ -264,8 +264,8 @@ export default function Gri305Panel() {
               </select>
             </div>
             <div>
-              <label className="block text-xs text-white/40 mb-1">Denominator Value</label>
-              <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0b1120] text-white/70 focus:outline-none"
+              <label className="block text-xs text-gray-500 mb-1">Denominator Value</label>
+              <input type="number" className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-[#f5f6f8] text-gray-700 focus:outline-none"
                 value={intensityDenominatorValue} onChange={e => setIntensityDenominatorValue(e.target.value)} placeholder="e.g. 100000000" />
             </div>
           </div>
@@ -274,13 +274,13 @@ export default function Gri305Panel() {
         <Card title="GRI 305-5 — Reduction of GHG Emissions" subtitle="Reductions vs base year (tCO₂e). Excludes offsets.">
           <div className="space-y-3">
             <div>
-              <label className="block text-xs text-white/40 mb-1">Base Year Emissions (tCO₂e Scope 1+2)</label>
-              <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0b1120] text-white/70 focus:outline-none"
+              <label className="block text-xs text-gray-500 mb-1">Base Year Emissions (tCO₂e Scope 1+2)</label>
+              <input type="number" className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-[#f5f6f8] text-gray-700 focus:outline-none"
                 value={baseYearEmissions} onChange={e => setBaseYearEmissions(e.target.value)} placeholder={`${baseYear} baseline`} />
             </div>
             <div>
-              <label className="block text-xs text-white/40 mb-1">Reductions Achieved (tCO₂e, excl. offsets)</label>
-              <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0b1120] text-white/70 focus:outline-none"
+              <label className="block text-xs text-gray-500 mb-1">Reductions Achieved (tCO₂e, excl. offsets)</label>
+              <input type="number" className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-[#f5f6f8] text-gray-700 focus:outline-none"
                 value={reductionsTco2e} onChange={e => setReductionsTco2e(e.target.value)} placeholder="e.g. 2500" />
             </div>
           </div>
@@ -291,8 +291,8 @@ export default function Gri305Panel() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card title="GRI 305-6 — Ozone-Depleting Substances" subtitle="Total ODS production/destruction (metric tonnes CFC-11 equivalent).">
           <div>
-            <label className="block text-xs text-white/40 mb-1">Total ODS (tonnes CFC-11e)</label>
-            <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0b1120] text-white/70 focus:outline-none"
+            <label className="block text-xs text-gray-500 mb-1">Total ODS (tonnes CFC-11e)</label>
+            <input type="number" className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-[#f5f6f8] text-gray-700 focus:outline-none"
               value={odsTotal} onChange={e => setOdsTotal(e.target.value)} placeholder="e.g. 0.5" />
           </div>
         </Card>
@@ -300,18 +300,18 @@ export default function Gri305Panel() {
         <Card title="GRI 305-7 — NOₓ, SOₓ and Other Significant Air Emissions" subtitle="Significant air emissions in kg or tonnes per emission type.">
           <div className="space-y-2">
             <div>
-              <label className="block text-xs text-white/40 mb-1">NOₓ (kg or tonnes)</label>
-              <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0b1120] text-white/70 focus:outline-none"
+              <label className="block text-xs text-gray-500 mb-1">NOₓ (kg or tonnes)</label>
+              <input type="number" className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-[#f5f6f8] text-gray-700 focus:outline-none"
                 value={nox} onChange={e => setNox(e.target.value)} placeholder="e.g. 450" />
             </div>
             <div>
-              <label className="block text-xs text-white/40 mb-1">SOₓ (kg or tonnes)</label>
-              <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0b1120] text-white/70 focus:outline-none"
+              <label className="block text-xs text-gray-500 mb-1">SOₓ (kg or tonnes)</label>
+              <input type="number" className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-[#f5f6f8] text-gray-700 focus:outline-none"
                 value={sox} onChange={e => setSox(e.target.value)} placeholder="e.g. 120" />
             </div>
             <div>
-              <label className="block text-xs text-white/40 mb-1">Particulate Matter — PM2.5/PM10 (kg or tonnes)</label>
-              <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0b1120] text-white/70 focus:outline-none"
+              <label className="block text-xs text-gray-500 mb-1">Particulate Matter — PM2.5/PM10 (kg or tonnes)</label>
+              <input type="number" className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-[#f5f6f8] text-gray-700 focus:outline-none"
                 value={pm} onChange={e => setPm(e.target.value)} placeholder="e.g. 80" />
             </div>
           </div>
@@ -320,7 +320,7 @@ export default function Gri305Panel() {
 
       <div className="flex justify-end">
         <button onClick={compute}
-          className="bg-emerald-400 hover:bg-emerald-300 text-[#080e1c] text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors">
+          className="bg-emerald-400 hover:bg-emerald-300 text-[#ffffff] text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors">
           Compute GRI 305 Summary
         </button>
       </div>
@@ -331,18 +331,18 @@ export default function Gri305Panel() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard label="Scope 1 (tCO₂e)" value={result.s1.toLocaleString()} color="text-blue-300" sub="Direct emissions" />
             <StatCard label="Scope 2 Market-Based (tCO₂e)" value={result.s2m.toLocaleString()} color="text-purple-300" sub="Contractual instruments" />
-            <StatCard label="Total Scope 1+2 Market (tCO₂e)" value={(result.s1 + result.s2m).toLocaleString()} color="text-cyan-300" sub="Primary GRI metric" />
+            <StatCard label="Total Scope 1+2 Market (tCO₂e)" value={(result.s1 + result.s2m).toLocaleString()} color="text-gray-800" sub="Primary GRI metric" />
             <StatCard label="Scope 3 Material Cats (tCO₂e)" value={result.scope3Total.toLocaleString()} color="text-emerald-400"
               sub={`${result.materialCats} categories reported`} />
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard label="GHG Intensity (tCO₂e/unit)" value={result.intensityMarket.toFixed(4)} color="text-white"
+            <StatCard label="GHG Intensity (tCO₂e/unit)" value={result.intensityMarket.toFixed(4)} color="text-gray-900"
               sub={`Per unit of ${intensityDenominator}`} />
             <StatCard label="Reduction vs Base Year" value={`${result.reductionPct > 0 ? '-' : '+'}${Math.abs(result.reductionPct)}%`}
               color={result.reductionPct > 0 ? 'text-emerald-400' : 'text-red-500'}
               sub={`vs ${baseYear} baseline (Scope 1+2)`} />
-            <StatCard label="Scope 3 Categories Calculated" value={`${result.calculatedCats}/15`} color="text-cyan-300"
+            <StatCard label="Scope 3 Categories Calculated" value={`${result.calculatedCats}/15`} color="text-gray-800"
               sub="GRI 305-3 coverage" />
             <StatCard label="Absolute Reductions (tCO₂e)" value={result.reductionsTco2e.toLocaleString()}
               color="text-emerald-400" sub="Excl. offsets (305-5)" />
@@ -357,7 +357,7 @@ export default function Gri305Panel() {
                   <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#ffffff60' }} />
                   <YAxis tick={{ fontSize: 9, fill: '#ffffff60' }} tickFormatter={v => v.toLocaleString()} />
                   <Tooltip
-                    contentStyle={{ background: '#0d1424', border: '1px solid #ffffff10', borderRadius: 8 }}
+                    contentStyle={{ background: '#ffffff', border: '1px solid #ffffff10', borderRadius: 8 }}
                     formatter={v => [`${v.toLocaleString()} tCO₂e`]}
                   />
                   <Bar dataKey="value" name="tCO₂e" radius={[4, 4, 0, 0]}>
@@ -371,14 +371,14 @@ export default function Gri305Panel() {
       )}
 
       {/* Methodology */}
-      <Card title="Methodology Reference" className="border-white/[0.03]">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs text-white/50">
-          <div><span className="font-semibold text-white/70">Standard:</span> GRI 305: Emissions (2016)</div>
-          <div><span className="font-semibold text-white/70">Protocol:</span> GHG Protocol Corporate Standard + Scope 3</div>
-          <div><span className="font-semibold text-white/70">ISO:</span> ISO 14064-1:2018</div>
-          <div><span className="font-semibold text-white/70">ESRS E1:</span> Cross-reference for EU CSRD reporters</div>
-          <div><span className="font-semibold text-white/70">S2 Methods:</span> Both location & market-based required</div>
-          <div><span className="font-semibold text-white/70">Scope 3:</span> 15 categories per GHG Protocol Scope 3 Standard</div>
+      <Card title="Methodology Reference" className="border-gray-100">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs text-gray-500">
+          <div><span className="font-semibold text-gray-700">Standard:</span> GRI 305: Emissions (2016)</div>
+          <div><span className="font-semibold text-gray-700">Protocol:</span> GHG Protocol Corporate Standard + Scope 3</div>
+          <div><span className="font-semibold text-gray-700">ISO:</span> ISO 14064-1:2018</div>
+          <div><span className="font-semibold text-gray-700">ESRS E1:</span> Cross-reference for EU CSRD reporters</div>
+          <div><span className="font-semibold text-gray-700">S2 Methods:</span> Both location & market-based required</div>
+          <div><span className="font-semibold text-gray-700">Scope 3:</span> 15 categories per GHG Protocol Scope 3 Standard</div>
         </div>
       </Card>
     </div>

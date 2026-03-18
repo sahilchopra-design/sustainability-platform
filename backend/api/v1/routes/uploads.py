@@ -21,7 +21,14 @@ router = APIRouter(prefix="/uploads", tags=["uploads"])
 
 # Constants
 MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
+MAX_ROW_COUNT = 100_000  # Max rows per upload to prevent memory issues
 ALLOWED_EXTENSIONS = [".csv", ".xlsx", ".xls", ".json"]
+ALLOWED_MIME_TYPES = {
+    ".csv": ["text/csv", "text/plain", "application/csv", "application/vnd.ms-excel"],
+    ".xlsx": ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"],
+    ".xls": ["application/vnd.ms-excel"],
+    ".json": ["application/json", "text/json", "text/plain"],
+}
 
 
 def get_file_extension(filename: str) -> str:
@@ -79,6 +86,15 @@ async def upload_file(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Unsupported file format. Allowed: {', '.join(ALLOWED_EXTENSIONS)}"
         )
+
+    # Validate MIME type matches extension
+    if file.content_type:
+        allowed_mimes = ALLOWED_MIME_TYPES.get(file_ext, [])
+        if allowed_mimes and file.content_type not in allowed_mimes:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"File content type '{file.content_type}' does not match extension '{file_ext}'. Expected: {', '.join(allowed_mimes)}"
+            )
     
     # Read file content
     file_content = await file.read()
@@ -104,7 +120,17 @@ async def upload_file(
         
         # Parse file to get metadata
         df, metadata = upload_service.parse_file(file_path, file_format)
-        
+
+        # Validate row count
+        if metadata.get("total_rows", 0) > MAX_ROW_COUNT:
+            # Clean up saved file
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"File contains {metadata['total_rows']:,} rows. Maximum allowed: {MAX_ROW_COUNT:,}. Please split into smaller files."
+            )
+
         # Auto-map columns
         auto_mapping = upload_service.auto_map_columns(metadata["columns"])
         

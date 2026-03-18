@@ -20,8 +20,18 @@ Key regulatory anchors:
   - Basel III/IV Pillar 1: RWA add-ons for material climate exposures
 
 Author: ECL Climate Engine Module
-Version: 2.0.0
-Date: 2026-03-01
+Version: 2.1.0
+Date: 2026-03-17
+Changes (v2.1.0 — GAP-004):
+  - EAD climate overlay: _calculate_ead_climate_uplift() — BCBS Principle 16 / EBA GL/2022/16 §4.2.4.
+    CCF draw-down on committed undrawn facilities driven by transition risk stress.
+    Asset class × sector transition risk × scenario → incremental CCF (EAD_CCF_UPLIFT_TABLE).
+    Carbon intensity loading (NGFS 2023): sectors >200 tCO2e/MEUR carry additional CCF draw.
+  - LGD Component 1 upgraded to IPCC AR6 calibration (WG2 SPM B1.2):
+    Flood return-period compression amplifiers (1.7–5.6×) scale existing flood damage haircuts
+    using log-linear JRC depth-damage curves (Huizinga et al. 2017; Winsemius et al. 2016).
+  - New ECLScenarioResult fields: ead_uplift_pct, lgd_ipcc_damage_pct (full audit trail).
+  - Base ECL now correctly uses un-uplifted EAD_base; climate ECL uses adjusted EAD.
 """
 from __future__ import annotations
 
@@ -141,6 +151,17 @@ class ClimateRiskInputs:
     sbti_aligned: bool                           # Science-Based Targets initiative
     net_zero_committed: bool                     # Net-zero with credible pathway
 
+    # ── EAD CCF uplift inputs (BCBS Principle 16 / EBA GL/2022/16 §4.2.4) ────
+    # Transition-risk-driven drawdown on committed-but-undrawn facilities.
+    # If undrawn_commitment == 0 the EAD uplift is zero (no committed lines).
+    undrawn_commitment: Decimal = Decimal("0")  # Committed undrawn facility (EUR)
+    ccf_base: Decimal           = Decimal("0.5")  # Basel III CCF for this facility type
+
+    # ── IPCC AR6 flood return period (EBA/ESRB/2021/04 physical risk) ─────────
+    # Nominal design return period for the collateral's flood defence standard.
+    # Options: 10 | 50 | 100 | 200 years. Used to scale climate frequency shift.
+    flood_return_period_years: int = 100        # Nominal return period (years)
+
 
 @dataclass
 class ECLScenarioResult:
@@ -152,7 +173,9 @@ class ECLScenarioResult:
     pd_uplift_bps: Decimal         # Absolute PD uplift in basis points
     lgd_climate_adjusted: Decimal  # LGD after climate/collateral haircut
     lgd_haircut_pct: Decimal       # LGD haircut as fraction (e.g. 0.12)
-    ead_climate: Decimal           # EAD (pass-through; CCF hook for future dev)
+    ead_climate: Decimal           # Climate-adjusted EAD (BCBS Principle 16)
+    ead_uplift_pct: Decimal        # EAD uplift fraction from CCF climate draw (e.g. 0.12 = +12%)
+    lgd_ipcc_damage_pct: Decimal   # IPCC AR6 flood-damage Component 1 of LGD haircut (audit trail)
     ecl_12m_base: Decimal          # 12-month ECL without climate overlay
     ecl_12m_climate: Decimal       # 12-month ECL with climate overlay
     ecl_lifetime_base: Decimal     # Lifetime ECL without climate overlay
@@ -284,6 +307,96 @@ class ECLClimateEngine:
         AssetClass.REVOLVING_CREDIT:      0.9,  # Short duration reduces risk
     }
 
+    # ── IPCC AR6 flood frequency amplifiers (EBA/ESRB/2021/04; IPCC AR6 WG2 SPM B1.2) ─────
+    # A 1-in-100yr flood event becomes X times more frequent under each warming pathway.
+    # Calibrated to IPCC AR6 WG2 SPM B1.2 Table SPM.1 (probability of exceedance multipliers).
+    # Higher amplifier → nominal return period compresses → higher expected annual damage.
+    # OPTIMISTIC (+1.5°C): 1.7×; BASE (+2.5°C): 2.8×; ADVERSE (+3.5°C): 4.1×; SEVERE (+4°C): 5.6×.
+    IPCC_AR6_FLOOD_FREQUENCY_AMPLIFIERS: Dict[ClimateScenario, float] = {
+        ClimateScenario.OPTIMISTIC: 1.70,   # +1.5°C — IPCC AR6 WG2 SPM B1.2 low end
+        ClimateScenario.BASE:       2.80,   # +2.5°C — NDC-aligned
+        ClimateScenario.ADVERSE:    4.10,   # +3.5°C — disorderly transition
+        ClimateScenario.SEVERE:     5.60,   # +4.0°C — hot-house world
+    }
+
+    # ── EAD CCF climate uplift table ──────────────────────────────────────────
+    # Incremental CCF draw rate on committed-but-undrawn facilities induced by
+    # transition risk (carbon cost pass-through, regulatory capex mandates →
+    # borrower liquidity stress → drawdown of committed lines).
+    # Ref: BCBS Principle 16; EBA GL/2022/16 §4.2.4; ECB DNAR 2022.
+    # Key: (AssetClass, sector_transition_risk, ClimateScenario) → incremental CCF ∈ [0, 1].
+    # Asset classes not in table → 0 (no committed-facility drawdown risk modelled).
+    EAD_CCF_UPLIFT_TABLE: Dict[Tuple[AssetClass, str, ClimateScenario], float] = {
+        # Revolving credit — highest sensitivity (on-demand drawdown under stress)
+        (AssetClass.REVOLVING_CREDIT, "very_high", ClimateScenario.OPTIMISTIC): 0.050,
+        (AssetClass.REVOLVING_CREDIT, "very_high", ClimateScenario.BASE):       0.120,
+        (AssetClass.REVOLVING_CREDIT, "very_high", ClimateScenario.ADVERSE):    0.220,
+        (AssetClass.REVOLVING_CREDIT, "very_high", ClimateScenario.SEVERE):     0.350,
+        (AssetClass.REVOLVING_CREDIT, "high",      ClimateScenario.OPTIMISTIC): 0.025,
+        (AssetClass.REVOLVING_CREDIT, "high",      ClimateScenario.BASE):       0.065,
+        (AssetClass.REVOLVING_CREDIT, "high",      ClimateScenario.ADVERSE):    0.130,
+        (AssetClass.REVOLVING_CREDIT, "high",      ClimateScenario.SEVERE):     0.210,
+        (AssetClass.REVOLVING_CREDIT, "medium",    ClimateScenario.OPTIMISTIC): 0.008,
+        (AssetClass.REVOLVING_CREDIT, "medium",    ClimateScenario.BASE):       0.025,
+        (AssetClass.REVOLVING_CREDIT, "medium",    ClimateScenario.ADVERSE):    0.055,
+        (AssetClass.REVOLVING_CREDIT, "medium",    ClimateScenario.SEVERE):     0.085,
+        (AssetClass.REVOLVING_CREDIT, "low",       ClimateScenario.OPTIMISTIC): 0.000,
+        (AssetClass.REVOLVING_CREDIT, "low",       ClimateScenario.BASE):       0.008,
+        (AssetClass.REVOLVING_CREDIT, "low",       ClimateScenario.ADVERSE):    0.018,
+        (AssetClass.REVOLVING_CREDIT, "low",       ClimateScenario.SEVERE):     0.035,
+        # Project finance — capital-intensive; stranded asset risk → cost overrun drawdowns
+        (AssetClass.PROJECT_FINANCE,  "very_high", ClimateScenario.OPTIMISTIC): 0.040,
+        (AssetClass.PROJECT_FINANCE,  "very_high", ClimateScenario.BASE):       0.100,
+        (AssetClass.PROJECT_FINANCE,  "very_high", ClimateScenario.ADVERSE):    0.180,
+        (AssetClass.PROJECT_FINANCE,  "very_high", ClimateScenario.SEVERE):     0.280,
+        (AssetClass.PROJECT_FINANCE,  "high",      ClimateScenario.OPTIMISTIC): 0.020,
+        (AssetClass.PROJECT_FINANCE,  "high",      ClimateScenario.BASE):       0.055,
+        (AssetClass.PROJECT_FINANCE,  "high",      ClimateScenario.ADVERSE):    0.110,
+        (AssetClass.PROJECT_FINANCE,  "high",      ClimateScenario.SEVERE):     0.175,
+        (AssetClass.PROJECT_FINANCE,  "medium",    ClimateScenario.OPTIMISTIC): 0.005,
+        (AssetClass.PROJECT_FINANCE,  "medium",    ClimateScenario.BASE):       0.020,
+        (AssetClass.PROJECT_FINANCE,  "medium",    ClimateScenario.ADVERSE):    0.045,
+        (AssetClass.PROJECT_FINANCE,  "medium",    ClimateScenario.SEVERE):     0.070,
+        (AssetClass.PROJECT_FINANCE,  "low",       ClimateScenario.OPTIMISTIC): 0.000,
+        (AssetClass.PROJECT_FINANCE,  "low",       ClimateScenario.BASE):       0.008,
+        (AssetClass.PROJECT_FINANCE,  "low",       ClimateScenario.ADVERSE):    0.018,
+        (AssetClass.PROJECT_FINANCE,  "low",       ClimateScenario.SEVERE):     0.030,
+        # Corporate loan — working-capital drawdown from carbon cost pass-through
+        (AssetClass.CORPORATE_LOAN,   "very_high", ClimateScenario.OPTIMISTIC): 0.020,
+        (AssetClass.CORPORATE_LOAN,   "very_high", ClimateScenario.BASE):       0.060,
+        (AssetClass.CORPORATE_LOAN,   "very_high", ClimateScenario.ADVERSE):    0.115,
+        (AssetClass.CORPORATE_LOAN,   "very_high", ClimateScenario.SEVERE):     0.175,
+        (AssetClass.CORPORATE_LOAN,   "high",      ClimateScenario.OPTIMISTIC): 0.010,
+        (AssetClass.CORPORATE_LOAN,   "high",      ClimateScenario.BASE):       0.030,
+        (AssetClass.CORPORATE_LOAN,   "high",      ClimateScenario.ADVERSE):    0.065,
+        (AssetClass.CORPORATE_LOAN,   "high",      ClimateScenario.SEVERE):     0.110,
+        (AssetClass.CORPORATE_LOAN,   "medium",    ClimateScenario.OPTIMISTIC): 0.003,
+        (AssetClass.CORPORATE_LOAN,   "medium",    ClimateScenario.BASE):       0.012,
+        (AssetClass.CORPORATE_LOAN,   "medium",    ClimateScenario.ADVERSE):    0.028,
+        (AssetClass.CORPORATE_LOAN,   "medium",    ClimateScenario.SEVERE):     0.048,
+        (AssetClass.CORPORATE_LOAN,   "low",       ClimateScenario.OPTIMISTIC): 0.000,
+        (AssetClass.CORPORATE_LOAN,   "low",       ClimateScenario.BASE):       0.003,
+        (AssetClass.CORPORATE_LOAN,   "low",       ClimateScenario.ADVERSE):    0.010,
+        (AssetClass.CORPORATE_LOAN,   "low",       ClimateScenario.SEVERE):     0.020,
+        # SME loan — limited hedging capacity amplifies transition drawdown risk
+        (AssetClass.SME_LOAN,         "very_high", ClimateScenario.OPTIMISTIC): 0.025,
+        (AssetClass.SME_LOAN,         "very_high", ClimateScenario.BASE):       0.075,
+        (AssetClass.SME_LOAN,         "very_high", ClimateScenario.ADVERSE):    0.145,
+        (AssetClass.SME_LOAN,         "very_high", ClimateScenario.SEVERE):     0.215,
+        (AssetClass.SME_LOAN,         "high",      ClimateScenario.OPTIMISTIC): 0.012,
+        (AssetClass.SME_LOAN,         "high",      ClimateScenario.BASE):       0.038,
+        (AssetClass.SME_LOAN,         "high",      ClimateScenario.ADVERSE):    0.085,
+        (AssetClass.SME_LOAN,         "high",      ClimateScenario.SEVERE):     0.135,
+        (AssetClass.SME_LOAN,         "medium",    ClimateScenario.OPTIMISTIC): 0.003,
+        (AssetClass.SME_LOAN,         "medium",    ClimateScenario.BASE):       0.015,
+        (AssetClass.SME_LOAN,         "medium",    ClimateScenario.ADVERSE):    0.038,
+        (AssetClass.SME_LOAN,         "medium",    ClimateScenario.SEVERE):     0.065,
+        (AssetClass.SME_LOAN,         "low",       ClimateScenario.OPTIMISTIC): 0.000,
+        (AssetClass.SME_LOAN,         "low",       ClimateScenario.BASE):       0.005,
+        (AssetClass.SME_LOAN,         "low",       ClimateScenario.ADVERSE):    0.013,
+        (AssetClass.SME_LOAN,         "low",       ClimateScenario.SEVERE):     0.028,
+    }
+
     def __init__(self) -> None:
         """
         Initialise ECL Climate Engine.
@@ -351,28 +464,132 @@ class ECLClimateEngine:
         total = max(0.0, min(total * disc, self.MAX_PD_UPLIFT_BPS))
         return Decimal(str(round(total, 4)))
 
-    def _calculate_lgd_haircut(self, base_inputs: BaseECLInputs, climate_inputs: ClimateRiskInputs, scenario: ClimateScenario) -> Decimal:
+    def _calculate_lgd_haircut(
+        self,
+        base_inputs: BaseECLInputs,
+        climate_inputs: ClimateRiskInputs,
+        scenario: ClimateScenario,
+    ) -> Tuple[Decimal, Decimal]:
         """
-        Calculate climate LGD haircut as a fraction (EBA GL/2022/16 para 4.2.3, ECB Guide para 4.2).
-        Component 1: Flood risk  -  LGD_PHYSICAL_HAIRCUTS lookup.
-        Component 2: EPC degradation (property only)  -  EPC_LGD_DEGRADATION lookup.
-        Component 3: Physical risk score  -  score * scenario_multiplier * 0.15/100 * asset_sensitivity.
-                     0.15 scaling calibrated to ECB (2022) DNAR analysis.
-        Combination: max(comps) + LGD_CORRELATION_FACTOR * sum(remaining).
-        Avoids double-counting per Ortec Finance 2023 / ECB MaRs 2022.
-        Cap: 30pct absolute maximum.
+        Calculate climate LGD haircut as a fraction. Returns (combined_haircut, ipcc_c1_damage).
+        EBA GL/2022/16 para 4.2.3 / ECB Guide para 4.2 / IPCC AR6 WG2 SPM B1.2.
+
+        Component 1 — IPCC AR6-calibrated flood damage (GAP-004 upgrade):
+          Replaces simple lookup with frequency-amplified damage scaling.
+          Mechanism: climate change compresses the return period of design-standard floods.
+          IPCC AR6 amplifier shifts the nominal return period (e.g. 1-in-100yr) to an
+          effective shorter period (e.g. 1-in-18yr at +4°C), raising expected annual damage.
+          Damage scales log-linearly with return period per JRC depth-damage functions
+          (Huizinga et al. 2017; Winsemius et al. 2016).
+          Formula: c1 = LGD_PHYSICAL_HAIRCUTS[flood_risk] × log(RP_nominal)/log(RP_effective)
+          RP_effective = max(RP_nominal / IPCC_amplifier, 5.0)  — floor at 5yr event.
+        Component 2 — EPC stranding (property only) — EPC_LGD_DEGRADATION lookup.
+          EU EPBD recast (Directive 2024/1275) — EPC ≤D becomes unlettable by 2033.
+        Component 3 — Physical risk score composite (ECB DNAR 2022 calibration):
+          score × scenario_multiplier × 0.15/100 × asset_sensitivity.
+        Combination: max(comps) + LGD_CORRELATION_FACTOR × sum(remaining).
+          Avoids double-counting per Ortec Finance 2023 / ECB MaRs 2022.
+        Cap: 30% absolute maximum (BCBS conservative prudential bound).
         """
-        c1 = self.LGD_PHYSICAL_HAIRCUTS.get(climate_inputs.collateral_flood_risk, 0.0)
+        # ── Component 1: IPCC AR6 flood frequency-amplified damage ───────────
+        base_flood_haircut = self.LGD_PHYSICAL_HAIRCUTS.get(climate_inputs.collateral_flood_risk, 0.0)
+        ipcc_amp = self.IPCC_AR6_FLOOD_FREQUENCY_AMPLIFIERS[scenario]
+        rp_nominal = float(getattr(climate_inputs, "flood_return_period_years", 100))
+        rp_effective = max(rp_nominal / ipcc_amp, 5.0)  # floor: 5-year event (annual prob ~20%)
+        # Log-linear damage scaling: higher frequency → proportionally higher expected annual damage.
+        # At +4°C (SEVERE), 100yr flood → 18yr: log(100)/log(18) ≈ 1.60× damage amplification.
+        if rp_effective < rp_nominal and rp_effective > 0:
+            rp_damage_scale = math.log(max(rp_nominal, 5.0)) / math.log(max(rp_effective, 5.0))
+        else:
+            rp_damage_scale = 1.0
+        c1 = min(base_flood_haircut * rp_damage_scale, self.MAX_LGD_HAIRCUT)
+        ipcc_c1_damage = c1  # captured separately for audit trail (lgd_ipcc_damage_pct)
+
+        # ── Component 2: EPC stranding (property collateral only) ────────────
         c2 = 0.0
         if base_inputs.collateral_type == "property":
             c2 = self.EPC_LGD_DEGRADATION.get(climate_inputs.collateral_energy_rating, 0.04)
+
+        # ── Component 3: Physical risk composite score ────────────────────────
         pm = self.PHYSICAL_RISK_MULTIPLIERS[scenario]
         cs = self.ASSET_CLASS_CLIMATE_SENSITIVITY.get(base_inputs.asset_class, 1.0)
         c3 = float(climate_inputs.physical_risk_score) * pm * 0.15 / 100.0 * cs
+
+        # ── Combine (avoids double-counting): max + correlation-weighted rest ─
         comps = sorted([c1, c2, c3], reverse=True)
         combined = comps[0] + self.LGD_CORRELATION_FACTOR * sum(comps[1:]) if len(comps) > 1 else comps[0]
-        return Decimal(str(round(min(combined, self.MAX_LGD_HAIRCUT), 6)))
 
+        return (
+            Decimal(str(round(min(combined, self.MAX_LGD_HAIRCUT), 6))),
+            Decimal(str(round(ipcc_c1_damage, 6))),
+        )
+
+
+    def _calculate_ead_climate_uplift(
+        self,
+        base_inputs: BaseECLInputs,
+        climate_inputs: ClimateRiskInputs,
+        scenario: ClimateScenario,
+    ) -> Decimal:
+        """
+        Calculate climate-driven EAD uplift from transition-risk-induced CCF draw.
+        BCBS Principle 16 / EBA GL/2022/16 §4.2.4.
+
+        Mechanism: Borrowers in carbon-intensive sectors facing abrupt transition risk
+        (carbon cost pass-through, regulatory capex mandates, supply-chain disruption)
+        draw down committed-but-undrawn revolving/term facilities to shore up liquidity,
+        increasing the bank's Exposure at Default above the current drawn balance.
+
+        EAD_climate = EAD_base + (undrawn_commitment × total_CCF_uplift)
+        total_CCF_uplift = EAD_CCF_UPLIFT_TABLE[asset, sector_risk, scenario]
+                         + carbon_intensity_loading × scenario_ci_multiplier
+
+        Carbon intensity loading (NGFS 2023 sector decomposition):
+          Sectors > 200 tCO2e/MEUR show 1.5–2× higher drawdown rates in stress
+          (ECB 2023 DNAR Annex 2, EBA 2023 banking sector stress test).
+
+        Returns uplift as a FRACTION of EAD_base (e.g. 0.12 → EAD increases 12%).
+        Returns Decimal("0") if no undrawn commitment or EAD_base is zero.
+        Cap: 50% maximum EAD uplift (regulatory prudential bound, CRR3 Art.111).
+        """
+        undrawn = float(climate_inputs.undrawn_commitment)
+        if undrawn <= 0.0:
+            return Decimal("0")
+        ead_base = float(base_inputs.ead)
+        if ead_base <= 0.0:
+            return Decimal("0")
+
+        # Table lookup: base CCF draw increment for this asset class × risk × scenario
+        ccf_key = (base_inputs.asset_class, climate_inputs.sector_transition_risk, scenario)
+        ccf_table_uplift = self.EAD_CCF_UPLIFT_TABLE.get(ccf_key, 0.0)
+
+        # Carbon intensity loading — additional draw in high-carbon sectors under stress
+        ci = float(climate_inputs.sector_carbon_intensity_tco2e_mrev)
+        if ci > 500.0:
+            ci_loading = 0.080    # Very high (steel, cement, oil & gas, heavy chemicals)
+        elif ci > 200.0:
+            ci_loading = 0.040    # High (chemicals, heavy transport, mining)
+        elif ci > 100.0:
+            ci_loading = 0.015    # Moderate (manufacturing, agri-processing)
+        else:
+            ci_loading = 0.000    # Low carbon — no additional loading
+
+        # Scenario-specific carbon-cost stress multiplier on CI loading.
+        # SEVERE has lower multiplier than ADVERSE: low carbon price → less transition stress
+        # but acute physical costs can still drive drawdown (captured in LGD component).
+        ci_scenario_mult: Dict[ClimateScenario, float] = {
+            ClimateScenario.OPTIMISTIC: 0.30,   # Orderly high carbon price → manageable
+            ClimateScenario.BASE:       0.70,   # NDC-aligned moderate stress
+            ClimateScenario.ADVERSE:    1.20,   # Abrupt policy shift → peak transition stress
+            ClimateScenario.SEVERE:     0.50,   # Low carbon price but physical dominates
+        }
+        total_ccf_uplift = ccf_table_uplift + ci_loading * ci_scenario_mult.get(scenario, 1.0)
+        total_ccf_uplift = min(total_ccf_uplift, 1.0)   # CCF ∈ [0, 1] per Basel III Art.111
+
+        # EAD uplift = undrawn × total_ccf_uplift, expressed as fraction of base EAD
+        ead_increment = undrawn * total_ccf_uplift
+        ead_uplift_fraction = ead_increment / ead_base
+        return Decimal(str(round(min(ead_uplift_fraction, 0.50), 6)))   # 50% cap
 
     def _assess_sicr(self, base_inputs: BaseECLInputs, climate_inputs: ClimateRiskInputs, pd_uplift_bps: Decimal, scenario: ClimateScenario) -> Tuple[bool, List[str]]:
         """
@@ -448,25 +665,36 @@ class ECLClimateEngine:
         Steps:
         1. PD climate adjustment (12m and lifetime).
         2. LGD climate adjustment.
-        3. EAD (pass-through; CCF hook for future dev per BCBS Principle 16).
+        3. EAD climate adjustment (CCF draw uplift; BCBS Principle 16 / EBA GL/2022/16 §4.2.4).
         4. SICR assessment.
         5. Stage determination.
         6. ECL: Stage 1 = PD_12m * LGD * EAD; Stage 2/3 = discounted lifetime.
         7. RWA proxy: (PD_uplift/PD_base) * 15pct. BIS WP No.977 (2022).
         """
         logger.debug("Scenario=%s asset=%s", scenario.value, base_inputs.asset_class.value)
-        pu = self._calculate_pd_uplift(climate_inputs, scenario)
+        pu   = self._calculate_pd_uplift(climate_inputs, scenario)
         pd12 = self._apply_pd_uplift(base_inputs.pd_12m_base, pu)
         pdl  = self._apply_pd_uplift(base_inputs.pd_lifetime_base, pu)
-        hc   = self._calculate_lgd_haircut(base_inputs, climate_inputs, scenario)
+
+        # ── LGD: IPCC AR6-calibrated haircut (GAP-004) ───────────────────────
+        hc, ipcc_dmg = self._calculate_lgd_haircut(base_inputs, climate_inputs, scenario)
         lgdc = min(base_inputs.lgd_base + hc, Decimal("1.0")).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
-        ead  = base_inputs.ead
+
+        # ── EAD: transition-risk CCF uplift (GAP-004; BCBS Principle 16) ─────
+        ead_uplift = self._calculate_ead_climate_uplift(base_inputs, climate_inputs, scenario)
+        ead_base   = base_inputs.ead                                   # un-uplifted (for base ECL)
+        ead        = (ead_base * (Decimal("1") + ead_uplift)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
         sicr, triggers = self._assess_sicr(base_inputs, climate_inputs, pu, scenario)
         stage = self._determine_stage_from_sicr(base_inputs, sicr, pd12)
-        ecl12b  = (base_inputs.pd_12m_base * base_inputs.lgd_base * ead).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-        ecllb   = self._discount_cashflow_ecl(base_inputs.pd_lifetime_base, base_inputs.lgd_base, ead, base_inputs.remaining_maturity_years, base_inputs.effective_interest_rate)
+
+        # Base ECL: no climate overlay — uses un-adjusted PD, LGD, and EAD_base
+        ecl12b  = (base_inputs.pd_12m_base * base_inputs.lgd_base * ead_base).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        ecllb   = self._discount_cashflow_ecl(base_inputs.pd_lifetime_base, base_inputs.lgd_base, ead_base, base_inputs.remaining_maturity_years, base_inputs.effective_interest_rate)
+        # Climate ECL: uses climate-adjusted PD, LGD, and EAD (all three drivers activated)
         ecl12c  = (pd12 * lgdc * ead).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
         ecllc   = self._discount_cashflow_ecl(pdl, lgdc, ead, base_inputs.remaining_maturity_years, base_inputs.effective_interest_rate)
+
         pb = float(base_inputs.pd_12m_base) * 10000.0
         rwa = max(0.0, min((float(pu) / pb * self.RWA_SCALING_FACTOR * 100.0) if pb > 0.01 else float(pu) * self.RWA_SCALING_FACTOR, 50.0))
         return ECLScenarioResult(
@@ -476,6 +704,8 @@ class ECLClimateEngine:
             lgd_climate_adjusted=lgdc,
             lgd_haircut_pct=hc,
             ead_climate=ead,
+            ead_uplift_pct=ead_uplift,
+            lgd_ipcc_damage_pct=ipcc_dmg,
             ecl_12m_base=ecl12b,
             ecl_12m_climate=ecl12c,
             ecl_lifetime_base=ecllb,
@@ -521,8 +751,10 @@ class ECLClimateEngine:
         Build model validation summary for audit trail.
         EBA/GL/2019/05, SR 11-7/OCC 2011-12, IFRS 7 para 35A-35N, Basel III Pillar 3.
         """
-        pw_pu = sum(self.SCENARIO_WEIGHTS[s] * float(r.pd_uplift_bps) for s, r in sr.items())
-        pw_hc = sum(self.SCENARIO_WEIGHTS[s] * float(r.lgd_haircut_pct) for s, r in sr.items())
+        pw_pu       = sum(self.SCENARIO_WEIGHTS[s] * float(r.pd_uplift_bps)     for s, r in sr.items())
+        pw_hc       = sum(self.SCENARIO_WEIGHTS[s] * float(r.lgd_haircut_pct)   for s, r in sr.items())
+        pw_ead_up   = sum(self.SCENARIO_WEIGHTS[s] * float(r.ead_uplift_pct)    for s, r in sr.items())
+        pw_ipcc_dmg = sum(self.SCENARIO_WEIGHTS[s] * float(r.lgd_ipcc_damage_pct) for s, r in sr.items())
         ead_f = max(float(base_inputs.ead), 1e-9)
         return {
             "methodology": {
@@ -531,7 +763,7 @@ class ECLClimateEngine:
                 "rwa_framework": "Basel III/IV CRR3 IRB Approach",
                 "scenario_framework": "NGFS Phase IV 2023",
                 "calculation_date": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                "engine_version": "2.0.0",
+                "engine_version": "2.1.0",   # GAP-004: EAD CCF uplift + IPCC AR6 LGD
             },
             "input_summary": {
                 "asset_class": base_inputs.asset_class.value,
@@ -557,12 +789,17 @@ class ECLClimateEngine:
                 "sector_carbon_intensity": float(climate_inputs.sector_carbon_intensity_tco2e_mrev),
                 "sbti_aligned": climate_inputs.sbti_aligned,
                 "net_zero_committed": climate_inputs.net_zero_committed,
+                "undrawn_commitment": float(climate_inputs.undrawn_commitment),
+                "flood_return_period_years": getattr(climate_inputs, "flood_return_period_years", 100),
             },
             "scenario_results_summary": {
                 s.value: {
                     "weight_pct": self.SCENARIO_WEIGHTS[s] * 100,
                     "pd_uplift_bps": float(r.pd_uplift_bps),
                     "lgd_haircut_pct": float(r.lgd_haircut_pct) * 100,
+                    "lgd_ipcc_flood_damage_pct": float(r.lgd_ipcc_damage_pct) * 100,
+                    "ead_uplift_pct": float(r.ead_uplift_pct) * 100,
+                    "ead_climate": float(r.ead_climate),
                     "ecl_12m_climate": float(r.ecl_12m_climate),
                     "ecl_lifetime_climate": float(r.ecl_lifetime_climate),
                     "sicr_triggered": r.sicr_triggered,
@@ -574,6 +811,8 @@ class ECLClimateEngine:
             "probability_weighted_metrics": {
                 "pw_pd_uplift_bps": round(pw_pu, 2),
                 "pw_lgd_haircut_pct": round(pw_hc * 100, 4),
+                "pw_lgd_ipcc_flood_damage_pct": round(pw_ipcc_dmg * 100, 4),
+                "pw_ead_uplift_pct": round(pw_ead_up * 100, 4),
                 "pw_ecl_12m": float(pw12),
                 "pw_ecl_lifetime": float(pwl),
                 "ecl_coverage_12m_pct": round(float(pw12) / ead_f * 100, 4),
@@ -587,12 +826,18 @@ class ECLClimateEngine:
                 "model_risk_classification": "Material" if float(base_inputs.ead) > 1_000_000 else "Non-Material",
                 "validation_status": "Model Validation Required -- Simulated Metric",
                 "validation_note": ("Gini is simulated. Production requires backtesting vs 5+ year " "historical defaults per EBA/GL/2017/16."),
+                "gap004_upgrades": {
+                    "ead_ccf_uplift": "BCBS Principle 16 / EBA GL/2022/16 §4.2.4 — CCF draw on committed lines",
+                    "lgd_ipcc_ar6": "IPCC AR6 WG2 SPM B1.2 flood frequency amplification (Huizinga 2017)",
+                },
                 "regulatory_references": [
                     "IFRS 9 para 5.5.1-5.5.20",
                     "EBA GL/2022/16 para 4.2-4.5",
                     "BCBS Climate Principles June 2022 (Principles 14-18)",
-                    "Basel III/IV CRR3 Art.143-191 (IRB approach)",
+                    "Basel III/IV CRR3 Art.143-191 (IRB approach) / Art.111 (CCF)",
                     "NGFS Phase IV Scenarios 2023",
+                    "IPCC AR6 WG2 SPM B1.2 (flood frequency amplifiers)",
+                    "Huizinga et al. 2017 JRC Global Flood Depth-Damage Functions",
                     "EBA/GL/2019/05 (Internal model governance)",
                     "SR 11-7 / OCC 2011-12 (Model risk management)",
                 ],
@@ -1149,3 +1394,155 @@ def _run_smoke_test() -> None:
 if __name__ == "__main__":
     _run_smoke_test()
 
+
+
+# ---------------------------------------------------------------------------
+# Climate Risk Integration Extension — Physical + Transition Risk Overlays
+# Added for climate_physical/transition_risk_engine.py integration (2026-03-08)
+# ---------------------------------------------------------------------------
+
+class ClimateRiskECLOverlay:
+    """
+    Applies physical and transition risk scores from the Climate Risk Engine
+    as PD/LGD overlays on top of existing ECL stage determinations.
+
+    This does NOT replace the existing ECL engine — it augments the output
+    by adjusting PD and LGD based on climate risk scores.
+
+    References:
+      - EBA GL/2025/01 §5.4 — Climate risk in credit risk models
+      - BIS Working Paper 1274 — Physical risk in credit models
+      - ECB climate stress test 2022 — PD/LGD sensitivity tables
+    """
+
+    # PD sensitivity: risk_score → PD uplift multiplier
+    # Source: ECB 2022 stress test calibration
+    _PD_MULTIPLIERS = {
+        # (lower_bound, upper_bound): multiplier
+        (0, 20):   1.00,   # negligible risk: no adjustment
+        (20, 40):  1.05,   # low: +5%
+        (40, 60):  1.15,   # moderate: +15%
+        (60, 75):  1.30,   # elevated: +30%
+        (75, 90):  1.55,   # high: +55%
+        (90, 100): 1.90,   # critical: +90%
+    }
+
+    # LGD uplift (additive, percentage points)
+    _LGD_UPLIFTS = {
+        (0, 20):   0.00,
+        (20, 40):  0.01,   # +1 pp
+        (40, 60):  0.03,   # +3 pp
+        (60, 75):  0.07,   # +7 pp
+        (75, 90):  0.12,   # +12 pp
+        (90, 100): 0.20,   # +20 pp
+    }
+
+    @staticmethod
+    def _lookup_table(score: float, table: dict) -> float:
+        for (lo, hi), val in table.items():
+            if lo <= score < hi or (score == 100 and hi == 100):
+                return val
+        return list(table.values())[-1]
+
+    def apply_physical_overlay(
+        self,
+        base_pd: float,
+        base_lgd: float,
+        physical_score: float,
+        pd_sensitivity: float = 1.0,
+        lgd_uplift_factor: float = 1.0,
+    ) -> dict:
+        """
+        Adjust base PD/LGD for physical climate risk exposure.
+
+        Args:
+            base_pd: Baseline PD (0-1)
+            base_lgd: Baseline LGD (0-1)
+            physical_score: Physical risk score from PhysicalRiskEngine (0-100)
+            pd_sensitivity: Multiplier on the PD uplift (1.0 = standard calibration)
+            lgd_uplift_factor: Multiplier on LGD uplift (1.0 = standard)
+
+        Returns:
+            dict with keys: adjusted_pd, adjusted_lgd, pd_uplift_multiplier, lgd_uplift_pp
+        """
+        pd_mult = self._lookup_table(physical_score, self._PD_MULTIPLIERS)
+        lgd_up = self._lookup_table(physical_score, self._LGD_UPLIFTS)
+
+        # Apply sensitivity scaling
+        effective_mult = 1.0 + (pd_mult - 1.0) * pd_sensitivity
+        effective_lgd_up = lgd_up * lgd_uplift_factor
+
+        adjusted_pd = min(base_pd * effective_mult, 1.0)
+        adjusted_lgd = min(base_lgd + effective_lgd_up, 1.0)
+
+        return {
+            "adjusted_pd": round(adjusted_pd, 6),
+            "adjusted_lgd": round(adjusted_lgd, 6),
+            "pd_uplift_multiplier": round(effective_mult, 4),
+            "lgd_uplift_pp": round(effective_lgd_up, 4),
+            "physical_score": physical_score,
+        }
+
+    def apply_transition_overlay(
+        self,
+        base_pd: float,
+        base_lgd: float,
+        transition_score: float,
+        pd_sensitivity: float = 0.8,   # transition risk typically lower direct PD impact vs physical
+        lgd_uplift_factor: float = 0.7,
+    ) -> dict:
+        """
+        Adjust base PD/LGD for transition climate risk.
+        Same mechanics as physical overlay with lower default sensitivities.
+        """
+        pd_mult = self._lookup_table(transition_score, self._PD_MULTIPLIERS)
+        lgd_up = self._lookup_table(transition_score, self._LGD_UPLIFTS)
+
+        effective_mult = 1.0 + (pd_mult - 1.0) * pd_sensitivity
+        effective_lgd_up = lgd_up * lgd_uplift_factor
+
+        adjusted_pd = min(base_pd * effective_mult, 1.0)
+        adjusted_lgd = min(base_lgd + effective_lgd_up, 1.0)
+
+        return {
+            "adjusted_pd": round(adjusted_pd, 6),
+            "adjusted_lgd": round(adjusted_lgd, 6),
+            "pd_uplift_multiplier": round(effective_mult, 4),
+            "lgd_uplift_pp": round(effective_lgd_up, 4),
+            "transition_score": transition_score,
+        }
+
+    def apply_combined_overlay(
+        self,
+        base_pd: float,
+        base_lgd: float,
+        physical_score: float,
+        transition_score: float,
+        integrated_score: float,
+        use_integrated: bool = True,
+    ) -> dict:
+        """
+        Combined overlay using integrated score (or max of physical/transition).
+        """
+        score = integrated_score if use_integrated else max(physical_score, transition_score)
+
+        pd_mult = self._lookup_table(score, self._PD_MULTIPLIERS)
+        lgd_up = self._lookup_table(score, self._LGD_UPLIFTS)
+
+        adjusted_pd = min(base_pd * pd_mult, 1.0)
+        adjusted_lgd = min(base_lgd + lgd_up, 1.0)
+
+        # EL = PD × LGD × EAD (caller supplies EAD)
+        return {
+            "adjusted_pd": round(adjusted_pd, 6),
+            "adjusted_lgd": round(adjusted_lgd, 6),
+            "pd_uplift_multiplier": round(pd_mult, 4),
+            "lgd_uplift_pp": round(lgd_up, 4),
+            "integrated_score_used": round(score, 4),
+            "physical_score": physical_score,
+            "transition_score": transition_score,
+        }
+
+
+# Module-level singleton
+climate_ecl_overlay = ClimateRiskECLOverlay()

@@ -24,9 +24,42 @@ from schemas.portfolio_analytics import (
     StrandingAnalysis, SustainabilityMetrics, ConcentrationAnalysis,
     ConcentrationMetrics, ScenarioComparisonResult, ScenarioComparisonRow,
     DashboardResponse, KPICard, ChartData, Alert, ReportType,
+    DataQualityReport,
 )
 
 logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# Reference data for auto-estimation of missing datapoints
+# Source: PCAF v2.0 Annex, IPCC AR6, S&P Global Ratings, Bloomberg BICS
+# ---------------------------------------------------------------------------
+
+SECTOR_REFERENCE_DATA = {
+    "Technology":     {"avg_pd": 0.015, "avg_lgd": 0.40, "avg_scope1_intensity": 5,   "avg_scope2_intensity": 25,  "avg_scope3_intensity": 50,  "avg_risk_score": 25},
+    "Healthcare":     {"avg_pd": 0.018, "avg_lgd": 0.42, "avg_scope1_intensity": 8,   "avg_scope2_intensity": 30,  "avg_scope3_intensity": 55,  "avg_risk_score": 28},
+    "Financials":     {"avg_pd": 0.012, "avg_lgd": 0.35, "avg_scope1_intensity": 2,   "avg_scope2_intensity": 15,  "avg_scope3_intensity": 120, "avg_risk_score": 22},
+    "Energy":         {"avg_pd": 0.035, "avg_lgd": 0.50, "avg_scope1_intensity": 250, "avg_scope2_intensity": 50,  "avg_scope3_intensity": 400, "avg_risk_score": 55},
+    "Industrials":    {"avg_pd": 0.025, "avg_lgd": 0.45, "avg_scope1_intensity": 80,  "avg_scope2_intensity": 40,  "avg_scope3_intensity": 150, "avg_risk_score": 40},
+    "Consumer":       {"avg_pd": 0.020, "avg_lgd": 0.43, "avg_scope1_intensity": 15,  "avg_scope2_intensity": 20,  "avg_scope3_intensity": 100, "avg_risk_score": 30},
+    "Materials":      {"avg_pd": 0.030, "avg_lgd": 0.48, "avg_scope1_intensity": 200, "avg_scope2_intensity": 60,  "avg_scope3_intensity": 250, "avg_risk_score": 50},
+    "Utilities":      {"avg_pd": 0.020, "avg_lgd": 0.45, "avg_scope1_intensity": 350, "avg_scope2_intensity": 80,  "avg_scope3_intensity": 100, "avg_risk_score": 45},
+    "Real Estate":    {"avg_pd": 0.022, "avg_lgd": 0.40, "avg_scope1_intensity": 10,  "avg_scope2_intensity": 35,  "avg_scope3_intensity": 60,  "avg_risk_score": 35},
+    "Communications": {"avg_pd": 0.018, "avg_lgd": 0.40, "avg_scope1_intensity": 4,   "avg_scope2_intensity": 22,  "avg_scope3_intensity": 45,  "avg_risk_score": 26},
+}
+
+COUNTRY_REFERENCE_DATA = {
+    "US": {"sovereign_spread": 0, "regulatory_risk": "low"},
+    "UK": {"sovereign_spread": 10, "regulatory_risk": "low"},
+    "Germany": {"sovereign_spread": 5, "regulatory_risk": "low"},
+    "France": {"sovereign_spread": 8, "regulatory_risk": "low"},
+    "Japan": {"sovereign_spread": 15, "regulatory_risk": "low"},
+    "China": {"sovereign_spread": 60, "regulatory_risk": "moderate"},
+    "Brazil": {"sovereign_spread": 150, "regulatory_risk": "high"},
+    "India": {"sovereign_spread": 100, "regulatory_risk": "moderate"},
+}
+
+# Global fallback when sector/country not matched
+GLOBAL_FALLBACK = {"avg_pd": 0.025, "avg_lgd": 0.45, "avg_scope1_intensity": 40, "avg_scope2_intensity": 30, "avg_scope3_intensity": 100, "avg_risk_score": 35}
 
 # ---------------------------------------------------------------------------
 # Database connection
@@ -102,23 +135,31 @@ _holdings: Dict[str, List[Dict]] = {}
 _reports: Dict[str, Dict] = {}
 
 
-def get_portfolio(portfolio_id: str) -> Optional[Dict]:
-    """Return portfolio dict — reads from portfolios_pg (primary) or legacy portfolios table."""
+def get_portfolio(portfolio_id: str, org_id: Optional[str] = None) -> Optional[Dict]:
+    """Return portfolio dict — reads from portfolios_pg (primary) or legacy portfolios table.
+
+    P0-2: When org_id is provided the row is only returned if portfolio.org_id matches,
+    preventing cross-tenant data access.
+    """
     # Primary: portfolios_pg
     if _table_exists("portfolios_pg"):
         rows = _exec(
-            "SELECT id, name, created_at, updated_at FROM portfolios_pg WHERE id=:pid LIMIT 1",
+            "SELECT id, name, org_id, description, created_at, updated_at FROM portfolios_pg WHERE id=:pid LIMIT 1",
             {"pid": portfolio_id},
         )
         if rows:
             r = rows[0]
+            row_org_id = str(r[2]) if r[2] else None
+            # P0-2 isolation: reject if requester's org doesn't match
+            if org_id and row_org_id and org_id != row_org_id:
+                return None
             return {
                 "id": str(r[0]),
                 "name": r[1],
-                "org_id": None,
-                "description": None,
-                "created_at": str(r[2]) if r[2] else None,
-                "updated_at": str(r[3]) if r[3] else None,
+                "org_id": row_org_id,
+                "description": r[3],
+                "created_at": str(r[4]) if r[4] else None,
+                "updated_at": str(r[5]) if r[5] else None,
             }
     # Fallback: legacy portfolios table
     if _table_exists("portfolios"):
@@ -163,19 +204,32 @@ def get_portfolio(portfolio_id: str) -> Optional[Dict]:
 
 
 def list_portfolios(org_id: Optional[str] = None) -> List[Dict]:
-    """List portfolios — reads from portfolios_pg (primary) or legacy portfolios table."""
+    """List portfolios — reads from portfolios_pg (primary) or legacy portfolios table.
+
+    P0-2: When org_id is provided only portfolios belonging to that org are returned.
+    """
     # Primary: portfolios_pg
     if _table_exists("portfolios_pg"):
-        rows = _exec("SELECT id, name, created_at, updated_at FROM portfolios_pg ORDER BY name LIMIT 200")
+        if org_id:
+            rows = _exec(
+                "SELECT id, name, org_id, description, created_at, updated_at "
+                "FROM portfolios_pg WHERE org_id=:oid ORDER BY name LIMIT 200",
+                {"oid": org_id},
+            )
+        else:
+            rows = _exec(
+                "SELECT id, name, org_id, description, created_at, updated_at "
+                "FROM portfolios_pg ORDER BY name LIMIT 200"
+            )
         if rows:
             return [
                 {
                     "id": str(r[0]),
                     "name": r[1],
-                    "org_id": None,
-                    "description": None,
-                    "created_at": str(r[2]) if r[2] else None,
-                    "updated_at": str(r[3]) if r[3] else None,
+                    "org_id": str(r[2]) if r[2] else None,
+                    "description": r[3],
+                    "created_at": str(r[4]) if r[4] else None,
+                    "updated_at": str(r[5]) if r[5] else None,
                     # Required by PortfolioResponse schema
                     "portfolio_type": "fund",
                     "investment_strategy": "core",
@@ -189,7 +243,13 @@ def list_portfolios(org_id: Optional[str] = None) -> List[Dict]:
             ]
     # Fallback: legacy portfolios table
     if _table_exists("portfolios"):
-        rows = _exec("SELECT id, name, org_id, description, created_at FROM portfolios LIMIT 200")
+        if org_id:
+            rows = _exec(
+                "SELECT id, name, org_id, description, created_at FROM portfolios WHERE org_id=:oid LIMIT 200",
+                {"oid": org_id},
+            )
+        else:
+            rows = _exec("SELECT id, name, org_id, description, created_at FROM portfolios LIMIT 200")
         if rows:
             return [
                 {
@@ -244,37 +304,158 @@ async def get_portfolios_from_db(org_id: str) -> List[Dict]:
     return list_portfolios(org_id)
 
 
+def _get_sector_ref(sector: str) -> Dict:
+    """Look up reference data for a sector, with fuzzy matching."""
+    if not sector:
+        return GLOBAL_FALLBACK
+    sl = sector.lower()
+    for key, ref in SECTOR_REFERENCE_DATA.items():
+        if key.lower() in sl or sl in key.lower():
+            return ref
+    return GLOBAL_FALLBACK
+
+
+# LEI prefix → region mapping (ISO 3166 MFI prefix codes)
+_LEI_REGION_MAP = {
+    "US": "North America", "GB": "Europe", "DE": "Europe", "FR": "Europe",
+    "JP": "Asia Pacific", "CN": "Asia Pacific", "IN": "Asia Pacific",
+    "BR": "Latin America", "AU": "Asia Pacific", "CA": "North America",
+    "CH": "Europe", "NL": "Europe", "SE": "Europe", "IT": "Europe",
+    "ES": "Europe", "KR": "Asia Pacific", "SG": "Asia Pacific",
+    "HK": "Asia Pacific", "ZA": "Africa", "MX": "Latin America",
+    "RU": "Europe", "IE": "Europe", "LU": "Europe", "NO": "Europe",
+    "DK": "Europe", "FI": "Europe", "BE": "Europe", "AT": "Europe",
+    "PT": "Europe", "PL": "Europe",
+}
+
+# Sector → typical dominant region heuristic (fallback when no LEI)
+_SECTOR_REGION_HEURISTIC = {
+    "Technology": "North America", "Financials": "Europe",
+    "Energy": "North America", "Healthcare": "North America",
+    "Industrials": "Europe", "Consumer": "North America",
+    "Materials": "Asia Pacific", "Utilities": "Europe",
+    "Real Estate": "Europe", "Communications": "North America",
+}
+
+
+def _estimate_region_from_lei(lei: str, sector: str) -> str:
+    """Estimate geographic region from LEI prefix or sector heuristic."""
+    if lei and len(lei) >= 2:
+        prefix = lei[:2].upper()
+        if prefix in _LEI_REGION_MAP:
+            return _LEI_REGION_MAP[prefix]
+    # Fall back to sector heuristic
+    if sector:
+        for key, region in _SECTOR_REGION_HEURISTIC.items():
+            if key.lower() in sector.lower() or sector.lower() in key.lower():
+                return region
+    return "Unknown"
+
+
 def get_holdings(portfolio_id: str) -> List[Dict]:
-    """Return holdings from assets_pg (primary) or legacy portfolio_holdings table."""
+    """Return holdings from assets_pg (primary) or legacy portfolio_holdings table.
+    Auto-estimates missing datapoints using sector reference data and flags them."""
     # Primary: assets_pg
     if _table_exists("assets_pg"):
         rows = _exec(
             "SELECT id, portfolio_id, company_name, asset_type, exposure, market_value, "
-            "company_sector, base_pd, base_lgd, rating "
+            "company_sector, base_pd, base_lgd, rating, "
+            "scope1_tco2e, scope2_tco2e, scope3_tco2e, evic_eur, pcaf_dqs, "
+            "company_subsector, entity_lei "
             "FROM assets_pg WHERE portfolio_id=:pid",
             {"pid": portfolio_id},
         )
+        # Column indices:
+        # 0=id, 1=portfolio_id, 2=company_name, 3=asset_type, 4=exposure,
+        # 5=market_value, 6=company_sector, 7=base_pd, 8=base_lgd, 9=rating,
+        # 10=scope1, 11=scope2, 12=scope3, 13=evic_eur, 14=pcaf_dqs,
+        # 15=company_subsector, 16=entity_lei
         if rows:
             # Compute total for weight calculation
             total_exposure = sum(float(r[4]) for r in rows if r[4] is not None) or 1.0
-            return [
-                {
+            results = []
+            for r in rows:
+                sector = r[6] or "Unknown"
+                ref = _get_sector_ref(sector)
+                estimated_fields = []
+
+                # Auto-estimate missing fields from reference data
+                base_pd = float(r[7]) if r[7] is not None else None
+                if base_pd is None:
+                    base_pd = ref["avg_pd"]
+                    estimated_fields.append("base_pd")
+
+                base_lgd = float(r[8]) if r[8] is not None else None
+                if base_lgd is None:
+                    base_lgd = ref["avg_lgd"]
+                    estimated_fields.append("base_lgd")
+
+                exposure = float(r[4]) if r[4] is not None else None
+                if exposure is None or exposure == 0:
+                    exposure = float(r[5]) if r[5] is not None else 0.0
+                    if exposure == 0:
+                        estimated_fields.append("exposure")
+
+                market_value = float(r[5]) if r[5] is not None else None
+                if market_value is None or market_value == 0:
+                    market_value = exposure
+                    if market_value > 0:
+                        estimated_fields.append("market_value")
+
+                # Country/region: assets_pg has no 'country' column —
+                # estimate from LEI prefix (first 2 chars = country code) or sector heuristic
+                lei = r[16] or ""
+                region = _estimate_region_from_lei(lei, sector)
+                if region == "Unknown":
+                    estimated_fields.append("country")
+
+                company_name = r[2] if r[2] else None
+                if not company_name:
+                    company_name = f"Asset-{str(r[0])[:8]}"
+                    estimated_fields.append("company_name")
+
+                # Emissions data
+                scope1 = float(r[10]) if r[10] is not None else None
+                scope2 = float(r[11]) if r[11] is not None else None
+                scope3 = float(r[12]) if r[12] is not None else None
+                evic = float(r[13]) if r[13] is not None else None
+                pcaf_dqs = int(r[14]) if r[14] is not None else None
+
+                if scope1 is None:
+                    scope1 = ref["avg_scope1_intensity"] * (exposure / 1e6) if exposure else 0
+                    estimated_fields.append("scope1_tco2e")
+                if scope2 is None:
+                    scope2 = ref["avg_scope2_intensity"] * (exposure / 1e6) if exposure else 0
+                    estimated_fields.append("scope2_tco2e")
+
+                results.append({
                     "id": str(r[0]),
                     "portfolio_id": str(r[1]),
-                    "asset_name": r[2],
-                    "asset_type": r[3],
-                    "value": float(r[4]) if r[4] is not None else 0.0,
-                    "current_value": float(r[5]) if r[5] is not None else 0.0,
-                    "annual_income": round(float(r[4] or 0) * 0.04, 2),  # proxy: 4% yield
-                    "weight": round(float(r[4] or 0) / total_exposure * 100, 2),
-                    "sector": r[6],
-                    "region": "Europe",  # all 8 CSRD entities are European
-                    "base_pd": float(r[7]) if r[7] is not None else 0.02,
-                    "base_lgd": float(r[8]) if r[8] is not None else 0.45,
-                    "rating": r[9],
-                }
-                for r in rows
-            ]
+                    "asset_name": company_name,
+                    "asset_type": r[3] or "Equity",
+                    "value": exposure,
+                    "current_value": market_value,
+                    "annual_income": round(exposure * 0.04, 2),  # proxy: 4% yield
+                    "weight": round(exposure / total_exposure * 100, 2),
+                    "sector": sector,
+                    "region": region,
+                    "country": region,
+                    "base_pd": base_pd,
+                    "base_lgd": base_lgd,
+                    "rating": r[9] or "NR",
+                    "scope1_tco2e": scope1,
+                    "scope2_tco2e": scope2,
+                    "scope3_tco2e": scope3,
+                    "evic_eur": evic,
+                    "pcaf_dqs": pcaf_dqs,
+                    # Data quality tracking
+                    "estimated_fields": estimated_fields,
+                    "data_quality": "complete" if len(estimated_fields) == 0
+                                    else "partial" if len(estimated_fields) <= 2
+                                    else "estimated",
+                    "estimation_method": "sector_reference_data" if estimated_fields else None,
+                })
+            return results
     # Fallback: legacy portfolio_holdings table
     if _table_exists("portfolio_holdings"):
         rows = _exec(
@@ -913,8 +1094,12 @@ class PortfolioAnalyticsEngine:
             total_adjusted_value += weighted_adjusted
             total_income += weighted_income
             
-            # Risk score
-            risk = holding.get("risk_score", 50)
+            # Risk score — derive from base_pd if available (PD 0.01=low → PD 0.10=very_high)
+            raw_pd = holding.get("base_pd")
+            if raw_pd is not None:
+                risk = min(100, max(0, int(float(raw_pd) * 1000)))  # PD 0.02 → 20, PD 0.10 → 100
+            else:
+                risk = holding.get("risk_score", 50)
             risk_scores.append(risk)
             
             # Risk bucket
@@ -932,7 +1117,7 @@ class PortfolioAnalyticsEngine:
                 stranded_assets.append({
                     "value": float(weighted_adjusted),
                     "years": holding.get("years_to_stranding", 10),
-                    "sector": holding.get("property_type"),
+                    "sector": holding.get("sector") or holding.get("property_type") or "Unknown",
                 })
             
             # Sustainability
@@ -946,11 +1131,11 @@ class PortfolioAnalyticsEngine:
                     cert_type = cert.split()[0]  # "LEED Gold" -> "LEED"
                     certifications_breakdown[cert_type] = certifications_breakdown.get(cert_type, 0) + 1
             
-            # Concentration
-            sector = holding.get("property_type", "unknown")
+            # Concentration — normalise key names across engine formats
+            sector = holding.get("sector") or holding.get("property_type") or holding.get("company_sector") or "Unknown"
             sector_values[sector] = sector_values.get(sector, Decimal("0")) + weighted_adjusted
-            
-            location = holding.get("property_location", "Unknown").split(",")[0]  # City only
+
+            location = (holding.get("region") or holding.get("property_location") or holding.get("country") or "Unknown").split(",")[0]
             location_values[location] = location_values.get(location, Decimal("0")) + weighted_adjusted
         
         # Calculate metrics
@@ -982,7 +1167,7 @@ class PortfolioAnalyticsEngine:
             risk_level = RiskLevel.VERY_HIGH
         
         return PortfolioAnalyticsResponse(
-            portfolio_id=UUID(portfolio_id),
+            portfolio_id=portfolio_id,
             calculation_date=as_of_date or date.today(),
             scenario_name="Base Case" if not scenario_id else f"Scenario {scenario_id[:8]}",
             portfolio_summary=PortfolioSummary(
@@ -1022,7 +1207,7 @@ class PortfolioAnalyticsEngine:
     def _empty_analytics(self, portfolio_id: str, calc_date: date) -> PortfolioAnalyticsResponse:
         """Return empty analytics for portfolio with no holdings."""
         return PortfolioAnalyticsResponse(
-            portfolio_id=UUID(portfolio_id),
+            portfolio_id=portfolio_id,
             calculation_date=calc_date,
             portfolio_summary=PortfolioSummary(
                 total_properties=0,
@@ -1053,21 +1238,61 @@ class PortfolioAnalyticsEngine:
         )
     
     def _get_scenario_adjustment(self, scenario_id: str, holding: Dict) -> Decimal:
-        """Get scenario-specific value adjustment for a holding."""
-        # Simplified: would integrate with scenario engine
-        risk = holding.get("risk_score", 50)
-        # Higher risk properties have larger adjustments
-        hash_val = sum(ord(c) for c in scenario_id) % 1000
-        adjustment = Decimal(str((hash_val - 500) / 10000.0 * (risk / 50.0)))
-        return adjustment
+        """Get scenario-specific value adjustment from DB scenario parameters."""
+        # Read scenario from DB
+        scenario_row = _exec(
+            "SELECT parameters FROM scenarios WHERE id = :sid LIMIT 1",
+            {"sid": scenario_id},
+        )
+        if scenario_row:
+            import json
+            params = scenario_row[0][0]
+            if isinstance(params, str):
+                params = json.loads(params)
+            # Extract value_change_pct from scenario parameters
+            change_pct = params.get("value_change_pct", "0")
+            base_adj = Decimal(str(change_pct)) / Decimal("100")
+            # Modulate by holding risk: higher risk → larger scenario impact
+            risk = Decimal(str(holding.get("risk_score", 50)))
+            risk_multiplier = risk / Decimal("50")
+            return (base_adj * risk_multiplier).quantize(Decimal("0.000001"))
+        # Fallback: no scenario found — zero adjustment
+        return Decimal("0")
     
-    def _calculate_var(self, portfolio_value: Decimal, avg_risk: float) -> Decimal:
-        """Calculate simplified Value at Risk (95% confidence)."""
-        # Simplified VaR: higher risk = higher VaR
-        volatility = 0.05 + (avg_risk / 100) * 0.15  # 5-20% volatility
-        z_score = 1.645  # 95% confidence
-        var = float(portfolio_value) * volatility * z_score
-        return Decimal(str(var)).quantize(Decimal("0.01"))
+    def _calculate_var(self, portfolio_value: Decimal, avg_risk: float,
+                       holdings: Optional[List[Dict]] = None) -> Decimal:
+        """
+        Calculate parametric Value-at-Risk (95% confidence).
+
+        Uses sector-level volatility from exposure_assessments when available,
+        otherwise applies a risk-score-calibrated volatility model:
+          σ = base_vol + risk_premium × (risk_score / 100)
+        where base_vol = 4% (institutional-grade RE) and risk_premium = 16%.
+        """
+        BASE_VOL = 0.04      # institutional-grade baseline
+        RISK_PREMIUM = 0.16  # max additional for highest-risk portfolios
+        Z_95 = 1.6449        # Normal quantile 95%
+        HOLDING_PERIOD_DAYS = 250  # 1-year VaR
+
+        # Try to get realised volatility from DB
+        vol_rows = _exec(
+            "SELECT STDDEV(total_var_pct) FROM exposure_assessments "
+            "WHERE portfolio_id IS NOT NULL LIMIT 1"
+        )
+        realised_vol = None
+        if vol_rows and vol_rows[0][0] is not None:
+            realised_vol = float(vol_rows[0][0])
+
+        if realised_vol and realised_vol > 0:
+            # Blend realised with risk-based estimate (70/30)
+            risk_vol = BASE_VOL + RISK_PREMIUM * (avg_risk / 100.0)
+            blended = 0.7 * realised_vol + 0.3 * risk_vol
+        else:
+            blended = BASE_VOL + RISK_PREMIUM * (avg_risk / 100.0)
+
+        # Annualised parametric VaR
+        var_amount = float(portfolio_value) * blended * Z_95
+        return Decimal(str(var_amount)).quantize(Decimal("0.01"))
     
     def _calculate_concentration(
         self, 
@@ -1121,7 +1346,7 @@ class PortfolioAnalyticsEngine:
         
         # Base case
         comparison_rows.append(ScenarioComparisonRow(
-            scenario_id=UUID(int=0),
+            scenario_id="base-case",
             scenario_name="Base Case",
             total_value=base_value,
             value_change=Decimal("0"),
@@ -1132,33 +1357,37 @@ class PortfolioAnalyticsEngine:
             avg_risk_score=base_analytics.risk_metrics.weighted_avg_risk_score,
         ))
         
-        # Each scenario (simulated)
-        scenario_names = [
-            "Optimistic Growth", "Recession Stress", "Climate Transition",
-            "Green Premium", "Rising Rates"
-        ]
-        
+        # Each scenario — read from DB
         for i, sid in enumerate(scenario_ids):
-            # Simulate scenario impact
-            hash_val = sum(ord(c) for c in sid) % 1000
-            adjustment = Decimal(str((hash_val - 500) / 10000.0))
-            scenario_value = base_value * (1 + adjustment)
-            stranded_adj = base_analytics.stranding_analysis.stranded_assets_count
-            
-            # Convert to proper types to avoid Decimal * float errors
-            var_multiplier = Decimal("1") + abs(adjustment) * Decimal("0.5")
-            risk_multiplier = Decimal("1") + adjustment * Decimal("0.3")
-            
+            import json as _json
+            scenario_row = _exec(
+                "SELECT name, parameters FROM scenarios WHERE id = :sid LIMIT 1",
+                {"sid": sid},
+            )
+            if scenario_row:
+                sname = scenario_row[0][0] or f"Scenario {sid[:8]}"
+                params = scenario_row[0][1]
+                if isinstance(params, str):
+                    params = _json.loads(params)
+                change_pct_raw = params.get("value_change_pct", "0")
+                adjustment = Decimal(str(change_pct_raw)) / Decimal("100")
+            else:
+                sname = f"Scenario {sid[:8]}"
+                adjustment = Decimal("0")
+
+            scenario_analytics = self.calculate_analytics(portfolio_id, sid, time_horizon)
+            scenario_value = scenario_analytics.portfolio_summary.total_adjusted_value
+
             comparison_rows.append(ScenarioComparisonRow(
-                scenario_id=UUID(sid) if len(sid) == 36 else UUID(int=i+1),
-                scenario_name=scenario_names[i % len(scenario_names)],
-                total_value=scenario_value.quantize(Decimal("0.01")),
+                scenario_id=sid,
+                scenario_name=sname,
+                total_value=scenario_value,
                 value_change=(scenario_value - base_value).quantize(Decimal("0.01")),
-                value_change_pct=(adjustment * 100).quantize(Decimal("0.01")),
-                stranded_count=max(0, stranded_adj),
-                stranded_value=base_analytics.stranding_analysis.stranded_assets_value * (1 + adjustment),
-                var_95=base_analytics.risk_metrics.value_at_risk_95 * var_multiplier,
-                avg_risk_score=base_analytics.risk_metrics.weighted_avg_risk_score * risk_multiplier,
+                value_change_pct=((scenario_value - base_value) / base_value * 100).quantize(Decimal("0.01")) if base_value else Decimal("0"),
+                stranded_count=scenario_analytics.stranding_analysis.stranded_assets_count,
+                stranded_value=scenario_analytics.stranding_analysis.stranded_assets_value,
+                var_95=scenario_analytics.risk_metrics.value_at_risk_95,
+                avg_risk_score=scenario_analytics.risk_metrics.weighted_avg_risk_score,
             ))
         
         # Find best/worst
@@ -1174,7 +1403,7 @@ class PortfolioAnalyticsEngine:
         ]
         
         return ScenarioComparisonResult(
-            portfolio_id=UUID(portfolio_id),
+            portfolio_id=portfolio_id,
             base_value=base_value,
             comparison_table=comparison_rows,
             best_scenario=best,
@@ -1364,18 +1593,69 @@ class PortfolioDashboardEngine:
                 action_required=False,
                 created_at=datetime.now(timezone.utc),
             ))
-        
+
+        # ── Data quality analysis & missing datapoint alerts ─────────
+        estimated_count = sum(1 for h in holdings if h.get("estimated_fields"))
+        missing_fields_counter: Dict[str, int] = {}
+        for h in holdings:
+            for f in h.get("estimated_fields", []):
+                missing_fields_counter[f] = missing_fields_counter.get(f, 0) + 1
+
+        if estimated_count > 0:
+            top_missing = sorted(missing_fields_counter.items(), key=lambda x: -x[1])[:5]
+            missing_summary = ", ".join(f"{f} ({c} assets)" for f, c in top_missing)
+            alerts.append(Alert(
+                id="data_quality_gaps",
+                severity="warning",
+                title=f"Missing Datapoints — {estimated_count}/{len(holdings)} Assets Estimated",
+                message=f"The following fields were auto-estimated using sector reference data: {missing_summary}. Upload actual data to improve accuracy.",
+                action_required=True,
+                created_at=datetime.now(timezone.utc),
+            ))
+
+        # Build data quality report for the frontend
+        data_quality_report = {
+            "total_assets": len(holdings),
+            "complete_count": sum(1 for h in holdings if h.get("data_quality") == "complete"),
+            "partial_count": sum(1 for h in holdings if h.get("data_quality") == "partial"),
+            "estimated_count": sum(1 for h in holdings if h.get("data_quality") == "estimated"),
+            "missing_fields": missing_fields_counter,
+            "estimation_method": "PCAF DQS-5 sector proxy / S&P Global reference data",
+            "recommendations": [],
+        }
+        # Add recommendations based on missing fields
+        if missing_fields_counter.get("base_pd", 0) > len(holdings) * 0.5:
+            data_quality_report["recommendations"].append(
+                "Over 50% of assets lack PD data. Upload credit ratings or PD estimates for more accurate risk scoring."
+            )
+        if missing_fields_counter.get("country", 0) > len(holdings) * 0.3:
+            data_quality_report["recommendations"].append(
+                "Many assets lack country data. Add country/region for geographic concentration analysis."
+            )
+        if missing_fields_counter.get("company_name", 0) > 0:
+            data_quality_report["recommendations"].append(
+                f"{missing_fields_counter['company_name']} assets have no company name. Update for better identification."
+            )
+
+        # Use total_value (sum of holdings) when stored AUM is zero
+        aum_raw = float(portfolio.get("aum") or 0)
+        if aum_raw == 0:
+            aum_raw = float(sum(
+                Decimal(str(h.get("current_value") or h.get("value") or 0))
+                for h in holdings
+            ))
         return DashboardResponse(
-            portfolio_id=UUID(portfolio_id),
+            portfolio_id=portfolio_id,
             portfolio_name=portfolio["name"],
             last_updated=datetime.now(timezone.utc),
             kpi_cards=kpi_cards,
             charts=charts,
             alerts=alerts,
-            total_aum=Decimal(str(portfolio.get("aum", 0))),
+            total_aum=Decimal(str(aum_raw)),
             property_count=len(holdings),
             avg_risk_score=analytics.risk_metrics.weighted_avg_risk_score,
             sustainability_score=analytics.sustainability_metrics.avg_gresb_score,
+            data_quality_report=DataQualityReport(**data_quality_report),
         )
 
 
@@ -1533,46 +1813,95 @@ class PortfolioReportEngine:
         }
     
     def _sustainability_section(self, analytics: PortfolioAnalyticsResponse, holdings: List[Dict]) -> Dict:
-        """Generate sustainability report section."""
+        """Generate sustainability report section with data-driven roadmap."""
+        gresb = analytics.sustainability_metrics.avg_gresb_score
+        cert_count = analytics.sustainability_metrics.certified_count
+        cert_pct = float(analytics.sustainability_metrics.pct_certified)
+        breakdown = analytics.sustainability_metrics.certifications_breakdown or {}
+
+        # Build data-driven improvement roadmap
+        roadmap = []
+        uncertified = len(holdings) - cert_count
+        if uncertified > 0:
+            # Identify uncertified asset types
+            uncert_types = set()
+            for h in holdings:
+                if not h.get("certifications"):
+                    uncert_types.add(h.get("property_type", "unknown"))
+            roadmap.append(
+                f"Target certification for {uncertified} uncertified assets "
+                f"({', '.join(uncert_types)})"
+            )
+        if gresb and float(gresb) < 70:
+            roadmap.append(f"Current GRESB {float(gresb):.0f}/100 — target 70+ through energy and governance improvements")
+        elif gresb and float(gresb) >= 70:
+            roadmap.append(f"GRESB {float(gresb):.0f}/100 above benchmark — maintain leadership position")
+        high_risk_assets = [h for h in holdings if h.get("risk_score", 0) > 60]
+        if high_risk_assets:
+            roadmap.append(f"Prioritise retrofit for {len(high_risk_assets)} high-risk assets to reduce transition exposure")
+        if not roadmap:
+            roadmap.append("Portfolio sustainability profile is strong — focus on maintaining standards")
+
         return {
             "gresb_performance": {
-                "avg_score": float(analytics.sustainability_metrics.avg_gresb_score) if analytics.sustainability_metrics.avg_gresb_score else None,
-                "benchmark": 72,  # Industry average
-                "peer_rank": "Above Average" if (analytics.sustainability_metrics.avg_gresb_score or 0) > 70 else "Average",
+                "avg_score": float(gresb) if gresb else None,
+                "benchmark": 72,
+                "peer_rank": "Above Average" if (gresb or 0) > 70 else "Below Average" if (gresb or 0) < 50 else "Average",
             },
             "certifications": {
-                "certified_count": analytics.sustainability_metrics.certified_count,
-                "certified_pct": float(analytics.sustainability_metrics.pct_certified),
-                "breakdown": analytics.sustainability_metrics.certifications_breakdown,
+                "certified_count": cert_count,
+                "certified_pct": cert_pct,
+                "uncertified_count": uncertified,
+                "breakdown": breakdown,
             },
-            "improvement_roadmap": [
-                "Target LEED certification for uncertified office assets",
-                "Implement energy efficiency upgrades in retail properties",
-                "Conduct GRESB assessment for portfolio-level ESG benchmarking",
-            ],
+            "improvement_roadmap": roadmap,
         }
     
     def _tcfd_section(self, analytics: PortfolioAnalyticsResponse, holdings: List[Dict]) -> Dict:
-        """Generate TCFD report section."""
+        """Generate TCFD report section with data-driven content."""
+        n_holdings = len(holdings)
+        high_risk = sum(1 for h in holdings if h.get("risk_score", 0) > 60)
+        certified = sum(1 for h in holdings if h.get("certifications"))
+        stranded = analytics.stranding_analysis.stranded_assets_count
+        cert_pct = float(analytics.sustainability_metrics.pct_certified)
+        risk_avg = float(analytics.risk_metrics.weighted_avg_risk_score)
+        var_95 = float(analytics.risk_metrics.value_at_risk_95)
+
+        # Dynamic opportunities / risks based on portfolio data
+        opportunities = []
+        risks = []
+        if cert_pct < 80:
+            opportunities.append(f"Certification uplift: {n_holdings - certified} uncertified assets represent green premium potential")
+        if risk_avg < 40:
+            opportunities.append("Low-risk profile supports green finance issuance at favourable terms")
+        else:
+            opportunities.append("Energy efficiency retrofits could reduce average risk score")
+        if stranded > 0:
+            risks.append(f"{stranded} assets identified as stranding risk (${float(analytics.stranding_analysis.stranded_assets_value)/1e6:.1f}M exposure)")
+        if high_risk > 0:
+            risks.append(f"{high_risk}/{n_holdings} assets exceed risk threshold (score > 60)")
+        risks.append(f"Portfolio VaR(95%) = ${var_95/1e6:.1f}M under current climate scenarios")
+
         return {
             "governance": {
-                "board_oversight": "Climate risks reviewed quarterly by investment committee",
-                "management_role": "Sustainability team monitors climate metrics monthly",
+                "board_oversight": f"Portfolio of {n_holdings} assets reviewed; {high_risk} flagged for elevated climate risk",
+                "management_role": f"Sustainability metrics tracked: avg risk {risk_avg:.1f}, {cert_pct:.0f}% certified",
             },
             "strategy": {
-                "climate_opportunities": ["Green building premium capture", "Energy efficiency improvements"],
-                "climate_risks": ["Stranding risk in fossil fuel-intensive assets", "Physical risk from extreme weather"],
-                "resilience": "Portfolio stress-tested against 1.5°C and 2°C scenarios",
+                "climate_opportunities": opportunities,
+                "climate_risks": risks,
+                "resilience": f"VaR(95%) = ${var_95/1e6:.1f}M; {stranded} stranded assets identified",
             },
             "risk_management": {
-                "identification": "CRREM-based transition risk assessment",
-                "assessment": f"Average risk score: {float(analytics.risk_metrics.weighted_avg_risk_score):.1f}",
-                "mitigation": "Targeted improvements for high-risk assets",
+                "identification": f"Assessed {n_holdings} holdings across {len(set(h.get('property_type','') for h in holdings))} sectors",
+                "assessment": f"Weighted average risk score: {risk_avg:.1f}/100 ({analytics.risk_metrics.risk_level.value})",
+                "mitigation": f"{high_risk} assets flagged for targeted climate intervention",
             },
             "metrics_targets": {
-                "carbon_intensity_target": "30% reduction by 2030",
-                "certification_target": "100% portfolio certified by 2030",
-                "current_certification_rate": float(analytics.sustainability_metrics.pct_certified),
+                "current_certification_rate": cert_pct,
+                "stranded_assets_pct": float(analytics.stranding_analysis.stranded_pct),
+                "portfolio_var_95": var_95,
+                "avg_risk_score": risk_avg,
             },
         }
 

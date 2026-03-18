@@ -74,7 +74,7 @@ export default function AlertsPage() {
             <Bell className="h-6 w-6 text-primary" />
             Scenario Alerts
             {unreadCount > 0 && (
-              <Badge className="bg-red-500 text-white text-xs ml-1">{unreadCount}</Badge>
+              <Badge className="bg-red-500 text-slate-900 text-xs ml-1">{unreadCount}</Badge>
             )}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">Notifications for scenario updates, data revisions, and trend changes</p>
@@ -125,7 +125,7 @@ export default function AlertsPage() {
                   <div className="flex items-center gap-2 mb-0.5">
                     <h3 className={`text-sm ${!alert.is_read ? 'font-semibold' : 'font-medium'}`}>{alert.title}</h3>
                     <Badge variant="outline" className="text-[9px] shrink-0">{alert.alert_type.replace(/_/g, ' ')}</Badge>
-                    {!alert.is_read && <Badge className="bg-blue-500 text-white text-[9px]">New</Badge>}
+                    {!alert.is_read && <Badge className="bg-blue-500 text-slate-900 text-[9px]">New</Badge>}
                   </div>
                   {alert.message && <p className="text-xs text-muted-foreground line-clamp-2">{alert.message}</p>}
                   <p className="text-[10px] text-muted-foreground mt-1">{new Date(alert.created_at).toLocaleString()}</p>

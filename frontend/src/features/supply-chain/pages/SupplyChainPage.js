@@ -3,7 +3,8 @@
  * GHG Protocol Scope 3 (15 categories), SBTi trajectory, emission factor lookup
  * Standards: GHG Protocol Scope 3 Standard, SBTi Corporate v2.0, ISO 14064-1
  */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { usePersonaDefaults } from '../../../context/PersonaContext';
 import axios from 'axios';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -49,21 +50,21 @@ const CAT_COLORS = [
 ];
 
 /* ── Tiny helpers ─────────────────────────────────────────────────────────── */
-function Badge({ label, color = 'bg-white/[0.06] text-white/60' }) {
+function Badge({ label, color = 'bg-black/[0.04] text-slate-600' }) {
   return <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${color}`}>{label}</span>;
 }
 
 function Card({ title, subtitle, badge, children, className = '' }) {
   return (
-    <div className={`bg-[#0d1424] rounded-xl border border-white/[0.06] shadow-sm ${className}`}>
+    <div className={`bg-white rounded-xl border border-black/[0.08] shadow-sm ${className}`}>
       {(title || subtitle) && (
-        <div className="px-6 py-4 border-b border-white/[0.04] flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-black/[0.06] flex items-center justify-between">
           <div>
-            {title && <h2 className="text-sm font-semibold text-white/90">{title}</h2>}
-            {subtitle && <p className="text-xs text-white/40 mt-0.5">{subtitle}</p>}
+            {title && <h2 className="text-sm font-semibold text-slate-900">{title}</h2>}
+            {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
           </div>
           {badge && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-black/[0.06] text-slate-700 border border-black/[0.15]">
               {badge}
             </span>
           )}
@@ -74,15 +75,15 @@ function Card({ title, subtitle, badge, children, className = '' }) {
   );
 }
 
-function StatCard({ label, value, unit, sub, color = 'text-white' }) {
+function StatCard({ label, value, unit, sub, color = 'text-slate-900' }) {
   return (
-    <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] shadow-sm p-5">
-      <p className="text-xs text-white/40 font-medium mb-1">{label}</p>
+    <div className="bg-white rounded-xl border border-black/[0.08] shadow-sm p-5">
+      <p className="text-xs text-slate-400 font-medium mb-1">{label}</p>
       <p className={`text-2xl font-bold ${color}`}>
         {typeof value === 'number' ? value.toLocaleString(undefined, { maximumFractionDigits: 1 }) : value}
-        {unit && <span className="text-sm font-normal text-white/40 ml-1">{unit}</span>}
+        {unit && <span className="text-sm font-normal text-slate-400 ml-1">{unit}</span>}
       </p>
-      {sub && <p className="text-[11px] text-white/30 mt-1">{sub}</p>}
+      {sub && <p className="text-[11px] text-slate-400 mt-1">{sub}</p>}
     </div>
   );
 }
@@ -90,10 +91,10 @@ function StatCard({ label, value, unit, sub, color = 'text-white' }) {
 /* ── Activity row inside a category ─────────────────────────────────────── */
 function ActivityRow({ activity, onChange, onRemove }) {
   return (
-    <div className="grid grid-cols-12 gap-2 items-center py-2 border-b border-white/[0.02] last:border-0">
+    <div className="grid grid-cols-12 gap-2 items-center py-2 border-b border-black/[0.03] last:border-0">
       <div className="col-span-4">
         <input
-          className="w-full text-xs border border-white/[0.06] rounded px-2 py-1.5 bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+          className="w-full text-xs border border-black/[0.08] rounded px-2 py-1.5 bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
           placeholder="Activity description"
           value={activity.description || ''}
           onChange={e => onChange({ ...activity, description: e.target.value })}
@@ -102,7 +103,7 @@ function ActivityRow({ activity, onChange, onRemove }) {
       <div className="col-span-2">
         <input
           type="number" min="0"
-          className="w-full text-xs border border-white/[0.06] rounded px-2 py-1.5 bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+          className="w-full text-xs border border-black/[0.08] rounded px-2 py-1.5 bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
           placeholder="Quantity"
           value={activity.quantity || ''}
           onChange={e => onChange({ ...activity, quantity: parseFloat(e.target.value) || 0 })}
@@ -110,7 +111,7 @@ function ActivityRow({ activity, onChange, onRemove }) {
       </div>
       <div className="col-span-2">
         <select
-          className="w-full text-xs border border-white/[0.06] rounded px-2 py-1.5 bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+          className="w-full text-xs border border-black/[0.08] rounded px-2 py-1.5 bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
           value={activity.unit || 'tonne'}
           onChange={e => onChange({ ...activity, unit: e.target.value })}
         >
@@ -120,7 +121,7 @@ function ActivityRow({ activity, onChange, onRemove }) {
       <div className="col-span-2">
         <input
           type="number" min="0"
-          className="w-full text-xs border border-white/[0.06] rounded px-2 py-1.5 bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+          className="w-full text-xs border border-black/[0.08] rounded px-2 py-1.5 bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
           placeholder="EF (kgCO₂e/unit)"
           value={activity.emission_factor_kgco2e_per_unit || ''}
           onChange={e => onChange({ ...activity, emission_factor_kgco2e_per_unit: parseFloat(e.target.value) || null })}
@@ -128,7 +129,7 @@ function ActivityRow({ activity, onChange, onRemove }) {
       </div>
       <div className="col-span-1">
         <input
-          className="w-full text-xs border border-white/[0.06] rounded px-2 py-1.5 bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+          className="w-full text-xs border border-black/[0.08] rounded px-2 py-1.5 bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
           placeholder="ISO2"
           value={activity.supplier_country_iso || ''}
           onChange={e => onChange({ ...activity, supplier_country_iso: e.target.value })}
@@ -143,14 +144,28 @@ function ActivityRow({ activity, onChange, onRemove }) {
 
 /* ── Scope 3 Panel ───────────────────────────────────────────────────────── */
 function Scope3Panel() {
-  const [entityId, setEntityId] = useState('');
+  const d = usePersonaDefaults('supply_chain');
+  const [entityId, setEntityId] = useState(d.entityName || '');
   const [reportingYear, setReportingYear] = useState(2024);
-  const [activitiesByCategory, setActivitiesByCategory] = useState({});
+  const [activitiesByCategory, setActivitiesByCategory] = useState(() => {
+    // Pre-populate top categories from persona data if available
+    const acts = {};
+    if (d.cat1)  acts['cat1_purchased_goods']    = [{ description: 'Purchased goods & services', spend_eur: d.cat1 * 0.8, emission_factor_kgco2e: 1.25 }];
+    if (d.cat4)  acts['cat4_upstream_transport']  = [{ description: 'Upstream logistics', tkm: d.cat4 * 2500, emission_factor_kgco2e: 0.098 }];
+    if (d.cat11) acts['cat11_use_of_products']    = [{ description: 'Use of sold products', units_sold: 1, lifetime_emissions_tco2e: d.cat11 }];
+    return acts;
+  });
   const [includeHotspot, setIncludeHotspot] = useState(true);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [expandedCats, setExpandedCats] = useState({});
+
+  useEffect(() => {
+    setEntityId(d.entityName || '');
+    setResult(null);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [d.entityName]);
 
   const toggleCat = id => setExpandedCats(prev => ({ ...prev, [id]: !prev[id] }));
 
@@ -214,17 +229,17 @@ function Scope3Panel() {
       {/* Header & Entity */}
       <div className="flex flex-wrap items-end gap-4">
         <div>
-          <label className="block text-xs font-medium text-white/60 mb-1">Entity / Company ID</label>
-          <input className="border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 w-48 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+          <label className="block text-xs font-medium text-slate-600 mb-1">Entity / Company ID</label>
+          <input className="border border-black/[0.08] rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-slate-700 w-48 focus:outline-none focus:ring-2 focus:ring-black/50"
             value={entityId} onChange={e => setEntityId(e.target.value)} placeholder="company_001" />
         </div>
         <div>
-          <label className="block text-xs font-medium text-white/60 mb-1">Reporting Year</label>
+          <label className="block text-xs font-medium text-slate-600 mb-1">Reporting Year</label>
           <input type="number" min="2000" max="2100"
-            className="border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 w-32 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            className="border border-black/[0.08] rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-slate-700 w-32 focus:outline-none focus:ring-2 focus:ring-black/50"
             value={reportingYear} onChange={e => setReportingYear(parseInt(e.target.value))} />
         </div>
-        <label className="flex items-center gap-2 text-xs text-white/60 cursor-pointer">
+        <label className="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
           <input type="checkbox" className="rounded" checked={includeHotspot}
             onChange={e => setIncludeHotspot(e.target.checked)} />
           Include Hotspot Analysis
@@ -232,14 +247,14 @@ function Scope3Panel() {
         <div className="flex gap-2 flex-wrap">
           <Badge label="GHG Protocol Scope 3" color="bg-emerald-500/10 text-emerald-700" />
           <Badge label="SBTi Corporate v2.0" color="bg-blue-500/10 text-blue-700" />
-          <Badge label="ISO 14064-1" color="bg-white/[0.06] text-white/60" />
+          <Badge label="ISO 14064-1" color="bg-black/[0.04] text-slate-600" />
         </div>
       </div>
 
       {/* Categories */}
       <Card title="Scope 3 Activity Data — All 15 Categories" subtitle="Enter activity data per GHG Protocol Scope 3 category. Leave empty to exclude from calculation.">
         {/* Column headers */}
-        <div className="grid grid-cols-12 gap-2 text-[10px] font-semibold text-white/30 uppercase tracking-wide mb-2 px-1">
+        <div className="grid grid-cols-12 gap-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-2 px-1">
           <div className="col-span-4">Description</div>
           <div className="col-span-2">Quantity</div>
           <div className="col-span-2">Unit</div>
@@ -254,33 +269,33 @@ function Scope3Panel() {
             const isOpen = expandedCats[cat.id];
             const catTotal = acts.reduce((s, a) => s + (a.quantity || 0) * (a.emission_factor_kgco2e_per_unit || 0) / 1000, 0);
             return (
-              <div key={cat.id} className="border border-white/[0.06] rounded-lg overflow-hidden">
+              <div key={cat.id} className="border border-black/[0.08] rounded-lg overflow-hidden">
                 <button
-                  className="w-full flex items-center justify-between px-4 py-2.5 bg-white/[0.02] hover:bg-white/[0.06] transition-colors"
+                  className="w-full flex items-center justify-between px-4 py-2.5 bg-black/[0.02] hover:bg-black/[0.04] transition-colors"
                   onClick={() => toggleCat(cat.id)}
                 >
                   <div className="flex items-center gap-3">
-                    <span className={`w-2 h-2 rounded-full ${cat.upstream ? 'bg-cyan-400/10' : 'bg-teal-400'}`} />
-                    <span className="text-xs font-medium text-white/70">{cat.label}</span>
-                    <span className="text-[10px] text-white/30">{cat.upstream ? 'Upstream' : 'Downstream'}</span>
+                    <span className={`w-2 h-2 rounded-full ${cat.upstream ? 'bg-black/[0.05]' : 'bg-teal-400'}`} />
+                    <span className="text-xs font-medium text-slate-700">{cat.label}</span>
+                    <span className="text-[10px] text-slate-400">{cat.upstream ? 'Upstream' : 'Downstream'}</span>
                     {acts.length > 0 && (
-                      <span className="text-[10px] bg-cyan-400/10 text-cyan-400 px-1.5 py-0.5 rounded font-medium">
+                      <span className="text-[10px] bg-black/[0.05] text-slate-700 px-1.5 py-0.5 rounded font-medium">
                         {acts.length} activities · {catTotal.toFixed(2)} tCO₂e est.
                       </span>
                     )}
                   </div>
-                  <span className="text-white/30 text-xs">{isOpen ? '▲' : '▼'}</span>
+                  <span className="text-slate-400 text-xs">{isOpen ? '▲' : '▼'}</span>
                 </button>
 
                 {isOpen && (
-                  <div className="px-4 pb-3 pt-2 bg-[#0d1424]">
+                  <div className="px-4 pb-3 pt-2 bg-white">
                     {acts.map((act, ai) => (
                       <ActivityRow key={ai} activity={act}
                         onChange={u => updateActivity(cat.id, ai, u)}
                         onRemove={() => removeActivity(cat.id, ai)} />
                     ))}
                     <button
-                      className="mt-2 text-xs text-cyan-400 hover:text-cyan-300 font-medium flex items-center gap-1"
+                      className="mt-2 text-xs text-slate-700 hover:text-slate-800 font-medium flex items-center gap-1"
                       onClick={() => addActivity(cat.id)}
                     >
                       + Add Activity
@@ -297,7 +312,7 @@ function Scope3Panel() {
         <button
           onClick={handleCalculate}
           disabled={loading}
-          className="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-50 text-white text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors"
+          className="bg-black hover:bg-gray-800 disabled:opacity-50 text-slate-900 text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors"
         >
           {loading ? 'Calculating…' : 'Calculate Scope 3 Emissions'}
         </button>
@@ -313,7 +328,7 @@ function Scope3Panel() {
           {/* KPI Row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard label="Total Scope 3 Emissions" value={result.total_scope3_tco2e} unit="tCO₂e"
-              color="text-cyan-300" sub={`${result.reporting_year} reporting year`} />
+              color="text-slate-800" sub={`${result.reporting_year} reporting year`} />
             <StatCard label="Categories Active" value={result.by_category?.length || 0}
               sub="of 15 GHG Protocol categories" />
             <StatCard label="Data Quality Score" value={`${((result.validation_summary?.data_quality_score || 0) * 100).toFixed(0)}%`}
@@ -365,21 +380,21 @@ function Scope3Panel() {
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="border-b border-white/[0.06]">
+                  <tr className="border-b border-black/[0.08]">
                     {['Category','tCO₂e','% of Total','Data Quality','Hotspot'].map(h => (
-                      <th key={h} className="text-left text-white/40 font-semibold py-2 pr-4">{h}</th>
+                      <th key={h} className="text-left text-slate-400 font-semibold py-2 pr-4">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {result.by_category?.sort((a, b) => b.total_tco2e - a.total_tco2e).map((c, i) => (
-                    <tr key={i} className="border-b border-white/[0.02] hover:bg-white/[0.02]">
-                      <td className="py-2 pr-4 font-medium text-white/70">{c.category.replace(/_/g, ' ')}</td>
+                    <tr key={i} className="border-b border-black/[0.03] hover:bg-black/[0.02]">
+                      <td className="py-2 pr-4 font-medium text-slate-700">{c.category.replace(/_/g, ' ')}</td>
                       <td className="pr-4 font-mono">{c.total_tco2e.toLocaleString(undefined, { maximumFractionDigits: 1 })}</td>
                       <td className="pr-4">
                         <div className="flex items-center gap-2">
-                          <div className="h-1.5 bg-white/[0.06] rounded-full w-16 overflow-hidden">
-                            <div className="h-full bg-cyan-400/10 rounded-full" style={{ width: `${Math.min(c.pct_of_total, 100)}%` }} />
+                          <div className="h-1.5 bg-black/[0.04] rounded-full w-16 overflow-hidden">
+                            <div className="h-full bg-black/[0.05] rounded-full" style={{ width: `${Math.min(c.pct_of_total, 100)}%` }} />
                           </div>
                           <span>{c.pct_of_total?.toFixed(1)}%</span>
                         </div>
@@ -413,11 +428,11 @@ function Scope3Panel() {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-3 flex-wrap mb-1">
-                        <span className="text-xs font-semibold text-white/90">{h.activity}</span>
+                        <span className="text-xs font-semibold text-slate-900">{h.activity}</span>
                         <Badge label={h.category.replace(/_/g, ' ')} color="bg-red-100 text-red-700" />
-                        <span className="text-xs text-white/40">{h.tco2e?.toFixed(1)} tCO₂e ({h.pct_of_total?.toFixed(1)}% of total)</span>
+                        <span className="text-xs text-slate-400">{h.tco2e?.toFixed(1)} tCO₂e ({h.pct_of_total?.toFixed(1)}% of total)</span>
                       </div>
-                      <p className="text-xs text-white/60">{h.recommended_action}</p>
+                      <p className="text-xs text-slate-600">{h.recommended_action}</p>
                     </div>
                   </div>
                 ))}
@@ -429,13 +444,13 @@ function Scope3Panel() {
           <Card title="Validation Summary — ISO 14064-1 Compliance">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div className={`rounded-lg p-3 ${result.validation_summary?.is_valid ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-red-500/10 border border-red-500/20'}`}>
-                <p className="text-xs font-semibold text-white/60 mb-1">Validity Status</p>
+                <p className="text-xs font-semibold text-slate-600 mb-1">Validity Status</p>
                 <p className={`text-sm font-bold ${result.validation_summary?.is_valid ? 'text-emerald-700' : 'text-red-700'}`}>
                   {result.validation_summary?.is_valid ? 'Valid Disclosure' : 'Incomplete Disclosure'}
                 </p>
               </div>
               <div className="rounded-lg p-3 bg-blue-500/10 border border-blue-500/20">
-                <p className="text-xs font-semibold text-white/60 mb-1">Data Quality</p>
+                <p className="text-xs font-semibold text-slate-600 mb-1">Data Quality</p>
                 <p className="text-sm font-bold text-blue-700">
                   {((result.validation_summary?.data_quality_score || 0) * 100).toFixed(0)}% — Tier {
                     (result.validation_summary?.data_quality_score || 0) > 0.8 ? '1' :
@@ -444,7 +459,7 @@ function Scope3Panel() {
                 </p>
               </div>
               <div className="rounded-lg p-3 bg-amber-500/10 border border-amber-200">
-                <p className="text-xs font-semibold text-white/60 mb-1">Standard</p>
+                <p className="text-xs font-semibold text-slate-600 mb-1">Standard</p>
                 <p className="text-sm font-bold text-amber-700">GHG Protocol Scope 3 Corporate Standard</p>
               </div>
             </div>
@@ -469,13 +484,14 @@ function Scope3Panel() {
 
 /* ── SBTi Trajectory Panel ────────────────────────────────────────────────── */
 function SBTiPanel() {
+  const d = usePersonaDefaults('supply_chain');
   const [form, setForm] = useState({
-    entity_id: '',
+    entity_id: d.entityName || '',
     base_year: 2019,
-    base_year_emissions_tco2e: 100000,
+    base_year_emissions_tco2e: d.totalScope3 || 100000,
     target_year: 2030,
-    reduction_pct: 42,
-    sbti_pathway: '1.5C',
+    reduction_pct: d.sbtiTarget ? 42 : 42,
+    sbti_pathway: d.sbtiPathway === '1.5°C' ? '1.5C' : (d.sbtiPathway === 'Well below 2°C' ? 'well-below-2C' : '1.5C'),
   });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -546,33 +562,33 @@ function SBTiPanel() {
       {/* SBTi Stats Banner */}
       {sbtiStats && (
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-          <div className="bg-[#0d1424] rounded-lg border border-white/[0.06] p-3 text-center">
-            <p className="text-lg font-bold text-cyan-400">{sbtiStats.total_companies?.toLocaleString()}</p>
-            <p className="text-[10px] text-white/30">Total Companies</p>
+          <div className="bg-white rounded-lg border border-black/[0.08] p-3 text-center">
+            <p className="text-lg font-bold text-slate-700">{sbtiStats.total_companies?.toLocaleString()}</p>
+            <p className="text-[10px] text-slate-400">Total Companies</p>
           </div>
-          <div className="bg-[#0d1424] rounded-lg border border-white/[0.06] p-3 text-center">
+          <div className="bg-white rounded-lg border border-black/[0.08] p-3 text-center">
             <p className="text-lg font-bold text-emerald-400">{sbtiStats.committed?.toLocaleString()}</p>
-            <p className="text-[10px] text-white/30">Committed</p>
+            <p className="text-[10px] text-slate-400">Committed</p>
           </div>
-          <div className="bg-[#0d1424] rounded-lg border border-white/[0.06] p-3 text-center">
+          <div className="bg-white rounded-lg border border-black/[0.08] p-3 text-center">
             <p className="text-lg font-bold text-violet-400">{sbtiStats.targets_set?.toLocaleString()}</p>
-            <p className="text-[10px] text-white/30">Targets Set</p>
+            <p className="text-[10px] text-slate-400">Targets Set</p>
           </div>
-          <div className="bg-[#0d1424] rounded-lg border border-white/[0.06] p-3 text-center">
+          <div className="bg-white rounded-lg border border-black/[0.08] p-3 text-center">
             <p className="text-lg font-bold text-amber-400">{sbtiStats.net_zero_committed?.toLocaleString()}</p>
-            <p className="text-[10px] text-white/30">Net Zero Committed</p>
+            <p className="text-[10px] text-slate-400">Net Zero Committed</p>
           </div>
-          <div className="bg-[#0d1424] rounded-lg border border-white/[0.06] p-3 text-center">
+          <div className="bg-white rounded-lg border border-black/[0.08] p-3 text-center">
             <p className="text-lg font-bold text-blue-400">{sbtiStats.aligned_1_5c?.toLocaleString()}</p>
-            <p className="text-[10px] text-white/30">1.5°C Aligned</p>
+            <p className="text-[10px] text-slate-400">1.5°C Aligned</p>
           </div>
-          <div className="bg-[#0d1424] rounded-lg border border-white/[0.06] p-3 text-center">
-            <p className="text-lg font-bold text-white/70">{sbtiStats.sectors}</p>
-            <p className="text-[10px] text-white/30">Sectors</p>
+          <div className="bg-white rounded-lg border border-black/[0.08] p-3 text-center">
+            <p className="text-lg font-bold text-slate-700">{sbtiStats.sectors}</p>
+            <p className="text-[10px] text-slate-400">Sectors</p>
           </div>
-          <div className="bg-[#0d1424] rounded-lg border border-white/[0.06] p-3 text-center">
-            <p className="text-lg font-bold text-white/70">{sbtiStats.countries}</p>
-            <p className="text-[10px] text-white/30">Countries</p>
+          <div className="bg-white rounded-lg border border-black/[0.08] p-3 text-center">
+            <p className="text-lg font-bold text-slate-700">{sbtiStats.countries}</p>
+            <p className="text-[10px] text-slate-400">Countries</p>
           </div>
         </div>
       )}
@@ -581,12 +597,12 @@ function SBTiPanel() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {/* Company Search Autocomplete */}
           <div className="col-span-2 md:col-span-3 relative">
-            <label className="block text-xs font-medium text-white/60 mb-1">
+            <label className="block text-xs font-medium text-slate-600 mb-1">
               Search SBTi Company Registry
-              <span className="text-white/30 ml-2 font-normal">({sbtiStats?.total_companies?.toLocaleString() || '...'} companies)</span>
+              <span className="text-slate-400 ml-2 font-normal">({sbtiStats?.total_companies?.toLocaleString() || '...'} companies)</span>
             </label>
             <input
-              className="w-full border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+              className="w-full border border-black/[0.08] rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-2 focus:ring-black/50"
               value={sbtiSearch}
               onChange={e => { setSbtiSearch(e.target.value); setShowDropdown(true); }}
               onFocus={() => sbtiResults.length > 0 && setShowDropdown(true)}
@@ -594,29 +610,29 @@ function SBTiPanel() {
             />
             {sbtiSearching && (
               <div className="absolute right-3 top-8">
-                <div className="w-4 h-4 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
               </div>
             )}
             {showDropdown && sbtiResults.length > 0 && (
-              <div className="absolute z-50 w-full mt-1 bg-[#0d1424] border border-white/[0.1] rounded-lg shadow-xl max-h-64 overflow-y-auto">
+              <div className="absolute z-50 w-full mt-1 bg-white border border-black/[0.12] rounded-lg shadow-xl max-h-64 overflow-y-auto">
                 {sbtiResults.map(c => (
                   <button
                     key={c.id}
                     onClick={() => selectCompany(c)}
-                    className="w-full text-left px-4 py-2.5 hover:bg-white/[0.04] border-b border-white/[0.03] last:border-0 transition-colors"
+                    className="w-full text-left px-4 py-2.5 hover:bg-black/[0.03] border-b border-black/[0.04] last:border-0 transition-colors"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-white/80 font-medium">{c.company_name}</span>
+                      <span className="text-sm text-slate-800 font-medium">{c.company_name}</span>
                       <span className={`text-[10px] px-2 py-0.5 rounded border ${
                         c.target_status === 'Targets set' ? 'bg-violet-500/10 text-violet-400 border-violet-500/20'
                         : c.target_status === 'Committed' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                        : 'bg-white/[0.04] text-white/40 border-white/[0.06]'
+                        : 'bg-black/[0.03] text-slate-400 border-black/[0.08]'
                       }`}>{c.target_status || 'unknown'}</span>
                     </div>
-                    <div className="flex gap-3 mt-0.5 text-[10px] text-white/30">
+                    <div className="flex gap-3 mt-0.5 text-[10px] text-slate-400">
                       <span>{c.sector || 'N/A'}</span>
                       <span>{c.country || 'N/A'}</span>
-                      {c.near_term_ambition && <span className="text-cyan-400">{c.near_term_ambition}</span>}
+                      {c.near_term_ambition && <span className="text-slate-700">{c.near_term_ambition}</span>}
                       {c.net_zero_committed && <span className="text-amber-400">Net Zero</span>}
                     </div>
                   </button>
@@ -627,24 +643,24 @@ function SBTiPanel() {
 
           {/* Selected Company Info */}
           {selectedCompany && (
-            <div className="col-span-2 md:col-span-3 bg-[#080e1c] rounded-lg border border-cyan-500/20 p-4">
+            <div className="col-span-2 md:col-span-3 bg-[#fafafa] rounded-lg border border-black/[0.15] p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-white/90">{selectedCompany.company_name}</p>
-                  <div className="flex gap-4 mt-1 text-[10px] text-white/40">
-                    <span>Sector: <span className="text-white/60">{selectedCompany.sector || 'N/A'}</span></span>
-                    <span>Country: <span className="text-white/60">{selectedCompany.country || 'N/A'}</span></span>
-                    <span>ISIN: <span className="text-white/60 font-mono">{selectedCompany.isin || 'N/A'}</span></span>
-                    <span>Status: <span className="text-cyan-400">{selectedCompany.target_status?.replace(/_/g, ' ')}</span></span>
+                  <p className="text-sm font-semibold text-slate-900">{selectedCompany.company_name}</p>
+                  <div className="flex gap-4 mt-1 text-[10px] text-slate-400">
+                    <span>Sector: <span className="text-slate-600">{selectedCompany.sector || 'N/A'}</span></span>
+                    <span>Country: <span className="text-slate-600">{selectedCompany.country || 'N/A'}</span></span>
+                    <span>ISIN: <span className="text-slate-600 font-mono">{selectedCompany.isin || 'N/A'}</span></span>
+                    <span>Status: <span className="text-slate-700">{selectedCompany.target_status?.replace(/_/g, ' ')}</span></span>
                   </div>
-                  <div className="flex gap-4 mt-1 text-[10px] text-white/40">
-                    <span>Near-term: <span className="text-white/60">{selectedCompany.near_term_ambition || 'N/A'} by {selectedCompany.near_term_target_year || 'N/A'}</span></span>
-                    <span>Long-term: <span className="text-white/60">{selectedCompany.long_term_ambition || 'N/A'} by {selectedCompany.long_term_target_year || 'N/A'}</span></span>
+                  <div className="flex gap-4 mt-1 text-[10px] text-slate-400">
+                    <span>Near-term: <span className="text-slate-600">{selectedCompany.near_term_ambition || 'N/A'} by {selectedCompany.near_term_target_year || 'N/A'}</span></span>
+                    <span>Long-term: <span className="text-slate-600">{selectedCompany.long_term_ambition || 'N/A'} by {selectedCompany.long_term_target_year || 'N/A'}</span></span>
                     {selectedCompany.net_zero_committed && <span className="text-amber-400 font-medium">Net Zero by {selectedCompany.net_zero_year || 'TBD'}</span>}
                   </div>
                 </div>
                 <button onClick={() => { setSelectedCompany(null); setSbtiSearch(''); set('entity_id', ''); }}
-                  className="text-xs text-white/30 hover:text-white/60 border border-white/[0.06] rounded px-2 py-1">
+                  className="text-xs text-slate-400 hover:text-slate-600 border border-black/[0.08] rounded px-2 py-1">
                   Clear
                 </button>
               </div>
@@ -652,35 +668,35 @@ function SBTiPanel() {
           )}
 
           <div>
-            <label className="block text-xs font-medium text-white/60 mb-1">Entity ID</label>
-            <input className="w-full border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <label className="block text-xs font-medium text-slate-600 mb-1">Entity ID</label>
+            <input className="w-full border border-black/[0.08] rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-2 focus:ring-black/50"
               value={form.entity_id} onChange={e => set('entity_id', e.target.value)} placeholder="company_001" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-white/60 mb-1">Base Year</label>
-            <input type="number" className="w-full border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <label className="block text-xs font-medium text-slate-600 mb-1">Base Year</label>
+            <input type="number" className="w-full border border-black/[0.08] rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-2 focus:ring-black/50"
               value={form.base_year} onChange={e => set('base_year', parseInt(e.target.value))} />
           </div>
           <div>
-            <label className="block text-xs font-medium text-white/60 mb-1">Base Year Emissions (tCO₂e)</label>
-            <input type="number" className="w-full border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <label className="block text-xs font-medium text-slate-600 mb-1">Base Year Emissions (tCO₂e)</label>
+            <input type="number" className="w-full border border-black/[0.08] rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-2 focus:ring-black/50"
               value={form.base_year_emissions_tco2e} onChange={e => set('base_year_emissions_tco2e', parseFloat(e.target.value))} />
           </div>
           <div>
-            <label className="block text-xs font-medium text-white/60 mb-1">Target Year</label>
+            <label className="block text-xs font-medium text-slate-600 mb-1">Target Year</label>
             <input type="number" min="2025" max="2050"
-              className="w-full border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+              className="w-full border border-black/[0.08] rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-2 focus:ring-black/50"
               value={form.target_year} onChange={e => set('target_year', parseInt(e.target.value))} />
           </div>
           <div>
-            <label className="block text-xs font-medium text-white/60 mb-1">Absolute Reduction Target (%)</label>
+            <label className="block text-xs font-medium text-slate-600 mb-1">Absolute Reduction Target (%)</label>
             <input type="number" min="0" max="100"
-              className="w-full border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+              className="w-full border border-black/[0.08] rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-2 focus:ring-black/50"
               value={form.reduction_pct} onChange={e => set('reduction_pct', parseFloat(e.target.value))} />
           </div>
           <div>
-            <label className="block text-xs font-medium text-white/60 mb-1">SBTi Pathway</label>
-            <select className="w-full border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <label className="block text-xs font-medium text-slate-600 mb-1">SBTi Pathway</label>
+            <select className="w-full border border-black/[0.08] rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-2 focus:ring-black/50"
               value={form.sbti_pathway} onChange={e => set('sbti_pathway', e.target.value)}>
               {SBTI_PATHWAYS.map(p => <option key={p.v} value={p.v}>{p.l}</option>)}
             </select>
@@ -688,7 +704,7 @@ function SBTiPanel() {
         </div>
         <div className="mt-4 flex justify-end">
           <button onClick={handleCalc} disabled={loading}
-            className="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-50 text-white text-sm font-semibold px-6 py-2.5 rounded-lg shadow transition-colors">
+            className="bg-black hover:bg-gray-800 disabled:opacity-50 text-slate-900 text-sm font-semibold px-6 py-2.5 rounded-lg shadow transition-colors">
             {loading ? 'Calculating…' : 'Generate Trajectory'}
           </button>
         </div>
@@ -730,26 +746,26 @@ function SBTiPanel() {
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="border-b border-white/[0.06]">
+                  <tr className="border-b border-black/[0.08]">
                     {['Year','Target Emissions (tCO₂e)','Cumulative Reduction','Annual Required Reduction'].map(h => (
-                      <th key={h} className="text-left text-white/40 font-semibold py-2 pr-6">{h}</th>
+                      <th key={h} className="text-left text-slate-400 font-semibold py-2 pr-6">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {result.trajectory_milestones?.map((m, i) => (
-                    <tr key={i} className="border-b border-white/[0.02] hover:bg-white/[0.02]">
-                      <td className="py-2 pr-6 font-semibold text-cyan-400">{m.year}</td>
+                    <tr key={i} className="border-b border-black/[0.03] hover:bg-black/[0.02]">
+                      <td className="py-2 pr-6 font-semibold text-slate-700">{m.year}</td>
                       <td className="pr-6 font-mono">{m.target_emissions_tco2e?.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
                       <td className="pr-6">
                         <div className="flex items-center gap-2">
-                          <div className="h-1.5 bg-white/[0.06] rounded-full w-20 overflow-hidden">
+                          <div className="h-1.5 bg-black/[0.04] rounded-full w-20 overflow-hidden">
                             <div className="h-full bg-emerald-400 rounded-full" style={{ width: `${Math.min(m.cumulative_reduction_pct || 0, 100)}%` }} />
                           </div>
                           <span className="font-medium text-emerald-700">{m.cumulative_reduction_pct?.toFixed(1)}%</span>
                         </div>
                       </td>
-                      <td className="text-white/60">{m.annual_reduction_required_tco2e?.toLocaleString(undefined, { maximumFractionDigits: 0 })} tCO₂e/yr</td>
+                      <td className="text-slate-600">{m.annual_reduction_required_tco2e?.toLocaleString(undefined, { maximumFractionDigits: 0 })} tCO₂e/yr</td>
                     </tr>
                   ))}
                 </tbody>
@@ -791,23 +807,23 @@ function EmissionFactorPanel() {
       <Card title="Emission Factor Lookup" subtitle="GHG Protocol / DEFRA / IPCC AR6 emission factor database">
         <div className="flex flex-wrap gap-4 items-end">
           <div>
-            <label className="block text-xs font-medium text-white/60 mb-1">Activity Type</label>
-            <input className="border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 w-64 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <label className="block text-xs font-medium text-slate-600 mb-1">Activity Type</label>
+            <input className="border border-black/[0.08] rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-slate-700 w-64 focus:outline-none focus:ring-2 focus:ring-black/50"
               placeholder="e.g. grid_electricity, natural_gas, diesel"
               value={activity} onChange={e => setActivity(e.target.value)} />
           </div>
           <div>
-            <label className="block text-xs font-medium text-white/60 mb-1">Country (ISO2)</label>
-            <input className="border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 w-24 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <label className="block text-xs font-medium text-slate-600 mb-1">Country (ISO2)</label>
+            <input className="border border-black/[0.08] rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-slate-700 w-24 focus:outline-none focus:ring-2 focus:ring-black/50"
               value={country} onChange={e => setCountry(e.target.value)} />
           </div>
           <div>
-            <label className="block text-xs font-medium text-white/60 mb-1">Year</label>
-            <input type="number" className="border border-white/[0.06] rounded-lg px-3 py-2 text-sm bg-[#0b1120] text-white/70 w-24 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <label className="block text-xs font-medium text-slate-600 mb-1">Year</label>
+            <input type="number" className="border border-black/[0.08] rounded-lg px-3 py-2 text-sm bg-[#f5f6f8] text-slate-700 w-24 focus:outline-none focus:ring-2 focus:ring-black/50"
               value={year} onChange={e => setYear(parseInt(e.target.value))} />
           </div>
           <button onClick={handleLookup} disabled={loading}
-            className="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-50 text-white text-sm font-semibold px-5 py-2.5 rounded-lg shadow transition-colors">
+            className="bg-black hover:bg-gray-800 disabled:opacity-50 text-slate-900 text-sm font-semibold px-5 py-2.5 rounded-lg shadow transition-colors">
             {loading ? 'Looking up…' : 'Lookup Factor'}
           </button>
         </div>
@@ -818,14 +834,14 @@ function EmissionFactorPanel() {
       {result && (
         <Card title="Emission Factor Results">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <StatCard label="Emission Factor" value={result.emission_factor_kgco2e_per_unit?.toFixed(4)} unit="kgCO₂e/unit" color="text-cyan-300" />
+            <StatCard label="Emission Factor" value={result.emission_factor_kgco2e_per_unit?.toFixed(4)} unit="kgCO₂e/unit" color="text-slate-800" />
             <StatCard label="GWP Basis" value={result.gwp_basis || 'AR6'} sub="IPCC Global Warming Potential" />
             <StatCard label="Source" value={result.source || 'DEFRA 2024'} sub={result.version} />
             <StatCard label="Uncertainty" value={`±${result.uncertainty_pct?.toFixed(0) || '?'}%`}
               color={result.uncertainty_pct < 10 ? 'text-emerald-700' : 'text-amber-600'} />
           </div>
           {result.notes && (
-            <div className="bg-white/[0.02] rounded-lg p-3 text-xs text-white/60">
+            <div className="bg-black/[0.02] rounded-lg p-3 text-xs text-slate-600">
               <strong>Notes:</strong> {result.notes}
             </div>
           )}
@@ -889,7 +905,7 @@ function ChinaSupplierPanel() {
 
   const READINESS_COLOR = (s) => {
     if (s >= 75) return 'text-emerald-400';
-    if (s >= 50) return 'text-cyan-400';
+    if (s >= 50) return 'text-slate-700';
     if (s >= 25) return 'text-amber-400';
     return 'text-red-400';
   };
@@ -899,8 +915,8 @@ function ChinaSupplierPanel() {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-base font-bold text-white">China Supplier Intelligence</h2>
-          <p className="text-xs text-white/40 mt-0.5">
+          <h2 className="text-base font-bold text-slate-900">China Supplier Intelligence</h2>
+          <p className="text-xs text-slate-400 mt-0.5">
             GHG Protocol Scope 3 Cat 1 emission factors from CETS-verified Chinese exporters
           </p>
         </div>
@@ -908,11 +924,11 @@ function ChinaSupplierPanel() {
           <select
             value={sector}
             onChange={e => setSector(e.target.value)}
-            className="text-xs border border-white/[0.06] rounded px-3 py-1.5 bg-[#0b1120] text-white/70 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+            className="text-xs border border-black/[0.08] rounded px-3 py-1.5 bg-[#f5f6f8] text-slate-700 focus:outline-none focus:ring-1 focus:ring-black/50"
           >
             {SECTORS.map(s => <option key={s} value={s}>{s || 'All Sectors'}</option>)}
           </select>
-          <span className="text-[10px] text-white/30">
+          <span className="text-[10px] text-slate-400">
             {exporters.length} exporters · {scope3Factors?.total_factors || 0} EF records
           </span>
         </div>
@@ -927,31 +943,31 @@ function ChinaSupplierPanel() {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-white/[0.06]">
-                  <th className="text-left py-2 pr-4 text-white/40 font-medium">HS-4</th>
-                  <th className="text-left py-2 pr-4 text-white/40 font-medium">Product</th>
-                  <th className="text-left py-2 pr-4 text-white/40 font-medium">Sector</th>
-                  <th className="text-right py-2 pr-4 text-white/40 font-medium">EF (tCO2/t)</th>
-                  <th className="text-right py-2 text-white/40 font-medium">EU Benchmark</th>
+                <tr className="border-b border-black/[0.08]">
+                  <th className="text-left py-2 pr-4 text-slate-400 font-medium">HS-4</th>
+                  <th className="text-left py-2 pr-4 text-slate-400 font-medium">Product</th>
+                  <th className="text-left py-2 pr-4 text-slate-400 font-medium">Sector</th>
+                  <th className="text-right py-2 pr-4 text-slate-400 font-medium">EF (tCO2/t)</th>
+                  <th className="text-right py-2 text-slate-400 font-medium">EU Benchmark</th>
                 </tr>
               </thead>
               <tbody>
                 {(scope3Factors.factors || []).map((f, i) => (
-                  <tr key={i} className="border-b border-white/[0.02] hover:bg-white/[0.02]">
-                    <td className="py-2 pr-4 font-mono text-white/60">{f.hs4 || f.hs_code?.substring(0, 4) || '—'}</td>
-                    <td className="py-2 pr-4 text-white/80">{f.product || f.product_name}</td>
+                  <tr key={i} className="border-b border-black/[0.03] hover:bg-black/[0.02]">
+                    <td className="py-2 pr-4 font-mono text-slate-600">{f.hs4 || f.hs_code?.substring(0, 4) || '—'}</td>
+                    <td className="py-2 pr-4 text-slate-800">{f.product || f.product_name}</td>
                     <td className="py-2 pr-4">
-                      <span className="px-1.5 py-0.5 rounded text-[10px] bg-cyan-500/10 text-cyan-400">{f.sector}</span>
+                      <span className="px-1.5 py-0.5 rounded text-[10px] bg-black/[0.06] text-slate-700">{f.sector}</span>
                     </td>
-                    <td className="py-2 pr-4 text-right font-bold text-white">{Number(f.ef_tco2_t || f.embedded_carbon_tco2_per_tonne || 0).toFixed(3)}</td>
-                    <td className="py-2 text-right text-white/50">{f.eu_benchmark_tco2_per_tonne ? Number(f.eu_benchmark_tco2_per_tonne).toFixed(3) : '—'}</td>
+                    <td className="py-2 pr-4 text-right font-bold text-slate-900">{Number(f.ef_tco2_t || f.embedded_carbon_tco2_per_tonne || 0).toFixed(3)}</td>
+                    <td className="py-2 text-right text-slate-500">{f.eu_benchmark_tco2_per_tonne ? Number(f.eu_benchmark_tco2_per_tonne).toFixed(3) : '—'}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <p className="text-[10px] text-white/20 mt-3 pt-2 border-t border-white/[0.04]">
-            Use these factors in Scope 3 Cat 1 calculations for imported Chinese goods. · View full data at <a href="/china-trade" className="text-cyan-400 hover:underline">/china-trade</a>
+          <p className="text-[10px] text-slate-300 mt-3 pt-2 border-t border-black/[0.06]">
+            Use these factors in Scope 3 Cat 1 calculations for imported Chinese goods. · View full data at <a href="/china-trade" className="text-slate-700 hover:underline">/china-trade</a>
           </p>
         </Card>
       )}
@@ -962,42 +978,42 @@ function ChinaSupplierPanel() {
         subtitle="Click an exporter to view cross-module entity hub (CBAM · ETS · ESG)"
       >
         {loading ? (
-          <div className="text-center py-8 text-white/30 text-sm">Loading exporters…</div>
+          <div className="text-center py-8 text-slate-400 text-sm">Loading exporters…</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-white/[0.06]">
-                  <th className="text-left py-2 pr-4 text-white/40 font-medium">Entity</th>
-                  <th className="text-left py-2 pr-4 text-white/40 font-medium">Sector</th>
-                  <th className="text-right py-2 pr-4 text-white/40 font-medium">CBAM Readiness</th>
-                  <th className="text-right py-2 pr-4 text-white/40 font-medium">Carbon Int. (tCO2/t)</th>
-                  <th className="text-right py-2 text-white/40 font-medium">ESG Tier</th>
+                <tr className="border-b border-black/[0.08]">
+                  <th className="text-left py-2 pr-4 text-slate-400 font-medium">Entity</th>
+                  <th className="text-left py-2 pr-4 text-slate-400 font-medium">Sector</th>
+                  <th className="text-right py-2 pr-4 text-slate-400 font-medium">CBAM Readiness</th>
+                  <th className="text-right py-2 pr-4 text-slate-400 font-medium">Carbon Int. (tCO2/t)</th>
+                  <th className="text-right py-2 text-slate-400 font-medium">ESG Tier</th>
                 </tr>
               </thead>
               <tbody>
                 {(exporters.slice(0, 15)).map((e, i) => (
                   <tr
                     key={i}
-                    className={`border-b border-white/[0.02] cursor-pointer transition-colors ${
-                      selectedEntity === e.entity_name ? 'bg-cyan-400/5' : 'hover:bg-white/[0.02]'
+                    className={`border-b border-black/[0.03] cursor-pointer transition-colors ${
+                      selectedEntity === e.entity_name ? 'bg-black/5' : 'hover:bg-black/[0.02]'
                     }`}
                     onClick={() => fetchEntityHub(e.entity_name)}
                   >
-                    <td className="py-2 pr-4 text-white/80 font-medium">{e.entity_name}</td>
+                    <td className="py-2 pr-4 text-slate-800 font-medium">{e.entity_name}</td>
                     <td className="py-2 pr-4">
-                      <span className="px-1.5 py-0.5 rounded text-[10px] bg-white/[0.06] text-white/50">{e.sector}</span>
+                      <span className="px-1.5 py-0.5 rounded text-[10px] bg-black/[0.04] text-slate-500">{e.sector}</span>
                     </td>
                     <td className={`py-2 pr-4 text-right font-bold ${READINESS_COLOR(e.cbam_readiness_score)}`}>
                       {e.cbam_readiness_score}
                     </td>
-                    <td className="py-2 pr-4 text-right text-white/70">
+                    <td className="py-2 pr-4 text-right text-slate-700">
                       {e.carbon_intensity_tco2_per_tonne ? Number(e.carbon_intensity_tco2_per_tonne).toFixed(2) : '—'}
                     </td>
                     <td className="py-2 text-right">
                       <span className={`px-1.5 py-0.5 rounded text-[10px] ${
                         e.esg_tier === 'Leader' ? 'bg-emerald-500/10 text-emerald-400' :
-                        e.esg_tier === 'Advanced' ? 'bg-cyan-500/10 text-cyan-400' :
+                        e.esg_tier === 'Advanced' ? 'bg-black/[0.06] text-slate-700' :
                         e.esg_tier === 'Developing' ? 'bg-amber-500/10 text-amber-400' :
                         'bg-red-500/10 text-red-400'
                       }`}>{e.esg_tier || '—'}</span>
@@ -1029,7 +1045,7 @@ function ChinaSupplierPanel() {
           <div className="flex gap-2 flex-wrap">
             {Object.entries(entityHub.module_links || {}).map(([mod, href]) => (
               <a key={mod} href={href}
-                className="text-[10px] px-2.5 py-1 rounded border border-cyan-400/20 text-cyan-400/70 hover:text-cyan-300 hover:border-cyan-400/40 transition-colors capitalize">
+                className="text-[10px] px-2.5 py-1 rounded border border-black/[0.15] text-slate-700 hover:text-slate-800 hover:border-black/40 transition-colors capitalize">
                 {mod.replace(/_/g, ' ')}
               </a>
             ))}
@@ -1052,27 +1068,27 @@ export default function SupplyChainPage() {
   const [activePanel, setActivePanel] = useState('scope3');
 
   return (
-    <div className="flex flex-col h-full bg-white/[0.02]">
+    <div className="flex flex-col h-full bg-black/[0.02]">
       {/* Page header */}
-      <div className="bg-[#0d1424] border-b border-white/[0.06] px-8 py-5">
+      <div className="bg-white border-b border-black/[0.08] px-8 py-5">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-xl font-bold text-white">Supply Chain Emissions</h1>
-            <p className="text-sm text-white/40 mt-0.5">
+            <h1 className="text-xl font-bold text-slate-900">Supply Chain Emissions</h1>
+            <p className="text-sm text-slate-400 mt-0.5">
               Scope 3 value-chain assessment, SBTi target trajectories, and emission factor database
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Badge label="GHG Protocol Scope 3" color="bg-emerald-500/10 text-emerald-700" />
             <Badge label="SBTi Corporate v2.0" color="bg-blue-500/10 text-blue-700" />
-            <Badge label="ISO 14064-1:2023" color="bg-white/[0.06] text-white/60" />
+            <Badge label="ISO 14064-1:2023" color="bg-black/[0.04] text-slate-600" />
             <Badge label="TCFD Scope 3" color="bg-purple-50 text-purple-700" />
           </div>
         </div>
       </div>
 
       {/* Sub-nav */}
-      <div className="bg-[#0d1424] border-b border-white/[0.06] px-8">
+      <div className="bg-white border-b border-black/[0.08] px-8">
         <div className="flex gap-0">
           {PANELS.map(p => (
             <button
@@ -1080,12 +1096,12 @@ export default function SupplyChainPage() {
               onClick={() => setActivePanel(p.id)}
               className={`px-5 py-3.5 border-b-2 transition-all ${
                 activePanel === p.id
-                  ? 'border-cyan-400/20 text-cyan-300'
-                  : 'border-transparent text-white/40 hover:text-white/70 hover:border-white/[0.08]'
+                  ? 'border-black/[0.15] text-slate-800'
+                  : 'border-transparent text-slate-400 hover:text-slate-700 hover:border-black/[0.10]'
               }`}
             >
               <span className="text-sm font-semibold block">{p.label}</span>
-              <span className="text-[10px] text-white/30">{p.sub}</span>
+              <span className="text-[10px] text-slate-400">{p.sub}</span>
             </button>
           ))}
         </div>

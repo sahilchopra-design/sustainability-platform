@@ -269,7 +269,7 @@ function WaterRiskMapInner({ locations = [], onLocationSelect, selectedLocationI
         />
         
         {/* Legend */}
-        <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-[#0d1424]/60 p-3 rounded-lg shadow-lg text-xs">
+        <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-white/60 p-3 rounded-lg shadow-lg text-xs">
           <div className="font-medium mb-2">Water Stress Level</div>
           <div className="space-y-1">
             <div className="flex items-center gap-2">
@@ -292,7 +292,7 @@ function WaterRiskMapInner({ locations = [], onLocationSelect, selectedLocationI
         </div>
 
         {/* Stats Badge */}
-        <div className="absolute top-4 left-4 bg-white/90 dark:bg-[#0d1424]/60 p-2 rounded-lg shadow text-xs">
+        <div className="absolute top-4 left-4 bg-white/90 dark:bg-white/60 p-2 rounded-lg shadow text-xs">
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-amber-500" />
             <span>

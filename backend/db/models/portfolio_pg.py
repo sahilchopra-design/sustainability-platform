@@ -69,6 +69,8 @@ class PortfolioPG(Base):
     id = Column(String, primary_key=True, default=lambda: str(_uuid.uuid4()))
     name = Column(String(255), nullable=False)
     description = Column(Text)
+    # Multi-tenant isolation (migration 055) — NULL = legacy/unscoped
+    org_id = Column(UUID(as_uuid=True), ForeignKey("organisations.id", ondelete="SET NULL"), nullable=True, index=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc),
                         onupdate=lambda: datetime.now(timezone.utc))

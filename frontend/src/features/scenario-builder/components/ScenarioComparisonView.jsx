@@ -29,8 +29,8 @@ function ParamDiffTable({ scenarios }) {
     <div className="overflow-x-auto">
       <table className="w-full text-[11px]" data-testid="param-diff-table">
         <thead>
-          <tr className="border-b border-white/8">
-            <th className="text-left text-white/35 font-normal pb-2 pr-3 w-36">Parameter</th>
+          <tr className="border-b border-gray-200">
+            <th className="text-left text-gray-500 font-normal pb-2 pr-3 w-36">Parameter</th>
             {scenarios.map((s, i) => (
               <th key={s.id} className="text-right pb-2 px-2 font-medium" style={{ color: COMPARE_COLORS[i] }}>
                 {s.name.length > 20 ? s.name.slice(0, 18) + '…' : s.name}
@@ -53,10 +53,10 @@ function ParamDiffTable({ scenarios }) {
             const hasVariance = maxVal - minVal > 0.001;
 
             return (
-              <tr key={paramId} className="border-b border-white/5">
+              <tr key={paramId} className="border-b border-black/5">
                 <td className="py-1.5 pr-3">
-                  <div className="text-white/60">{paramDef.label}</div>
-                  <div className="text-[9px] text-white/25">{paramDef.unit}</div>
+                  <div className="text-gray-600">{paramDef.label}</div>
+                  <div className="text-[9px] text-gray-400">{paramDef.unit}</div>
                 </td>
                 {values.map((val, i) => {
                   const isMin = hasVariance && val === minVal;
@@ -65,7 +65,7 @@ function ParamDiffTable({ scenarios }) {
                     <td key={i} className="text-right py-1.5 px-2">
                       <span className={`font-mono ${
                         isMax ? 'text-amber-400 font-semibold' :
-                        isMin ? 'text-emerald-400/80' : 'text-white/65'
+                        isMin ? 'text-emerald-400/80' : 'text-gray-600'
                       }`}>
                         {val?.toFixed(2) ?? '—'}
                       </span>
@@ -108,11 +108,11 @@ function MetricComparisonChart({ scenarios }) {
           <XAxis dataKey="metric" tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 10 }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fill: 'rgba(255,255,255,0.2)', fontSize: 9 }} axisLine={false} tickLine={false} width={30} />
           <Tooltip
-            contentStyle={{ background: '#0d1526', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 11 }}
-            labelStyle={{ color: 'rgba(255,255,255,0.6)' }}
+            contentStyle={{ background: '#0d1526', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 8, fontSize: 11 }}
+            labelStyle={{ color: 'rgba(0,0,0,0.6)' }}
           />
           <Legend
-            wrapperStyle={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}
+            wrapperStyle={{ fontSize: 10, color: 'rgba(0,0,0,0.4)' }}
             formatter={(value, entry) => scenarios[parseInt(value.replace('s', ''))]?.name?.slice(0, 20) || value}
           />
           {scenarios.map((s, i) => (
@@ -156,7 +156,7 @@ export function ScenarioComparisonView({ currentScenario }) {
     <div className="flex flex-col gap-4" data-testid="scenario-comparison-view">
       {/* Selector */}
       <div>
-        <p className="text-[11px] text-white/40 mb-2">Compare with (up to 2 templates):</p>
+        <p className="text-[11px] text-gray-500 mb-2">Compare with (up to 2 templates):</p>
         <div className="flex flex-wrap gap-1.5">
           {SCENARIO_TEMPLATES.map((tpl, i) => {
             const isSelected = selectedIds.includes(tpl.id);
@@ -168,8 +168,8 @@ export function ScenarioComparisonView({ currentScenario }) {
                 onClick={() => toggleTemplate(tpl.id)}
                 className={`text-[10px] px-2 py-1 rounded border transition-colors ${
                   isSelected
-                    ? 'border-white/20 text-white/80 font-semibold'
-                    : 'border-white/8 text-white/35 hover:border-white/16 hover:text-white/55'
+                    ? 'border-black/20 text-gray-800 font-semibold'
+                    : 'border-gray-200 text-gray-500 hover:border-black/16 hover:text-gray-500'
                 }`}
                 style={isSelected ? { borderColor: COMPARE_COLORS[colorIdx + 1], color: COMPARE_COLORS[colorIdx + 1] } : {}}
               >
@@ -195,15 +195,15 @@ export function ScenarioComparisonView({ currentScenario }) {
       {/* Tabs */}
       {comparisonScenarios.length > 1 && (
         <>
-          <div className="flex gap-1 border-b border-white/8 pb-0">
+          <div className="flex gap-1 border-b border-gray-200 pb-0">
             {[['params', 'Parameters'], ['chart', 'Chart']].map(([key, lbl]) => (
               <button
                 key={key}
                 onClick={() => setTab(key)}
                 className={`text-[11px] px-3 py-1.5 rounded-t border-b-2 transition-colors ${
                   tab === key
-                    ? 'border-cyan-500 text-cyan-300'
-                    : 'border-transparent text-white/40 hover:text-white/60'
+                    ? 'border-black text-gray-800'
+                    : 'border-transparent text-gray-500 hover:text-gray-600'
                 }`}
               >
                 {lbl}
@@ -217,7 +217,7 @@ export function ScenarioComparisonView({ currentScenario }) {
       )}
 
       {comparisonScenarios.length === 1 && (
-        <div className="text-[12px] text-white/25 py-6 text-center">
+        <div className="text-[12px] text-gray-400 py-6 text-center">
           Select at least one template above to compare
         </div>
       )}

@@ -248,12 +248,12 @@ export function SalesComparisonCalculator() {
         </CardHeader>
         <CardContent className="space-y-4">
           {comparables.length === 0 ? (
-            <p className="text-center py-8 text-white/40">
+            <p className="text-center py-8 text-gray-500">
               No comparables added. Click "Add Comparable" to begin.
             </p>
           ) : (
             comparables.map((comp, idx) => (
-              <div key={comp.id} className="bg-white/[0.02] rounded-lg p-4 space-y-3">
+              <div key={comp.id} className="bg-gray-50 rounded-lg p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <Badge variant="outline">Comparable {idx + 1}</Badge>
                   <Button 
@@ -400,7 +400,7 @@ export function SalesComparisonCalculator() {
 
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-white/60">Confidence Level</span>
+                  <span className="text-sm text-gray-600">Confidence Level</span>
                   <Badge 
                     className={
                       result.confidence_level === 'high' 
@@ -414,7 +414,7 @@ export function SalesComparisonCalculator() {
                   </Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-white/60">95% Confidence Range</span>
+                  <span className="text-sm text-gray-600">95% Confidence Range</span>
                   <span className="text-sm font-medium">
                     {formatCurrency(result.confidence_range_low, true)} - {formatCurrency(result.confidence_range_high, true)}
                   </span>
@@ -422,20 +422,20 @@ export function SalesComparisonCalculator() {
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white/[0.02] rounded-lg p-3 text-center">
-                  <p className="text-xs text-white/40">Mean Price</p>
+                <div className="bg-gray-50 rounded-lg p-3 text-center">
+                  <p className="text-xs text-gray-500">Mean Price</p>
                   <p className="text-lg font-semibold">{formatCurrency(result.mean_adjusted_price, true)}</p>
                 </div>
-                <div className="bg-white/[0.02] rounded-lg p-3 text-center">
-                  <p className="text-xs text-white/40">Median Price</p>
+                <div className="bg-gray-50 rounded-lg p-3 text-center">
+                  <p className="text-xs text-gray-500">Median Price</p>
                   <p className="text-lg font-semibold">{formatCurrency(result.median_adjusted_price, true)}</p>
                 </div>
-                <div className="bg-white/[0.02] rounded-lg p-3 text-center">
-                  <p className="text-xs text-white/40">Avg Gross Adj</p>
+                <div className="bg-gray-50 rounded-lg p-3 text-center">
+                  <p className="text-xs text-gray-500">Avg Gross Adj</p>
                   <p className="text-lg font-semibold">{formatPercent(result.avg_gross_adjustment_percent)}</p>
                 </div>
-                <div className="bg-white/[0.02] rounded-lg p-3 text-center">
-                  <p className="text-xs text-white/40">Avg Net Adj</p>
+                <div className="bg-gray-50 rounded-lg p-3 text-center">
+                  <p className="text-xs text-gray-500">Avg Net Adj</p>
                   <p className="text-lg font-semibold">{formatPercent(result.avg_net_adjustment_percent)}</p>
                 </div>
               </div>
@@ -452,10 +452,10 @@ export function SalesComparisonCalculator() {
             </CardHeader>
             <CardContent className="space-y-4">
               {result.adjusted_comparables?.map((comp, idx) => (
-                <div key={comp.comp_id} className="bg-white/[0.02] rounded-lg p-4 space-y-3">
+                <div key={comp.comp_id} className="bg-gray-50 rounded-lg p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <Badge variant="outline">Comp {idx + 1}</Badge>
-                    <span className="text-xs text-white/40">
+                    <span className="text-xs text-gray-500">
                       {comp.days_since_sale} days ago
                     </span>
                   </div>
@@ -468,7 +468,7 @@ export function SalesComparisonCalculator() {
                   <div className="space-y-1">
                     {comp.adjustments?.map((adj, i) => (
                       <div key={i} className="flex justify-between text-xs">
-                        <span className="text-white/60 capitalize">{adj.type}:</span>
+                        <span className="text-gray-600 capitalize">{adj.type}:</span>
                         <span className={parseFloat(adj.amount) >= 0 ? 'text-emerald-400' : 'text-red-400'}>
                           {parseFloat(adj.amount) >= 0 ? '+' : ''}{formatCurrency(adj.amount, true)}
                         </span>
@@ -483,7 +483,7 @@ export function SalesComparisonCalculator() {
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-white/40">Per SF:</span>
+                    <span className="text-gray-500">Per SF:</span>
                     <span>{formatCurrency(comp.adjusted_price_per_sf)}</span>
                   </div>
                 </div>

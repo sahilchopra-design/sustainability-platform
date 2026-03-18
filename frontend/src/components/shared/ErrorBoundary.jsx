@@ -41,7 +41,7 @@ function FallbackUI({ error, resetError, goHome }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#060c18",
+        background: "#ffffff",
         color: "#e2e8f0",
         fontFamily:
           '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',

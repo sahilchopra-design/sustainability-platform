@@ -31,8 +31,9 @@ import {
   RadarIcon, ScatterChart as ScatterIcon, Grid3X3, Play, Loader2,
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import DemoBanner from '../components/shared/DemoBanner';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+const API = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants
@@ -198,17 +199,17 @@ const fmtNum = (v, d = 1) => v == null ? '—' : v.toFixed(d);
 
 function ChartTypeSelector({ types = CHART_TYPES, value, onChange }) {
   return (
-    <div className="flex items-center gap-0.5 bg-white/[0.04] rounded p-0.5">
+    <div className="flex items-center gap-0.5 bg-gray-50 rounded p-0.5">
       {types.map(({ id, label, Icon }) => (
         <button
           key={id}
           onClick={() => onChange(id)}
           title={label}
           className={cn(
-            'p-1.5 rounded text-white/40 transition-all',
+            'p-1.5 rounded text-gray-500 transition-all',
             value === id
-              ? 'bg-cyan-500/20 text-cyan-300'
-              : 'hover:text-white/70 hover:bg-white/[0.06]'
+              ? 'bg-black/[0.08] text-gray-800'
+              : 'hover:text-gray-700 hover:bg-gray-50'
           )}
         >
           <Icon className="h-3.5 w-3.5" />
@@ -220,21 +221,21 @@ function ChartTypeSelector({ types = CHART_TYPES, value, onChange }) {
 
 function KpiCard({ title, value, sub, trend, Icon, color = 'indigo', loading }) {
   const iconColors = {
-    indigo: 'text-cyan-400 bg-cyan-400/10',
+    indigo: 'text-gray-700 bg-black/[0.05]',
     green:  'text-emerald-400 bg-emerald-400/10',
     amber:  'text-amber-400 bg-amber-400/10',
     red:    'text-red-400 bg-red-400/10',
   };
   return (
-    <div className="bg-[#0d1424] border border-white/[0.06] rounded-lg p-4">
+    <div className="bg-white border border-gray-200 rounded-lg p-4">
       <div className="flex items-start justify-between">
         <div className="space-y-1 min-w-0">
-          <p className="text-[10px] font-semibold text-white/40 uppercase tracking-wider truncate">{title}</p>
+          <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider truncate">{title}</p>
           {loading
-            ? <div className="h-8 w-24 bg-white/10 rounded animate-pulse" />
-            : <p className="text-2xl font-bold text-white tabular-nums mono-num">{value}</p>
+            ? <div className="h-8 w-24 bg-black/[0.06] rounded animate-pulse" />
+            : <p className="text-2xl font-bold text-gray-900 tabular-nums mono-num">{value}</p>
           }
-          {sub && <p className="text-[11px] text-white/30 truncate">{sub}</p>}
+          {sub && <p className="text-[11px] text-gray-500 truncate">{sub}</p>}
         </div>
         <div className={cn('p-2 rounded-lg flex-shrink-0 ml-2', iconColors[color])}>
           <Icon className="h-4 w-4" />
@@ -255,15 +256,15 @@ function KpiCard({ title, value, sub, trend, Icon, color = 'indigo', loading }) 
 const CustomTooltip = ({ active, payload, label, formatter }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#0d1424] border border-white/[0.08] rounded-lg shadow-2xl p-3 text-xs min-w-[160px]">
-      <p className="font-semibold text-white/80 mb-2 border-b border-white/[0.08] pb-1">{label}</p>
+    <div className="bg-white border border-gray-300 rounded-lg shadow-2xl p-3 text-xs min-w-[160px]">
+      <p className="font-semibold text-gray-800 mb-2 border-b border-gray-300 pb-1">{label}</p>
       {payload.map((entry, i) => (
         <div key={i} className="flex items-center justify-between gap-3 py-0.5">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-sm flex-shrink-0" style={{ backgroundColor: entry.color || entry.fill }} />
-            <span className="text-white/40">{entry.name}</span>
+            <span className="text-gray-500">{entry.name}</span>
           </div>
-          <span className="font-medium tabular-nums text-white/80 mono-num">
+          <span className="font-medium tabular-nums text-gray-800 mono-num">
             {formatter ? formatter(entry.value, entry.name) : entry.value?.toLocaleString()}
           </span>
         </div>
@@ -274,12 +275,12 @@ const CustomTooltip = ({ active, payload, label, formatter }) => {
 
 function SectionCard({ title, description, chartType, onChartTypeChange, chartTypeOptions, children }) {
   return (
-    <div className="bg-[#0d1424] border border-white/[0.06] rounded-lg overflow-hidden">
+    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
       <div className="px-4 pt-4 pb-2">
         <div className="flex items-center justify-between gap-2">
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-white/80 truncate">{title}</p>
-            {description && <p className="text-[11px] text-white/30 mt-0.5 truncate">{description}</p>}
+            <p className="text-sm font-semibold text-gray-800 truncate">{title}</p>
+            {description && <p className="text-[11px] text-gray-500 mt-0.5 truncate">{description}</p>}
           </div>
           {onChartTypeChange && (
             <ChartTypeSelector
@@ -483,9 +484,9 @@ function RiskHeatmap({ data, sectors }) {
       <table className="text-xs w-full border-separate border-spacing-0.5">
         <thead>
           <tr>
-            <th className="text-left p-1 text-white/30 w-28 font-normal">Scenario</th>
+            <th className="text-left p-1 text-gray-500 w-28 font-normal">Scenario</th>
             {sectors.map(s => (
-              <th key={s} className="text-center p-1 text-white/30 font-medium">
+              <th key={s} className="text-center p-1 text-gray-500 font-medium">
                 {s.split(' ')[0]}
               </th>
             ))}
@@ -494,7 +495,7 @@ function RiskHeatmap({ data, sectors }) {
         <tbody>
           {data.map(row => (
             <tr key={row.scenario}>
-              <td className="p-1 font-medium text-white/50 whitespace-nowrap">
+              <td className="p-1 font-medium text-gray-500 whitespace-nowrap">
                 {row.scenario.split(' ').slice(0, 2).join(' ')}
               </td>
               {sectors.map(s => {
@@ -513,7 +514,7 @@ function RiskHeatmap({ data, sectors }) {
           ))}
         </tbody>
       </table>
-      <div className="flex items-center gap-2 mt-2 text-xs text-white/30">
+      <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
         {legend.map(({ bg, label }) => (
           <div key={label} className="flex items-center gap-1">
             <div className="w-4 h-3 rounded" style={{ backgroundColor: bg }} />
@@ -532,12 +533,12 @@ function TornadoChart({ data }) {
     <div className="space-y-1.5">
       {data.map((d) => (
         <div key={d.driver} className="flex items-center gap-2 text-xs">
-          <div className="w-32 text-right text-white/50 font-medium truncate">{d.driver}</div>
+          <div className="w-32 text-right text-gray-500 font-medium truncate">{d.driver}</div>
           <div className="flex-1 flex items-center gap-0.5 h-6">
             {/* Downside bar (left) */}
             <div className="flex-1 flex justify-end">
               <div
-                className="h-5 rounded-l flex items-center justify-end pr-1 text-white text-[10px] font-medium mono-num"
+                className="h-5 rounded-l flex items-center justify-end pr-1 text-gray-900 text-[10px] font-medium mono-num"
                 style={{ width: `${Math.abs(d.low) / maxSwing * 100}%`, backgroundColor: '#10b981', minWidth: 2 }}
               >
                 {Math.abs(d.low) > 1 && `${d.low.toFixed(1)}%`}
@@ -548,17 +549,17 @@ function TornadoChart({ data }) {
             {/* Upside bar (right) */}
             <div className="flex-1">
               <div
-                className="h-5 rounded-r flex items-center pl-1 text-white text-[10px] font-medium mono-num"
+                className="h-5 rounded-r flex items-center pl-1 text-gray-900 text-[10px] font-medium mono-num"
                 style={{ width: `${d.high / maxSwing * 100}%`, backgroundColor: '#ef4444', minWidth: 2 }}
               >
                 {d.high > 1 && `+${d.high.toFixed(1)}%`}
               </div>
             </div>
           </div>
-          <div className="w-12 text-white/30 mono-num">{d.swing.toFixed(1)}</div>
+          <div className="w-12 text-gray-500 mono-num">{d.swing.toFixed(1)}</div>
         </div>
       ))}
-      <div className="flex items-center gap-3 text-xs text-white/30 mt-2">
+      <div className="flex items-center gap-3 text-xs text-gray-500 mt-2">
         <div className="flex items-center gap-1"><div className="w-3 h-2 rounded" style={{ backgroundColor: '#10b981' }} /><span>Downside</span></div>
         <div className="flex items-center gap-1"><div className="w-3 h-2 bg-red-500 rounded" /><span>Upside impact</span></div>
         <span className="ml-auto">Swing = total range (%)</span>
@@ -647,11 +648,11 @@ function PdLgdScatter({ data }) {
             if (!active || !payload?.length) return null;
             const d = payload[0]?.payload;
             return (
-              <div className="bg-[#0d1424] border border-white/[0.08] rounded-lg shadow-xl p-2 text-xs">
-                <p className="font-semibold text-white/80">{d?.sector}</p>
-                <p className="text-white/50">PD: {(d?.pd * 100).toFixed(2)}%</p>
-                <p className="text-white/50">LGD: {(d?.lgd * 100).toFixed(1)}%</p>
-                <p className="text-white/50">EL: {fmtCcy(d?.expectedLoss)}</p>
+              <div className="bg-white border border-gray-300 rounded-lg shadow-xl p-2 text-xs">
+                <p className="font-semibold text-gray-800">{d?.sector}</p>
+                <p className="text-gray-500">PD: {(d?.pd * 100).toFixed(2)}%</p>
+                <p className="text-gray-500">LGD: {(d?.lgd * 100).toFixed(1)}%</p>
+                <p className="text-gray-500">EL: {fmtCcy(d?.expectedLoss)}</p>
               </div>
             );
           }}
@@ -689,8 +690,8 @@ function WhatIfPanel({ baseEl, onChange }) {
       <div className={cn('p-3 rounded-lg border text-center',
         adjustedEl > baseEl ? 'bg-red-500/10 border-red-500/20' : 'bg-emerald-500/10 border-emerald-500/20'
       )}>
-        <p className="text-[10px] text-white/40 uppercase tracking-wider mb-1">Adjusted Expected Loss</p>
-        <p className="text-2xl font-bold text-white mono-num">{fmtCcy(adjustedEl * 1e6)}</p>
+        <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Adjusted Expected Loss</p>
+        <p className="text-2xl font-bold text-gray-900 mono-num">{fmtCcy(adjustedEl * 1e6)}</p>
         <p className={cn('text-sm font-medium mono-num', adjustedEl > baseEl ? 'text-red-400' : 'text-emerald-400')}>
           {adjustedEl >= baseEl ? '+' : ''}{pctChange}% vs base
         </p>
@@ -702,9 +703,9 @@ function WhatIfPanel({ baseEl, onChange }) {
         { label: 'Temperature Target (°C)', value: tempTarget, setter: setTempTarget, min: 1.5, max: 4.0, step: 0.1, unit: '°C' },
       ].map(({ label, value, setter, min, max, step, unit }) => (
         <div key={label}>
-          <div className="flex justify-between text-xs text-white/40 mb-1">
+          <div className="flex justify-between text-xs text-gray-500 mb-1">
             <span>{label}</span>
-            <span className="font-semibold tabular-nums text-cyan-300 mono-num">{unit}{value}</span>
+            <span className="font-semibold tabular-nums text-gray-800 mono-num">{unit}{value}</span>
           </div>
           <Slider min={min} max={max} step={step} value={[value]}
             onValueChange={([v]) => setter(v)} className="w-full" />
@@ -724,7 +725,7 @@ function LiveDataBadge({ isLive }) {
       'flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium',
       isLive
         ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-        : 'bg-white/[0.04] border-white/[0.08] text-white/30'
+        : 'bg-gray-50 border-gray-300 text-gray-500'
     )}>
       <div className={cn(
         'w-1.5 h-1.5 rounded-full',
@@ -742,19 +743,19 @@ function LiveDataBadge({ isLive }) {
 function PortfolioInfoPanel({ portfolio }) {
   if (!portfolio) return null;
   return (
-    <div className="bg-cyan-400/[0.06] border border-cyan-400/10 rounded-lg p-2.5 space-y-1.5 text-xs">
-      <p className="font-semibold text-cyan-300 truncate">{portfolio.name}</p>
+    <div className="bg-black/[0.06] border border-black/10 rounded-lg p-2.5 space-y-1.5 text-xs">
+      <p className="font-semibold text-gray-800 truncate">{portfolio.name}</p>
       <div className="space-y-1">
         {portfolio.asset_count != null && (
           <div className="flex justify-between">
-            <span className="text-white/40">Assets</span>
-            <span className="font-medium tabular-nums text-white/70 mono-num">{portfolio.asset_count.toLocaleString()}</span>
+            <span className="text-gray-500">Assets</span>
+            <span className="font-medium tabular-nums text-gray-700 mono-num">{portfolio.asset_count.toLocaleString()}</span>
           </div>
         )}
         {portfolio.total_exposure != null && (
           <div className="flex justify-between">
-            <span className="text-white/40">Total Exposure</span>
-            <span className="font-medium tabular-nums text-white/70 mono-num">{fmtCcy(portfolio.total_exposure)}</span>
+            <span className="text-gray-500">Total Exposure</span>
+            <span className="font-medium tabular-nums text-gray-700 mono-num">{fmtCcy(portfolio.total_exposure)}</span>
           </div>
         )}
       </div>
@@ -1050,23 +1051,24 @@ export default function InteractiveDashboard() {
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div className="flex h-full min-h-screen bg-[#080e1c] font-sans" data-testid="interactive-dashboard">
-
+    <div className="flex flex-col h-full min-h-screen bg-white font-sans" data-testid="interactive-dashboard">
+      <DemoBanner message="All KPIs, charts, and scenario comparisons display deterministic sample data. Connect a live portfolio to see real risk analytics." />
+      <div className="flex flex-1">
       {/* ── Sidebar ────────────────────────────────────────────────────── */}
       <aside className={cn(
-        'flex-shrink-0 bg-[#0b1120] border-r border-white/[0.06] flex flex-col transition-all duration-300 overflow-hidden',
+        'flex-shrink-0 bg-[#f5f6f8] border-r border-gray-200 flex flex-col transition-all duration-300 overflow-hidden',
         sidebarOpen ? 'w-64' : 'w-10'
       )}>
         {/* Toggle */}
-        <div className="flex items-center justify-between p-2 border-b border-white/[0.05]">
+        <div className="flex items-center justify-between p-2 border-b border-gray-200">
           {sidebarOpen && (
             <div className="flex items-center gap-2 px-1">
-              <Filter className="h-3.5 w-3.5 text-cyan-400" />
-              <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">Filters</span>
+              <Filter className="h-3.5 w-3.5 text-gray-700" />
+              <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Filters</span>
             </div>
           )}
           <button onClick={() => setSidebarOpen(o => !o)}
-            className="p-1 rounded hover:bg-white/[0.06] text-white/30 ml-auto transition-colors">
+            className="p-1 rounded hover:bg-gray-50 text-gray-500 ml-auto transition-colors">
             {sidebarOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
           </button>
         </div>
@@ -1076,9 +1078,9 @@ export default function InteractiveDashboard() {
 
             {/* Portfolio selector */}
             <div>
-              <p className="text-[10px] font-semibold text-white/30 uppercase tracking-wider mb-2">Portfolio</p>
+              <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Portfolio</p>
               {portfoliosLoading ? (
-                <div className="h-7 w-full bg-white/10 rounded animate-pulse" />
+                <div className="h-7 w-full bg-black/[0.06] rounded animate-pulse" />
               ) : (
                 <Select value={selectedPortfolioId} onValueChange={setSelectedPortfolioId}>
                   <SelectTrigger className="h-7 text-xs">
@@ -1105,7 +1107,7 @@ export default function InteractiveDashboard() {
 
             {/* Scenarios */}
             <div>
-              <p className="text-[10px] font-semibold text-white/30 uppercase tracking-wider mb-2">Scenarios</p>
+              <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Scenarios</p>
               <div className="space-y-1.5">
                 {ALL_SCENARIOS.map(s => (
                   <label key={s} className="flex items-center gap-2 cursor-pointer">
@@ -1117,7 +1119,7 @@ export default function InteractiveDashboard() {
                     <div className="flex items-center gap-1.5">
                       <div className="w-2 h-2 rounded-full flex-shrink-0"
                         style={{ backgroundColor: SCENARIO_COLORS[s] }} />
-                      <span className="text-white/50 leading-tight">{s}</span>
+                      <span className="text-gray-500 leading-tight">{s}</span>
                     </div>
                   </label>
                 ))}
@@ -1129,12 +1131,12 @@ export default function InteractiveDashboard() {
             {/* Horizon */}
             <div>
               <div className="flex justify-between items-center mb-2">
-                <p className="text-[10px] font-semibold text-white/30 uppercase tracking-wider">Time Horizon</p>
-                <span className="font-bold text-cyan-300 mono-num">{horizon}</span>
+                <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Time Horizon</p>
+                <span className="font-bold text-gray-800 mono-num">{horizon}</span>
               </div>
               <Slider min={2025} max={2050} step={5} value={[horizon]}
                 onValueChange={([v]) => setHorizon(v)} />
-              <div className="flex justify-between text-white/20 mt-1 text-[10px]">
+              <div className="flex justify-between text-gray-400 mt-1 text-[10px]">
                 <span>2025</span><span>2050</span>
               </div>
             </div>
@@ -1144,9 +1146,9 @@ export default function InteractiveDashboard() {
             {/* Sectors */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <p className="text-[10px] font-semibold text-white/30 uppercase tracking-wider">Sectors</p>
+                <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Sectors</p>
                 <button onClick={() => setSelectedSectors(ALL_SECTORS)}
-                  className="text-cyan-400 hover:text-cyan-300 text-[10px]">All</button>
+                  className="text-gray-700 hover:text-gray-800 text-[10px]">All</button>
               </div>
               <div className="space-y-1.5">
                 {ALL_SECTORS.map(s => (
@@ -1159,7 +1161,7 @@ export default function InteractiveDashboard() {
                     <div className="flex items-center gap-1.5">
                       <div className="w-2 h-2 rounded-sm flex-shrink-0"
                         style={{ backgroundColor: SECTOR_COLORS[s] }} />
-                      <span className="text-white/50">{s}</span>
+                      <span className="text-gray-500">{s}</span>
                     </div>
                   </label>
                 ))}
@@ -1170,7 +1172,7 @@ export default function InteractiveDashboard() {
 
             {/* Asset Types */}
             <div>
-              <p className="text-[10px] font-semibold text-white/30 uppercase tracking-wider mb-2">Asset Types</p>
+              <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Asset Types</p>
               <div className="space-y-1.5">
                 {ALL_ASSET_TYPES.map(t => (
                   <label key={t} className="flex items-center gap-2 cursor-pointer">
@@ -1179,7 +1181,7 @@ export default function InteractiveDashboard() {
                       onCheckedChange={() => toggleAssetType(t)}
                       className="h-3.5 w-3.5"
                     />
-                    <span className="text-white/50">{t}</span>
+                    <span className="text-gray-500">{t}</span>
                   </label>
                 ))}
               </div>
@@ -1189,20 +1191,20 @@ export default function InteractiveDashboard() {
 
             {/* Risk parameters */}
             <div>
-              <p className="text-[10px] font-semibold text-white/30 uppercase tracking-wider mb-3">Risk Parameters</p>
+              <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-3">Risk Parameters</p>
               <div className="space-y-3">
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="text-white/40">VaR Confidence</span>
-                    <span className="font-semibold text-cyan-300 mono-num">{confidenceLevel}%</span>
+                    <span className="text-gray-500">VaR Confidence</span>
+                    <span className="font-semibold text-gray-800 mono-num">{confidenceLevel}%</span>
                   </div>
                   <Slider min={90} max={99.9} step={0.5} value={[confidenceLevel]}
                     onValueChange={([v]) => setConfidenceLevel(v)} />
                 </div>
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="text-white/40">Discount Rate</span>
-                    <span className="font-semibold text-cyan-300 mono-num">{discountRate}%</span>
+                    <span className="text-gray-500">Discount Rate</span>
+                    <span className="font-semibold text-gray-800 mono-num">{discountRate}%</span>
                   </div>
                   <Slider min={1} max={12} step={0.25} value={[discountRate]}
                     onValueChange={([v]) => setDiscountRate(v)} />
@@ -1217,10 +1219,10 @@ export default function InteractiveDashboard() {
               <Button
                 size="sm"
                 className={cn(
-                  'w-full h-8 text-xs gap-1.5 font-medium text-[#080e1c]',
+                  'w-full h-8 text-xs gap-1.5 font-medium text-[#ffffff]',
                   analysisRunning
-                    ? 'bg-cyan-400/50 cursor-not-allowed'
-                    : 'bg-cyan-400 hover:bg-cyan-300'
+                    ? 'bg-black/50 cursor-not-allowed'
+                    : 'bg-black hover:bg-gray-800'
                 )}
                 onClick={handleRunLiveAnalysis}
                 disabled={analysisRunning}
@@ -1261,14 +1263,14 @@ export default function InteractiveDashboard() {
       {/* ── Main ───────────────────────────────────────────────────────── */}
       <main className="flex-1 min-w-0 flex flex-col">
         {/* Header */}
-        <div className="bg-[#0b1120] border-b border-white/[0.05] px-5 py-3 flex items-center justify-between">
+        <div className="bg-[#f5f6f8] border-b border-gray-200 px-5 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-cyan-400/10 rounded-lg">
-              <LayoutDashboard className="h-5 w-5 text-cyan-400" />
+            <div className="p-2 bg-black/[0.05] rounded-lg">
+              <LayoutDashboard className="h-5 w-5 text-gray-700" />
             </div>
             <div>
-              <h1 className="text-base font-bold text-white">Interactive Analytics</h1>
-              <p className="text-[11px] text-white/30">
+              <h1 className="text-base font-bold text-gray-900">Interactive Analytics</h1>
+              <p className="text-[11px] text-gray-500">
                 {dashboardData
                   ? `${dbKpis?.sbti_companies?.toLocaleString() || 0} SBTi · ${dbKpis?.ca100_companies || 0} CA100+ · ${dbKpis?.country_risk_countries || 0} countries · ${dbKpis?.total_data_points?.toLocaleString() || 0} data points`
                   : `${selectedScenarios.length} scenarios · ${selectedSectors.length} sectors · Horizon ${horizon}`
@@ -1278,7 +1280,7 @@ export default function InteractiveDashboard() {
           </div>
           <div className="flex items-center gap-2">
             <LiveDataBadge isLive={isLiveData && (!!liveKpis || !!dashboardData)} />
-            <Button variant="outline" size="sm" className="h-7 text-xs gap-1 border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 bg-transparent">
+            <Button variant="outline" size="sm" className="h-7 text-xs gap-1 border-black/10 text-gray-500 hover:text-gray-800 hover:border-black/20 bg-transparent">
               <Download className="h-3 w-3" />Export
             </Button>
           </div>
@@ -1323,24 +1325,24 @@ export default function InteractiveDashboard() {
         {/* Data Sources Banner */}
         {dashboardData && (
           <div className="px-4 pb-2">
-            <div className="bg-[#0d1424] border border-white/[0.06] rounded-lg px-4 py-2.5">
+            <div className="bg-white border border-gray-200 rounded-lg px-4 py-2.5">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4 text-[10px] text-white/40 flex-wrap">
-                  <span className="font-semibold text-white/50 uppercase tracking-wider">Data Sources</span>
+                <div className="flex items-center gap-4 text-[10px] text-gray-500 flex-wrap">
+                  <span className="font-semibold text-gray-500 uppercase tracking-wider">Data Sources</span>
                   {[
                     { label: 'SBTi', count: dbKpis?.sbti_companies, color: 'text-violet-400' },
                     { label: 'CA100+', count: dbKpis?.ca100_companies, color: 'text-blue-400' },
                     { label: 'CPI', count: null, color: 'text-amber-400' },
                     { label: 'FSI', count: null, color: 'text-red-400' },
                     { label: 'FH/FIW', count: null, color: 'text-emerald-400' },
-                    { label: 'GII', count: null, color: 'text-cyan-400' },
+                    { label: 'GII', count: null, color: 'text-gray-700' },
                     { label: 'CSRD', count: dbKpis?.csrd_kpi_values, color: 'text-orange-400' },
                     { label: 'Coal', count: null, color: 'text-gray-400' },
                   ].map(s => (
                     <div key={s.label} className="flex items-center gap-1">
                       <div className={cn('w-1.5 h-1.5 rounded-full bg-current', s.color)} />
                       <span className={s.color}>{s.label}</span>
-                      {s.count != null && <span className="text-white/25 mono-num">{s.count.toLocaleString()}</span>}
+                      {s.count != null && <span className="text-gray-400 mono-num">{s.count.toLocaleString()}</span>}
                     </div>
                   ))}
                 </div>
@@ -1361,7 +1363,7 @@ export default function InteractiveDashboard() {
                       .catch(() => {})
                       .finally(() => setDashboardLoading(false));
                   }}
-                  className="text-white/30 hover:text-cyan-400 transition-colors p-1"
+                  className="text-gray-500 hover:text-gray-700 transition-colors p-1"
                   title="Refresh data"
                 >
                   <RefreshCw className={cn('h-3 w-3', dashboardLoading && 'animate-spin')} />
@@ -1586,8 +1588,8 @@ export default function InteractiveDashboard() {
                       const aligned = d.paris_aligned != null ? d.paris_aligned : (d.scope1 + d.scope2 + d.scope3) < d.target2030 * 3;
                       return (
                         <div key={d.sector} className="flex items-center gap-2 text-xs">
-                          <div className="w-28 text-white/50 font-medium truncate">{d.sector}</div>
-                          <div className="flex-1 bg-white/[0.06] rounded-full h-2 overflow-hidden">
+                          <div className="w-28 text-gray-500 font-medium truncate">{d.sector}</div>
+                          <div className="flex-1 bg-gray-50 rounded-full h-2 overflow-hidden">
                             <div className="h-full rounded-full transition-all"
                               style={{ width: `${Math.min(pctVal, 100)}%`, backgroundColor: aligned ? '#10b981' : '#ef4444' }} />
                           </div>
@@ -1647,9 +1649,9 @@ export default function InteractiveDashboard() {
                   <table className="w-full text-xs border-separate border-spacing-0.5">
                     <thead>
                       <tr>
-                        <th className="text-left p-1.5 text-white/30 font-normal">Scenario</th>
+                        <th className="text-left p-1.5 text-gray-500 font-normal">Scenario</th>
                         {[2030, 2035, 2040, 2045, 2050].map(y => (
-                          <th key={y} className="text-center p-1.5 text-white/30 font-medium mono-num">{y}</th>
+                          <th key={y} className="text-center p-1.5 text-gray-500 font-medium mono-num">{y}</th>
                         ))}
                       </tr>
                     </thead>
@@ -1657,7 +1659,7 @@ export default function InteractiveDashboard() {
                       {selectedScenarios.map((s, si) => {
                         return (
                           <tr key={s}>
-                            <td className="p-1.5 font-medium text-white/50 whitespace-nowrap">
+                            <td className="p-1.5 font-medium text-gray-500 whitespace-nowrap">
                               <div className="flex items-center gap-1.5">
                                 <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: SCENARIO_COLORS[s] }} />
                                 {s}
@@ -1672,7 +1674,7 @@ export default function InteractiveDashboard() {
                               return (
                                 <td key={y} className={cn(
                                   'text-center p-1.5 rounded font-medium tabular-nums mono-num',
-                                  isHorizon ? 'ring-1 ring-cyan-400/50' : ''
+                                  isHorizon ? 'ring-1 ring-black/50' : ''
                                 )}
                                   style={{ backgroundColor: cellBg, color: cellColor }}>
                                   {val}%
@@ -1684,13 +1686,14 @@ export default function InteractiveDashboard() {
                       })}
                     </tbody>
                   </table>
-                  <p className="text-[11px] text-white/30 mt-2">Ring = selected horizon. Values = Expected Loss % of exposure.</p>
+                  <p className="text-[11px] text-gray-500 mt-2">Ring = selected horizon. Values = Expected Loss % of exposure.</p>
                 </div>
               </SectionCard>
             </TabsContent>
           </Tabs>
         </div>
       </main>
+      </div>
     </div>
   );
 }

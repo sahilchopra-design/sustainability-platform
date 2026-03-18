@@ -17,6 +17,7 @@ import {
   Plus, Trash2, RefreshCw, BarChart2, Zap, Leaf, Shield, Flame,
   MapPin, Calendar, DollarSign, Info, FileText
 } from "lucide-react";
+import DemoBanner from '../../../components/shared/DemoBanner';
 
 const API = process.env.REACT_APP_BACKEND_URL || "http://localhost:8001";
 const fmt = (v, d = 2) => v == null ? "—" : new Intl.NumberFormat("en-GB", { minimumFractionDigits: d, maximumFractionDigits: d }).format(v);
@@ -55,24 +56,24 @@ const DEFAULT_PROPERTY = {
 function Section({ title, icon: Icon, children, defaultOpen = true, badge }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border border-white/[0.06] rounded-lg overflow-hidden mb-4 ">
+    <div className="border border-black/[0.08] rounded-lg overflow-hidden mb-4 ">
       <button onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-4 py-3 bg-gradient-to-r from-slate-50 to-slate-100 hover:from-slate-100 hover:to-slate-150 transition-colors">
-        <span className="flex items-center gap-2 font-medium text-sm text-white/70">
-          {Icon && <Icon className="h-4 w-4 text-cyan-400" />}
+        <span className="flex items-center gap-2 font-medium text-sm text-slate-700">
+          {Icon && <Icon className="h-4 w-4 text-slate-700" />}
           {title}
-          {badge && <span className="ml-2 px-2 py-0.5 bg-cyan-400/10 text-cyan-300 rounded text-xs font-medium">{badge}</span>}
+          {badge && <span className="ml-2 px-2 py-0.5 bg-black/[0.05] text-slate-800 rounded text-xs font-medium">{badge}</span>}
         </span>
-        {open ? <ChevronUp className="h-4 w-4 text-white/30" /> : <ChevronDown className="h-4 w-4 text-white/30" />}
+        {open ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
       </button>
-      {open && <div className="p-4 bg-[#0d1424]">{children}</div>}
+      {open && <div className="p-4 bg-white">{children}</div>}
     </div>
   );
 }
 
 function KpiCard({ label, value, sub, trend, color = "indigo", icon: Icon }) {
   const colors = {
-    indigo: "bg-cyan-400/10 border-cyan-400/20 text-cyan-300",
+    indigo: "bg-black/[0.05] border-black/[0.15] text-slate-800",
     green: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400",
     amber: "bg-amber-500/10 border-amber-500/20 text-amber-400",
     red: "bg-red-500/10 border-red-500/20 text-red-400",
@@ -151,10 +152,10 @@ function PropertyPanel({ properties, onChange, onAdd, onRemove }) {
   return (
     <Section title="Property Portfolio" icon={Building2} badge={`${properties.length} asset${properties.length > 1 ? "s" : ""}`}>
       {properties.map((p, idx) => (
-        <div key={idx} className="border border-white/[0.04] rounded-lg p-4 mb-3 bg-white/[0.02]">
+        <div key={idx} className="border border-black/[0.06] rounded-lg p-4 mb-3 bg-black/[0.02]">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-semibold text-white/70 flex items-center gap-1.5">
-              <Building2 className="h-4 w-4 text-cyan-400" />{p.asset_id}
+            <span className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+              <Building2 className="h-4 w-4 text-slate-700" />{p.asset_id}
             </span>
             {properties.length > 1 && (
               <button onClick={() => onRemove(idx)} className="text-red-400 hover:text-red-400 p-1">
@@ -182,15 +183,15 @@ function PropertyPanel({ properties, onChange, onAdd, onRemove }) {
               ["Green Capex Budget (£)", "capex_green_gbp", "number"],
             ].map(([label, field, type, opts]) => (
               <div key={field} className="flex flex-col gap-1">
-                <label className="text-xs text-white/40 font-medium">{label}</label>
+                <label className="text-xs text-slate-400 font-medium">{label}</label>
                 {type === "select" ? (
                   <select value={p[field] || ""} onChange={e => onChange(idx, field, e.target.value)}
-                    className="border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0d1424] focus:ring-2 focus:ring-cyan-400/50 outline-none">
+                    className="border border-black/[0.08] rounded px-2 py-1.5 text-sm bg-white focus:ring-2 focus:ring-black/50 outline-none">
                     {(opts || []).map(o => <option key={o} value={o}>{o}</option>)}
                   </select>
                 ) : (
                   <input type={type} value={p[field] ?? ""} onChange={e => onChange(idx, field, type === "number" ? parseFloat(e.target.value) : e.target.value)}
-                    className="border border-white/[0.06] rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-cyan-400/50 outline-none" />
+                    className="border border-black/[0.08] rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-black/50 outline-none" />
                 )}
               </div>
             ))}
@@ -198,7 +199,7 @@ function PropertyPanel({ properties, onChange, onAdd, onRemove }) {
         </div>
       ))}
       <button onClick={onAdd}
-        className="flex items-center gap-1.5 px-3 py-2 border border-dashed border-cyan-400/20 text-cyan-400 rounded-lg text-sm hover:bg-cyan-400/10 transition-colors">
+        className="flex items-center gap-1.5 px-3 py-2 border border-dashed border-black/[0.15] text-slate-700 rounded-lg text-sm hover:bg-black/[0.05] transition-colors">
         <Plus className="h-4 w-4" /> Add Property
       </button>
     </Section>
@@ -240,10 +241,10 @@ function CLVaRPanel({ properties }) {
       {/* Property Selector */}
       {properties.length > 1 && (
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-xs text-white/40">Property:</span>
+          <span className="text-xs text-slate-400">Property:</span>
           {properties.map((p, i) => (
             <button key={i} onClick={() => setSelectedProperty(i)}
-              className={`px-2 py-1 rounded text-xs font-medium transition-colors ${selectedProperty === i ? "bg-cyan-400 text-white" : "bg-white/[0.06] text-white/60 hover:bg-white/[0.08]"}`}>
+              className={`px-2 py-1 rounded text-xs font-medium transition-colors ${selectedProperty === i ? "bg-black text-slate-900" : "bg-black/[0.04] text-slate-600 hover:bg-black/[0.05]"}`}>
               {p.asset_id}
             </button>
           ))}
@@ -252,10 +253,10 @@ function CLVaRPanel({ properties }) {
 
       {/* Scenario Selector */}
       <div className="flex items-center gap-2 mb-4 flex-wrap">
-        <span className="text-xs text-white/40 mr-1">Scenarios:</span>
+        <span className="text-xs text-slate-400 mr-1">Scenarios:</span>
         {CLIMATE_SCENARIOS.map(s => (
           <button key={s} onClick={() => setSelectedScenarios(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s])}
-            className={`px-2.5 py-1 rounded-full text-xs font-semibold border transition-all ${selectedScenarios.includes(s) ? "text-white border-transparent" : "bg-[#0d1424] text-white/40 border-white/[0.06]"}`}
+            className={`px-2.5 py-1 rounded-full text-xs font-semibold border transition-all ${selectedScenarios.includes(s) ? "text-slate-900 border-transparent" : "bg-white text-slate-400 border-black/[0.08]"}`}
             style={selectedScenarios.includes(s) ? { backgroundColor: SCENARIO_COLORS[s], borderColor: SCENARIO_COLORS[s] } : {}}>
             {s}
           </button>
@@ -274,7 +275,7 @@ function CLVaRPanel({ properties }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         {/* Adjusted value by scenario */}
         <div>
-          <p className="text-xs font-medium text-white/40 mb-2">Adjusted Value by Scenario (£m)</p>
+          <p className="text-xs font-medium text-slate-400 mb-2">Adjusted Value by Scenario (£m)</p>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={waterfallData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -293,7 +294,7 @@ function CLVaRPanel({ properties }) {
 
         {/* Driver decomposition */}
         <div>
-          <p className="text-xs font-medium text-white/40 mb-2">CLVaR Driver Decomposition (%)</p>
+          <p className="text-xs font-medium text-slate-400 mb-2">CLVaR Driver Decomposition (%)</p>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={barData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -313,15 +314,15 @@ function CLVaRPanel({ properties }) {
       <div className="overflow-x-auto">
         <table className="w-full text-xs border-collapse">
           <thead>
-            <tr className="bg-white/[0.02]">
+            <tr className="bg-black/[0.02]">
               {["Scenario", "Baseline (£)", "Adjusted Value (£)", "CLVaR (%)", "CLVaR (£)", "EPC Impact", "Physical Risk", "Capex Lift"].map(h => (
-                <th key={h} className="text-left px-3 py-2 text-white/40 font-medium border-b border-white/[0.06]">{h}</th>
+                <th key={h} className="text-left px-3 py-2 text-slate-400 font-medium border-b border-black/[0.08]">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {results.map((r, i) => (
-              <tr key={i} className="hover:bg-white/[0.02] border-b border-white/[0.04]">
+              <tr key={i} className="hover:bg-black/[0.02] border-b border-black/[0.06]">
                 <td className="px-3 py-2 font-semibold" style={{ color: SCENARIO_COLORS[r.scenario] }}>{r.scenario}</td>
                 <td className="px-3 py-2 tabular-nums">{fmtCcy(r.baseline_value)}</td>
                 <td className="px-3 py-2 tabular-nums font-medium">{fmtCcy(r.adjusted_value)}</td>
@@ -447,11 +448,11 @@ function CRREMPanel({ properties }) {
           const isUrgent = sy && sy <= 2030;
           return (
             <div key={p.asset_id} className={`p-3 rounded-lg border ${isUrgent ? "bg-red-500/10 border-red-500/20" : sy ? "bg-amber-500/10 border-amber-500/20" : "bg-emerald-500/10 border-emerald-500/20"}`}>
-              <p className="text-xs font-semibold text-white/70">{p.asset_id} — {p.property_type}</p>
+              <p className="text-xs font-semibold text-slate-700">{p.asset_id} — {p.property_type}</p>
               <p className={`text-lg font-bold mt-1 ${isUrgent ? "text-red-400" : sy ? "text-amber-400" : "text-emerald-400"}`}>
                 {sy ? `Strands ${sy}` : "Within Pathway"}
               </p>
-              <p className="text-xs text-white/40 mt-0.5">
+              <p className="text-xs text-slate-400 mt-0.5">
                 {p.energy_intensity_kwh_m2} kWh/m²/yr current · EPC {p.epc_rating}
               </p>
             </div>
@@ -481,7 +482,7 @@ function PhysicalRiskPanel({ properties }) {
     <Section title="Physical Climate Risk Assessment (TCFD / NGFS)" icon={AlertTriangle}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
-          <p className="text-xs font-medium text-white/40 mb-2">Multi-Hazard Risk Radar</p>
+          <p className="text-xs font-medium text-slate-400 mb-2">Multi-Hazard Risk Radar</p>
           <ResponsiveContainer width="100%" height={240}>
             <RadarChart data={radarData}>
               <PolarGrid />
@@ -497,13 +498,13 @@ function PhysicalRiskPanel({ properties }) {
         </div>
 
         <div>
-          <p className="text-xs font-medium text-white/40 mb-2">Risk Summary by Property</p>
+          <p className="text-xs font-medium text-slate-400 mb-2">Risk Summary by Property</p>
           <div className="space-y-2">
             {properties.map((p, i) => (
-              <div key={p.asset_id} className="flex items-center gap-3 p-2 border border-white/[0.04] rounded-lg">
+              <div key={p.asset_id} className="flex items-center gap-3 p-2 border border-black/[0.06] rounded-lg">
                 <div className="w-2 h-10 rounded-full flex-shrink-0" style={{ backgroundColor: colors[i % colors.length] }} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-white/70 truncate">{p.asset_id} — {p.address}</p>
+                  <p className="text-xs font-semibold text-slate-700 truncate">{p.asset_id} — {p.address}</p>
                   <div className="flex items-center gap-2 mt-1">
                     <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${p.flood_risk === "High" || p.flood_risk === "Very High" ? "bg-red-100 text-red-400" : p.flood_risk === "Medium" ? "bg-amber-100 text-amber-400" : "bg-emerald-100 text-emerald-400"}`}>
                       Flood: {p.flood_risk}
@@ -514,8 +515,8 @@ function PhysicalRiskPanel({ properties }) {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-white/90">{p.physical_risk_score}</p>
-                  <p className="text-xs text-white/30">/ 100</p>
+                  <p className="text-sm font-bold text-slate-900">{p.physical_risk_score}</p>
+                  <p className="text-xs text-slate-400">/ 100</p>
                 </div>
               </div>
             ))}
@@ -556,28 +557,28 @@ function ValuationPanel({ properties }) {
   return (
     <Section title="Valuation — Income Capitalisation & DCF (RICS VPS4 / IVS 105)" icon={DollarSign}>
       {/* Controls */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 p-3 bg-white/[0.02] rounded-lg">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 p-3 bg-black/[0.02] rounded-lg">
         <div>
-          <label className="text-xs text-white/40 font-medium">Method</label>
+          <label className="text-xs text-slate-400 font-medium">Method</label>
           <select value={method} onChange={e => setMethod(e.target.value)}
-            className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs mt-1 bg-[#0d1424] focus:ring-2 focus:ring-cyan-400/50 outline-none">
+            className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs mt-1 bg-white focus:ring-2 focus:ring-black/50 outline-none">
             {VALUATION_METHODS.map(m => <option key={m}>{m}</option>)}
           </select>
         </div>
         <div>
-          <label className="text-xs text-white/40 font-medium">Discount Rate (%)</label>
+          <label className="text-xs text-slate-400 font-medium">Discount Rate (%)</label>
           <input type="number" value={discountRate} onChange={e => setDiscountRate(parseFloat(e.target.value))} step="0.25"
-            className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs mt-1 focus:ring-2 focus:ring-cyan-400/50 outline-none" />
+            className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs mt-1 focus:ring-2 focus:ring-black/50 outline-none" />
         </div>
         <div>
-          <label className="text-xs text-white/40 font-medium">Hold Period (yrs)</label>
+          <label className="text-xs text-slate-400 font-medium">Hold Period (yrs)</label>
           <input type="number" value={holdPeriod} onChange={e => setHoldPeriod(parseInt(e.target.value))} min={1} max={30}
-            className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs mt-1 focus:ring-2 focus:ring-cyan-400/50 outline-none" />
+            className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs mt-1 focus:ring-2 focus:ring-black/50 outline-none" />
         </div>
         <div>
-          <label className="text-xs text-white/40 font-medium">Exit Yield (%)</label>
+          <label className="text-xs text-slate-400 font-medium">Exit Yield (%)</label>
           <input type="number" value={exitYield} onChange={e => setExitYield(parseFloat(e.target.value))} step="0.25"
-            className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-xs mt-1 focus:ring-2 focus:ring-cyan-400/50 outline-none" />
+            className="w-full border border-black/[0.08] rounded px-2 py-1.5 text-xs mt-1 focus:ring-2 focus:ring-black/50 outline-none" />
         </div>
       </div>
 
@@ -585,20 +586,20 @@ function ValuationPanel({ properties }) {
       <div className="overflow-x-auto mb-4">
         <table className="w-full text-xs border-collapse">
           <thead>
-            <tr className="bg-white/[0.02]">
+            <tr className="bg-black/[0.02]">
               {["Asset", "PV Income (£)", "PV Terminal (£)", "DCF Value (£)", "ESG Adj. (£)", "ESG Premium", "Market Value (£)", "Spread to Market"].map(h => (
-                <th key={h} className="text-left px-3 py-2 text-white/40 font-medium border-b border-white/[0.06]">{h}</th>
+                <th key={h} className="text-left px-3 py-2 text-slate-400 font-medium border-b border-black/[0.08]">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {dcfResults.map((r, i) => (
-              <tr key={r.asset_id} className="hover:bg-white/[0.02] border-b border-white/[0.04]">
-                <td className="px-3 py-2 font-semibold text-cyan-300">{r.asset_id}</td>
+              <tr key={r.asset_id} className="hover:bg-black/[0.02] border-b border-black/[0.06]">
+                <td className="px-3 py-2 font-semibold text-slate-800">{r.asset_id}</td>
                 <td className="px-3 py-2 tabular-nums">{fmtCcy(r.pv_income)}</td>
                 <td className="px-3 py-2 tabular-nums">{fmtCcy(r.pv_terminal)}</td>
                 <td className="px-3 py-2 tabular-nums font-medium">{fmtCcy(r.dcf_value)}</td>
-                <td className="px-3 py-2 tabular-nums font-bold text-cyan-300">{fmtCcy(r.esg_adjusted)}</td>
+                <td className="px-3 py-2 tabular-nums font-bold text-slate-800">{fmtCcy(r.esg_adjusted)}</td>
                 <td className={`px-3 py-2 tabular-nums font-medium ${r.esg_premium_pct >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                   {r.esg_premium_pct >= 0 ? "+" : ""}{fmtPct(r.esg_premium_pct)}
                 </td>
@@ -667,14 +668,14 @@ function ValidationPanel({ properties }) {
 
   return (
     <Section title="Validation Summary — Methodology Compliance" icon={FileText} defaultOpen={false}>
-      <div className="mb-3 p-3 bg-cyan-400/10 border border-cyan-400/20 rounded text-xs text-cyan-300">
+      <div className="mb-3 p-3 bg-black/[0.05] border border-black/[0.15] rounded text-xs text-slate-800">
         <strong>Frameworks checked:</strong> RICS VPS4 (2021), IVS 2024, CRREM v2.0 (2023), TCFD (2021), GRESB Real Estate Standard,
         SFDR PAI Indicators, EU Taxonomy (Art 9 — Climate Change Mitigation).
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         {checks.map((c, i) => <ValidationBadge key={i} {...c} />)}
       </div>
-      <div className="mt-3 p-3 bg-white/[0.02] border border-white/[0.06] rounded text-xs text-white/60">
+      <div className="mt-3 p-3 bg-black/[0.02] border border-black/[0.08] rounded text-xs text-slate-600">
         <strong>Data Sources:</strong> CRREM Pathways (crrem.eu), MSCI Real Assets, JLL Green Premium Research,
         RealPAC Carbon Risk data, RICS UK Commercial Market Survey, EPC Open Data Portal (UK DLUHC),
         Environment Agency Flood Map for Planning, Ordnance Survey AddressBase.
@@ -721,19 +722,21 @@ export default function RealEstateAssessmentPage() {
   };
 
   return (
-    <div className="p-6 space-y-4 max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto">
+      <DemoBanner message="Climate VaR, stranding risk, and CRREM pathway charts display deterministic sample data. Enter or import real property details to run live assessments." />
+      <div className="p-6 space-y-4">
       {/* Page header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Building2 className="h-6 w-6 text-cyan-400" />
+          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <Building2 className="h-6 w-6 text-slate-700" />
             Real Estate Climate Assessment
           </h1>
-          <p className="text-sm text-white/40 mt-1">
+          <p className="text-sm text-slate-400 mt-1">
             CLVaR · CRREM Stranding · Physical Risk · ESG-Adjusted Valuation — RICS VPS4 / IVS 2024 / CRREM v2.0
           </p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-white/30">
+        <div className="flex items-center gap-2 text-xs text-slate-400">
           <Shield className="h-4 w-4" />
           <span>{properties.length} propert{properties.length > 1 ? "ies" : "y"} loaded</span>
         </div>
@@ -743,18 +746,19 @@ export default function RealEstateAssessmentPage() {
       <PropertyPanel properties={properties} onChange={handleChange} onAdd={addProperty} onRemove={idx => setProperties(prev => prev.filter((_, i) => i !== idx))} />
 
       {/* Analysis tabs */}
-      <div className="border border-white/[0.06] rounded-lg overflow-hidden">
-        <div className="flex overflow-x-auto bg-white/[0.02] border-b border-white/[0.06]">
+      <div className="border border-black/[0.08] rounded-lg overflow-hidden">
+        <div className="flex overflow-x-auto bg-black/[0.02] border-b border-black/[0.08]">
           {TABS.map(({ id, label, icon: Icon }) => (
             <button key={id} onClick={() => setActiveTab(id)}
-              className={`flex items-center gap-1.5 px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors border-b-2 ${activeTab === id ? "border-cyan-400/20 text-cyan-300 bg-[#0d1424]" : "border-transparent text-white/40 hover:text-white/70 hover:bg-white/60"}`}>
+              className={`flex items-center gap-1.5 px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors border-b-2 ${activeTab === id ? "border-black/[0.15] text-slate-800 bg-white" : "border-transparent text-slate-400 hover:text-slate-700 hover:bg-white/60"}`}>
               <Icon className="h-4 w-4" />{label}
             </button>
           ))}
         </div>
-        <div className="p-4 bg-[#0d1424]">
+        <div className="p-4 bg-white">
           {renderTab()}
         </div>
+      </div>
       </div>
     </div>
   );

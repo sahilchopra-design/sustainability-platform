@@ -35,10 +35,10 @@ const READINESS_COLORS = {
 };
 
 const KPI = ({ label, value, sub, accent }) => (
-  <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-    <div className={`text-2xl font-bold ${accent || 'text-white'}`}>{value}</div>
-    <div className="text-[11px] text-white/40 mt-1">{label}</div>
-    {sub && <div className="text-[10px] text-white/25 mt-0.5">{sub}</div>}
+  <div className="bg-white border border-gray-200 rounded-lg p-4">
+    <div className={`text-2xl font-bold ${accent || 'text-gray-900'}`}>{value}</div>
+    <div className="text-[11px] text-gray-500 mt-1">{label}</div>
+    {sub && <div className="text-[10px] text-gray-400 mt-0.5">{sub}</div>}
   </div>
 );
 
@@ -115,72 +115,72 @@ export function IrenaFivePillarsPanel() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6">
-        <h2 className="text-xl font-bold text-white">IRENA Five Pillars Transition Readiness</h2>
-        <p className="text-xs text-white/40 mt-1">
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h2 className="text-xl font-bold text-gray-900">IRENA Five Pillars Transition Readiness</h2>
+        <p className="text-xs text-gray-500 mt-1">
           IRENA World Energy Transitions Outlook 2023 / Energy Transition Readiness Assessment Framework
         </p>
       </div>
 
       {/* Entity Info */}
-      <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6">
-        <h3 className="text-sm font-semibold text-white/70 mb-4">Assessment Entity</h3>
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h3 className="text-sm font-semibold text-gray-700 mb-4">Assessment Entity</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <label className="text-[11px] text-white/40 block mb-1">Entity Name</label>
+            <label className="text-[11px] text-gray-500 block mb-1">Entity Name</label>
             <input type="text" value={form.entity_name}
               onChange={e => setForm(f => ({ ...f, entity_name: e.target.value }))}
-              className="w-full bg-[#1a2332] border border-white/[0.08] rounded px-2 py-1.5 text-sm text-white" />
+              className="w-full bg-[#1a2332] border border-gray-300 rounded px-2 py-1.5 text-sm text-gray-900" />
           </div>
           <div>
-            <label className="text-[11px] text-white/40 block mb-1">Entity Type</label>
+            <label className="text-[11px] text-gray-500 block mb-1">Entity Type</label>
             <select value={form.entity_type}
               onChange={e => setForm(f => ({ ...f, entity_type: e.target.value }))}
-              className="w-full bg-[#1a2332] border border-white/[0.08] rounded px-2 py-1.5 text-sm text-white">
+              className="w-full bg-[#1a2332] border border-gray-300 rounded px-2 py-1.5 text-sm text-gray-900">
               <option value="country">Country</option>
               <option value="organisation">Organisation</option>
               <option value="project">Project</option>
             </select>
           </div>
           <div>
-            <label className="text-[11px] text-white/40 block mb-1">Country (ISO2)</label>
+            <label className="text-[11px] text-gray-500 block mb-1">Country (ISO2)</label>
             <input type="text" value={form.country_iso2} maxLength={2}
               onChange={e => setForm(f => ({ ...f, country_iso2: e.target.value.toUpperCase() }))}
-              className="w-full bg-[#1a2332] border border-white/[0.08] rounded px-2 py-1.5 text-sm text-white" />
+              className="w-full bg-[#1a2332] border border-gray-300 rounded px-2 py-1.5 text-sm text-gray-900" />
           </div>
           <div>
-            <label className="text-[11px] text-white/40 block mb-1">Assessment Year</label>
+            <label className="text-[11px] text-gray-500 block mb-1">Assessment Year</label>
             <input type="number" value={form.assessment_year}
               onChange={e => setForm(f => ({ ...f, assessment_year: Number(e.target.value) }))}
-              className="w-full bg-[#1a2332] border border-white/[0.08] rounded px-2 py-1.5 text-sm text-white" />
+              className="w-full bg-[#1a2332] border border-gray-300 rounded px-2 py-1.5 text-sm text-gray-900" />
           </div>
         </div>
       </div>
 
       {/* Scoring Grid */}
       {framework && (
-        <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6">
-          <h3 className="text-sm font-semibold text-white/70 mb-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <h3 className="text-sm font-semibold text-gray-700 mb-4">
             Pillar Scores (0-10 per criterion)
           </h3>
           <div className="space-y-6">
             {framework.map(pillar => (
               <div key={pillar.id}>
                 <div className="flex items-baseline gap-2 mb-3">
-                  <span className="text-sm font-semibold text-white">{pillar.name}</span>
-                  <span className="text-[10px] text-white/30">Weight: {(pillar.weight * 100).toFixed(0)}%</span>
+                  <span className="text-sm font-semibold text-gray-900">{pillar.name}</span>
+                  <span className="text-[10px] text-gray-500">Weight: {(pillar.weight * 100).toFixed(0)}%</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
                   {pillar.criteria.map(crit => (
                     <div key={crit.id}>
-                      <label className="text-[10px] text-white/40 block mb-1">{crit.label}</label>
+                      <label className="text-[10px] text-gray-500 block mb-1">{crit.label}</label>
                       <input
                         type="range" min={0} max={crit.max} step={0.5}
                         value={scores[pillar.id]?.[crit.id] || 0}
                         onChange={e => setScore(pillar.id, crit.id, e.target.value)}
                         className="w-full accent-blue-500"
                       />
-                      <div className="text-center text-xs text-white/60 mt-0.5">
+                      <div className="text-center text-xs text-gray-600 mt-0.5">
                         {scores[pillar.id]?.[crit.id] || 0} / {crit.max}
                       </div>
                     </div>
@@ -191,7 +191,7 @@ export function IrenaFivePillarsPanel() {
           </div>
 
           <button onClick={run} disabled={loading}
-            className="mt-6 px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium disabled:opacity-40 transition-colors">
+            className="mt-6 px-6 py-2 bg-blue-600 hover:bg-blue-500 text-gray-900 rounded-lg text-sm font-medium disabled:opacity-40 transition-colors">
             {loading ? 'Assessing...' : 'Run Five Pillars Assessment'}
           </button>
           {error && <div className="mt-3 text-sm text-red-400">{error}</div>}
@@ -222,8 +222,8 @@ export function IrenaFivePillarsPanel() {
           {/* Radar + Bar Charts */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Radar */}
-            <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6">
-              <h3 className="text-sm font-semibold text-white/70 mb-4">Five Pillars Radar</h3>
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-4">Five Pillars Radar</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <RadarChart data={radarData}>
                   <PolarGrid stroke="#ffffff10" />
@@ -235,14 +235,14 @@ export function IrenaFivePillarsPanel() {
             </div>
 
             {/* Pillar Scores Bar */}
-            <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6">
-              <h3 className="text-sm font-semibold text-white/70 mb-4">Pillar Scores (%)</h3>
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-4">Pillar Scores (%)</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={pillarBars} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" />
                   <XAxis type="number" domain={[0, 100]} tick={{ fill: '#ffffff60', fontSize: 10 }} />
                   <YAxis dataKey="name" type="category" tick={{ fill: '#ffffff60', fontSize: 10 }} width={120} />
-                  <Tooltip contentStyle={{ background: '#111827', border: '1px solid #ffffff15', borderRadius: 8, fontSize: 11 }}
+                  <Tooltip contentStyle={{ background: '#ffffff', border: '1px solid #ffffff15', borderRadius: 8, fontSize: 11 }}
                     formatter={(v, n) => [`${v}%`, n]} />
                   <Bar dataKey="pct" name="Score %">
                     {pillarBars.map((entry, i) => (
@@ -255,15 +255,15 @@ export function IrenaFivePillarsPanel() {
           </div>
 
           {/* Pillar Detail Cards */}
-          <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6">
-            <h3 className="text-sm font-semibold text-white/70 mb-4">Pillar Details</h3>
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h3 className="text-sm font-semibold text-gray-700 mb-4">Pillar Details</h3>
             <div className="space-y-4">
               {result.pillar_results.map(p => (
-                <div key={p.id} className="bg-[#111827] rounded-lg border border-white/[0.04] p-4">
+                <div key={p.id} className="bg-white rounded-lg border border-gray-200 p-4">
                   <div className="flex items-baseline justify-between mb-3">
                     <div>
-                      <span className="text-sm font-semibold text-white">{p.name}</span>
-                      <span className="text-[10px] text-white/30 ml-2">Weight: {(p.weight * 100).toFixed(0)}%</span>
+                      <span className="text-sm font-semibold text-gray-900">{p.name}</span>
+                      <span className="text-[10px] text-gray-500 ml-2">Weight: {(p.weight * 100).toFixed(0)}%</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="text-sm font-bold" style={{ color: RATING_COLORS[p.rating] }}>
@@ -287,7 +287,7 @@ export function IrenaFivePillarsPanel() {
                         <div className={`text-xs font-bold ${c.pct >= 60 ? 'text-green-400' : c.pct >= 40 ? 'text-amber-400' : 'text-red-400'}`}>
                           {c.score}/{c.max_score}
                         </div>
-                        <div className="text-[9px] text-white/30 mt-0.5 leading-tight">{c.label}</div>
+                        <div className="text-[9px] text-gray-500 mt-0.5 leading-tight">{c.label}</div>
                       </div>
                     ))}
                   </div>
@@ -298,14 +298,14 @@ export function IrenaFivePillarsPanel() {
 
           {/* Gap Analysis */}
           {result.gap_analysis.length > 0 && (
-            <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6">
-              <h3 className="text-sm font-semibold text-white/70 mb-4">
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-4">
                 Gap Analysis (below 50%)
               </h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead>
-                    <tr className="text-white/40 border-b border-white/[0.06]">
+                    <tr className="text-gray-500 border-b border-gray-200">
                       <th className="text-left py-2 px-2">Pillar</th>
                       <th className="text-left py-2 px-2">Criterion</th>
                       <th className="text-right py-2 px-2">Score</th>
@@ -316,11 +316,11 @@ export function IrenaFivePillarsPanel() {
                   </thead>
                   <tbody>
                     {result.gap_analysis.map((g, i) => (
-                      <tr key={i} className="border-b border-white/[0.03] hover:bg-white/[0.02]">
-                        <td className="py-2 px-2 text-white/60">{g.pillar}</td>
-                        <td className="py-2 px-2 text-white">{g.criterion}</td>
+                      <tr key={i} className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="py-2 px-2 text-gray-600">{g.pillar}</td>
+                        <td className="py-2 px-2 text-gray-900">{g.criterion}</td>
                         <td className="py-2 px-2 text-right text-red-400">{g.score}</td>
-                        <td className="py-2 px-2 text-right text-white/40">{g.max}</td>
+                        <td className="py-2 px-2 text-right text-gray-500">{g.max}</td>
                         <td className="py-2 px-2 text-right text-red-400">{g.pct}%</td>
                         <td className="py-2 px-2 text-right text-amber-400">+{g.gap_to_50pct}</td>
                       </tr>
@@ -333,13 +333,13 @@ export function IrenaFivePillarsPanel() {
 
           {/* Recommendations */}
           {result.recommendations.length > 0 && (
-            <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6">
-              <h3 className="text-sm font-semibold text-white/70 mb-4">Recommendations</h3>
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-4">Recommendations</h3>
               <div className="space-y-2">
                 {result.recommendations.map((r, i) => (
                   <div key={i} className="flex items-start gap-2">
                     <span className="text-blue-400 mt-0.5 text-xs">{i + 1}.</span>
-                    <span className="text-sm text-white/80">{r}</span>
+                    <span className="text-sm text-gray-800">{r}</span>
                   </div>
                 ))}
               </div>
@@ -348,8 +348,8 @@ export function IrenaFivePillarsPanel() {
 
           {/* Country Benchmarks */}
           {result.country_benchmarks && Object.keys(result.country_benchmarks).length > 0 && (
-            <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6">
-              <h3 className="text-sm font-semibold text-white/70 mb-4">
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-4">
                 Country Benchmarks
                 {result.country_benchmarks.country_name &&
                   ` -- ${result.country_benchmarks.country_name}`}
@@ -358,12 +358,12 @@ export function IrenaFivePillarsPanel() {
                 {Object.entries(result.country_benchmarks)
                   .filter(([k]) => k !== 'country_name')
                   .map(([idx, val]) => (
-                    <div key={idx} className="bg-[#111827] rounded-lg p-3 text-center">
-                      <div className="text-lg font-bold text-white">
+                    <div key={idx} className="bg-white rounded-lg p-3 text-center">
+                      <div className="text-lg font-bold text-gray-900">
                         {val.score !== null ? val.score.toFixed(1) : 'N/A'}
                       </div>
-                      <div className="text-[10px] text-white/40 mt-1">{idx}</div>
-                      {val.rank && <div className="text-[10px] text-white/25">Rank: {val.rank}</div>}
+                      <div className="text-[10px] text-gray-500 mt-1">{idx}</div>
+                      {val.rank && <div className="text-[10px] text-gray-400">Rank: {val.rank}</div>}
                     </div>
                   ))}
               </div>

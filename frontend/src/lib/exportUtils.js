@@ -1,6 +1,8 @@
 /**
  * Universal Export Utility for all modules
- * Provides PDF and Excel export functionality
+ * Provides PDF and Excel export functionality.
+ * When the backend is unavailable, falls back to a client-side JSON download
+ * so the export action always succeeds in demo/offline mode.
  */
 
 import axios from 'axios';
@@ -11,6 +13,38 @@ const exportApi = axios.create({
   baseURL: `${API_URL}/api/v1/exports`,
   responseType: 'blob',
 });
+
+/**
+ * Fallback: download data as JSON when the backend export API is unreachable.
+ */
+function fallbackJsonDownload(data, filenameBase) {
+  const content = JSON.stringify({ ...data, _exportMode: 'offline_fallback', exportDate: new Date().toISOString() }, null, 2);
+  const blob = new Blob([content], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${filenameBase}_${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Wrap an export API call with an offline fallback.
+ */
+async function withFallback(apiFn, fallbackData, filenameBase) {
+  try {
+    return await apiFn();
+  } catch (err) {
+    const isNetworkError = !err.response;
+    if (isNetworkError) {
+      fallbackJsonDownload(fallbackData, filenameBase);
+      return { _fallback: true };
+    }
+    throw err;
+  }
+}
 
 /**
  * Download a blob as a file
@@ -35,90 +69,105 @@ const getExtension = (format) => format === 'excel' ? 'xlsx' : 'pdf';
  * Export portfolio analytics report
  */
 export const exportPortfolioAnalytics = async (portfolioId, format = 'pdf', reportType = 'executive') => {
-  const response = await exportApi.get(
-    `/portfolio-analytics/${portfolioId}?format=${format}&report_type=${reportType}`
+  return withFallback(
+    async () => {
+      const response = await exportApi.get(`/portfolio-analytics/${portfolioId}?format=${format}&report_type=${reportType}`);
+      downloadFile(response.data, `portfolio_analytics_${portfolioId.slice(0, 8)}.${getExtension(format)}`);
+      return response;
+    },
+    { portfolioId, format, reportType },
+    'portfolio_analytics'
   );
-  const filename = `portfolio_analytics_${portfolioId.slice(0, 8)}.${getExtension(format)}`;
-  downloadFile(response.data, filename);
-  return response;
 };
 
 /**
  * Export sustainability assessment
  */
 export const exportSustainabilityAssessment = async (data, format = 'pdf', assessmentType = 'breeam') => {
-  const response = await exportApi.post(
-    `/sustainability/assessment?format=${format}&assessment_type=${assessmentType}`,
-    data
+  return withFallback(
+    async () => {
+      const response = await exportApi.post(`/sustainability/assessment?format=${format}&assessment_type=${assessmentType}`, data);
+      downloadFile(response.data, `${assessmentType}_assessment.${getExtension(format)}`);
+      return response;
+    },
+    data,
+    `${assessmentType}_assessment`
   );
-  const filename = `${assessmentType}_assessment.${getExtension(format)}`;
-  downloadFile(response.data, filename);
-  return response;
 };
 
 /**
  * Export stranded assets analysis
  */
 export const exportStrandedAssets = async (data, format = 'pdf') => {
-  const response = await exportApi.post(
-    `/stranded-assets/analysis?format=${format}`,
-    data
+  return withFallback(
+    async () => {
+      const response = await exportApi.post(`/stranded-assets/analysis?format=${format}`, data);
+      downloadFile(response.data, `stranded_asset_analysis.${getExtension(format)}`);
+      return response;
+    },
+    data,
+    'stranded_asset_analysis'
   );
-  const filename = `stranded_asset_analysis.${getExtension(format)}`;
-  downloadFile(response.data, filename);
-  return response;
 };
 
 /**
  * Export scenario analysis/comparison
  */
 export const exportScenarioAnalysis = async (data, format = 'pdf') => {
-  const response = await exportApi.post(
-    `/scenario-analysis/comparison?format=${format}`,
-    data
+  return withFallback(
+    async () => {
+      const response = await exportApi.post(`/scenario-analysis/comparison?format=${format}`, data);
+      downloadFile(response.data, `scenario_comparison.${getExtension(format)}`);
+      return response;
+    },
+    data,
+    'scenario_comparison'
   );
-  const filename = `scenario_comparison.${getExtension(format)}`;
-  downloadFile(response.data, filename);
-  return response;
 };
 
 /**
  * Export nature risk assessment
  */
 export const exportNatureRisk = async (data, format = 'pdf') => {
-  const response = await exportApi.post(
-    `/nature-risk/assessment?format=${format}`,
-    data
+  return withFallback(
+    async () => {
+      const response = await exportApi.post(`/nature-risk/assessment?format=${format}`, data);
+      downloadFile(response.data, `nature_risk_assessment.${getExtension(format)}`);
+      return response;
+    },
+    data,
+    'nature_risk_assessment'
   );
-  const filename = `nature_risk_assessment.${getExtension(format)}`;
-  downloadFile(response.data, filename);
-  return response;
 };
 
 /**
  * Export real estate valuation
  */
 export const exportValuation = async (data, format = 'pdf', valuationType = 'dcf') => {
-  const response = await exportApi.post(
-    `/valuation/analysis?format=${format}&valuation_type=${valuationType}`,
-    data
+  return withFallback(
+    async () => {
+      const response = await exportApi.post(`/valuation/analysis?format=${format}&valuation_type=${valuationType}`, data);
+      downloadFile(response.data, `${valuationType}_valuation.${getExtension(format)}`);
+      return response;
+    },
+    data,
+    `${valuationType}_valuation`
   );
-  const filename = `${valuationType}_valuation.${getExtension(format)}`;
-  downloadFile(response.data, filename);
-  return response;
 };
 
 /**
  * Export carbon calculation
  */
 export const exportCarbonCalculation = async (data, format = 'pdf') => {
-  const response = await exportApi.post(
-    `/carbon/calculation?format=${format}`,
-    data
+  return withFallback(
+    async () => {
+      const response = await exportApi.post(`/carbon/calculation?format=${format}`, data);
+      downloadFile(response.data, `carbon_calculation.${getExtension(format)}`);
+      return response;
+    },
+    data,
+    'carbon_calculation'
   );
-  const filename = `carbon_calculation.${getExtension(format)}`;
-  downloadFile(response.data, filename);
-  return response;
 };
 
 export default {

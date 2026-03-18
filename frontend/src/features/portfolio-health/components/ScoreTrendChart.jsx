@@ -28,9 +28,9 @@ const METRIC_COLOURS = {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#0d1628] border border-white/10 rounded px-2 py-1 text-xs tabular-nums">
-      <span className="text-white/50">{label}: </span>
-      <span className="text-white font-semibold">{payload[0]?.value?.toFixed(1)}</span>
+    <div className="bg-white border border-black/10 rounded px-2 py-1 text-xs tabular-nums">
+      <span className="text-gray-500">{label}: </span>
+      <span className="text-gray-900 font-semibold">{payload[0]?.value?.toFixed(1)}</span>
     </div>
   );
 };
@@ -46,7 +46,7 @@ export function ScoreTrendChart({
   if (!data.length) {
     return (
       <div
-        className="flex items-center justify-center text-white/20 text-xs"
+        className="flex items-center justify-center text-gray-400 text-xs"
         style={{ height }}
       >
         No trend data

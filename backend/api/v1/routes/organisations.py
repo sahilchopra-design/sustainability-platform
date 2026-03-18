@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -17,6 +17,7 @@ from sqlalchemy.orm import Session
 from db.base import get_db
 from db.models.portfolio_pg import OrganisationPG, OrgUserPG, UserPG
 from api.dependencies import get_current_user, require_role
+from services.demo_portfolio_seeder import DemoPortfolioSeeder
 
 router = APIRouter(prefix="/api/v1/organisations", tags=["organisations"])
 
@@ -118,6 +119,7 @@ def get_organisation(
 @router.post("/", summary="Create a new organisation", status_code=201)
 def create_organisation(
     body: OrgCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     _user=Depends(require_role("admin")),
 ):
@@ -132,7 +134,40 @@ def create_organisation(
     db.add(org)
     db.commit()
     db.refresh(org)
+
+    # P0-3: Seed a demo portfolio in the background so the dashboard is
+    # never empty on first login. Uses a fresh DB session (background-safe).
+    from db.postgres import SessionLocal  # local import avoids circular dep
+    def _seed(org_id):
+        seed_db = SessionLocal()
+        try:
+            DemoPortfolioSeeder(seed_db).seed_for_org(org_id)
+        finally:
+            seed_db.close()
+
+    background_tasks.add_task(_seed, org.id)
+
     return _org_to_dict(org)
+
+
+@router.post("/{org_id}/seed-demo", summary="Seed demo portfolio for an org (P0-3)", status_code=202)
+def seed_demo_portfolio(
+    org_id: UUID,
+    db: Session = Depends(get_db),
+    _user=Depends(require_role("admin")),
+):
+    """Idempotently provision the demo portfolio for an existing org.
+
+    Safe to call on orgs that were created before the P0-3 fix.
+    Returns immediately; seeding happens synchronously (small dataset).
+    """
+    org = db.get(OrganisationPG, org_id)
+    if not org:
+        raise HTTPException(404, "Organisation not found")
+    portfolio = DemoPortfolioSeeder(db).seed_for_org(org_id)
+    if portfolio:
+        return {"status": "seeded", "portfolio_id": portfolio.id, "portfolio_name": portfolio.name}
+    return {"status": "already_exists"}
 
 
 @router.put("/{org_id}", summary="Update an organisation")

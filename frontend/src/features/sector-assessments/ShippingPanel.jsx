@@ -31,13 +31,13 @@ const Field = ({ label, children, hint }) => (
 const Num = ({ value, onChange, placeholder, min, max, step = 'any' }) => (
   <input type="number" value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
     min={min} max={max} step={step}
-    className="w-full bg-white/5 border border-white/15 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/60"
+    className="w-full bg-gray-50 border border-black/15 rounded px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-black/60"
     style={{ fontFamily: 'IBM Plex Mono, monospace' }} />
 );
 
 const Select = ({ value, onChange, options }) => (
   <select value={value} onChange={e => onChange(e.target.value)}
-    className="w-full bg-white/5 border border-white/15 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/60">
+    className="w-full bg-gray-50 border border-black/15 rounded px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-black/60">
     {options.map(o => <option key={o} value={o}>{o}</option>)}
   </select>
 );
@@ -93,7 +93,7 @@ export default function ShippingPanel() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Shipping Decarbonisation</h2>
+        <h2 className="text-lg font-semibold text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Shipping Decarbonisation</h2>
         <p className="text-sm text-gray-400 mt-0.5">IMO CII Rating / EEXI / AER — 2023 GHG Strategy alignment</p>
       </div>
 
@@ -102,7 +102,7 @@ export default function ShippingPanel() {
         <div className="col-span-2 md:col-span-3">
           <Field label="Vessel Name">
             <input type="text" value={form.vessel_name} onChange={e => set('vessel_name', e.target.value)}
-              className="w-full bg-white/5 border border-white/15 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/60" />
+              className="w-full bg-gray-50 border border-black/15 rounded px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-black/60" />
           </Field>
         </div>
         <Field label="Vessel Type"><Select value={form.vessel_type} onChange={v => set('vessel_type', v)} options={VESSEL_TYPES} /></Field>
@@ -116,7 +116,7 @@ export default function ShippingPanel() {
       </div>
 
       <button onClick={handleCalculate} disabled={loading}
-        className="w-full py-3 rounded-lg text-sm font-semibold text-white disabled:opacity-50"
+        className="w-full py-3 rounded-lg text-sm font-semibold text-gray-900 disabled:opacity-50"
         style={{ background: 'linear-gradient(135deg, hsl(199,89%,40%), hsl(199,89%,30%))' }}
         data-testid="shipping-calculate-btn">
         {loading ? 'Calculating...' : 'Calculate CII Rating'}
@@ -136,10 +136,10 @@ export default function ShippingPanel() {
             </div>
             <div>
               <div className="text-sm text-gray-400">CII Rating — {form.vessel_name}</div>
-              <div className="text-lg font-semibold text-white mt-0.5">{ciiInfo?.label}</div>
+              <div className="text-lg font-semibold text-gray-900 mt-0.5">{ciiInfo?.label}</div>
               <div className="text-sm text-gray-400 mt-1">
-                AER: <span className="text-white font-mono">{parseFloat(result.aer).toFixed(3)}</span> gCO₂/dwt-nm
-                &nbsp;|&nbsp; EEXI: <span className="text-white font-mono">{result.eexi ? parseFloat(result.eexi).toFixed(3) : '—'}</span>
+                AER: <span className="text-gray-900 font-mono">{parseFloat(result.aer).toFixed(3)}</span> gCO₂/dwt-nm
+                &nbsp;|&nbsp; EEXI: <span className="text-gray-900 font-mono">{result.eexi ? parseFloat(result.eexi).toFixed(3) : '—'}</span>
               </div>
             </div>
           </div>
@@ -152,9 +152,9 @@ export default function ShippingPanel() {
               { label: 'vs IMO 2030', value: `${parseFloat(result.pct_vs_2030_target) > 0 ? '+' : ''}${parseFloat(result.pct_vs_2030_target).toFixed(1)}%`, sub: parseFloat(result.pct_vs_2030_target) > 0 ? 'Above target' : 'On track' },
               { label: 'Stranding Year', value: result.projected_stranding_year || '—', sub: result.projected_stranding_year ? 'Projected CII D/E' : 'No imminent risk' },
             ].map((k, i) => (
-              <div key={i} data-testid={k.testId} className="rounded-lg p-3 border border-white/10 bg-white/3">
+              <div key={i} data-testid={k.testId} className="rounded-lg p-3 border border-black/10 bg-white/3">
                 <div className="text-xs text-gray-400 mb-1">{k.label}</div>
-                <div className="text-xl font-bold text-white" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>{k.value}</div>
+                <div className="text-xl font-bold text-gray-900" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>{k.value}</div>
                 <div className="text-xs text-gray-500 mt-0.5">{k.sub}</div>
               </div>
             ))}
@@ -168,7 +168,7 @@ export default function ShippingPanel() {
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" horizontal={false} />
                 <XAxis type="number" tick={{ fill: '#9ca3af', fontSize: 11 }} tickFormatter={v => `${v.toFixed(1)}`} />
                 <YAxis type="category" dataKey="name" tick={{ fill: '#9ca3af', fontSize: 11 }} width={110} />
-                <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8 }}
+                <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid rgba(0,0,0,0.15)', borderRadius: 8 }}
                   formatter={v => [`${Number(v).toFixed(3)} gCO₂/dwt-nm`]} />
                 <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                   {improvementData.map((entry, i) => (

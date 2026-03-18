@@ -873,3 +873,108 @@ class PortfolioNatureRiskCalculator:
             "total_exposure_at_risk_usd": round(total_exposure_at_risk, 2),
             "dependency_breakdown": dependency_counts
         }
+
+
+# ---------------------------------------------------------------------------
+# Climate Risk Integration Extension — ENCORE Amplifier Hook
+# Added for climate_integrated_risk.py integration (2026-03-08)
+# ---------------------------------------------------------------------------
+
+# ENCORE-aligned ecosystem dependency scores by NACE section (A-U)
+# Score range: 1.0 (no dependency) to 2.0 (critical dependency)
+# Source: ENCORE database v2 / TNFD-LEAP calibration
+_ENCORE_NACE_AMPLIFIERS: dict = {
+    "A": 1.80,   # Agriculture, Forestry, Fishing — critical ecosystem dependency
+    "B": 1.60,   # Mining & Quarrying — high dependency (water, soil)
+    "C": 1.25,   # Manufacturing — moderate (varies by sub-sector)
+    "D": 1.15,   # Electricity & Gas supply
+    "E": 1.45,   # Water supply & waste management
+    "F": 1.10,   # Construction
+    "G": 1.05,   # Wholesale & Retail trade
+    "H": 1.05,   # Transportation
+    "I": 1.15,   # Accommodation & Food (tourism nature-dependent)
+    "J": 1.00,   # Information & Communication
+    "K": 1.00,   # Financial & Insurance
+    "L": 1.05,   # Real Estate
+    "M": 1.00,   # Professional, Scientific & Technical
+    "N": 1.00,   # Administrative & Support
+    "O": 1.00,   # Public Administration
+    "P": 1.00,   # Education
+    "Q": 1.00,   # Health
+    "R": 1.20,   # Arts, Entertainment & Recreation (tourism)
+    "S": 1.00,   # Other Services
+    "T": 1.00,   # Households
+    "U": 1.00,   # Extraterritorial
+}
+
+# More granular sub-sector amplifiers (NACE 2-digit prefix)
+_ENCORE_NACE2_AMPLIFIERS: dict = {
+    "01": 1.90,  # Crop production — highest ecosystem dependency
+    "02": 1.85,  # Forestry
+    "03": 1.80,  # Fishing & aquaculture
+    "05": 1.65,  # Coal mining (water + land)
+    "06": 1.55,  # Oil & gas extraction
+    "35": 1.20,  # Electricity — renewables context
+    "36": 1.55,  # Water collection & treatment
+    "41": 1.10,  # Construction of buildings
+    "55": 1.25,  # Accommodation (coastal/nature tourism)
+    "56": 1.15,  # Food service
+    "90": 1.30,  # Creative arts (nature-recreation)
+    "91": 1.25,  # Libraries, museums, cultural (heritage sites)
+    "92": 1.40,  # Gambling + recreation (leisure parks, outdoor)
+    "93": 1.45,  # Sports activities (stadiums, outdoor venues)
+}
+
+
+def get_encore_amplifier(
+    sector_nace: str,
+    cap: float = 2.0,
+) -> float:
+    """
+    Return ENCORE ecosystem dependency amplifier for a NACE sector code.
+    Used to amplify integrated climate risk scores for nature-dependent sectors.
+
+    Args:
+        sector_nace: NACE code (e.g. "A.01.1", "C.20", "B")
+        cap: Maximum amplifier value (default 2.0)
+
+    Returns:
+        float: amplifier >= 1.0, capped at cap
+    """
+    if not sector_nace:
+        return 1.0
+    # Normalise: remove dots, uppercase
+    code = sector_nace.replace(".", "").upper().strip()
+
+    # Try 2-digit prefix
+    if len(code) >= 2 and code[:2] in _ENCORE_NACE2_AMPLIFIERS:
+        return min(_ENCORE_NACE2_AMPLIFIERS[code[:2]], cap)
+
+    # Try 2-digit numeric (e.g. "01", "35")
+    numeric_prefix = "".join(c for c in code if c.isdigit())[:2]
+    if numeric_prefix in _ENCORE_NACE2_AMPLIFIERS:
+        return min(_ENCORE_NACE2_AMPLIFIERS[numeric_prefix], cap)
+
+    # Fall back to NACE section (first letter if alphabetic, else first char)
+    section = code[0] if code[0].isalpha() else "G"
+    return min(_ENCORE_NACE_AMPLIFIERS.get(section, 1.0), cap)
+
+
+def get_nature_risk_amplifiers_for_portfolio(
+    entities: list,
+    cap: float = 2.0,
+) -> dict:
+    """
+    Compute ENCORE amplifiers for a list of entities.
+
+    Args:
+        entities: List of dicts with keys: entity_id, sector_nace
+        cap: Maximum amplifier
+
+    Returns:
+        dict: {entity_id: amplifier_float}
+    """
+    return {
+        e.get("entity_id", str(i)): get_encore_amplifier(e.get("sector_nace", "G"), cap=cap)
+        for i, e in enumerate(entities)
+    }

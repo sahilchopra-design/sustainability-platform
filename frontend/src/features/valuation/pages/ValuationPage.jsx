@@ -20,16 +20,16 @@ export default function ValuationPage() {
   const [activeTab, setActiveTab] = useState('dashboard');
 
   return (
-    <div className="min-h-screen bg-white/[0.02]">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-[#0d1424] border-b border-white/[0.06] px-6 py-4">
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-100 rounded-lg">
             <Building2 className="h-6 w-6 text-emerald-400" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">Real Estate Valuation Engine</h1>
-            <p className="text-sm text-white/40">
+            <h1 className="text-xl font-bold text-gray-900">Real Estate Valuation Engine</h1>
+            <p className="text-sm text-gray-500">
               Professional-grade property valuations using Income, Cost, and Sales Comparison approaches
             </p>
           </div>
@@ -55,10 +55,10 @@ export default function ValuationPage() {
       {/* Main Content */}
       <div className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-6 bg-[#0d1424] border border-white/[0.06]">
+          <TabsList className="grid w-full grid-cols-5 mb-6 bg-white border border-gray-200">
             <TabsTrigger 
               value="dashboard" 
-              className="flex items-center gap-2 data-[state=active]:bg-white/[0.06]"
+              className="flex items-center gap-2 data-[state=active]:bg-gray-50"
               data-testid="tab-dashboard"
             >
               <LayoutDashboard className="h-4 w-4" />
@@ -104,13 +104,13 @@ export default function ValuationPage() {
 
           <TabsContent value="direct-cap" className="mt-0">
             <div className="mb-4">
-              <h2 className="text-lg font-semibold text-white/90 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <div className="p-1.5 bg-blue-100 rounded">
                   <TrendingUp className="h-4 w-4 text-blue-300" />
                 </div>
                 Direct Capitalization Method
               </h2>
-              <p className="text-sm text-white/60 mt-1">
+              <p className="text-sm text-gray-600 mt-1">
                 Value = NOI / Cap Rate. Best for stabilized income-producing properties with predictable cash flows.
               </p>
             </div>
@@ -119,13 +119,13 @@ export default function ValuationPage() {
 
           <TabsContent value="dcf" className="mt-0">
             <div className="mb-4">
-              <h2 className="text-lg font-semibold text-white/90 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <div className="p-1.5 bg-violet-100 rounded">
                   <LineChart className="h-4 w-4 text-violet-600" />
                 </div>
                 Discounted Cash Flow Analysis
               </h2>
-              <p className="text-sm text-white/60 mt-1">
+              <p className="text-sm text-gray-600 mt-1">
                 Multi-year projection of cash flows discounted to present value. Best for properties with changing income streams.
               </p>
             </div>
@@ -134,13 +134,13 @@ export default function ValuationPage() {
 
           <TabsContent value="cost" className="mt-0">
             <div className="mb-4">
-              <h2 className="text-lg font-semibold text-white/90 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <div className="p-1.5 bg-amber-100 rounded">
                   <Hammer className="h-4 w-4 text-amber-400" />
                 </div>
                 Replacement Cost Method
               </h2>
-              <p className="text-sm text-white/60 mt-1">
+              <p className="text-sm text-gray-600 mt-1">
                 Value = Land + (RCN - Depreciation). Best for special-purpose properties and newer construction.
               </p>
             </div>
@@ -149,13 +149,13 @@ export default function ValuationPage() {
 
           <TabsContent value="sales" className="mt-0">
             <div className="mb-4">
-              <h2 className="text-lg font-semibold text-white/90 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <div className="p-1.5 bg-emerald-100 rounded">
                   <Scale className="h-4 w-4 text-emerald-400" />
                 </div>
                 Sales Comparison Approach
               </h2>
-              <p className="text-sm text-white/60 mt-1">
+              <p className="text-sm text-gray-600 mt-1">
                 Adjusts recent comparable sales to estimate subject value. Best when sufficient market data is available.
               </p>
             </div>

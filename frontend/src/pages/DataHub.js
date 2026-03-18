@@ -21,9 +21,9 @@ import TrajectoryViewer from '../components/data-hub/TrajectoryViewer';
 
 const TIER_LABELS = { tier_1: 'Tier 1 — Primary', tier_2: 'Tier 2 — Models', tier_3: 'Tier 3 — Regional',
   tier_4: 'Tier 4 — Sector', tier_5: 'Tier 5 — Carbon Pricing', tier_6: 'Tier 6 — Physical Risk' };
-const TIER_COLORS = { tier_1: 'bg-blue-600 text-white', tier_2: 'bg-teal-600 text-white',
-  tier_3: 'bg-amber-600 text-white', tier_4: 'bg-violet-600 text-white',
-  tier_5: 'bg-emerald-600 text-white', tier_6: 'bg-rose-600 text-white' };
+const TIER_COLORS = { tier_1: 'bg-blue-600 text-slate-900', tier_2: 'bg-teal-600 text-slate-900',
+  tier_3: 'bg-amber-600 text-slate-900', tier_4: 'bg-violet-600 text-slate-900',
+  tier_5: 'bg-emerald-600 text-slate-900', tier_6: 'bg-rose-600 text-slate-900' };
 const TIER_SHORT = { tier_1: 'T1', tier_2: 'T2', tier_3: 'T3', tier_4: 'T4', tier_5: 'T5', tier_6: 'T6' };
 const PIE_COLORS = ['#1e40af', '#0d9488', '#d97706', '#7c3aed', '#059669', '#dc2626', '#0284c7', '#be123c'];
 
@@ -194,7 +194,7 @@ export default function DataHub() {
                 className="cursor-pointer hover:opacity-80 transition-opacity text-xs"
                 onClick={() => handleSourceFilter(src.id)}
                 data-testid={`source-filter-${src.short_name}`}>
-                <span className={`inline-block w-4 h-4 rounded text-[9px] font-bold mr-1 flex items-center justify-center ${TIER_COLORS[src.tier] || 'bg-gray-500 text-white'}`}>
+                <span className={`inline-block w-4 h-4 rounded text-[9px] font-bold mr-1 flex items-center justify-center ${TIER_COLORS[src.tier] || 'bg-gray-500 text-slate-900'}`}>
                   {TIER_SHORT[src.tier] || '?'}
                 </span>
                 {src.short_name.toUpperCase()} ({src.scenario_count})

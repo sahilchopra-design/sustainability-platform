@@ -30,8 +30,12 @@ export function ExportButton({
     setExportFormat(format);
     
     try {
-      await onExport(format);
-      toast.success(`${format.toUpperCase()} export downloaded successfully`);
+      const result = await onExport(format);
+      if (result?._fallback) {
+        toast.success('Downloaded as JSON (offline mode — backend unavailable)');
+      } else {
+        toast.success(`${format.toUpperCase()} export downloaded successfully`);
+      }
     } catch (error) {
       console.error('Export error:', error);
       toast.error(`Export failed: ${error.message || 'Unknown error'}`);

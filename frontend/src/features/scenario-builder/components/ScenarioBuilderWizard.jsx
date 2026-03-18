@@ -36,7 +36,7 @@ function StepProgress({ currentStep, onNavigate }) {
             {/* Connector */}
             {idx > 0 && (
               <div className={`flex-1 h-px mx-1 transition-colors ${
-                done ? 'bg-cyan-500/50' : 'bg-white/8'
+                done ? 'bg-gray-500' : 'bg-white/8'
               }`} />
             )}
 
@@ -49,24 +49,24 @@ function StepProgress({ currentStep, onNavigate }) {
             >
               <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all ${
                 active
-                  ? 'border-cyan-500 bg-cyan-500/15 shadow-[0_0_10px_rgba(34,211,238,0.25)]'
+                  ? 'border-black bg-gray-200 shadow-[0_0_10px_rgba(34,211,238,0.25)]'
                   : done
-                  ? 'border-cyan-500/60 bg-cyan-500/10'
-                  : 'border-white/15 bg-white/3'
+                  ? 'border-black/60 bg-gray-100'
+                  : 'border-black/15 bg-white/3'
               }`}>
                 {done ? (
-                  <svg className="h-3.5 w-3.5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <svg className="h-3.5 w-3.5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                 ) : (
-                  <svg className={`h-3.5 w-3.5 ${active ? 'text-cyan-300' : 'text-white/30'}`}
+                  <svg className={`h-3.5 w-3.5 ${active ? 'text-gray-800' : 'text-gray-500'}`}
                     fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                     <path strokeLinecap="round" strokeLinejoin="round" d={step.icon} />
                   </svg>
                 )}
               </div>
               <span className={`text-[9px] font-medium ${
-                active ? 'text-cyan-300' : done ? 'text-white/45' : 'text-white/25'
+                active ? 'text-gray-800' : done ? 'text-gray-500' : 'text-gray-400'
               }`}>
                 {step.label}
               </span>
@@ -84,8 +84,8 @@ function StepTemplate({ onSelectTemplate, selectedTemplateId, onNext }) {
   return (
     <div className="flex flex-col h-full">
       <div className="mb-4">
-        <h3 className="text-[15px] font-semibold text-white/90 mb-1">Choose a Starting Template</h3>
-        <p className="text-[12px] text-white/40">
+        <h3 className="text-[15px] font-semibold text-gray-900 mb-1">Choose a Starting Template</h3>
+        <p className="text-[12px] text-gray-500">
           Select an official NGFS scenario or a custom stress test as your base. You can customise all parameters in the next step.
         </p>
       </div>
@@ -97,14 +97,14 @@ function StepTemplate({ onSelectTemplate, selectedTemplateId, onNext }) {
         />
       </div>
 
-      <div className="flex items-center justify-end pt-4 mt-4 border-t border-white/8">
+      <div className="flex items-center justify-end pt-4 mt-4 border-t border-gray-200">
         <button
           onClick={onNext}
           disabled={!selectedTemplateId}
           className={`px-4 py-2 rounded text-[12px] font-semibold flex items-center gap-2 transition-colors ${
             selectedTemplateId
-              ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/25'
-              : 'bg-white/5 text-white/25 border border-white/8 cursor-not-allowed'
+              ? 'bg-gray-200 text-gray-800 border border-gray-300 hover:bg-gray-300'
+              : 'bg-gray-50 text-gray-400 border border-gray-200 cursor-not-allowed'
           }`}
         >
           Configure Parameters
@@ -123,8 +123,8 @@ function StepParameters({ scenario, onChangeValue, onReset, onChangeFamily, onCh
   return (
     <div className="flex flex-col h-full">
       <div className="mb-4">
-        <h3 className="text-[15px] font-semibold text-white/90 mb-1">Configure Parameters</h3>
-        <p className="text-[12px] text-white/40">
+        <h3 className="text-[15px] font-semibold text-gray-900 mb-1">Configure Parameters</h3>
+        <p className="text-[12px] text-gray-500">
           Adjust macro, carbon, physical, transition and financial parameters. The cyan line on each slider shows the NGFS baseline.
         </p>
       </div>
@@ -139,14 +139,14 @@ function StepParameters({ scenario, onChangeValue, onReset, onChangeFamily, onCh
         />
       </div>
 
-      <div className="flex items-center justify-between pt-4 mt-4 border-t border-white/8">
-        <button onClick={onBack} className="text-[12px] text-white/40 hover:text-white/70 flex items-center gap-1 transition-colors">
+      <div className="flex items-center justify-between pt-4 mt-4 border-t border-gray-200">
+        <button onClick={onBack} className="text-[12px] text-gray-500 hover:text-gray-700 flex items-center gap-1 transition-colors">
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
           Back
         </button>
-        <button onClick={onNext} className="px-4 py-2 rounded text-[12px] font-semibold flex items-center gap-2 bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/25 transition-colors">
+        <button onClick={onNext} className="px-4 py-2 rounded text-[12px] font-semibold flex items-center gap-2 bg-gray-200 text-gray-800 border border-gray-300 hover:bg-gray-300 transition-colors">
           Edit Trajectories
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -172,8 +172,8 @@ function StepTrajectory({ scenario, onUpdatePoint, onResetTrajectory, onBack, on
   return (
     <div className="flex flex-col h-full">
       <div className="mb-4">
-        <h3 className="text-[15px] font-semibold text-white/90 mb-1">Edit Trajectories</h3>
-        <p className="text-[12px] text-white/40">
+        <h3 className="text-[15px] font-semibold text-gray-900 mb-1">Edit Trajectories</h3>
+        <p className="text-[12px] text-gray-500">
           Click any data point on the chart to edit it directly. Dashed lines show NGFS reference trajectories.
         </p>
       </div>
@@ -183,7 +183,7 @@ function StepTrajectory({ scenario, onUpdatePoint, onResetTrajectory, onBack, on
         <div className="w-44 overflow-y-auto shrink-0 space-y-2">
           {Object.entries(paramGroups).map(([groupLabel, params]) => (
             <div key={groupLabel}>
-              <p className="text-[9px] font-semibold text-white/25 uppercase tracking-wider px-1 mb-1">{groupLabel}</p>
+              <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider px-1 mb-1">{groupLabel}</p>
               {params.map(p => {
                 const hasEdits = (p.trajectory || []).some(pt => pt.isEdited);
                 return (
@@ -192,8 +192,8 @@ function StepTrajectory({ scenario, onUpdatePoint, onResetTrajectory, onBack, on
                     onClick={() => setActiveParam(p.id)}
                     className={`w-full text-left text-[11px] px-2 py-1.5 rounded border transition-colors ${
                       activeParam === p.id
-                        ? 'border-cyan-500/40 bg-cyan-500/10 text-cyan-300'
-                        : 'border-transparent text-white/45 hover:text-white/70 hover:bg-white/5'
+                        ? 'border-gray-400 bg-gray-100 text-gray-800'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                     }`}
                   >
                     <span className="truncate block">{p.label}</span>
@@ -218,14 +218,14 @@ function StepTrajectory({ scenario, onUpdatePoint, onResetTrajectory, onBack, on
         </div>
       </div>
 
-      <div className="flex items-center justify-between pt-4 mt-4 border-t border-white/8">
-        <button onClick={onBack} className="text-[12px] text-white/40 hover:text-white/70 flex items-center gap-1 transition-colors">
+      <div className="flex items-center justify-between pt-4 mt-4 border-t border-gray-200">
+        <button onClick={onBack} className="text-[12px] text-gray-500 hover:text-gray-700 flex items-center gap-1 transition-colors">
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
           Back
         </button>
-        <button onClick={onNext} className="px-4 py-2 rounded text-[12px] font-semibold flex items-center gap-2 bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/25 transition-colors">
+        <button onClick={onNext} className="px-4 py-2 rounded text-[12px] font-semibold flex items-center gap-2 bg-gray-200 text-gray-800 border border-gray-300 hover:bg-gray-300 transition-colors">
           Preview Impact
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -242,8 +242,8 @@ function StepPreview({ scenario, onBack, onNext }) {
   return (
     <div className="flex flex-col h-full">
       <div className="mb-4">
-        <h3 className="text-[15px] font-semibold text-white/90 mb-1">Impact Preview</h3>
-        <p className="text-[12px] text-white/40">
+        <h3 className="text-[15px] font-semibold text-gray-900 mb-1">Impact Preview</h3>
+        <p className="text-[12px] text-gray-500">
           Quick Monte Carlo estimate (~200 draws) showing how your scenario affects a representative 6-asset portfolio vs the NGFS Orderly baseline.
         </p>
       </div>
@@ -252,14 +252,14 @@ function StepPreview({ scenario, onBack, onNext }) {
         <ScenarioImpactPreviewPanel scenario={scenario} />
       </div>
 
-      <div className="flex items-center justify-between pt-4 mt-4 border-t border-white/8">
-        <button onClick={onBack} className="text-[12px] text-white/40 hover:text-white/70 flex items-center gap-1 transition-colors">
+      <div className="flex items-center justify-between pt-4 mt-4 border-t border-gray-200">
+        <button onClick={onBack} className="text-[12px] text-gray-500 hover:text-gray-700 flex items-center gap-1 transition-colors">
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
           Back
         </button>
-        <button onClick={onNext} className="px-4 py-2 rounded text-[12px] font-semibold flex items-center gap-2 bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/25 transition-colors">
+        <button onClick={onNext} className="px-4 py-2 rounded text-[12px] font-semibold flex items-center gap-2 bg-gray-200 text-gray-800 border border-gray-300 hover:bg-gray-300 transition-colors">
           Review & Publish
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -291,13 +291,13 @@ function StepReview({ scenario, setName, setDescription, setTags, saving, onSave
   return (
     <div className="flex flex-col h-full">
       <div className="mb-4">
-        <h3 className="text-[15px] font-semibold text-white/90 mb-1">Review & Publish</h3>
-        <p className="text-[12px] text-white/40">Name and describe your scenario, then save as draft or submit for approval.</p>
+        <h3 className="text-[15px] font-semibold text-gray-900 mb-1">Review & Publish</h3>
+        <p className="text-[12px] text-gray-500">Name and describe your scenario, then save as draft or submit for approval.</p>
       </div>
 
       <div className="flex-1 overflow-y-auto space-y-4">
         {/* Summary card */}
-        <div className="bg-[#0d1526] border border-white/8 rounded-lg p-3 flex items-start gap-3">
+        <div className="bg-white border border-gray-200 rounded-lg p-3 flex items-start gap-3">
           <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${familyMeta.bgClass} ${familyMeta.borderClass}`}>
             <svg className={`h-4 w-4 ${familyMeta.textClass}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
@@ -308,44 +308,44 @@ function StepReview({ scenario, setName, setDescription, setTags, saving, onSave
               <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border ${familyMeta.bgClass} ${familyMeta.textClass} ${familyMeta.borderClass}`}>
                 {scenario.ngfsFamily}
               </span>
-              <span className="text-[10px] text-white/35">Horizon: {scenario.timeHorizon}</span>
-              <span className="text-[10px] text-white/35">{modifiedParams.length} parameter{modifiedParams.length !== 1 ? 's' : ''} customised</span>
+              <span className="text-[10px] text-gray-500">Horizon: {scenario.timeHorizon}</span>
+              <span className="text-[10px] text-gray-500">{modifiedParams.length} parameter{modifiedParams.length !== 1 ? 's' : ''} customised</span>
             </div>
           </div>
         </div>
 
         {/* Name */}
         <div>
-          <label className="block text-[11px] font-medium text-white/55 mb-1.5">Scenario Name *</label>
+          <label className="block text-[11px] font-medium text-gray-500 mb-1.5">Scenario Name *</label>
           <input
             type="text"
             value={scenario.name}
             onChange={e => setName(e.target.value)}
             placeholder="e.g. High Carbon Price + Physical Risk Stress Test"
-            className="w-full px-3 py-2 text-[12px] bg-white/5 border border-white/10 rounded text-white/80 placeholder-white/20 focus:outline-none focus:border-cyan-500/40"
+            className="w-full px-3 py-2 text-[12px] bg-gray-50 border border-black/10 rounded text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500"
           />
         </div>
 
         {/* Description */}
         <div>
-          <label className="block text-[11px] font-medium text-white/55 mb-1.5">Description</label>
+          <label className="block text-[11px] font-medium text-gray-500 mb-1.5">Description</label>
           <textarea
             value={scenario.description}
             onChange={e => setDescription(e.target.value)}
             rows={3}
             placeholder="Describe the scenario's key assumptions, intended use, and regulatory alignment..."
-            className="w-full px-3 py-2 text-[12px] bg-white/5 border border-white/10 rounded text-white/80 placeholder-white/20 focus:outline-none focus:border-cyan-500/40 resize-none"
+            className="w-full px-3 py-2 text-[12px] bg-gray-50 border border-black/10 rounded text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 resize-none"
           />
         </div>
 
         {/* Tags */}
         <div>
-          <label className="block text-[11px] font-medium text-white/55 mb-1.5">Tags (press Enter to add)</label>
+          <label className="block text-[11px] font-medium text-gray-500 mb-1.5">Tags (press Enter to add)</label>
           <div className="flex flex-wrap gap-1.5 mb-1.5">
             {scenario.tags.map(t => (
-              <span key={t} className="flex items-center gap-1 text-[10px] text-cyan-400/80 bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded">
+              <span key={t} className="flex items-center gap-1 text-[10px] text-gray-700 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded">
                 {t}
-                <button onClick={() => removeTag(t)} className="text-cyan-400/50 hover:text-cyan-400/90">
+                <button onClick={() => removeTag(t)} className="text-gray-500 hover:text-gray-700">
                   <svg className="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -359,24 +359,24 @@ function StepReview({ scenario, setName, setDescription, setTags, saving, onSave
             onChange={e => setTagInput(e.target.value)}
             onKeyDown={handleAddTag}
             placeholder="Type a tag and press Enter..."
-            className="w-full px-3 py-2 text-[12px] bg-white/5 border border-white/10 rounded text-white/80 placeholder-white/20 focus:outline-none focus:border-cyan-500/40"
+            className="w-full px-3 py-2 text-[12px] bg-gray-50 border border-black/10 rounded text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500"
           />
         </div>
 
         {/* Modified params summary */}
         {modifiedParams.length > 0 && (
           <div>
-            <p className="text-[11px] font-medium text-white/50 mb-2">Customised Parameters ({modifiedParams.length})</p>
-            <div className="bg-[#080e1c] rounded-lg p-2 space-y-1">
+            <p className="text-[11px] font-medium text-gray-500 mb-2">Customised Parameters ({modifiedParams.length})</p>
+            <div className="bg-white rounded-lg p-2 space-y-1">
               {modifiedParams.slice(0, 8).map(p => {
                 const baseline = p.trajectories?.[scenario.ngfsFamily]?.[scenario.timeHorizon] ?? p.baseline;
                 const delta = p.value - baseline;
                 const pct = baseline !== 0 ? (delta / Math.abs(baseline)) * 100 : 0;
                 return (
                   <div key={p.id} className="flex items-center justify-between text-[10px]">
-                    <span className="text-white/50">{p.label}</span>
+                    <span className="text-gray-500">{p.label}</span>
                     <div className="flex items-center gap-1.5">
-                      <span className="font-mono text-white/65">{p.value?.toFixed(2)} {p.unit}</span>
+                      <span className="font-mono text-gray-600">{p.value?.toFixed(2)} {p.unit}</span>
                       <span className={`font-semibold ${delta > 0 ? 'text-amber-400' : 'text-emerald-400'}`}>
                         {delta > 0 ? '+' : ''}{pct.toFixed(1)}%
                       </span>
@@ -385,7 +385,7 @@ function StepReview({ scenario, setName, setDescription, setTags, saving, onSave
                 );
               })}
               {modifiedParams.length > 8 && (
-                <p className="text-[9px] text-white/25">+{modifiedParams.length - 8} more</p>
+                <p className="text-[9px] text-gray-400">+{modifiedParams.length - 8} more</p>
               )}
             </div>
           </div>
@@ -393,8 +393,8 @@ function StepReview({ scenario, setName, setDescription, setTags, saving, onSave
       </div>
 
       {/* Actions */}
-      <div className="flex items-center justify-between pt-4 mt-4 border-t border-white/8">
-        <button onClick={onBack} className="text-[12px] text-white/40 hover:text-white/70 flex items-center gap-1 transition-colors">
+      <div className="flex items-center justify-between pt-4 mt-4 border-t border-gray-200">
+        <button onClick={onBack} className="text-[12px] text-gray-500 hover:text-gray-700 flex items-center gap-1 transition-colors">
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
@@ -404,7 +404,7 @@ function StepReview({ scenario, setName, setDescription, setTags, saving, onSave
           <button
             onClick={onSaveDraft}
             disabled={saving}
-            className="px-3.5 py-2 rounded text-[12px] font-medium flex items-center gap-1.5 bg-white/5 text-white/65 border border-white/10 hover:bg-white/10 transition-colors disabled:opacity-40"
+            className="px-3.5 py-2 rounded text-[12px] font-medium flex items-center gap-1.5 bg-gray-50 text-gray-600 border border-black/10 hover:bg-gray-100 transition-colors disabled:opacity-40"
           >
             {saving ? (
               <svg className="h-3.5 w-3.5 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -416,7 +416,7 @@ function StepReview({ scenario, setName, setDescription, setTags, saving, onSave
           <button
             onClick={onPublish}
             disabled={saving || !scenario.name?.trim()}
-            className="px-4 py-2 rounded text-[12px] font-semibold flex items-center gap-2 bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 hover:bg-cyan-500/30 transition-colors disabled:opacity-40"
+            className="px-4 py-2 rounded text-[12px] font-semibold flex items-center gap-2 bg-gray-100 text-gray-800 border border-gray-400 hover:bg-gray-300 transition-colors disabled:opacity-40"
           >
             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />

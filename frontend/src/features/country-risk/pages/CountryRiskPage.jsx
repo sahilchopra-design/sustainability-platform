@@ -26,15 +26,15 @@ const COMPARE_COLORS = ['#06b6d4', '#8b5cf6', '#f59e0b', '#ec4899', '#10b981'];
 /* ── Reusable Components ───────────────────────────────────────────────────── */
 function Card({ title, subtitle, badge, children, className = '' }) {
   return (
-    <div className={`bg-[#0d1424] rounded-xl border border-white/[0.06] shadow-sm ${className}`}>
+    <div className={`bg-white rounded-xl border border-gray-200 shadow-sm ${className}`}>
       {(title || subtitle) && (
-        <div className="px-6 py-4 border-b border-white/[0.04] flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <div>
-            {title && <h2 className="text-sm font-semibold text-white/90">{title}</h2>}
-            {subtitle && <p className="text-xs text-white/40 mt-0.5">{subtitle}</p>}
+            {title && <h2 className="text-sm font-semibold text-gray-900">{title}</h2>}
+            {subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}
           </div>
           {badge && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-700 border border-gray-200">
               {badge}
             </span>
           )}
@@ -45,15 +45,15 @@ function Card({ title, subtitle, badge, children, className = '' }) {
   );
 }
 
-function StatCard({ label, value, unit, sub, color = 'text-white' }) {
+function StatCard({ label, value, unit, sub, color = 'text-gray-900' }) {
   return (
-    <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] shadow-sm p-5">
-      <p className="text-xs text-white/40 font-medium mb-1">{label}</p>
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+      <p className="text-xs text-gray-500 font-medium mb-1">{label}</p>
       <p className={`text-2xl font-bold ${color}`}>
         {typeof value === 'number' ? value.toLocaleString(undefined, { maximumFractionDigits: 1 }) : value}
-        {unit && <span className="text-sm font-normal text-white/40 ml-1">{unit}</span>}
+        {unit && <span className="text-sm font-normal text-gray-500 ml-1">{unit}</span>}
       </p>
-      {sub && <p className="text-[11px] text-white/30 mt-1">{sub}</p>}
+      {sub && <p className="text-[11px] text-gray-500 mt-1">{sub}</p>}
     </div>
   );
 }
@@ -61,22 +61,22 @@ function StatCard({ label, value, unit, sub, color = 'text-white' }) {
 function Spinner() {
   return (
     <div className="flex items-center justify-center py-20">
-      <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+      <div className="w-8 h-8 border-2 border-black border-t-transparent rounded-full animate-spin" />
     </div>
   );
 }
 
 function TabPill({ tabs, active, onChange }) {
   return (
-    <div className="inline-flex bg-[#0a0f1e] rounded-lg p-1 border border-white/[0.06] flex-wrap">
+    <div className="inline-flex bg-[#f0f0f0] rounded-lg p-1 border border-gray-200 flex-wrap">
       {tabs.map(t => (
         <button
           key={t.id}
           onClick={() => onChange(t.id)}
           className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${
             active === t.id
-              ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
-              : 'text-white/40 hover:text-white/60'
+              ? 'bg-gray-100 text-gray-700 border border-gray-300'
+              : 'text-gray-500 hover:text-gray-600'
           }`}
         >
           {t.label}
@@ -204,8 +204,8 @@ export default function CountryRiskPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-white/90">Country Risk & Governance</h1>
-          <p className="text-sm text-white/40 mt-1">
+          <h1 className="text-xl font-bold text-gray-900">Country Risk & Governance</h1>
+          <p className="text-sm text-gray-500 mt-1">
             {indices.length} indices covering {totalRecords.toLocaleString()} country-year records
           </p>
         </div>
@@ -232,7 +232,7 @@ export default function CountryRiskPage() {
             {indices.map(idx => (
               <div
                 key={idx.index_name}
-                className="bg-[#0d1424] rounded-xl border border-white/[0.06] shadow-sm p-5 cursor-pointer hover:border-cyan-500/20 transition-colors"
+                className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 cursor-pointer hover:border-gray-200 transition-colors"
                 onClick={() => { setSelectedIndex(idx.index_name); setTab('rankings'); }}
               >
                 <div className="flex items-center justify-between mb-2">
@@ -246,28 +246,28 @@ export default function CountryRiskPage() {
                   >
                     {idx.index_name}
                   </span>
-                  <span className="text-[10px] text-white/30">{idx.category}</span>
+                  <span className="text-[10px] text-gray-500">{idx.category}</span>
                 </div>
-                <p className="text-sm font-semibold text-white/80 mb-1">{idx.full_name}</p>
-                <p className="text-[10px] text-white/30">{idx.source}</p>
-                <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/[0.04]">
+                <p className="text-sm font-semibold text-gray-800 mb-1">{idx.full_name}</p>
+                <p className="text-[10px] text-gray-500">{idx.source}</p>
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-200">
                   <div>
-                    <p className="text-lg font-bold text-white/80">{idx.country_count}</p>
-                    <p className="text-[10px] text-white/30">countries</p>
+                    <p className="text-lg font-bold text-gray-800">{idx.country_count}</p>
+                    <p className="text-[10px] text-gray-500">countries</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-bold text-white/60">{idx.year_range?.min}–{idx.year_range?.max}</p>
-                    <p className="text-[10px] text-white/30">{idx.record_count?.toLocaleString()} records</p>
+                    <p className="text-sm font-bold text-gray-600">{idx.year_range?.min}–{idx.year_range?.max}</p>
+                    <p className="text-[10px] text-gray-500">{idx.record_count?.toLocaleString()} records</p>
                   </div>
                 </div>
-                <p className="text-[10px] text-white/20 mt-2">{idx.scale}</p>
+                <p className="text-[10px] text-gray-400 mt-2">{idx.scale}</p>
               </div>
             ))}
           </div>
 
           {/* Total Stats */}
           <div className="grid grid-cols-3 gap-4">
-            <StatCard label="Total Records" value={totalRecords} color="text-cyan-400" />
+            <StatCard label="Total Records" value={totalRecords} color="text-gray-700" />
             <StatCard label="Indices Available" value={indices.length} color="text-violet-400" />
             <StatCard
               label="Max Country Coverage"
@@ -284,15 +284,15 @@ export default function CountryRiskPage() {
         <div className="space-y-4">
           <Card>
             <div className="flex items-center gap-4">
-              <label className="text-xs text-white/40">Index:</label>
+              <label className="text-xs text-gray-500">Index:</label>
               {Object.keys(INDEX_COLORS).map(idx => (
                 <button
                   key={idx}
                   onClick={() => setSelectedIndex(idx)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${
                     selectedIndex === idx
-                      ? 'border-cyan-500/30 bg-cyan-500/10 text-cyan-400'
-                      : 'border-white/[0.06] text-white/40 hover:text-white/60'
+                      ? 'border-gray-300 bg-gray-100 text-gray-700'
+                      : 'border-gray-200 text-gray-500 hover:text-gray-600'
                   }`}
                 >
                   {idx}
@@ -304,10 +304,10 @@ export default function CountryRiskPage() {
           {rankingsLoading ? <Spinner /> : rankings && (
             <>
               <div className="flex items-center justify-between">
-                <p className="text-xs text-white/40">
+                <p className="text-xs text-gray-500">
                   {rankings.full_name} — {rankings.year} — Top 50 of {rankings.total} countries
                 </p>
-                <p className="text-[10px] text-white/20">{rankings.scale}</p>
+                <p className="text-[10px] text-gray-400">{rankings.scale}</p>
               </div>
 
               {/* Bar Chart */}
@@ -328,7 +328,7 @@ export default function CountryRiskPage() {
                       tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
                     />
                     <Tooltip
-                      contentStyle={{ background: '#0d1424', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }}
+                      contentStyle={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 8 }}
                       itemStyle={{ color: '#e2e8f0' }}
                     />
                     <Bar
@@ -345,31 +345,31 @@ export default function CountryRiskPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead>
-                      <tr className="border-b border-white/[0.06]">
-                        <th className="text-left py-3 px-3 text-white/40 font-medium w-12">#</th>
-                        <th className="text-left py-3 px-3 text-white/40 font-medium">Country</th>
-                        <th className="text-left py-3 px-3 text-white/40 font-medium w-16">ISO3</th>
-                        <th className="text-right py-3 px-3 text-white/40 font-medium w-20">Score</th>
-                        <th className="text-center py-3 px-3 text-white/40 font-medium w-16">Rank</th>
-                        <th className="text-center py-3 px-3 text-white/40 font-medium w-20">Action</th>
+                      <tr className="border-b border-gray-200">
+                        <th className="text-left py-3 px-3 text-gray-500 font-medium w-12">#</th>
+                        <th className="text-left py-3 px-3 text-gray-500 font-medium">Country</th>
+                        <th className="text-left py-3 px-3 text-gray-500 font-medium w-16">ISO3</th>
+                        <th className="text-right py-3 px-3 text-gray-500 font-medium w-20">Score</th>
+                        <th className="text-center py-3 px-3 text-gray-500 font-medium w-16">Rank</th>
+                        <th className="text-center py-3 px-3 text-gray-500 font-medium w-20">Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       {(rankings.rankings || []).map(r => (
-                        <tr key={r.country_iso3} className="border-b border-white/[0.03] hover:bg-white/[0.02]">
-                          <td className="py-2 px-3 text-white/30">{r.rank}</td>
-                          <td className="py-2 px-3 text-white/80 font-medium">{r.country_name}</td>
-                          <td className="py-2 px-3 text-white/40 font-mono text-[10px]">{r.country_iso3}</td>
+                        <tr key={r.country_iso3} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="py-2 px-3 text-gray-500">{r.rank}</td>
+                          <td className="py-2 px-3 text-gray-800 font-medium">{r.country_name}</td>
+                          <td className="py-2 px-3 text-gray-500 font-mono text-[10px]">{r.country_iso3}</td>
                           <td className="py-2 px-3 text-right">
                             <span className="font-bold" style={{ color: INDEX_COLORS[rankings.index_name] || '#e2e8f0' }}>
                               {r.score?.toFixed(1)}
                             </span>
                           </td>
-                          <td className="py-2 px-3 text-center text-white/40">{r.original_rank || r.rank}</td>
+                          <td className="py-2 px-3 text-center text-gray-500">{r.original_rank || r.rank}</td>
                           <td className="py-2 px-3 text-center">
                             <button
                               onClick={() => { setProfileIso(r.country_iso3); setTab('profile'); }}
-                              className="text-cyan-400 hover:text-cyan-300 text-[10px] font-medium"
+                              className="text-gray-700 hover:text-gray-800 text-[10px] font-medium"
                             >
                               Profile
                             </button>
@@ -391,19 +391,19 @@ export default function CountryRiskPage() {
           <Card>
             <div className="flex items-end gap-3">
               <div className="flex-1 max-w-xs">
-                <label className="text-[10px] text-white/40 font-medium block mb-1">Country ISO3 Code</label>
+                <label className="text-[10px] text-gray-500 font-medium block mb-1">Country ISO3 Code</label>
                 <input
                   type="text"
                   value={profileIso}
                   onChange={e => setProfileIso(e.target.value.toUpperCase().slice(0, 3))}
                   placeholder="e.g. GBR, USA, DEU"
-                  className="w-full bg-[#080e1c] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white/80 font-mono placeholder:text-white/20 focus:outline-none focus:border-cyan-500/40"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 font-mono placeholder:text-gray-400 focus:outline-none focus:border-blue-500"
                   maxLength={3}
                 />
               </div>
               <button
                 onClick={loadProfile}
-                className="px-4 py-2 text-xs font-medium bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/30 transition-colors"
+                className="px-4 py-2 text-xs font-medium bg-gray-100 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-300 transition-colors"
               >
                 Load Profile
               </button>
@@ -413,10 +413,10 @@ export default function CountryRiskPage() {
           {profileLoading ? <Spinner /> : profileData && (
             <>
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-white/90">
+                <h2 className="text-lg font-bold text-gray-900">
                   {profileData.country_name} ({profileData.country_iso3})
                 </h2>
-                <span className="text-[10px] text-white/30">{profileData.indices?.length || 0} indices available</span>
+                <span className="text-[10px] text-gray-500">{profileData.indices?.length || 0} indices available</span>
               </div>
 
               {/* Latest Scores Overview */}
@@ -424,7 +424,7 @@ export default function CountryRiskPage() {
                 {(profileData.indices || []).map(idx => (
                   <div
                     key={idx.index_name}
-                    className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-5"
+                    className="bg-white rounded-xl border border-gray-200 p-5"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span
@@ -437,14 +437,14 @@ export default function CountryRiskPage() {
                       >
                         {idx.index_name}
                       </span>
-                      <span className="text-[10px] text-white/30">{idx.latest_year}</span>
+                      <span className="text-[10px] text-gray-500">{idx.latest_year}</span>
                     </div>
                     <p className="text-2xl font-bold" style={{ color: INDEX_COLORS[idx.index_name] || '#e2e8f0' }}>
                       {idx.latest_score?.toFixed(1) || 'N/A'}
                     </p>
-                    <p className="text-[10px] text-white/30 mt-1">{idx.full_name}</p>
+                    <p className="text-[10px] text-gray-500 mt-1">{idx.full_name}</p>
                     {idx.latest_rank && (
-                      <p className="text-xs text-white/50 mt-1">Rank #{idx.latest_rank}</p>
+                      <p className="text-xs text-gray-500 mt-1">Rank #{idx.latest_rank}</p>
                     )}
                   </div>
                 ))}
@@ -463,7 +463,7 @@ export default function CountryRiskPage() {
                       <XAxis dataKey="year" stroke="rgba(255,255,255,0.2)" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10 }} />
                       <YAxis stroke="rgba(255,255,255,0.2)" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10 }} />
                       <Tooltip
-                        contentStyle={{ background: '#0d1424', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }}
+                        contentStyle={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 8 }}
                         itemStyle={{ color: '#e2e8f0' }}
                       />
                       <Line
@@ -483,11 +483,11 @@ export default function CountryRiskPage() {
                 <Card title="Coal Plant Capacity" subtitle="GEM Coal Plant Tracker">
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                     {Object.entries(profileData.coal_capacity).map(([kpi, d]) => (
-                      <div key={kpi} className="bg-[#080e1c] rounded-lg p-3 border border-white/[0.04]">
-                        <p className="text-[10px] text-white/40 mb-1 truncate">{kpi.replace(/coal_capacity_/g, '').replace(/_/g, ' ')}</p>
+                      <div key={kpi} className="bg-white rounded-lg p-3 border border-gray-200">
+                        <p className="text-[10px] text-gray-500 mb-1 truncate">{kpi.replace(/coal_capacity_/g, '').replace(/_/g, ' ')}</p>
                         <p className="text-lg font-bold text-amber-400">
                           {d.value?.toLocaleString() || 0}
-                          <span className="text-xs font-normal text-white/30 ml-1">{d.unit}</span>
+                          <span className="text-xs font-normal text-gray-500 ml-1">{d.unit}</span>
                         </p>
                       </div>
                     ))}
@@ -525,12 +525,12 @@ export default function CountryRiskPage() {
                         strokeWidth={2}
                       />
                       <Tooltip
-                        contentStyle={{ background: '#0d1424', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }}
+                        contentStyle={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 8 }}
                         itemStyle={{ color: '#e2e8f0' }}
                       />
                     </RadarChart>
                   </ResponsiveContainer>
-                  <p className="text-[10px] text-white/20 mt-2 text-center">
+                  <p className="text-[10px] text-gray-400 mt-2 text-center">
                     Higher = better governance. FSI, FH_FIW, and UNDP_GII scores inverted for comparability.
                   </p>
                 </Card>
@@ -546,7 +546,7 @@ export default function CountryRiskPage() {
           <Card>
             <div className="flex items-end gap-3 flex-wrap">
               <div className="flex-1 min-w-[280px]">
-                <label className="text-[10px] text-white/40 font-medium block mb-1">
+                <label className="text-[10px] text-gray-500 font-medium block mb-1">
                   Countries (comma-separated ISO3)
                 </label>
                 <input
@@ -554,15 +554,15 @@ export default function CountryRiskPage() {
                   value={compareInput}
                   onChange={e => setCompareInput(e.target.value.toUpperCase())}
                   placeholder="GBR,DEU,FRA,USA,JPN"
-                  className="w-full bg-[#080e1c] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white/80 font-mono placeholder:text-white/20 focus:outline-none focus:border-cyan-500/40"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 font-mono placeholder:text-gray-400 focus:outline-none focus:border-blue-500"
                 />
               </div>
               <div className="w-40">
-                <label className="text-[10px] text-white/40 font-medium block mb-1">Index (optional)</label>
+                <label className="text-[10px] text-gray-500 font-medium block mb-1">Index (optional)</label>
                 <select
                   value={compareIndex}
                   onChange={e => setCompareIndex(e.target.value)}
-                  className="w-full bg-[#080e1c] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white/80 focus:outline-none focus:border-cyan-500/40"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-blue-500"
                 >
                   <option value="">All Indices</option>
                   {indices.map(i => (
@@ -572,7 +572,7 @@ export default function CountryRiskPage() {
               </div>
               <button
                 onClick={loadCompare}
-                className="px-4 py-2 text-xs font-medium bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/30 transition-colors"
+                className="px-4 py-2 text-xs font-medium bg-gray-100 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-300 transition-colors"
               >
                 Compare
               </button>
@@ -605,7 +605,7 @@ export default function CountryRiskPage() {
                         <XAxis dataKey="country" stroke="rgba(255,255,255,0.2)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }} />
                         <YAxis stroke="rgba(255,255,255,0.2)" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10 }} />
                         <Tooltip
-                          contentStyle={{ background: '#0d1424', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }}
+                          contentStyle={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 8 }}
                           itemStyle={{ color: '#e2e8f0' }}
                           formatter={(v, n, p) => [`Score: ${v?.toFixed(1)}, Rank: ${p.payload.rank || '-'}`, idxName]}
                         />
@@ -621,19 +621,19 @@ export default function CountryRiskPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead>
-                      <tr className="border-b border-white/[0.06]">
-                        <th className="text-left py-3 px-3 text-white/40 font-medium">Country</th>
+                      <tr className="border-b border-gray-200">
+                        <th className="text-left py-3 px-3 text-gray-500 font-medium">Country</th>
                         {(compareData.indices_included || []).map(idx => (
-                          <th key={idx} className="text-center py-3 px-3 text-white/40 font-medium">{idx}</th>
+                          <th key={idx} className="text-center py-3 px-3 text-gray-500 font-medium">{idx}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
                       {(compareData.countries || []).map((c, ci) => (
-                        <tr key={c.country_iso3} className="border-b border-white/[0.03] hover:bg-white/[0.02]">
-                          <td className="py-2 px-3 text-white/80 font-medium">
+                        <tr key={c.country_iso3} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="py-2 px-3 text-gray-800 font-medium">
                             {c.country_name}
-                            <span className="text-white/30 ml-1 font-mono text-[10px]">({c.country_iso3})</span>
+                            <span className="text-gray-500 ml-1 font-mono text-[10px]">({c.country_iso3})</span>
                           </td>
                           {(compareData.indices_included || []).map(idx => {
                             const d = c.indices?.[idx];
@@ -645,10 +645,10 @@ export default function CountryRiskPage() {
                                       {d.latest.score?.toFixed(1)}
                                     </span>
                                     {d.latest.rank && (
-                                      <span className="text-white/20 text-[10px] ml-1">#{d.latest.rank}</span>
+                                      <span className="text-gray-400 text-[10px] ml-1">#{d.latest.rank}</span>
                                     )}
                                   </div>
-                                ) : <span className="text-white/20">-</span>}
+                                ) : <span className="text-gray-400">-</span>}
                               </td>
                             );
                           })}
@@ -669,13 +669,13 @@ export default function CountryRiskPage() {
           <Card>
             <div className="flex items-end gap-3">
               <div className="flex-1 max-w-xs">
-                <label className="text-[10px] text-white/40 font-medium block mb-1">Search Country</label>
+                <label className="text-[10px] text-gray-500 font-medium block mb-1">Search Country</label>
                 <input
                   type="text"
                   value={coalSearch}
                   onChange={e => setCoalSearch(e.target.value)}
                   placeholder="Country name..."
-                  className="w-full bg-[#080e1c] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white/80 placeholder:text-white/20 focus:outline-none focus:border-cyan-500/40"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-blue-500"
                 />
               </div>
               <button
@@ -689,7 +689,7 @@ export default function CountryRiskPage() {
 
           {coalData && (
             <>
-              <p className="text-xs text-white/40">{coalData.total_countries} countries returned</p>
+              <p className="text-xs text-gray-500">{coalData.total_countries} countries returned</p>
 
               {/* Coal Bar Chart — top countries by operating capacity */}
               <Card title="Coal Capacity by Country" subtitle="GEM Coal Plant Tracker — operating capacity">
@@ -717,11 +717,11 @@ export default function CountryRiskPage() {
                       tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
                     />
                     <Tooltip
-                      contentStyle={{ background: '#0d1424', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }}
+                      contentStyle={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 8 }}
                       itemStyle={{ color: '#e2e8f0' }}
                       formatter={v => `${v?.toLocaleString()} MW`}
                     />
-                    <Legend wrapperStyle={{ color: 'rgba(255,255,255,0.5)', fontSize: 11 }} />
+                    <Legend wrapperStyle={{ color: 'rgba(0,0,0,0.5)', fontSize: 11 }} />
                     <Bar dataKey="operating" name="Operating" fill="#ef4444" stackId="a" radius={[0, 0, 0, 0]} />
                     <Bar dataKey="construction" name="Construction" fill="#f59e0b" stackId="a" />
                     <Bar dataKey="announced" name="Announced" fill="#64748b" stackId="a" radius={[0, 4, 4, 0]} />
@@ -734,32 +734,32 @@ export default function CountryRiskPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead>
-                      <tr className="border-b border-white/[0.06]">
-                        <th className="text-left py-3 px-3 text-white/40 font-medium">Country</th>
-                        <th className="text-right py-3 px-3 text-white/40 font-medium">Operating (MW)</th>
-                        <th className="text-right py-3 px-3 text-white/40 font-medium">Construction</th>
-                        <th className="text-right py-3 px-3 text-white/40 font-medium">Announced</th>
-                        <th className="text-right py-3 px-3 text-white/40 font-medium">Retired</th>
-                        <th className="text-right py-3 px-3 text-white/40 font-medium">Cancelled</th>
+                      <tr className="border-b border-gray-200">
+                        <th className="text-left py-3 px-3 text-gray-500 font-medium">Country</th>
+                        <th className="text-right py-3 px-3 text-gray-500 font-medium">Operating (MW)</th>
+                        <th className="text-right py-3 px-3 text-gray-500 font-medium">Construction</th>
+                        <th className="text-right py-3 px-3 text-gray-500 font-medium">Announced</th>
+                        <th className="text-right py-3 px-3 text-gray-500 font-medium">Retired</th>
+                        <th className="text-right py-3 px-3 text-gray-500 font-medium">Cancelled</th>
                       </tr>
                     </thead>
                     <tbody>
                       {(coalData.countries || []).map(c => (
-                        <tr key={c.country} className="border-b border-white/[0.03] hover:bg-white/[0.02]">
-                          <td className="py-2 px-3 text-white/80 font-medium">{c.country}</td>
+                        <tr key={c.country} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="py-2 px-3 text-gray-800 font-medium">{c.country}</td>
                           <td className="py-2 px-3 text-right text-red-400 font-mono">
                             {(c.capacities?.coal_capacity_operating?.value_mw || 0).toLocaleString()}
                           </td>
                           <td className="py-2 px-3 text-right text-amber-400 font-mono">
                             {(c.capacities?.coal_capacity_construction?.value_mw || 0).toLocaleString()}
                           </td>
-                          <td className="py-2 px-3 text-right text-white/40 font-mono">
+                          <td className="py-2 px-3 text-right text-gray-500 font-mono">
                             {(c.capacities?.coal_capacity_announced?.value_mw || 0).toLocaleString()}
                           </td>
                           <td className="py-2 px-3 text-right text-emerald-400 font-mono">
                             {(c.capacities?.coal_capacity_retired_since_2010?.value_mw || 0).toLocaleString()}
                           </td>
-                          <td className="py-2 px-3 text-right text-cyan-400 font-mono">
+                          <td className="py-2 px-3 text-right text-gray-700 font-mono">
                             {(c.capacities?.coal_capacity_cancelled_since_2010?.value_mw || 0).toLocaleString()}
                           </td>
                         </tr>

@@ -248,7 +248,7 @@ export function BREEAMCalculator() {
   return (
     <div className="space-y-6">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-2 bg-[#0d1424] border border-white/[0.06]">
+        <TabsList className="grid w-full grid-cols-2 bg-white border border-gray-200">
           <TabsTrigger
             value="calculator"
             className="flex items-center gap-2 data-[state=active]:bg-blue-500/10 data-[state=active]:text-blue-300"
@@ -375,7 +375,7 @@ export function BREEAMCalculator() {
 
                 {/* Category Scores */}
                 <div className="border-t pt-4">
-                  <h3 className="font-medium text-white/90 mb-4 flex items-center gap-2">
+                  <h3 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
                     <BarChart3 className="h-4 w-4" />
                     Category Scores (0-100)
                   </h3>
@@ -438,7 +438,7 @@ export function BREEAMCalculator() {
                       {previewScore.toFixed(1)}%
                     </div>
                     <Badge 
-                      className={`${previewRating.bg} text-white text-sm px-3 py-1`}
+                      className={`${previewRating.bg} text-gray-900 text-sm px-3 py-1`}
                       data-testid="breeam-preview-rating"
                     >
                       {previewRating.label}
@@ -447,7 +447,7 @@ export function BREEAMCalculator() {
                       value={previewScore} 
                       className="h-2"
                     />
-                    <div className="flex justify-between text-xs text-white/40">
+                    <div className="flex justify-between text-xs text-gray-500">
                       <span>Pass 30%</span>
                       <span>Outstanding 85%</span>
                     </div>
@@ -471,7 +471,7 @@ export function BREEAMCalculator() {
                           />
                           <span>{val.label}</span>
                         </div>
-                        <span className="text-white/40">≥{val.min}%</span>
+                        <span className="text-gray-500">≥{val.min}%</span>
                       </div>
                     ))}
                   </div>
@@ -522,13 +522,13 @@ export function BREEAMCalculator() {
                       <div className="text-3xl font-bold text-blue-300">
                         {parseFloat(breeamResult.weighted_score || previewScore).toFixed(1)}%
                       </div>
-                      <div className="text-sm text-white/60">Weighted Score</div>
+                      <div className="text-sm text-gray-600">Weighted Score</div>
                     </div>
                     <div className="bg-emerald-500/10 p-4 rounded-lg text-center">
-                      <Badge className={`${getRatingFromScore(parseFloat(breeamResult.weighted_score) || previewScore).bg} text-white`}>
+                      <Badge className={`${getRatingFromScore(parseFloat(breeamResult.weighted_score) || previewScore).bg} text-gray-900`}>
                         {breeamResult.rating?.replace('_', ' ').toUpperCase() || previewRating.label}
                       </Badge>
-                      <div className="text-sm text-white/60 mt-2">Rating Level</div>
+                      <div className="text-sm text-gray-600 mt-2">Rating Level</div>
                     </div>
                   </div>
 
@@ -545,20 +545,20 @@ export function BREEAMCalculator() {
 
                   <div className="grid grid-cols-2 gap-4 pt-2">
                     <div>
-                      <div className="text-sm text-white/40">Rent Premium</div>
+                      <div className="text-sm text-gray-500">Rent Premium</div>
                       <div className="text-lg font-semibold text-emerald-400">
                         +{parseFloat(breeamResult.estimated_rent_premium_percent || 7.5).toFixed(1)}%
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-white/40">Value Premium</div>
+                      <div className="text-sm text-gray-500">Value Premium</div>
                       <div className="text-lg font-semibold text-emerald-400">
                         +{parseFloat(breeamResult.estimated_value_premium_percent || 12.8).toFixed(1)}%
                       </div>
                     </div>
                     {breeamResult.estimated_value_impact && (
                       <div className="col-span-2">
-                        <div className="text-sm text-white/40">Estimated Value Impact</div>
+                        <div className="text-sm text-gray-500">Estimated Value Impact</div>
                         <div className="text-xl font-bold text-blue-300">
                           {formatCurrency(breeamResult.estimated_value_impact)}
                         </div>
@@ -654,7 +654,7 @@ export function BREEAMCalculator() {
                               {item.priority}
                             </Badge>
                           </div>
-                          <div className="text-xs text-white/60">
+                          <div className="text-xs text-gray-600">
                             Current: {item.current_score} → Target: {item.target_score}
                           </div>
                           <div className="text-xs text-emerald-400 font-medium">
@@ -781,29 +781,29 @@ export function BREEAMCalculator() {
                       <div className="text-2xl font-bold text-blue-300">
                         {parseFloat(breeamResult?.weighted_score || previewScore).toFixed(1)}%
                       </div>
-                      <Badge className={`${previewRating.bg} text-white mt-2`}>
+                      <Badge className={`${previewRating.bg} text-gray-900 mt-2`}>
                         {breeamResult?.rating?.replace('_', ' ').toUpperCase() || previewRating.label}
                       </Badge>
                     </div>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-white/40">Rent Premium</span>
+                        <span className="text-gray-500">Rent Premium</span>
                         <span className="font-medium text-emerald-400">
                           +{parseFloat(breeamResult?.estimated_rent_premium_percent || 7.5).toFixed(1)}%
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-white/40">Value Premium</span>
+                        <span className="text-gray-500">Value Premium</span>
                         <span className="font-medium text-emerald-400">
                           +{parseFloat(breeamResult?.estimated_value_premium_percent || 12.8).toFixed(1)}%
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-white/40">Market Focus</span>
+                        <span className="text-gray-500">Market Focus</span>
                         <span className="font-medium">Europe, UK</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-white/40">Categories</span>
+                        <span className="text-gray-500">Categories</span>
                         <span className="font-medium">10</span>
                       </div>
                     </div>
@@ -817,7 +817,7 @@ export function BREEAMCalculator() {
                         {leedResult?.total_points || leedTotalPoints}/110
                       </div>
                       <Badge 
-                        className="text-white mt-2"
+                        className="text-gray-900 mt-2"
                         style={{ backgroundColor: leedLevel.color }}
                       >
                         {leedResult?.certification_level?.toUpperCase() || leedLevel.label.toUpperCase()}
@@ -825,23 +825,23 @@ export function BREEAMCalculator() {
                     </div>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-white/40">Rent Premium</span>
+                        <span className="text-gray-500">Rent Premium</span>
                         <span className="font-medium text-emerald-400">
                           +{parseFloat(leedResult?.estimated_rent_premium_percent || 9.0).toFixed(1)}%
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-white/40">Value Premium</span>
+                        <span className="text-gray-500">Value Premium</span>
                         <span className="font-medium text-emerald-400">
                           +{parseFloat(leedResult?.estimated_value_premium_percent || 15.3).toFixed(1)}%
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-white/40">Market Focus</span>
+                        <span className="text-gray-500">Market Focus</span>
                         <span className="font-medium">Americas, Global</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-white/40">Categories</span>
+                        <span className="text-gray-500">Categories</span>
                         <span className="font-medium">9</span>
                       </div>
                     </div>
@@ -870,7 +870,7 @@ export function BREEAMCalculator() {
                       {region === 'europe' ? 'BREEAM Recommended' : 'LEED Recommended'}
                     </span>
                   </div>
-                  <p className="text-sm text-white/60">
+                  <p className="text-sm text-gray-600">
                     {region === 'europe' 
                       ? 'For European markets, BREEAM has stronger recognition and typically commands higher premiums.'
                       : 'For North American markets, LEED is the dominant certification with highest market recognition.'
@@ -879,8 +879,8 @@ export function BREEAMCalculator() {
                 </div>
 
                 <div className="space-y-2 text-sm">
-                  <div className="font-medium text-white/70">Key Differences:</div>
-                  <ul className="space-y-1 text-white/60">
+                  <div className="font-medium text-gray-700">Key Differences:</div>
+                  <ul className="space-y-1 text-gray-600">
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span>BREEAM: Percentage-based scoring (0-100%)</span>

@@ -86,7 +86,7 @@ export function ENCOREExplorer() {
   return (
     <div className="space-y-6" data-testid="encore-explorer">
       {/* Header */}
-      <Card className="bg-[#0d1424] dark:bg-[#111827]">
+      <Card className="bg-white dark:bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Leaf className="h-5 w-5 text-emerald-400" />
@@ -108,7 +108,7 @@ export function ENCOREExplorer() {
                   {sectors.map(sector => (
                     <SelectItem key={sector.code} value={sector.code}>
                       <div className="flex items-center gap-2">
-                        <Building2 className="h-4 w-4 text-white/30" />
+                        <Building2 className="h-4 w-4 text-gray-500" />
                         {sector.name}
                       </div>
                     </SelectItem>
@@ -135,29 +135,29 @@ export function ENCOREExplorer() {
       {/* Ecosystem Services Overview */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {ecosystemServices.slice(0, 5).map(service => (
-          <Card key={service.id} className="bg-[#0d1424] dark:bg-[#111827]">
+          <Card key={service.id} className="bg-white dark:bg-white">
             <CardContent className="pt-4">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-2 h-2 rounded-full bg-emerald-500" />
                 <span className="text-xs font-medium truncate">{service.name}</span>
               </div>
-              <p className="text-xs text-white/40">{service.category}</p>
+              <p className="text-xs text-gray-500">{service.category}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
       {loading ? (
-        <Card className="bg-[#0d1424] dark:bg-[#111827]">
+        <Card className="bg-white dark:bg-white">
           <CardContent className="py-12 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto"></div>
-            <p className="text-white/40 mt-2">Loading ENCORE data...</p>
+            <p className="text-gray-500 mt-2">Loading ENCORE data...</p>
           </CardContent>
         </Card>
       ) : selectedSector ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Service Scores */}
-          <Card className="bg-[#0d1424] dark:bg-[#111827]">
+          <Card className="bg-white dark:bg-white">
             <CardHeader>
               <CardTitle className="text-lg">Ecosystem Service Dependencies</CardTitle>
               <CardDescription>
@@ -178,7 +178,7 @@ export function ENCOREExplorer() {
                         </Badge>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className={`text-xs font-medium px-2 py-0.5 rounded ${DEPENDENCY_COLORS[Math.round(avgScore)]} text-white`}>
+                        <span className={`text-xs font-medium px-2 py-0.5 rounded ${DEPENDENCY_COLORS[Math.round(avgScore)]} text-gray-900`}>
                           {DEPENDENCY_LABELS[Math.round(avgScore)] || 'N/A'}
                         </span>
                         <span className="text-sm font-mono">{avgScore.toFixed(1)}</span>
@@ -192,7 +192,7 @@ export function ENCOREExplorer() {
                 ))}
 
                 {serviceScores.length === 0 && (
-                  <div className="text-center py-8 text-white/40">
+                  <div className="text-center py-8 text-gray-500">
                     No dependency data available for this sector
                   </div>
                 )}
@@ -201,7 +201,7 @@ export function ENCOREExplorer() {
           </Card>
 
           {/* Detailed Dependencies */}
-          <Card className="bg-[#0d1424] dark:bg-[#111827]">
+          <Card className="bg-white dark:bg-white">
             <CardHeader>
               <CardTitle className="text-lg">Dependency Details</CardTitle>
               <CardDescription>
@@ -213,21 +213,21 @@ export function ENCOREExplorer() {
                 {dependencies.map((dep, index) => (
                   <div 
                     key={index}
-                    className="p-3 bg-white/[0.02] dark:bg-[#0d1424]/50 rounded-lg"
+                    className="p-3 bg-gray-50 dark:bg-gray-500 rounded-lg"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium">{dep.subsector_name}</span>
-                      <Badge className={`${DEPENDENCY_COLORS[dep.dependency_score]} text-white`}>
+                      <Badge className={`${DEPENDENCY_COLORS[dep.dependency_score]} text-gray-900`}>
                         {dep.dependency_score}/5
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-white/40">
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
                       <span>{dep.ecosystem_service.replace('_', ' ')}</span>
                       <ArrowRight className="h-3 w-3" />
                       <span className="capitalize">{dep.dependency_type}</span>
                     </div>
                     {dep.dependency_description && (
-                      <p className="text-xs text-white/40 mt-2 italic">
+                      <p className="text-xs text-gray-500 mt-2 italic">
                         {dep.dependency_description}
                       </p>
                     )}
@@ -235,7 +235,7 @@ export function ENCOREExplorer() {
                 ))}
 
                 {dependencies.length === 0 && (
-                  <div className="text-center py-8 text-white/40">
+                  <div className="text-center py-8 text-gray-500">
                     Select a sector to view dependencies
                   </div>
                 )}
@@ -244,8 +244,8 @@ export function ENCOREExplorer() {
           </Card>
         </div>
       ) : (
-        <Card className="bg-[#0d1424] dark:bg-[#111827]">
-          <CardContent className="py-12 text-center text-white/40">
+        <Card className="bg-white dark:bg-white">
+          <CardContent className="py-12 text-center text-gray-500">
             <Leaf className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p>Select a sector to explore its ecosystem dependencies</p>
           </CardContent>

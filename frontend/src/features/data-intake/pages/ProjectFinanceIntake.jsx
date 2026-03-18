@@ -89,13 +89,13 @@ export default function ProjectFinanceIntake() {
       <div className="p-6 bg-gray-900 min-h-screen text-gray-100">
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white">Project Finance</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Project Finance</h1>
             <p className="text-gray-400 text-sm mt-1">
               Renewable energy and green infrastructure project assessments with DSCR, LCOE and equity IRR.
             </p>
           </div>
           <button onClick={() => { resetWizard(); setView('wizard'); }}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-sm text-white rounded">
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-sm text-gray-900 rounded">
             + New Project
           </button>
         </div>
@@ -117,16 +117,16 @@ export default function ProjectFinanceIntake() {
                 {projects.map(p => (
                   <tr key={p.id} className="hover:bg-gray-800">
                     <td className="py-1.5 pr-3 font-mono text-xs text-gray-400">{p.project_ref}</td>
-                    <td className="py-1.5 pr-3 text-white text-xs">{p.project_name}</td>
+                    <td className="py-1.5 pr-3 text-gray-900 text-xs">{p.project_name}</td>
                     <td className="py-1.5 pr-3 text-gray-400 text-xs">{p.project_type}</td>
                     <td className="py-1.5 pr-3 text-gray-400 text-xs">{p.country_iso2}</td>
-                    <td className="py-1.5 pr-3 text-white text-xs">{p.capacity_mw || '—'}</td>
-                    <td className="py-1.5 pr-3 text-white text-xs">{p.total_capex_musd || '—'}</td>
+                    <td className="py-1.5 pr-3 text-gray-900 text-xs">{p.capacity_mw || '—'}</td>
+                    <td className="py-1.5 pr-3 text-gray-900 text-xs">{p.total_capex_musd || '—'}</td>
                     <td className={`py-1.5 pr-3 text-xs font-medium ${
                       p.preliminary_dscr >= 1.3 ? 'text-green-400' : p.preliminary_dscr >= 1.0 ? 'text-yellow-400' : 'text-red-400'
                     }`}>{p.preliminary_dscr ? Number(p.preliminary_dscr).toFixed(2) : '—'}</td>
-                    <td className="py-1.5 pr-3 text-white text-xs">{p.preliminary_lcoe_usd_mwh ? Number(p.preliminary_lcoe_usd_mwh).toFixed(1) : '—'}</td>
-                    <td className="py-1.5 pr-3 text-white text-xs">{p.preliminary_equity_irr_pct ? `${Number(p.preliminary_equity_irr_pct).toFixed(1)}%` : '—'}</td>
+                    <td className="py-1.5 pr-3 text-gray-900 text-xs">{p.preliminary_lcoe_usd_mwh ? Number(p.preliminary_lcoe_usd_mwh).toFixed(1) : '—'}</td>
+                    <td className="py-1.5 pr-3 text-gray-900 text-xs">{p.preliminary_equity_irr_pct ? `${Number(p.preliminary_equity_irr_pct).toFixed(1)}%` : '—'}</td>
                     <td className="py-1.5 pr-3">
                       <span className={`px-1.5 py-0.5 rounded text-xs ${
                         p.paris_alignment_status === 'aligned' ? 'bg-green-900 text-green-300'
@@ -161,8 +161,8 @@ export default function ProjectFinanceIntake() {
   return (
     <div className="p-6 bg-gray-900 min-h-screen text-gray-100">
       <div className="mb-6 flex items-center gap-4">
-        <button onClick={() => setView('list')} className="text-gray-400 hover:text-white text-sm">← Back</button>
-        <h1 className="text-xl font-bold text-white">New Project Finance Record</h1>
+        <button onClick={() => setView('list')} className="text-gray-400 hover:text-gray-900 text-sm">← Back</button>
+        <h1 className="text-xl font-bold text-gray-900">New Project Finance Record</h1>
       </div>
 
       {/* Steps */}
@@ -171,7 +171,7 @@ export default function ProjectFinanceIntake() {
           <div key={s} className="flex items-center shrink-0">
             <button onClick={() => !result && setStep(i)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs ${
-                i === step ? 'bg-blue-600 text-white' : i < step ? 'bg-gray-700 text-green-400' : 'bg-gray-800 text-gray-500'
+                i === step ? 'bg-blue-600 text-gray-900' : i < step ? 'bg-gray-700 text-green-400' : 'bg-gray-800 text-gray-500'
               }`}>
               <span className="font-bold">{i < step ? '✓' : i + 1}</span>
               <span className="hidden sm:inline">{s}</span>
@@ -188,26 +188,26 @@ export default function ProjectFinanceIntake() {
             <div className="col-span-2">
               <Field label="Project Name *">
                 <input value={form.project_name} onChange={e => set('project_name', e.target.value)}
-                  className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" />
+                  className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" />
               </Field>
             </div>
             <Field label="Project Type">
               <select value={form.project_type} onChange={e => set('project_type', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white">
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900">
                 {PROJECT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </Field>
             <Field label="Country (ISO2)">
               <input value={form.country_iso2} onChange={e => set('country_iso2', e.target.value.toUpperCase())} maxLength={2}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" />
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" />
             </Field>
             <Field label="Project Life (years)">
               <input type="number" value={form.project_life_yrs} onChange={e => set('project_life_yrs', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" />
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" />
             </Field>
             <Field label="Discount Rate (%)">
               <input type="number" step="0.5" value={form.discount_rate_pct} onChange={e => set('discount_rate_pct', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" />
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" />
             </Field>
           </div>
         )}
@@ -217,16 +217,16 @@ export default function ProjectFinanceIntake() {
           <div className="grid grid-cols-2 gap-4">
             <Field label="Capacity (MW)">
               <input type="number" value={form.capacity_mw} onChange={e => set('capacity_mw', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" />
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" />
             </Field>
             <Field label="Capacity Factor (%)">
               <input type="number" step="0.1" value={form.capacity_factor_pct} onChange={e => set('capacity_factor_pct', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" />
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" />
             </Field>
             <div className="col-span-2">
               <Field label="Total CapEx (M USD)">
                 <input type="number" value={form.total_capex_musd} onChange={e => set('total_capex_musd', e.target.value)}
-                  className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" />
+                  className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" />
               </Field>
             </div>
           </div>
@@ -237,19 +237,19 @@ export default function ProjectFinanceIntake() {
           <div className="grid grid-cols-2 gap-4">
             <Field label="Debt (M USD)">
               <input type="number" value={form.debt_musd} onChange={e => set('debt_musd', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" />
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" />
             </Field>
             <Field label="Equity (M USD)">
               <input type="number" value={form.equity_musd} onChange={e => set('equity_musd', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" />
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" />
             </Field>
             <Field label="Annual Debt Service (M USD)">
               <input type="number" value={form.annual_debt_service_musd} onChange={e => set('annual_debt_service_musd', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" />
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" />
             </Field>
             {form.debt_musd && form.total_capex_musd && (
               <div className="bg-gray-800 border border-gray-700 rounded-lg p-3 flex flex-col justify-center">
-                <div className="text-lg font-bold text-white">
+                <div className="text-lg font-bold text-gray-900">
                   {(parseFloat(form.debt_musd) / parseFloat(form.total_capex_musd) * 100).toFixed(1)}%
                 </div>
                 <div className="text-xs text-gray-400">Debt/CapEx ratio</div>
@@ -263,15 +263,15 @@ export default function ProjectFinanceIntake() {
           <div className="grid grid-cols-2 gap-4">
             <Field label="Annual Revenue (M USD)">
               <input type="number" value={form.annual_revenue_musd} onChange={e => set('annual_revenue_musd', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" />
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" />
             </Field>
             <Field label="Annual OpEx (M USD)">
               <input type="number" value={form.annual_opex_musd} onChange={e => set('annual_opex_musd', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" />
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" />
             </Field>
             {form.annual_revenue_musd && form.annual_opex_musd && (
               <div className="col-span-2 bg-gray-800 border border-gray-700 rounded-lg p-3">
-                <div className="text-lg font-bold text-white">
+                <div className="text-lg font-bold text-gray-900">
                   {(parseFloat(form.annual_revenue_musd) - parseFloat(form.annual_opex_musd)).toFixed(2)} M USD
                 </div>
                 <div className="text-xs text-gray-400">Preliminary EBITDA/yr</div>
@@ -286,17 +286,17 @@ export default function ProjectFinanceIntake() {
             <div className="flex items-center gap-3 p-3 bg-gray-800 border border-gray-700 rounded-lg">
               <input type="checkbox" id="cc" checked={form.include_carbon_credits}
                 onChange={e => set('include_carbon_credits', e.target.checked)} className="w-4 h-4 accent-green-500" />
-              <label htmlFor="cc" className="text-sm text-white">Include carbon credit revenue</label>
+              <label htmlFor="cc" className="text-sm text-gray-900">Include carbon credit revenue</label>
             </div>
             {form.include_carbon_credits && (
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Carbon Credit Price (USD/tCO2)">
                   <input type="number" value={form.carbon_credit_price_usd} onChange={e => set('carbon_credit_price_usd', e.target.value)}
-                    className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" />
+                    className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" />
                 </Field>
                 <Field label="Annual CO2 Avoided (tCO2e)">
                   <input type="number" value={form.annual_co2_avoided_tco2e} onChange={e => set('annual_co2_avoided_tco2e', e.target.value)}
-                    className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" />
+                    className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" />
                 </Field>
                 {form.carbon_credit_price_usd && form.annual_co2_avoided_tco2e && (
                   <div className="col-span-2 bg-gray-800 border border-gray-700 rounded-lg p-3">
@@ -323,7 +323,7 @@ export default function ProjectFinanceIntake() {
                   <input type="radio" name="ep" value={c.v} checked={form.equator_principles_category === c.v}
                     onChange={() => set('equator_principles_category', c.v)} className="mt-0.5" />
                   <div>
-                    <div className="text-white font-medium text-sm">{c.label}</div>
+                    <div className="text-gray-900 font-medium text-sm">{c.label}</div>
                     <div className="text-xs text-gray-400">{c.desc}</div>
                   </div>
                 </label>
@@ -331,13 +331,13 @@ export default function ProjectFinanceIntake() {
             </div>
             <Field label="Paris Alignment Status">
               <select value={form.paris_alignment_status} onChange={e => set('paris_alignment_status', e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white">
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900">
                 {['aligned', 'misaligned', 'under_review'].map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </Field>
             <Field label="Notes">
               <textarea value={form.notes} onChange={e => set('notes', e.target.value)} rows={3}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white" />
+                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-gray-900" />
             </Field>
           </div>
         )}
@@ -357,13 +357,13 @@ export default function ProjectFinanceIntake() {
                     { label: 'Equity IRR', value: result.preliminary_equity_irr_pct ? `${Number(result.preliminary_equity_irr_pct).toFixed(1)}%` : '—', ok: result.preliminary_equity_irr_pct > 8 },
                   ].map(m => (
                     <div key={m.label} className="bg-gray-800 border border-gray-700 rounded-lg p-3 text-center">
-                      <div className={`text-xl font-bold ${m.ok ? 'text-white' : 'text-yellow-400'}`}>{m.value}</div>
+                      <div className={`text-xl font-bold ${m.ok ? 'text-gray-900' : 'text-yellow-400'}`}>{m.value}</div>
                       <div className="text-xs text-gray-400 mt-1">{m.label}</div>
                     </div>
                   ))}
                 </div>
                 <button onClick={() => { resetWizard(); setView('list'); }}
-                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-sm text-white rounded">
+                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-sm text-gray-900 rounded">
                   View All Projects
                 </button>
               </div>
@@ -382,7 +382,7 @@ export default function ProjectFinanceIntake() {
                   ].map(([k, v]) => (
                     <div key={k} className="flex justify-between">
                       <span className="text-gray-400">{k}</span>
-                      <span className="text-white font-medium">{v}</span>
+                      <span className="text-gray-900 font-medium">{v}</span>
                     </div>
                   ))}
                 </div>
@@ -397,17 +397,17 @@ export default function ProjectFinanceIntake() {
           <div className="flex justify-between mt-8">
             <button
               onClick={() => step > 0 ? setStep(s => s - 1) : setView('list')}
-              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-sm text-white rounded">
+              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-sm text-gray-900 rounded">
               {step === 0 ? 'Cancel' : 'Back'}
             </button>
             {step < STEPS.length - 1 ? (
               <button onClick={() => setStep(s => s + 1)} disabled={step === 0 && !form.project_name}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-sm text-white rounded">
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-sm text-gray-900 rounded">
                 Next
               </button>
             ) : (
               <button onClick={handleSave} disabled={saving}
-                className="px-4 py-2 bg-green-600 hover:bg-green-500 disabled:opacity-40 text-sm text-white rounded">
+                className="px-4 py-2 bg-green-600 hover:bg-green-500 disabled:opacity-40 text-sm text-gray-900 rounded">
                 {saving ? 'Computing & Saving...' : 'Save Project'}
               </button>
             )}

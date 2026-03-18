@@ -15,7 +15,7 @@ export default function NatureRiskPage() {
   const [activeTab, setActiveTab] = useState('dashboard');
 
   return (
-    <div className="min-h-screen bg-white/[0.02] dark:bg-[#0d1424]">
+    <div className="min-h-screen bg-gray-50 dark:bg-white">
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Header */}
         <div className="mb-6">
@@ -24,10 +24,10 @@ export default function NatureRiskPage() {
               <Leaf className="h-6 w-6 text-emerald-400 dark:text-emerald-400" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white dark:text-white">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-900">
                 Nature Risk Module
               </h1>
-              <p className="text-white/60 dark:text-white/30">
+              <p className="text-gray-600 dark:text-gray-500">
                 TNFD LEAP Assessment & Portfolio Nature Risk Analysis
               </p>
             </div>
@@ -47,10 +47,10 @@ export default function NatureRiskPage() {
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7 h-auto p-1 bg-white/[0.06] dark:bg-[#111827] rounded-lg">
+          <TabsList className="grid w-full grid-cols-7 h-auto p-1 bg-gray-50 dark:bg-white rounded-lg">
             <TabsTrigger 
               value="dashboard" 
-              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-[#0d1424] dark:data-[state=active]:bg-[#1a2234]"
+              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-[#1a2234]"
               data-testid="tab-dashboard"
             >
               <BarChart3 className="h-4 w-4" />
@@ -58,7 +58,7 @@ export default function NatureRiskPage() {
             </TabsTrigger>
             <TabsTrigger 
               value="leap" 
-              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-[#0d1424] dark:data-[state=active]:bg-[#1a2234]"
+              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-[#1a2234]"
               data-testid="tab-leap"
             >
               <Compass className="h-4 w-4" />
@@ -66,7 +66,7 @@ export default function NatureRiskPage() {
             </TabsTrigger>
             <TabsTrigger 
               value="portfolio" 
-              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-[#0d1424] dark:data-[state=active]:bg-[#1a2234]"
+              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-[#1a2234]"
               data-testid="tab-portfolio"
             >
               <Building2 className="h-4 w-4" />
@@ -74,7 +74,7 @@ export default function NatureRiskPage() {
             </TabsTrigger>
             <TabsTrigger 
               value="water" 
-              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-[#0d1424] dark:data-[state=active]:bg-[#1a2234]"
+              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-[#1a2234]"
               data-testid="tab-water"
             >
               <Droplets className="h-4 w-4" />
@@ -82,7 +82,7 @@ export default function NatureRiskPage() {
             </TabsTrigger>
             <TabsTrigger 
               value="biodiversity" 
-              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-[#0d1424] dark:data-[state=active]:bg-[#1a2234]"
+              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-[#1a2234]"
               data-testid="tab-biodiversity"
             >
               <TreePine className="h-4 w-4" />
@@ -90,7 +90,7 @@ export default function NatureRiskPage() {
             </TabsTrigger>
             <TabsTrigger 
               value="encore" 
-              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-[#0d1424] dark:data-[state=active]:bg-[#1a2234]"
+              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-[#1a2234]"
               data-testid="tab-encore"
             >
               <Leaf className="h-4 w-4" />
@@ -98,7 +98,7 @@ export default function NatureRiskPage() {
             </TabsTrigger>
             <TabsTrigger 
               value="gbf" 
-              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-[#0d1424] dark:data-[state=active]:bg-[#1a2234]"
+              className="flex items-center gap-2 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-[#1a2234]"
               data-testid="tab-gbf"
             >
               <Target className="h-4 w-4" />

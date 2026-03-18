@@ -442,7 +442,7 @@ export default function MethodologyCalculator() {
 
   return (
     <div className="space-y-6" data-testid="methodology-calculator">
-      <Card className="bg-[#0d1424] border-white/[0.06]">
+      <Card className="bg-white border-gray-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calculator className="w-5 h-5 text-emerald-400" />
@@ -489,14 +489,14 @@ export default function MethodologyCalculator() {
                       {methodologies.map((m) => (
                         <SelectItem key={m.code} value={m.code}>
                           <span className="font-medium">{m.code}</span>
-                          <span className="text-white/40 ml-2">- {m.name}</span>
+                          <span className="text-gray-500 ml-2">- {m.name}</span>
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="flex items-center gap-2 mt-6">
-                  <span className="px-2 py-1 bg-white/[0.06] text-white/60 text-xs rounded">
+                  <span className="px-2 py-1 bg-gray-50 text-gray-600 text-xs rounded">
                     {methodologies.find(m => m.code === selectedMethodology)?.standard || '-'}
                   </span>
                   <span className="px-2 py-1 bg-emerald-100 text-emerald-400 text-xs rounded">
@@ -513,7 +513,7 @@ export default function MethodologyCalculator() {
                       <Label className="flex items-center gap-1 text-sm">
                         {config.label}
                         {config.unit && (
-                          <span className="text-white/30 text-xs">({config.unit})</span>
+                          <span className="text-gray-500 text-xs">({config.unit})</span>
                         )}
                       </Label>
                       {config.type === 'select' ? (
@@ -593,7 +593,7 @@ export default function MethodologyCalculator() {
 
       {/* Results Card */}
       {result && (
-        <Card className="bg-[#0d1424] border-white/[0.06]" data-testid="calculation-result">
+        <Card className="bg-white border-gray-200" data-testid="calculation-result">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -636,21 +636,21 @@ export default function MethodologyCalculator() {
                 {/* Detailed Breakdown */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {result.baseline_emissions !== undefined && (
-                    <div className="p-4 bg-white/[0.02] rounded-lg">
-                      <p className="text-xs text-white/40">Baseline Emissions</p>
-                      <p className="text-lg font-semibold text-white/70">
+                    <div className="p-4 bg-gray-50 rounded-lg">
+                      <p className="text-xs text-gray-500">Baseline Emissions</p>
+                      <p className="text-lg font-semibold text-gray-700">
                         {formatNumber(result.baseline_emissions)}
                       </p>
-                      <p className="text-xs text-white/30">{result.unit}</p>
+                      <p className="text-xs text-gray-500">{result.unit}</p>
                     </div>
                   )}
                   {result.project_emissions !== undefined && (
-                    <div className="p-4 bg-white/[0.02] rounded-lg">
-                      <p className="text-xs text-white/40">Project Emissions</p>
-                      <p className="text-lg font-semibold text-white/70">
+                    <div className="p-4 bg-gray-50 rounded-lg">
+                      <p className="text-xs text-gray-500">Project Emissions</p>
+                      <p className="text-lg font-semibold text-gray-700">
                         {formatNumber(result.project_emissions)}
                       </p>
-                      <p className="text-xs text-white/30">{result.unit}</p>
+                      <p className="text-xs text-gray-500">{result.unit}</p>
                     </div>
                   )}
                   {result.annual_generation_mwh !== undefined && (
@@ -685,20 +685,20 @@ export default function MethodologyCalculator() {
                 {/* Yearly Results for Forestry */}
                 {result.yearly_results && result.yearly_results.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-medium text-white/70 mb-3">Yearly Projections</h4>
+                    <h4 className="text-sm font-medium text-gray-700 mb-3">Yearly Projections</h4>
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="bg-white/[0.02]">
-                            <th className="px-3 py-2 text-left text-white/60">Year</th>
-                            <th className="px-3 py-2 text-right text-white/60">CO2 Sequestered</th>
-                            <th className="px-3 py-2 text-right text-white/60">Risk Buffer</th>
-                            <th className="px-3 py-2 text-right text-white/60">Net Credits</th>
+                          <tr className="bg-gray-50">
+                            <th className="px-3 py-2 text-left text-gray-600">Year</th>
+                            <th className="px-3 py-2 text-right text-gray-600">CO2 Sequestered</th>
+                            <th className="px-3 py-2 text-right text-gray-600">Risk Buffer</th>
+                            <th className="px-3 py-2 text-right text-gray-600">Net Credits</th>
                           </tr>
                         </thead>
                         <tbody>
                           {result.yearly_results.slice(0, 10).map((yr, idx) => (
-                            <tr key={idx} className="border-b border-white/[0.04]">
+                            <tr key={idx} className="border-b border-gray-200">
                               <td className="px-3 py-2">{yr.year}</td>
                               <td className="px-3 py-2 text-right">{formatNumber(yr.co2_sequestered)}</td>
                               <td className="px-3 py-2 text-right text-red-400">-{formatNumber(yr.risk_buffer)}</td>
@@ -708,7 +708,7 @@ export default function MethodologyCalculator() {
                         </tbody>
                       </table>
                       {result.yearly_results.length > 10 && (
-                        <p className="text-xs text-white/30 mt-2">
+                        <p className="text-xs text-gray-500 mt-2">
                           Showing first 10 of {result.yearly_results.length} years
                         </p>
                       )}
@@ -736,8 +736,8 @@ export default function MethodologyCalculator() {
               <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Check className="w-8 h-8 text-emerald-400" />
               </div>
-              <p className="text-lg font-semibold text-white">Project Saved!</p>
-              <p className="text-sm text-white/40 mt-1">
+              <p className="text-lg font-semibold text-gray-900">Project Saved!</p>
+              <p className="text-sm text-gray-500 mt-1">
                 Your calculation has been added to the portfolio.
               </p>
             </div>
@@ -814,10 +814,10 @@ export default function MethodologyCalculator() {
                 </div>
 
                 {/* Calculation Summary */}
-                <div className="p-3 bg-white/[0.02] rounded-lg">
-                  <p className="text-xs text-white/40 mb-1">Calculation Summary</p>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <p className="text-xs text-gray-500 mb-1">Calculation Summary</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-white/70">{selectedMethodology}</span>
+                    <span className="text-sm font-medium text-gray-700">{selectedMethodology}</span>
                     <span className="text-sm font-bold text-emerald-400">
                       {formatNumber(result?.emission_reductions)} tCO2e/year
                     </span>

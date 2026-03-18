@@ -98,7 +98,7 @@ export function WaterRiskAnalysis() {
   return (
     <div className="space-y-6" data-testid="water-risk-analysis">
       {/* Header */}
-      <Card className="bg-[#0d1424] dark:bg-[#111827]">
+      <Card className="bg-white dark:bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Droplets className="h-5 w-5 text-blue-300" />
@@ -149,7 +149,7 @@ export function WaterRiskAnalysis() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Panel - Map/List Toggle */}
-        <Card className="bg-[#0d1424] dark:bg-[#111827] lg:col-span-1">
+        <Card className="bg-white dark:bg-white lg:col-span-1">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg">Locations</CardTitle>
@@ -191,21 +191,21 @@ export function WaterRiskAnalysis() {
                       className={`p-3 rounded-lg cursor-pointer transition-all ${
                         selectedLocation?.id === location.id
                           ? 'bg-blue-500/10 dark:bg-blue-900/30 border-2 border-blue-500'
-                          : 'bg-white/[0.02] dark:bg-[#0d1424]/50 hover:bg-white/[0.06] dark:hover:bg-[#1a2234]'
+                          : 'bg-gray-50 dark:bg-gray-500 hover:bg-gray-50 dark:hover:bg-[#1a2234]'
                       }`}
                       onClick={() => analyzeLocation(location.id)}
                       data-testid={`location-${location.id}`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-white/30" />
+                          <MapPin className="h-4 w-4 text-gray-500" />
                           <span className="font-medium text-sm">{location.location_name}</span>
                         </div>
                         <Badge className={getRiskColor(location.baseline_water_stress)}>
                           {location.baseline_water_stress?.toFixed(1)}
                         </Badge>
                       </div>
-                      <div className="text-xs text-white/40 mt-1 ml-6">
+                      <div className="text-xs text-gray-500 mt-1 ml-6">
                         {location.country_code} • {location.basin_name}
                       </div>
                     </div>
@@ -219,58 +219,58 @@ export function WaterRiskAnalysis() {
         {/* Analysis Results */}
         <div className="lg:col-span-2 space-y-6">
           {loading ? (
-            <Card className="bg-[#0d1424] dark:bg-[#111827]">
+            <Card className="bg-white dark:bg-white">
               <CardContent className="py-12 text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                <p className="text-white/40 mt-2">Analyzing water risk...</p>
+                <p className="text-gray-500 mt-2">Analyzing water risk...</p>
               </CardContent>
             </Card>
           ) : analysisResult ? (
             <>
               {/* Summary Cards */}
               <div className="grid grid-cols-3 gap-4">
-                <Card className="bg-[#0d1424] dark:bg-[#111827]">
+                <Card className="bg-white dark:bg-white">
                   <CardContent className="pt-6">
-                    <div className="flex items-center gap-2 text-white/40 mb-1">
+                    <div className="flex items-center gap-2 text-gray-500 mb-1">
                       <Droplets className="h-4 w-4" />
                       <span className="text-xs">Baseline Risk</span>
                     </div>
                     <p className={`text-2xl font-bold ${getRiskColor(analysisResult.baseline_risk_score).split(' ')[0]}`}>
                       {analysisResult.baseline_risk_score?.toFixed(2)}
                     </p>
-                    <p className="text-xs text-white/40">{getRiskLevel(analysisResult.baseline_risk_score)}</p>
+                    <p className="text-xs text-gray-500">{getRiskLevel(analysisResult.baseline_risk_score)}</p>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-[#0d1424] dark:bg-[#111827]">
+                <Card className="bg-white dark:bg-white">
                   <CardContent className="pt-6">
-                    <div className="flex items-center gap-2 text-white/40 mb-1">
+                    <div className="flex items-center gap-2 text-gray-500 mb-1">
                       <TrendingUp className="h-4 w-4" />
                       <span className="text-xs">2050 Projection</span>
                     </div>
                     <p className={`text-2xl font-bold ${getRiskColor(analysisResult.projected_risk_scores?.[2050] || 0).split(' ')[0]}`}>
                       {analysisResult.projected_risk_scores?.[2050]?.toFixed(2) || 'N/A'}
                     </p>
-                    <p className="text-xs text-white/40">{getRiskLevel(analysisResult.projected_risk_scores?.[2050])}</p>
+                    <p className="text-xs text-gray-500">{getRiskLevel(analysisResult.projected_risk_scores?.[2050])}</p>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-[#0d1424] dark:bg-[#111827]">
+                <Card className="bg-white dark:bg-white">
                   <CardContent className="pt-6">
-                    <div className="flex items-center gap-2 text-white/40 mb-1">
+                    <div className="flex items-center gap-2 text-gray-500 mb-1">
                       <AlertTriangle className="h-4 w-4" />
                       <span className="text-xs">Key Risks</span>
                     </div>
                     <p className="text-2xl font-bold text-orange-400">
                       {analysisResult.key_risk_factors?.length || 0}
                     </p>
-                    <p className="text-xs text-white/40">Risk factors identified</p>
+                    <p className="text-xs text-gray-500">Risk factors identified</p>
                   </CardContent>
                 </Card>
               </div>
 
               {/* Projection Chart */}
-              <Card className="bg-[#0d1424] dark:bg-[#111827]">
+              <Card className="bg-white dark:bg-white">
                 <CardHeader>
                   <CardTitle className="text-lg">Water Stress Projections</CardTitle>
                   <CardDescription>
@@ -320,7 +320,7 @@ export function WaterRiskAnalysis() {
               </Card>
 
               {/* Indicators */}
-              <Card className="bg-[#0d1424] dark:bg-[#111827]">
+              <Card className="bg-white dark:bg-white">
                 <CardHeader>
                   <CardTitle className="text-lg">Risk Indicators</CardTitle>
                 </CardHeader>
@@ -341,7 +341,7 @@ export function WaterRiskAnalysis() {
 
               {/* Recommendations */}
               {analysisResult.recommendations?.length > 0 && (
-                <Card className="bg-[#0d1424] dark:bg-[#111827]">
+                <Card className="bg-white dark:bg-white">
                   <CardHeader>
                     <CardTitle className="text-lg">Recommendations</CardTitle>
                   </CardHeader>
@@ -359,8 +359,8 @@ export function WaterRiskAnalysis() {
               )}
             </>
           ) : (
-            <Card className="bg-[#0d1424] dark:bg-[#111827]">
-              <CardContent className="py-12 text-center text-white/40">
+            <Card className="bg-white dark:bg-white">
+              <CardContent className="py-12 text-center text-gray-500">
                 <Droplets className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p>Select a location to view water risk analysis</p>
               </CardContent>

@@ -12,7 +12,7 @@ set PROJECT_ROOT=%~dp0
 set BACKEND_DIR=%PROJECT_ROOT%backend
 set FRONTEND_DIR=%PROJECT_ROOT%frontend
 set BACKEND_PORT=8001
-set FRONTEND_PORT=3000
+set FRONTEND_PORT=4000
 
 :: ── Pre-flight checks ──────────────────────────────────────────────────────────
 echo [1/4] Checking prerequisites...
@@ -68,7 +68,7 @@ echo  Backend is live at http://localhost:%BACKEND_PORT%
 :: ── Start frontend ──────────────────────────────────────────────────────────────
 echo [4/4] Starting frontend on port %FRONTEND_PORT%...
 cd /d "%FRONTEND_DIR%"
-start "A2 Frontend" cmd /k "title A2 Frontend (port %FRONTEND_PORT%) && set BROWSER=none&& npm start"
+start "A2 Frontend" cmd /k "title A2 Frontend (port %FRONTEND_PORT%) && set PORT=4000&& set BROWSER=none&& set REACT_APP_BACKEND_URL=http://localhost:8001&& npm start"
 
 :: Wait a moment then open browser
 timeout /t 5 /nobreak >nul

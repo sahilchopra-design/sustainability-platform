@@ -138,7 +138,7 @@ export default function ComparisonPage() {
               <CardContent>
                 <div className="flex flex-wrap gap-2">
                   {selectedScenarios.map((sc, i) => (
-                    <Badge key={sc.id} className="gap-1 cursor-pointer" style={{ backgroundColor: COLORS[i % COLORS.length], color: 'white' }}
+                    <Badge key={sc.id} className="gap-1 cursor-pointer" style={{ backgroundColor: COLORS[i % COLORS.length], color: '#111' }}
                       onClick={() => toggleScenario(sc)} data-testid={`selected-${sc.id}`}>
                       {sc.display_name || sc.name}
                       {i === 0 && <span className="text-[9px] opacity-70">(BASE)</span>}

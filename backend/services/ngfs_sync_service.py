@@ -26,49 +26,109 @@ logger = logging.getLogger(__name__)
 class NGFSSyncService:
     """Service for syncing with NGFS data sources."""
     
-    # NGFS scenario definitions (Phase IV as of 2024)
+    # NGFS scenario definitions
+    # Phase IV (original 6) + Phase V 2024 additions (LOW_DEMAND, DIVERGENT_NET_ZERO)
+    # Phase V recalibrates Net Zero 2050 and Delayed Transition per post-AR6 NiGEM model.
+    # Carbon prices in USD/tCO2; GDP impact in % deviation from baseline.
     NGFS_SCENARIOS = {
+        # ── Phase IV + Phase V recalibrated scenarios ─────────────────────
         NGFSScenarioType.NET_ZERO_2050: {
             "name": "Net Zero 2050",
-            "description": "Limits warming to 1.5°C through immediate policy action and innovation",
-            "carbon_price": {"2025": 75, "2030": 160, "2040": 350, "2050": 680},
+            "description": (
+                "Limits warming to 1.5°C through immediate ambitious policy action and "
+                "innovation. Phase V: recalibrated carbon prices +8% vs Phase IV, "
+                "stronger near-term transition risk."
+            ),
+            "phase": "V",
+            "carbon_price": {"2025": 81, "2030": 173, "2040": 378, "2050": 735},
             "temperature_pathway": {"2025": 1.1, "2030": 1.2, "2040": 1.3, "2050": 1.4},
-            "gdp_impact": {"2025": -0.3, "2030": -0.8, "2040": -1.2, "2050": -1.5},
+            "gdp_impact": {"2025": -0.4, "2030": -0.9, "2040": -1.3, "2050": -1.6},
+            "physical_risk_multiplier": {"2030": 1.0, "2050": 1.1},
+            "transition_risk_multiplier": {"2030": 1.4, "2050": 1.2},
         },
         NGFSScenarioType.DELAYED_TRANSITION: {
             "name": "Delayed Transition",
-            "description": "Late policy action makes achieving 2°C more difficult and costly",
-            "carbon_price": {"2025": 15, "2030": 100, "2040": 400, "2050": 1000},
+            "description": (
+                "Late policy action makes achieving 2°C more difficult and costly. "
+                "Phase V: peak carbon price raised to USD 1,200/tCO2 by 2050."
+            ),
+            "phase": "V",
+            "carbon_price": {"2025": 15, "2030": 110, "2040": 450, "2050": 1200},
             "temperature_pathway": {"2025": 1.2, "2030": 1.4, "2040": 1.6, "2050": 1.7},
-            "gdp_impact": {"2025": -0.1, "2030": -1.5, "2040": -3.0, "2050": -4.5},
+            "gdp_impact": {"2025": -0.1, "2030": -1.6, "2040": -3.2, "2050": -4.8},
+            "physical_risk_multiplier": {"2030": 1.0, "2050": 1.2},
+            "transition_risk_multiplier": {"2030": 1.0, "2050": 2.0},
         },
         NGFSScenarioType.BELOW_2C: {
             "name": "Below 2°C",
             "description": "Gradual strengthening of policies limits warming to below 2°C",
+            "phase": "IV",
             "carbon_price": {"2025": 50, "2030": 120, "2040": 250, "2050": 490},
             "temperature_pathway": {"2025": 1.1, "2030": 1.3, "2040": 1.5, "2050": 1.6},
             "gdp_impact": {"2025": -0.2, "2030": -1.0, "2040": -1.8, "2050": -2.3},
+            "physical_risk_multiplier": {"2030": 1.1, "2050": 1.3},
+            "transition_risk_multiplier": {"2030": 1.2, "2050": 1.1},
         },
         NGFSScenarioType.NATIONALLY_DETERMINED_CONTRIBUTIONS: {
             "name": "Nationally Determined Contributions (NDCs)",
             "description": "Warming around 2.5°C based on current commitments",
+            "phase": "IV",
             "carbon_price": {"2025": 25, "2030": 60, "2040": 120, "2050": 200},
             "temperature_pathway": {"2025": 1.2, "2030": 1.5, "2040": 1.9, "2050": 2.3},
             "gdp_impact": {"2025": -0.1, "2030": -0.5, "2040": -1.5, "2050": -3.0},
+            "physical_risk_multiplier": {"2030": 1.2, "2050": 1.8},
+            "transition_risk_multiplier": {"2030": 0.8, "2050": 0.9},
         },
         NGFSScenarioType.CURRENT_POLICIES: {
             "name": "Current Policies",
             "description": "Assumes policies as of today with limited further action",
+            "phase": "IV",
             "carbon_price": {"2025": 10, "2030": 25, "2040": 40, "2050": 60},
             "temperature_pathway": {"2025": 1.2, "2030": 1.6, "2040": 2.2, "2050": 3.0},
             "gdp_impact": {"2025": 0.0, "2030": -0.3, "2040": -2.0, "2050": -5.0},
+            "physical_risk_multiplier": {"2030": 1.4, "2050": 2.8},
+            "transition_risk_multiplier": {"2030": 0.3, "2050": 0.2},
         },
         NGFSScenarioType.FRAGMENTED_WORLD: {
             "name": "Fragmented World",
             "description": "Divergent policies lead to high physical and transition risks",
+            "phase": "IV",
             "carbon_price": {"2025": 5, "2030": 80, "2040": 200, "2050": 500},
             "temperature_pathway": {"2025": 1.2, "2030": 1.6, "2040": 2.3, "2050": 2.8},
             "gdp_impact": {"2025": 0.0, "2030": -1.2, "2040": -3.5, "2050": -6.5},
+            "physical_risk_multiplier": {"2030": 1.3, "2050": 2.2},
+            "transition_risk_multiplier": {"2030": 0.5, "2050": 1.5},
+        },
+        # ── NGFS Phase V (2024) new scenarios ─────────────────────────────
+        NGFSScenarioType.LOW_DEMAND: {
+            "name": "Low Demand",
+            "description": (
+                "NEW in Phase V. Demand-side mitigation through sufficiency and efficiency "
+                "achieves <1.5°C with lower carbon prices than Net Zero 2050. "
+                "IPCC AR6 WG3 Ch5 demand-side potential; NiGEM post-AR6 calibration."
+            ),
+            "phase": "V",
+            "carbon_price": {"2025": 45, "2030": 90, "2040": 180, "2050": 360},
+            "temperature_pathway": {"2025": 1.1, "2030": 1.2, "2040": 1.3, "2050": 1.4},
+            "gdp_impact": {"2025": -0.2, "2030": -0.5, "2040": -0.9, "2050": -1.1},
+            "physical_risk_multiplier": {"2030": 0.9, "2050": 1.0},
+            "transition_risk_multiplier": {"2030": 1.1, "2050": 0.8},
+            "demand_reduction_pct": {"2025": 5, "2030": 12, "2040": 22, "2050": 32},
+        },
+        NGFSScenarioType.DIVERGENT_NET_ZERO: {
+            "name": "Divergent Net Zero",
+            "description": (
+                "NEW in Phase V. Heterogeneous climate action across jurisdictions — "
+                "some reach net zero 2050, others lag. Results in carbon border friction, "
+                "supply-chain disruptions, and elevated transition risk dispersion. ~1.5°C."
+            ),
+            "phase": "V",
+            "carbon_price": {"2025": 60, "2030": 140, "2040": 310, "2050": 590},
+            "temperature_pathway": {"2025": 1.1, "2030": 1.2, "2040": 1.3, "2050": 1.5},
+            "gdp_impact": {"2025": -0.3, "2030": -1.0, "2040": -1.8, "2050": -2.1},
+            "physical_risk_multiplier": {"2030": 1.0, "2050": 1.2},
+            "transition_risk_multiplier": {"2030": 1.3, "2050": 1.4},
+            "cbam_friction_factor": 1.35,  # carbon border adjustment amplification
         },
     }
     

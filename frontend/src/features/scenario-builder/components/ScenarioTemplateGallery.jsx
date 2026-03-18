@@ -16,7 +16,7 @@ const CATEGORY_LABELS = {
 };
 
 const CATEGORY_COLORS = {
-  ngfs:       'text-cyan-400 bg-cyan-500/10 border-cyan-500/20',
+  ngfs:       'text-gray-700 bg-gray-100 border-gray-200',
   custom:     'text-violet-400 bg-violet-500/10 border-violet-500/20',
   stress:     'text-red-400 bg-red-500/10 border-red-500/20',
   regulatory: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
@@ -33,7 +33,7 @@ function FamilyBadge({ family }) {
 }
 
 function CategoryBadge({ category }) {
-  const cls = CATEGORY_COLORS[category] || 'text-white/40 bg-white/5 border-white/10';
+  const cls = CATEGORY_COLORS[category] || 'text-gray-500 bg-gray-50 border-black/10';
   return (
     <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border ${cls}`}>
       {CATEGORY_LABELS[category] || category}
@@ -48,8 +48,8 @@ function TemplateCard({ template, onSelect, isSelected }) {
       onClick={() => onSelect(template)}
       className={`relative flex flex-col rounded-lg border cursor-pointer transition-all duration-150 p-3.5 group
         ${isSelected
-          ? 'border-cyan-500/60 bg-cyan-500/8 shadow-[0_0_0_1px_rgba(34,211,238,0.15)]'
-          : 'border-white/8 bg-[#0d1526] hover:border-white/16 hover:bg-[#111b30]'
+          ? 'border-blue-300 bg-blue-50 shadow-[0_0_0_1px_rgba(34,211,238,0.15)]'
+          : 'border-gray-200 bg-white hover:border-black/16 hover:bg-[#f0f0f0]'
         }`}
     >
       {/* Official badge */}
@@ -64,7 +64,7 @@ function TemplateCard({ template, onSelect, isSelected }) {
       {/* Header */}
       <div className="flex items-start gap-2 mb-2 pr-10">
         <div>
-          <h4 className="text-[13px] font-semibold text-white/90 leading-snug mb-1">
+          <h4 className="text-[13px] font-semibold text-gray-900 leading-snug mb-1">
             {template.name}
           </h4>
           <div className="flex flex-wrap gap-1 mb-1.5">
@@ -75,22 +75,22 @@ function TemplateCard({ template, onSelect, isSelected }) {
       </div>
 
       {/* Description */}
-      <p className="text-[11px] text-white/45 leading-relaxed mb-3 flex-1 line-clamp-3">
+      <p className="text-[11px] text-gray-500 leading-relaxed mb-3 flex-1 line-clamp-3">
         {template.description}
       </p>
 
       {/* Tags */}
       <div className="flex flex-wrap gap-1 mb-3">
         {template.tags.slice(0, 5).map(tag => (
-          <span key={tag} className="text-[9px] text-white/30 bg-white/5 px-1.5 py-0.5 rounded">
+          <span key={tag} className="text-[9px] text-gray-500 bg-gray-50 px-1.5 py-0.5 rounded">
             {tag}
           </span>
         ))}
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between pt-2 border-t border-white/5">
-        <div className="flex items-center gap-3 text-[10px] text-white/30">
+      <div className="flex items-center justify-between pt-2 border-t border-black/5">
+        <div className="flex items-center gap-3 text-[10px] text-gray-500">
           <span>{template.author}</span>
           <span>·</span>
           <span>{template.usageCount.toLocaleString()} uses</span>
@@ -99,8 +99,8 @@ function TemplateCard({ template, onSelect, isSelected }) {
           onClick={(e) => { e.stopPropagation(); onSelect(template); }}
           className={`text-[11px] font-medium px-2.5 py-1 rounded transition-colors ${
             isSelected
-              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
-              : 'bg-white/5 text-white/60 hover:bg-cyan-500/15 hover:text-cyan-300 border border-white/8'
+              ? 'bg-gray-100 text-gray-800 border border-gray-300'
+              : 'bg-gray-50 text-gray-600 hover:bg-gray-200 hover:text-gray-800 border border-gray-200'
           }`}
         >
           {isSelected ? 'Selected' : 'Use Template'}
@@ -130,7 +130,7 @@ export function ScenarioTemplateGallery({ onSelectTemplate, selectedTemplateId }
       <div className="flex flex-col gap-2 mb-4">
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
-            <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input
@@ -138,14 +138,14 @@ export function ScenarioTemplateGallery({ onSelectTemplate, selectedTemplateId }
               placeholder="Search templates..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 text-[12px] bg-white/5 border border-white/10 rounded text-white/80 placeholder-white/25 focus:outline-none focus:border-cyan-500/40"
+              className="w-full pl-8 pr-3 py-1.5 text-[12px] bg-gray-50 border border-black/10 rounded text-gray-800 placeholder-black/25 focus:outline-none focus:border-blue-500"
               data-testid="template-search"
             />
           </div>
           {hasFilters && (
             <button
               onClick={clearFilters}
-              className="text-[11px] text-white/40 hover:text-white/70 px-2 py-1.5 rounded border border-white/8 hover:border-white/16 transition-colors"
+              className="text-[11px] text-gray-500 hover:text-gray-700 px-2 py-1.5 rounded border border-gray-200 hover:border-black/16 transition-colors"
             >
               Clear
             </button>
@@ -158,7 +158,7 @@ export function ScenarioTemplateGallery({ onSelectTemplate, selectedTemplateId }
           <select
             value={selectedFamily}
             onChange={e => setSelectedFamily(e.target.value)}
-            className="text-[11px] bg-white/5 border border-white/10 rounded px-2 py-1 text-white/60 focus:outline-none focus:border-cyan-500/40"
+            className="text-[11px] bg-gray-50 border border-black/10 rounded px-2 py-1 text-gray-600 focus:outline-none focus:border-blue-500"
             data-testid="filter-family"
           >
             {allFamilies.map(f => (
@@ -170,7 +170,7 @@ export function ScenarioTemplateGallery({ onSelectTemplate, selectedTemplateId }
           <select
             value={selectedCategory}
             onChange={e => setSelectedCategory(e.target.value)}
-            className="text-[11px] bg-white/5 border border-white/10 rounded px-2 py-1 text-white/60 focus:outline-none focus:border-cyan-500/40"
+            className="text-[11px] bg-gray-50 border border-black/10 rounded px-2 py-1 text-gray-600 focus:outline-none focus:border-blue-500"
             data-testid="filter-category"
           >
             {allCategories.map(c => (
@@ -184,7 +184,7 @@ export function ScenarioTemplateGallery({ onSelectTemplate, selectedTemplateId }
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value)}
-            className="text-[11px] bg-white/5 border border-white/10 rounded px-2 py-1 text-white/60 focus:outline-none focus:border-cyan-500/40"
+            className="text-[11px] bg-gray-50 border border-black/10 rounded px-2 py-1 text-gray-600 focus:outline-none focus:border-blue-500"
           >
             <option value="usage">Most Used</option>
             <option value="name">A–Z</option>
@@ -192,7 +192,7 @@ export function ScenarioTemplateGallery({ onSelectTemplate, selectedTemplateId }
           </select>
 
           {/* Result count */}
-          <span className="self-center text-[10px] text-white/30 ml-auto">
+          <span className="self-center text-[10px] text-gray-500 ml-auto">
             {filtered.length} template{filtered.length !== 1 ? 's' : ''}
           </span>
         </div>
@@ -200,7 +200,7 @@ export function ScenarioTemplateGallery({ onSelectTemplate, selectedTemplateId }
 
       {/* Grid */}
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-white/20 text-sm">
+        <div className="flex flex-col items-center justify-center py-16 text-gray-400 text-sm">
           <svg className="h-10 w-10 mb-3 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>

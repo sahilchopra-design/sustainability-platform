@@ -386,3 +386,119 @@ class CBAMComplianceScorer:
         if not recs:
             recs.append("Maintain current compliance posture — all indicators healthy")
         return recs
+
+
+# ---------------------------------------------------------------------------
+# Climate Risk Integration Extension
+# Added for climate_transition_risk_engine.py integration (2026-03-08)
+# ---------------------------------------------------------------------------
+
+class CBAMTransitionParams:
+    """
+    Extended CBAM parameters for use by the Transition Risk Engine.
+    These do not modify the existing CBAMEmissionsCalculator / CBAMCostProjector API —
+    they provide additional config consumed by ClimateTransitionRiskEngine.Stage2.
+    """
+    PRICE_SOURCES = {
+        # NGFS Phase 5 carbon price paths (EUR/tCO2e at key years, linear interpolation)
+        "NGFS_Below2C":       {2025: 55,  2030: 130, 2035: 210, 2040: 310, 2050: 500},
+        "NGFS_NZ2050":        {2025: 65,  2030: 145, 2035: 240, 2040: 360, 2050: 600},
+        "NGFS_DelayedTrans":  {2025: 35,  2030: 80,  2035: 170, 2040: 330, 2050: 580},
+        "NGFS_CurrentPolicy": {2025: 30,  2030: 45,  2035: 60,  2040: 80,  2050: 100},
+        "IEA_NZE":            {2025: 50,  2030: 130, 2035: 200, 2040: 280, 2050: 400},
+        "Custom":             None,   # caller must supply custom_price dict
+    }
+
+    @staticmethod
+    def interpolate_price(
+        source: str,
+        year: int,
+        custom_prices: dict | None = None,
+    ) -> float:
+        """Return carbon price (EUR/tCO2e) for a given source + year via linear interpolation."""
+        path = CBAMTransitionParams.PRICE_SOURCES.get(source)
+        if path is None:
+            path = custom_prices or {}
+        if not path:
+            return 50.0  # fallback default
+        years = sorted(path.keys())
+        if year <= years[0]:
+            return float(path[years[0]])
+        if year >= years[-1]:
+            return float(path[years[-1]])
+        for i in range(len(years) - 1):
+            y0, y1 = years[i], years[i + 1]
+            if y0 <= year <= y1:
+                t = (year - y0) / (y1 - y0)
+                return round(float(path[y0]) + t * (float(path[y1]) - float(path[y0])), 2)
+        return 50.0
+
+
+def get_cbam_carbon_exposure(
+    scope1_tco2e: float,
+    scope2_tco2e: float,
+    scope3_tco2e: float,
+    carbon_price_source: str = "NGFS_Below2C",
+    pass_through_rate: float = 0.85,
+    scope3_inclusion: bool = False,
+    time_horizon: int = 10,
+    scenario: str = "Below 2°C",
+    custom_carbon_prices: dict | None = None,
+) -> dict:
+    """
+    Compute forward-looking CBAM carbon exposure for use in transition risk assessment.
+
+    Args:
+        scope1_tco2e: Annual Scope 1 emissions (tCO2e)
+        scope2_tco2e: Annual Scope 2 emissions (tCO2e)
+        scope3_tco2e: Annual Scope 3 emissions (tCO2e)
+        carbon_price_source: Key in CBAMTransitionParams.PRICE_SOURCES
+        pass_through_rate: Fraction of carbon cost passed to counterparty (0-1)
+        scope3_inclusion: Include Scope 3 in cost calculation
+        time_horizon: Assessment horizon in years
+        scenario: NGFS scenario label (used for price source lookup)
+        custom_carbon_prices: {year: price} dict if source='Custom'
+
+    Returns:
+        dict with keys: carbon_price, annual_exposure_eur, cumulative_exposure_eur,
+                        exposure_as_pct_revenue (stub — caller should divide by revenue),
+                        scope_breakdown
+    """
+    # Map scenario name → price source
+    scenario_map = {
+        "Below 2°C": "NGFS_Below2C",
+        "Net Zero 2050": "NGFS_NZ2050",
+        "Delayed Transition": "NGFS_DelayedTrans",
+        "Current Policies": "NGFS_CurrentPolicy",
+    }
+    effective_source = scenario_map.get(scenario, carbon_price_source)
+
+    import datetime
+    base_year = datetime.date.today().year
+    target_year = base_year + time_horizon
+    price = CBAMTransitionParams.interpolate_price(
+        effective_source, target_year, custom_carbon_prices
+    )
+
+    covered_emissions = scope1_tco2e + scope2_tco2e
+    if scope3_inclusion:
+        covered_emissions += scope3_tco2e
+
+    annual_exposure = covered_emissions * price * pass_through_rate
+    # Simple cumulative: trapezoidal sum over horizon using base and target price
+    base_price = CBAMTransitionParams.interpolate_price(effective_source, base_year, custom_carbon_prices)
+    cumulative = annual_exposure * time_horizon * (1 + (price / max(base_price, 1))) / 2
+
+    return {
+        "carbon_price_eur_per_tco2e": price,
+        "pass_through_rate": pass_through_rate,
+        "annual_exposure_eur": round(annual_exposure, 2),
+        "cumulative_exposure_eur": round(cumulative, 2),
+        "scope_breakdown": {
+            "scope1": round(scope1_tco2e * price * pass_through_rate, 2),
+            "scope2": round(scope2_tco2e * price * pass_through_rate, 2),
+            "scope3": round(scope3_tco2e * price * pass_through_rate, 2) if scope3_inclusion else 0.0,
+        },
+        "source": effective_source,
+        "target_year": target_year,
+    }

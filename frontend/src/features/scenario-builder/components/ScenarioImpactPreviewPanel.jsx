@@ -45,12 +45,12 @@ function DeltaBar({ scenario, baseline, metric }) {
   const format = METRIC_FORMAT[metric] || (v => v.toFixed(2));
 
   return (
-    <div className="flex items-center justify-between gap-3 py-1.5 border-b border-white/5 last:border-0">
+    <div className="flex items-center justify-between gap-3 py-1.5 border-b border-black/5 last:border-0">
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-[11px] text-white/60">{METRIC_LABELS[metric]}</span>
+          <span className="text-[11px] text-gray-600">{METRIC_LABELS[metric]}</span>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-mono text-white/80">{format(scen)}</span>
+            <span className="text-[11px] font-mono text-gray-800">{format(scen)}</span>
             <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
               isWorse
                 ? 'text-red-400 bg-red-500/10'
@@ -61,7 +61,7 @@ function DeltaBar({ scenario, baseline, metric }) {
           </div>
         </div>
         {/* Mini delta bar */}
-        <div className="h-1 bg-white/5 rounded overflow-hidden">
+        <div className="h-1 bg-gray-50 rounded overflow-hidden">
           <div
             className={`h-full rounded transition-all duration-500 ${
               isWorse ? 'bg-red-400/60' : 'bg-emerald-400/60'
@@ -84,8 +84,8 @@ function ComparisonChart({ data }) {
           <XAxis dataKey="metric" tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 9 }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fill: 'rgba(255,255,255,0.2)', fontSize: 9 }} axisLine={false} tickLine={false} width={28} />
           <Tooltip
-            contentStyle={{ background: '#0d1526', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 11 }}
-            labelStyle={{ color: 'rgba(255,255,255,0.6)' }}
+            contentStyle={{ background: '#0d1526', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 8, fontSize: 11 }}
+            labelStyle={{ color: 'rgba(0,0,0,0.6)' }}
           />
           <Bar dataKey="baseline" name="NGFS Baseline" fill="rgba(255,255,255,0.15)" radius={[2,2,0,0]} />
           <Bar dataKey="scenario" name="Your Scenario" radius={[2,2,0,0]}>
@@ -166,15 +166,15 @@ export function ScenarioImpactPreviewPanel({ scenario }) {
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div>
-          <h4 className="text-[12px] font-semibold text-white/80">Impact Preview</h4>
-          <p className="text-[10px] text-white/30">vs. NGFS Orderly baseline · demo portfolio</p>
+          <h4 className="text-[12px] font-semibold text-gray-800">Impact Preview</h4>
+          <p className="text-[10px] text-gray-500">vs. NGFS Orderly baseline · demo portfolio</p>
         </div>
         <div className="flex items-center gap-2">
-          {lastRun && <span className="text-[9px] text-white/25">{lastRun}</span>}
+          {lastRun && <span className="text-[9px] text-gray-400">{lastRun}</span>}
           <button
             onClick={runPreview}
             disabled={loading}
-            className="text-[10px] flex items-center gap-1 px-2 py-1 rounded border border-white/10 text-white/50 hover:border-cyan-500/30 hover:text-cyan-300 transition-colors disabled:opacity-40"
+            className="text-[10px] flex items-center gap-1 px-2 py-1 rounded border border-black/10 text-gray-500 hover:border-gray-300 hover:text-gray-800 transition-colors disabled:opacity-40"
           >
             <svg className={`h-3 w-3 ${loading ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -188,7 +188,7 @@ export function ScenarioImpactPreviewPanel({ scenario }) {
       {loading && !results && (
         <div className="space-y-2">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-8 bg-white/5 rounded animate-pulse" />
+            <div key={i} className="h-8 bg-gray-50 rounded animate-pulse" />
           ))}
         </div>
       )}
@@ -210,13 +210,13 @@ export function ScenarioImpactPreviewPanel({ scenario }) {
 
       {/* Error / offline state */}
       {!loading && !results && (
-        <div className="text-[11px] text-white/30 py-4 text-center">
+        <div className="text-[11px] text-gray-500 py-4 text-center">
           Click refresh to run impact preview
         </div>
       )}
 
       {/* Disclaimer */}
-      <p className="text-[9px] text-white/20 mt-3 leading-relaxed">
+      <p className="text-[9px] text-gray-400 mt-3 leading-relaxed">
         Preview uses 6-asset demo portfolio · {results?.n_simulations || 200} Monte Carlo draws · P50 median estimates only
       </p>
     </div>

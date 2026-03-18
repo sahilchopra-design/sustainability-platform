@@ -25,46 +25,46 @@ import {
 const API = process.env.REACT_APP_API_URL || 'http://localhost:8001';
 
 /* ── Helpers ────────────────────────────────────────────────────────────── */
-function Badge({ label, color = 'bg-white/[0.06] text-white/60' }) {
+function Badge({ label, color = 'bg-black/[0.04] text-slate-600' }) {
   return <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${color}`}>{label}</span>;
 }
 function Card({ title, subtitle, children, className = '' }) {
   return (
-    <div className={`bg-[#0d1424] rounded-xl border border-white/[0.06]  ${className}`}>
+    <div className={`bg-white rounded-xl border border-black/[0.08]  ${className}`}>
       {(title || subtitle) && (
-        <div className="px-6 py-4 border-b border-white/[0.04]">
-          {title && <h2 className="text-sm font-semibold text-white/90">{title}</h2>}
-          {subtitle && <p className="text-xs text-white/40 mt-0.5">{subtitle}</p>}
+        <div className="px-6 py-4 border-b border-black/[0.06]">
+          {title && <h2 className="text-sm font-semibold text-slate-900">{title}</h2>}
+          {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
         </div>
       )}
       <div className="p-6">{children}</div>
     </div>
   );
 }
-function StatCard({ label, value, unit, sub, color = 'text-white' }) {
+function StatCard({ label, value, unit, sub, color = 'text-slate-900' }) {
   return (
-    <div className="bg-[#0d1424] rounded-xl border border-white/[0.06]  p-5">
-      <p className="text-xs text-white/40 font-medium mb-1">{label}</p>
+    <div className="bg-white rounded-xl border border-black/[0.08]  p-5">
+      <p className="text-xs text-slate-400 font-medium mb-1">{label}</p>
       <p className={`text-2xl font-bold ${color}`}>
-        {value}{unit && <span className="text-sm font-normal text-white/40 ml-1">{unit}</span>}
+        {value}{unit && <span className="text-sm font-normal text-slate-400 ml-1">{unit}</span>}
       </p>
-      {sub && <p className="text-[11px] text-white/30 mt-1">{sub}</p>}
+      {sub && <p className="text-[11px] text-slate-400 mt-1">{sub}</p>}
     </div>
   );
 }
 function Field({ label, hint, children }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-white/60 mb-1">{label}</label>
+      <label className="block text-xs font-medium text-slate-600 mb-1">{label}</label>
       {children}
-      {hint && <p className="text-[10px] text-white/30 mt-0.5">{hint}</p>}
+      {hint && <p className="text-[10px] text-slate-400 mt-0.5">{hint}</p>}
     </div>
   );
 }
 function Input({ value, onChange, type = 'text', ...rest }) {
   return (
     <input type={type} value={value} onChange={e => onChange(type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value)}
-      className="w-full border border-white/[0.06] rounded-lg bg-[#0b1120] text-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50" {...rest} />
+      className="w-full border border-black/[0.08] rounded-lg bg-[#f5f6f8] text-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/50" {...rest} />
   );
 }
 
@@ -112,7 +112,7 @@ function DataCentrePanel() {
       <div className="flex flex-wrap gap-2">
         <Badge label="EU Green Deal" color="bg-emerald-500/10 text-emerald-400" />
         <Badge label="IEA Data Centre Efficiency" color="bg-blue-500/10 text-blue-300" />
-        <Badge label="ISO/IEC 30134-2 (PUE)" color="bg-white/[0.06] text-white/60" />
+        <Badge label="ISO/IEC 30134-2 (PUE)" color="bg-black/[0.04] text-slate-600" />
         <Badge label="TCFD Physical Risk" color="bg-purple-500/10 text-purple-300" />
       </div>
       <Card title="Data Centre Parameters" subtitle="Facility parameters for ESG efficiency scoring and carbon intensity">
@@ -120,7 +120,7 @@ function DataCentrePanel() {
           <Field label="Facility ID"><Input value={form.facility_id} onChange={v => set('facility_id', v)} placeholder="DC_001" /></Field>
           <Field label="Location"><Input value={form.location} onChange={v => set('location', v)} placeholder="London, UK" /></Field>
           <Field label="Grid Region">
-            <select className="w-full border border-white/[0.06] rounded-lg bg-[#0b1120] text-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <select className="w-full border border-black/[0.08] rounded-lg bg-[#f5f6f8] text-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/50"
               value={form.grid_region} onChange={e => set('grid_region', e.target.value)}>
               {GRID_REGIONS.map(g => <option key={g.v} value={g.v}>{g.l}</option>)}
             </select>
@@ -141,7 +141,7 @@ function DataCentrePanel() {
             <Input type="number" value={form.renewable_energy_pct} onChange={v => set('renewable_energy_pct', v)} min="0" max="100" />
           </Field>
           <Field label="Cooling Type">
-            <select className="w-full border border-white/[0.06] rounded-lg bg-[#0b1120] text-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <select className="w-full border border-black/[0.08] rounded-lg bg-[#f5f6f8] text-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/50"
               value={form.cooling_type} onChange={e => set('cooling_type', e.target.value)}>
               {COOLING_TYPES.map(c => <option key={c.v} value={c.v}>{c.l}</option>)}
             </select>
@@ -149,12 +149,12 @@ function DataCentrePanel() {
           <div className="flex items-center gap-3 pt-6">
             <input type="checkbox" id="ppa" className="rounded" checked={form.has_renewable_ppa}
               onChange={e => set('has_renewable_ppa', e.target.checked)} />
-            <label htmlFor="ppa" className="text-xs text-white/60 cursor-pointer">Renewable PPA in place</label>
+            <label htmlFor="ppa" className="text-xs text-slate-600 cursor-pointer">Renewable PPA in place</label>
           </div>
         </div>
         <div className="mt-6 flex justify-end">
           <button onClick={handleCalc} disabled={loading}
-            className="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-50 text-white text-sm font-semibold px-8 py-2.5 rounded-lg transition-colors">
+            className="bg-black hover:bg-gray-800 disabled:opacity-50 text-slate-900 text-sm font-semibold px-8 py-2.5 rounded-lg transition-colors">
             {loading ? 'Assessing…' : 'Run Efficiency Assessment'}
           </button>
         </div>
@@ -184,16 +184,16 @@ function DataCentrePanel() {
             <Card title="Improvement Targets">
               <div className="space-y-3">
                 {result.improvement_targets?.map((t, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3 bg-white/[0.02] rounded-lg">
+                  <div key={i} className="flex items-start gap-3 p-3 bg-black/[0.02] rounded-lg">
                     <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
                       t.priority === 'HIGH' ? 'bg-red-100 text-red-400' : t.priority === 'MEDIUM' ? 'bg-amber-100 text-amber-400' : 'bg-emerald-100 text-emerald-400'
                     }`}>{i + 1}</div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-xs font-medium text-white/90">{t.measure}</span>
+                        <span className="text-xs font-medium text-slate-900">{t.measure}</span>
                         <Badge label={t.priority} color={t.priority === 'HIGH' ? 'bg-red-500/10 text-red-400' : t.priority === 'MEDIUM' ? 'bg-amber-500/10 text-amber-400' : 'bg-emerald-500/10 text-emerald-400'} />
                       </div>
-                      <p className="text-[10px] text-white/40">Reduction: {t.potential_reduction_pct?.toFixed(0)}%{t.payback_years ? ` · Payback: ${t.payback_years?.toFixed(1)}yr` : ''}</p>
+                      <p className="text-[10px] text-slate-400">Reduction: {t.potential_reduction_pct?.toFixed(0)}%{t.payback_years ? ` · Payback: ${t.payback_years?.toFixed(1)}yr` : ''}</p>
                     </div>
                   </div>
                 ))}
@@ -240,7 +240,7 @@ function CATRiskPanel() {
     <div className="space-y-6">
       <div className="flex flex-wrap gap-2">
         <Badge label="Lloyd's RDS" color="bg-blue-500/10 text-blue-300" />
-        <Badge label="IPCC AR6 Physical Risk" color="bg-cyan-400/10 text-cyan-300" />
+        <Badge label="IPCC AR6 Physical Risk" color="bg-black/[0.05] text-slate-800" />
         <Badge label="TCFD Physical Scenarios" color="bg-purple-500/10 text-purple-300" />
         <Badge label="Solvency II / ICS 2.0" color="bg-amber-500/10 text-amber-400" />
       </div>
@@ -251,21 +251,21 @@ function CATRiskPanel() {
           <Field label="Longitude"><Input type="number" value={form.longitude} onChange={v => set('longitude', v)} step="0.0001" /></Field>
           <Field label="Country (ISO2)"><Input value={form.country_iso} onChange={v => set('country_iso', v)} /></Field>
           <Field label="Peril">
-            <select className="w-full border border-white/[0.06] rounded-lg bg-[#0b1120] text-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <select className="w-full border border-black/[0.08] rounded-lg bg-[#f5f6f8] text-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/50"
               value={form.peril} onChange={e => set('peril', e.target.value)}>
               {PERILS_CAT.map(p => <option key={p.v} value={p.v}>{p.l}</option>)}
             </select>
           </Field>
           <Field label="Property Value (GBP)"><Input type="number" value={form.property_value_gbp} onChange={v => set('property_value_gbp', v)} /></Field>
           <Field label="Construction Type">
-            <select className="w-full border border-white/[0.06] rounded-lg bg-[#0b1120] text-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <select className="w-full border border-black/[0.08] rounded-lg bg-[#f5f6f8] text-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/50"
               value={form.construction_type} onChange={e => set('construction_type', e.target.value)}>
               {CONSTRUCTION_TYPES.map(c => <option key={c.v} value={c.v}>{c.l}</option>)}
             </select>
           </Field>
           <Field label="Year Built"><Input type="number" value={form.year_built} onChange={v => set('year_built', v)} /></Field>
           <Field label="Climate Scenario">
-            <select className="w-full border border-white/[0.06] rounded-lg bg-[#0b1120] text-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <select className="w-full border border-black/[0.08] rounded-lg bg-[#f5f6f8] text-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/50"
               value={form.climate_scenario} onChange={e => set('climate_scenario', e.target.value)}>
               {CLIMATE_SCENARIOS.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
@@ -273,7 +273,7 @@ function CATRiskPanel() {
         </div>
         <div className="mt-6 flex justify-end">
           <button onClick={handleCalc} disabled={loading}
-            className="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-50 text-white text-sm font-semibold px-8 py-2.5 rounded-lg transition-colors">
+            className="bg-black hover:bg-gray-800 disabled:opacity-50 text-slate-900 text-sm font-semibold px-8 py-2.5 rounded-lg transition-colors">
             {loading ? 'Modelling…' : 'Run CAT Risk Model'}
           </button>
         </div>
@@ -360,7 +360,7 @@ function PowerPlantPanel() {
           <Field label="Plant ID"><Input value={form.plant_id} onChange={v => set('plant_id', v)} placeholder="PLANT_001" /></Field>
           <Field label="Country (ISO2)"><Input value={form.country_iso} onChange={v => set('country_iso', v)} /></Field>
           <Field label="Fuel Type">
-            <select className="w-full border border-white/[0.06] rounded-lg bg-[#0b1120] text-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            <select className="w-full border border-black/[0.08] rounded-lg bg-[#f5f6f8] text-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/50"
               value={form.fuel_type} onChange={e => set('fuel_type', e.target.value)}>
               {FUEL_TYPES.map(f => <option key={f.v} value={f.v}>{f.l}</option>)}
             </select>
@@ -374,7 +374,7 @@ function PowerPlantPanel() {
         </div>
         <div className="mt-6 flex justify-end">
           <button onClick={handleCalc} disabled={loading}
-            className="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-50 text-white text-sm font-semibold px-8 py-2.5 rounded-lg transition-colors">
+            className="bg-black hover:bg-gray-800 disabled:opacity-50 text-slate-900 text-sm font-semibold px-8 py-2.5 rounded-lg transition-colors">
             {loading ? 'Analysing…' : 'Run Decarbonisation Analysis'}
           </button>
         </div>
@@ -432,21 +432,21 @@ function CoalPhaseOutPanel() {
       <div className="flex flex-wrap gap-2">
         <Badge label="IEA NZE 2050" color="bg-emerald-500/10 text-emerald-400" />
         <Badge label="IPCC AR6 WG3" color="bg-blue-500/10 text-blue-300" />
-        <Badge label="NZBA Coal Criteria" color="bg-white/[0.06] text-white/60" />
+        <Badge label="NZBA Coal Criteria" color="bg-black/[0.04] text-slate-600" />
         <Badge label="GFANZ Phase-Down" color="bg-purple-500/10 text-purple-300" />
       </div>
       <Card title="Coal Phase-Out Criteria Assessment" subtitle="IEA NZE 2050 / IPCC AR6 / NZBA aligned coal phase-down checklist">
         <div className="space-y-3">
           {COAL_CRITERIA.map(c => (
-            <div key={c.id} className="flex items-start gap-4 p-4 bg-white/[0.02] rounded-lg hover:bg-white/[0.03] transition-colors">
+            <div key={c.id} className="flex items-start gap-4 p-4 bg-black/[0.02] rounded-lg hover:bg-black/[0.03] transition-colors">
               <input type="checkbox" id={c.id} checked={checks[c.id]}
                 onChange={e => setChecks(prev => ({ ...prev, [c.id]: e.target.checked }))}
-                className="mt-0.5 rounded border-white/20 bg-white/[0.04] text-cyan-400 focus:ring-cyan-400/50" />
+                className="mt-0.5 rounded border-black/20 bg-black/[0.03] text-slate-700 focus:ring-black/50" />
               <div className="flex-1">
-                <label htmlFor={c.id} className="text-sm font-medium text-white/80 cursor-pointer">{c.label}</label>
-                <p className="text-[11px] text-white/30 mt-0.5">Standard: {c.standard}</p>
+                <label htmlFor={c.id} className="text-sm font-medium text-slate-800 cursor-pointer">{c.label}</label>
+                <p className="text-[11px] text-slate-400 mt-0.5">Standard: {c.standard}</p>
               </div>
-              <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${checks[c.id] ? 'bg-emerald-400' : 'bg-white/10'}`} />
+              <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${checks[c.id] ? 'bg-emerald-400' : 'bg-black/[0.06]'}`} />
             </div>
           ))}
         </div>
@@ -454,13 +454,13 @@ function CoalPhaseOutPanel() {
       <div className={`rounded-xl border p-5 ${ragConfig.bg} ${ragConfig.border}`}>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs font-medium text-white/40 mb-1">Assessment Result</p>
+            <p className="text-xs font-medium text-slate-400 mb-1">Assessment Result</p>
             <p className={`text-xl font-bold ${ragConfig.text}`}>{ragConfig.label}</p>
-            <p className="text-xs text-white/40 mt-1">{metCount} of {total} criteria satisfied</p>
+            <p className="text-xs text-slate-400 mt-1">{metCount} of {total} criteria satisfied</p>
           </div>
           <div className={`text-4xl font-black ${ragConfig.text}`}>{rag}</div>
         </div>
-        <div className="mt-3 h-2 bg-white/[0.04] rounded-full overflow-hidden">
+        <div className="mt-3 h-2 bg-black/[0.03] rounded-full overflow-hidden">
           <div className={`h-full rounded-full transition-all duration-500 ${rag === 'GREEN' ? 'bg-emerald-400' : rag === 'AMBER' ? 'bg-amber-400' : 'bg-red-400'}`}
             style={{ width: `${(metCount / total) * 100}%` }} />
         </div>
@@ -491,12 +491,12 @@ export default function SectorAssessmentsPage() {
   const [activePanel, setActivePanel] = useState('datacentre');
 
   return (
-    <div className="flex flex-col h-full bg-white/[0.02]">
-      <div className="bg-[#0d1424] border-b border-white/[0.06] px-8 py-5">
+    <div className="flex flex-col h-full bg-black/[0.02]">
+      <div className="bg-white border-b border-black/[0.08] px-8 py-5">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-xl font-bold text-white">Sector ESG Assessments</h1>
-            <p className="text-sm text-white/40 mt-0.5">
+            <h1 className="text-xl font-bold text-slate-900">Sector ESG Assessments</h1>
+            <p className="text-sm text-slate-400 mt-0.5">
               Technology / Data Centre, Insurance, Energy, Agriculture, Mining &amp; Extractives
             </p>
           </div>
@@ -510,17 +510,17 @@ export default function SectorAssessmentsPage() {
         </div>
       </div>
 
-      <div className="bg-[#0d1424] border-b border-white/[0.06] px-8 overflow-x-auto">
+      <div className="bg-white border-b border-black/[0.08] px-8 overflow-x-auto">
         <div className="flex gap-0 min-w-max">
           {PANELS.map(p => (
             <button key={p.id} onClick={() => setActivePanel(p.id)}
               className={`px-4 py-3.5 border-b-2 transition-all whitespace-nowrap ${
                 activePanel === p.id
-                  ? 'border-cyan-400/20 text-cyan-300'
-                  : 'border-transparent text-white/40 hover:text-white/70 hover:border-white/[0.08]'
+                  ? 'border-black/[0.15] text-slate-800'
+                  : 'border-transparent text-slate-400 hover:text-slate-700 hover:border-black/[0.10]'
               }`}>
               <span className="text-sm font-semibold block">{p.label}</span>
-              <span className="text-[10px] text-white/30">{p.sub}</span>
+              <span className="text-[10px] text-slate-400">{p.sub}</span>
             </button>
           ))}
         </div>

@@ -55,7 +55,7 @@ export function MapboxTokenGate({ children, height = '400px', className = '' }) 
           onClick={() => { clearToken(); setShowInput(true); }}
           title="Change Mapbox token"
           className="absolute bottom-2 right-2 z-10 flex items-center gap-1 px-2 py-1 text-xs
-                     bg-black/60 hover:bg-black/80 text-white/60 hover:text-white rounded
+                     bg-black/60 hover:bg-black/80 text-gray-600 hover:text-gray-900 rounded
                      backdrop-blur transition-colors"
         >
           <Key className="h-3 w-3" />
@@ -68,7 +68,7 @@ export function MapboxTokenGate({ children, height = '400px', className = '' }) 
   // No token — show prompt
   return (
     <div
-      className={`flex flex-col items-center justify-center bg-[#0d1424] border border-white/[0.06] rounded-lg ${className}`}
+      className={`flex flex-col items-center justify-center bg-white border border-gray-200 rounded-lg ${className}`}
       style={{ minHeight: height }}
     >
       <div className="w-full max-w-md px-6 py-8 text-center space-y-5">
@@ -80,15 +80,15 @@ export function MapboxTokenGate({ children, height = '400px', className = '' }) 
         </div>
 
         <div>
-          <h3 className="text-base font-semibold text-white">Mapbox API Key Required</h3>
-          <p className="mt-1 text-sm text-white/50">
+          <h3 className="text-base font-semibold text-gray-900">Mapbox API Key Required</h3>
+          <p className="mt-1 text-sm text-gray-500">
             Enter your Mapbox public access token to enable the map view.
           </p>
         </div>
 
         {/* Input */}
         <div className="space-y-2 text-left">
-          <label className="block text-xs font-medium text-white/60">
+          <label className="block text-xs font-medium text-gray-600">
             Public access token
           </label>
           <div className="relative">
@@ -98,15 +98,15 @@ export function MapboxTokenGate({ children, height = '400px', className = '' }) 
               onChange={(e) => { setInput(e.target.value); setError(''); }}
               onKeyDown={(e) => e.key === 'Enter' && handleSave()}
               placeholder="pk.eyJ1IjoiYW5..."
-              className="w-full bg-white/[0.05] border border-white/[0.12] rounded-md px-3 py-2 pr-10
-                         text-sm text-white placeholder:text-white/25
+              className="w-full bg-white/[0.05] border border-gray-300 rounded-md px-3 py-2 pr-10
+                         text-sm text-gray-900 placeholder:text-gray-400
                          focus:outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/30
                          font-mono"
             />
             <button
               type="button"
               onClick={() => setShowToken(!showToken)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
               title={showToken ? 'Hide token' : 'Show token'}
             >
               {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -121,13 +121,13 @@ export function MapboxTokenGate({ children, height = '400px', className = '' }) 
           onClick={handleSave}
           disabled={!input.trim()}
           className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/30
-                     disabled:cursor-not-allowed text-white text-sm font-medium rounded-md
+                     disabled:cursor-not-allowed text-gray-900 text-sm font-medium rounded-md
                      transition-colors"
         >
           Save & Load Map
         </button>
 
-        <p className="text-xs text-white/30 leading-relaxed">
+        <p className="text-xs text-gray-500 leading-relaxed">
           Token is saved in your browser only and never sent to any server.{' '}
           <a
             href="https://account.mapbox.com/access-tokens/"

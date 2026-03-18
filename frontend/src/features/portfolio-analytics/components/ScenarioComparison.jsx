@@ -74,9 +74,9 @@ export function ScenarioComparison({ portfolioId }) {
   
   if (!portfolioId) {
     return (
-      <Card className="bg-[#0d1424]" data-testid="scenario-comparison-disabled">
-        <CardContent className="py-12 text-center text-white/40">
-          <GitCompare className="h-12 w-12 mx-auto mb-4 text-white/20" />
+      <Card className="bg-white" data-testid="scenario-comparison-disabled">
+        <CardContent className="py-12 text-center text-gray-500">
+          <GitCompare className="h-12 w-12 mx-auto mb-4 text-gray-400" />
           <p>Select a portfolio to compare scenarios</p>
         </CardContent>
       </Card>
@@ -84,9 +84,9 @@ export function ScenarioComparison({ portfolioId }) {
   }
   
   return (
-    <Card className="bg-[#0d1424]" data-testid="scenario-comparison">
+    <Card className="bg-white" data-testid="scenario-comparison">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold text-white/70 flex items-center gap-2">
+        <CardTitle className="text-sm font-semibold text-gray-700 flex items-center gap-2">
           <GitCompare className="h-4 w-4 text-violet-500" />
           Scenario Comparison
         </CardTitle>
@@ -94,7 +94,7 @@ export function ScenarioComparison({ portfolioId }) {
       <CardContent className="space-y-4">
         {/* Scenario Selection */}
         <div>
-          <Label className="text-xs text-white/60 mb-2 block">Select Scenarios to Compare</Label>
+          <Label className="text-xs text-gray-600 mb-2 block">Select Scenarios to Compare</Label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {AVAILABLE_SCENARIOS.map((scenario) => (
               <label
@@ -102,7 +102,7 @@ export function ScenarioComparison({ portfolioId }) {
                 className={`flex items-start gap-2 p-2 rounded-lg border cursor-pointer transition-colors ${
                   selectedScenarios.includes(scenario.id)
                     ? 'bg-violet-50 border-violet-300'
-                    : 'bg-[#0d1424] border-white/[0.06] hover:bg-white/[0.02]'
+                    : 'bg-white border-gray-200 hover:bg-gray-50'
                 }`}
               >
                 <Checkbox
@@ -111,8 +111,8 @@ export function ScenarioComparison({ portfolioId }) {
                   className="mt-0.5"
                 />
                 <div>
-                  <p className="text-sm font-medium text-white/70">{scenario.name}</p>
-                  <p className="text-xs text-white/40">{scenario.description}</p>
+                  <p className="text-sm font-medium text-gray-700">{scenario.name}</p>
+                  <p className="text-xs text-gray-500">{scenario.description}</p>
                 </div>
               </label>
             ))}
@@ -161,14 +161,14 @@ export function ScenarioComparison({ portfolioId }) {
             </div>
             
             {/* Value Spread */}
-            <div className="p-3 bg-white/[0.02] rounded-lg">
+            <div className="p-3 bg-gray-50 rounded-lg">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-white/60">Value Spread</span>
-                <span className="font-semibold text-white/90">
+                <span className="text-xs text-gray-600">Value Spread</span>
+                <span className="font-semibold text-gray-900">
                   {formatCurrency(comparisonResult.value_spread)}
                 </span>
               </div>
-              <p className="text-xs text-white/40 mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 Base Value: {formatCurrency(comparisonResult.base_value)}
               </p>
             </div>
@@ -214,7 +214,7 @@ export function ScenarioComparison({ portfolioId }) {
             <div className="border rounded-lg overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-white/[0.02]">
+                  <TableRow className="bg-gray-50">
                     <TableHead className="text-xs">Scenario</TableHead>
                     <TableHead className="text-xs text-right">Value</TableHead>
                     <TableHead className="text-xs text-right">Change</TableHead>
@@ -243,7 +243,7 @@ export function ScenarioComparison({ portfolioId }) {
                             {row.stranded_count}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-right text-sm text-white/60">
+                        <TableCell className="text-right text-sm text-gray-600">
                           {formatCurrency(row.var_95)}
                         </TableCell>
                       </TableRow>

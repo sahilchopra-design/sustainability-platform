@@ -51,11 +51,11 @@ function EditPopover({ year, currentValue, param, onSave, onClose }) {
   };
 
   return (
-    <div className="absolute z-10 bg-[#0d1526] border border-cyan-500/30 rounded-lg p-3 shadow-xl w-52"
+    <div className="absolute z-10 bg-white border border-gray-300 rounded-lg p-3 shadow-xl w-52"
          style={{ top: '10px', right: '10px' }}>
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[11px] font-semibold text-cyan-300">{year} — {param.label}</span>
-        <button onClick={onClose} className="text-white/30 hover:text-white/70">
+        <span className="text-[11px] font-semibold text-gray-800">{year} — {param.label}</span>
+        <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -70,26 +70,26 @@ function EditPopover({ year, currentValue, param, onSave, onClose }) {
           step={param.step}
           onChange={e => setValue(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleSave()}
-          className="flex-1 text-[12px] bg-white/5 border border-white/10 rounded px-2 py-1 text-white/80 focus:outline-none focus:border-cyan-500/40"
+          className="flex-1 text-[12px] bg-gray-50 border border-black/10 rounded px-2 py-1 text-gray-800 focus:outline-none focus:border-blue-500"
           autoFocus
         />
-        <span className="text-[10px] text-white/40">{param.unit}</span>
+        <span className="text-[10px] text-gray-500">{param.unit}</span>
       </div>
       <div className="flex gap-1.5">
         <button
           onClick={handleSave}
-          className="flex-1 text-[11px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 rounded px-2 py-1 hover:bg-cyan-500/30 transition-colors"
+          className="flex-1 text-[11px] bg-gray-100 text-gray-800 border border-gray-300 rounded px-2 py-1 hover:bg-gray-300 transition-colors"
         >
           Apply
         </button>
         <button
           onClick={onClose}
-          className="text-[11px] bg-white/5 text-white/50 border border-white/10 rounded px-2 py-1 hover:bg-white/10 transition-colors"
+          className="text-[11px] bg-gray-50 text-gray-500 border border-black/10 rounded px-2 py-1 hover:bg-gray-100 transition-colors"
         >
           Cancel
         </button>
       </div>
-      <p className="text-[9px] text-white/25 mt-1.5">Range: {param.min}–{param.max} {param.unit}</p>
+      <p className="text-[9px] text-gray-400 mt-1.5">Range: {param.min}–{param.max} {param.unit}</p>
     </div>
   );
 }
@@ -99,13 +99,13 @@ function EditPopover({ year, currentValue, param, onSave, onClose }) {
 function CustomTooltip({ active, payload, label, unit }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#0d1526] border border-white/10 rounded-lg p-2.5 shadow-xl text-[11px]">
-      <p className="font-semibold text-white/70 mb-1.5">{label}</p>
+    <div className="bg-white border border-black/10 rounded-lg p-2.5 shadow-xl text-[11px]">
+      <p className="font-semibold text-gray-700 mb-1.5">{label}</p>
       {payload.map((entry, i) => (
         <div key={i} className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-            <span className="text-white/50">{entry.name}:</span>
+            <span className="text-gray-500">{entry.name}:</span>
           </div>
           <span className="font-mono font-semibold" style={{ color: entry.color }}>
             {entry.value?.toFixed(2)} {unit}
@@ -140,7 +140,7 @@ export function TrajectoryVisualizer({ scenario, paramId, onUpdatePoint, onReset
 
   if (!param || !scenParam) {
     return (
-      <div className="flex items-center justify-center h-48 text-white/30 text-sm">
+      <div className="flex items-center justify-center h-48 text-gray-500 text-sm">
         Select a parameter to visualize its trajectory
       </div>
     );
@@ -171,8 +171,8 @@ export function TrajectoryVisualizer({ scenario, paramId, onUpdatePoint, onReset
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div>
-          <h4 className="text-[13px] font-semibold text-white/90">{param.label}</h4>
-          <p className="text-[10px] text-white/35">{param.unit} · Click any point to edit</p>
+          <h4 className="text-[13px] font-semibold text-gray-900">{param.label}</h4>
+          <p className="text-[10px] text-gray-500">{param.unit} · Click any point to edit</p>
         </div>
         <div className="flex items-center gap-2">
           {/* Toggle NGFS overlays */}
@@ -185,7 +185,7 @@ export function TrajectoryVisualizer({ scenario, paramId, onUpdatePoint, onReset
                 className={`text-[9px] font-semibold px-1.5 py-0.5 rounded border transition-colors ${
                   showNgfs[fam]
                     ? `${meta.bgClass} ${meta.textClass} ${meta.borderClass}`
-                    : 'bg-white/5 text-white/25 border-white/8'
+                    : 'bg-gray-50 text-gray-400 border-gray-200'
                 }`}
               >
                 {fam === 'Hot house world' ? 'HH' : fam}
@@ -195,7 +195,7 @@ export function TrajectoryVisualizer({ scenario, paramId, onUpdatePoint, onReset
           {/* Reset button */}
           <button
             onClick={() => { onResetTrajectory(paramId); setActiveYear(null); setEditState(null); }}
-            className="text-[10px] text-white/40 hover:text-white/70 flex items-center gap-1 px-2 py-0.5 rounded border border-white/8 hover:border-white/16 transition-colors"
+            className="text-[10px] text-gray-500 hover:text-gray-700 flex items-center gap-1 px-2 py-0.5 rounded border border-gray-200 hover:border-black/16 transition-colors"
           >
             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -270,21 +270,21 @@ export function TrajectoryVisualizer({ scenario, paramId, onUpdatePoint, onReset
       <div className="mt-3 overflow-x-auto">
         <table className="w-full text-[10px]">
           <thead>
-            <tr className="border-b border-white/8">
-              <th className="text-left text-white/30 font-normal pb-1 pr-3">Scenario</th>
-              {YEARS.map(yr => <th key={yr} className="text-right text-white/30 font-normal pb-1 px-1">{yr}</th>)}
+            <tr className="border-b border-gray-200">
+              <th className="text-left text-gray-500 font-normal pb-1 pr-3">Scenario</th>
+              {YEARS.map(yr => <th key={yr} className="text-right text-gray-500 font-normal pb-1 px-1">{yr}</th>)}
             </tr>
           </thead>
           <tbody>
-            <tr className="border-b border-white/5">
-              <td className="text-cyan-400 font-medium py-1 pr-3">Your Scenario</td>
+            <tr className="border-b border-black/5">
+              <td className="text-gray-700 font-medium py-1 pr-3">Your Scenario</td>
               {YEARS.map(yr => {
                 const pt = (scenParam.trajectory || []).find(p => p.year === yr);
                 return (
                   <td
                     key={yr}
-                    className={`text-right px-1 py-1 cursor-pointer hover:bg-cyan-500/5 rounded ${
-                      pt?.isEdited ? 'text-amber-400 font-semibold' : 'text-white/70'
+                    className={`text-right px-1 py-1 cursor-pointer hover:bg-gray-50 rounded ${
+                      pt?.isEdited ? 'text-amber-400 font-semibold' : 'text-gray-700'
                     }`}
                     onClick={() => handleEditPoint(yr, pt?.value)}
                   >
@@ -294,12 +294,12 @@ export function TrajectoryVisualizer({ scenario, paramId, onUpdatePoint, onReset
               })}
             </tr>
             {NGFS_FAMILIES.map(fam => (
-              <tr key={fam} className="border-b border-white/5">
+              <tr key={fam} className="border-b border-black/5">
                 <td className="py-1 pr-3" style={{ color: FAMILY_COLORS[fam] + '99' }}>
                   {fam === 'Hot house world' ? 'Hot House' : fam}
                 </td>
                 {YEARS.map(yr => (
-                  <td key={yr} className="text-right px-1 py-1 text-white/30">
+                  <td key={yr} className="text-right px-1 py-1 text-gray-500">
                     {param.trajectories?.[fam]?.[yr]?.toFixed(1) ?? '—'}
                   </td>
                 ))}

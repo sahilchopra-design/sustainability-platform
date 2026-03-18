@@ -55,7 +55,7 @@ export const ProjectTable = ({
       case 'BBB':
         return 'bg-amber-100 text-amber-300';
       default:
-        return 'bg-white/[0.06] text-white/90';
+        return 'bg-gray-50 text-gray-900';
     }
   };
 
@@ -68,7 +68,7 @@ export const ProjectTable = ({
       case 'high':
         return 'bg-rose-100 text-rose-800';
       default:
-        return 'bg-white/[0.06] text-white/90';
+        return 'bg-gray-50 text-gray-900';
     }
   };
 
@@ -82,15 +82,15 @@ export const ProjectTable = ({
   ];
 
   return (
-    <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] overflow-hidden" data-testid="project-table">
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden" data-testid="project-table">
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-white/[0.02] border-b border-white/[0.06]">
+          <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className="px-6 py-3 text-left text-xs font-semibold text-white/40 uppercase tracking-wider cursor-pointer hover:bg-white/[0.06] transition-colors"
+                  className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-50 transition-colors"
                   onClick={() => handleSort(column.key)}
                 >
                   <div className="flex items-center gap-1">
@@ -99,28 +99,28 @@ export const ProjectTable = ({
                   </div>
                 </th>
               ))}
-              <th className="px-6 py-3 text-right text-xs font-semibold text-white/40 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200">
+          <tbody className="divide-y divide-gray-200">
             {sortedProjects.map((project) => (
               <tr
                 key={project.id}
-                className="hover:bg-white/[0.02] transition-colors"
+                className="hover:bg-gray-50 transition-colors"
                 data-testid={`project-row-${project.id}`}
               >
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-white">
+                  <div className="text-sm font-medium text-gray-900">
                     {project.name}
                   </div>
-                  <div className="text-xs text-white/40">
+                  <div className="text-xs text-gray-500">
                     {project.country_code}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-sm text-white/70">
+                  <span className="text-sm text-gray-700">
                     {project.project_type?.replace(/_/g, ' ')}
                   </span>
                 </td>
@@ -130,10 +130,10 @@ export const ProjectTable = ({
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-white tabular-nums">
+                  <div className="text-sm text-gray-900 tabular-nums">
                     {project.annual_credits?.toLocaleString()}
                   </div>
-                  <div className="text-xs text-white/40">tCO2e/yr</div>
+                  <div className="text-xs text-gray-500">tCO2e/yr</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getQualityBadgeColor(project.quality_rating)}`}>
@@ -179,7 +179,7 @@ export const ProjectTable = ({
       
       {projects.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-white/40">No projects found</p>
+          <p className="text-gray-500">No projects found</p>
           <button className="mt-2 text-blue-300 hover:text-blue-300 text-sm font-medium">
             Add your first project
           </button>

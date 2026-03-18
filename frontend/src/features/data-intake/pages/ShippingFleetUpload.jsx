@@ -64,11 +64,11 @@ export default function ShippingFleetUpload() {
     <div className="p-6 bg-gray-900 min-h-screen text-gray-100">
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Shipping Fleet Upload</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Shipping Fleet Upload</h1>
           <p className="text-gray-400 text-sm mt-1">Vessel-level CII ratings and CO2 emissions for Poseidon Principles alignment.</p>
         </div>
         <button onClick={downloadTemplate}
-          className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-sm text-white rounded border border-gray-600">
+          className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-sm text-gray-900 rounded border border-gray-600">
           Download Template
         </button>
       </div>
@@ -83,7 +83,7 @@ export default function ShippingFleetUpload() {
           })),
         ].map(k => (
           <div key={k.label} className="bg-gray-800 border border-gray-700 rounded-lg p-4">
-            <div className="text-xl font-bold text-white">{k.value}</div>
+            <div className="text-xl font-bold text-gray-900">{k.value}</div>
             <div className="text-xs text-gray-400 mt-1">{k.label}</div>
           </div>
         ))}
@@ -132,9 +132,9 @@ export default function ShippingFleetUpload() {
       <div className="flex gap-3 mb-4">
         <input type="text" placeholder="Filter by name, IMO, type, flag..." value={filter}
           onChange={e => setFilter(e.target.value)}
-          className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white" />
+          className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-gray-900" />
         <select value={ciiFilter} onChange={e => setCiiFilter(e.target.value)}
-          className="bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white">
+          className="bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-gray-900">
           <option value="">All CII</option>
           {['A','B','C','D','E'].map(r => <option key={r} value={r}>CII {r}</option>)}
         </select>
@@ -157,12 +157,12 @@ export default function ShippingFleetUpload() {
               {filtered.slice(0, 500).map(v => (
                 <tr key={v.id} className="hover:bg-gray-800">
                   <td className="py-1.5 pr-3 font-mono text-xs text-gray-300">{v.vessel_imo}</td>
-                  <td className="py-1.5 pr-3 text-white text-xs">{v.vessel_name}</td>
+                  <td className="py-1.5 pr-3 text-gray-900 text-xs">{v.vessel_name}</td>
                   <td className="py-1.5 pr-3 text-gray-400 text-xs">{v.vessel_type}</td>
                   <td className="py-1.5 pr-3 text-gray-400 text-xs">{v.flag_state}</td>
-                  <td className="py-1.5 pr-3 text-white text-xs">{v.dwt_tonnes ? Number(v.dwt_tonnes).toLocaleString() : '—'}</td>
+                  <td className="py-1.5 pr-3 text-gray-900 text-xs">{v.dwt_tonnes ? Number(v.dwt_tonnes).toLocaleString() : '—'}</td>
                   <td className="py-1.5 pr-3 text-gray-400 text-xs">{v.propulsion_type}</td>
-                  <td className="py-1.5 pr-3 text-white text-xs">{v.annual_co2_tco2e ? Number(v.annual_co2_tco2e).toLocaleString() : '—'}</td>
+                  <td className="py-1.5 pr-3 text-gray-900 text-xs">{v.annual_co2_tco2e ? Number(v.annual_co2_tco2e).toLocaleString() : '—'}</td>
                   <td className="py-1.5 pr-3">
                     <span className={`px-2 py-0.5 rounded text-xs font-bold ${CII_STYLE[v.cii_rating] || 'bg-gray-700 text-gray-400'}`}>
                       {v.cii_rating || '—'}

@@ -58,7 +58,7 @@ const REPORT_TYPES = [
     label: 'Executive Summary',
     description: 'High-level dashboard for executives',
     icon: BarChart2,
-    color: 'bg-white/[0.06] text-white/70',
+    color: 'bg-gray-50 text-gray-700',
   },
 ];
 
@@ -97,9 +97,9 @@ export function ReportGenerator({ portfolioId, portfolioName }) {
   
   if (!portfolioId) {
     return (
-      <Card className="bg-[#0d1424]" data-testid="report-generator-disabled">
-        <CardContent className="py-12 text-center text-white/40">
-          <FileText className="h-12 w-12 mx-auto mb-4 text-white/20" />
+      <Card className="bg-white" data-testid="report-generator-disabled">
+        <CardContent className="py-12 text-center text-gray-500">
+          <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400" />
           <p>Select a portfolio to generate reports</p>
         </CardContent>
       </Card>
@@ -107,9 +107,9 @@ export function ReportGenerator({ portfolioId, portfolioName }) {
   }
   
   return (
-    <Card className="bg-[#0d1424]" data-testid="report-generator">
+    <Card className="bg-white" data-testid="report-generator">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold text-white/70 flex items-center gap-2">
+        <CardTitle className="text-sm font-semibold text-gray-700 flex items-center gap-2">
           <FileText className="h-4 w-4 text-blue-500" />
           Generate Report
         </CardTitle>
@@ -117,7 +117,7 @@ export function ReportGenerator({ portfolioId, portfolioName }) {
       <CardContent className="space-y-4">
         {/* Report Type Selection */}
         <div>
-          <Label className="text-xs text-white/60 mb-2 block">Report Type</Label>
+          <Label className="text-xs text-gray-600 mb-2 block">Report Type</Label>
           <Select value={reportType} onValueChange={setReportType}>
             <SelectTrigger data-testid="report-type-select">
               <SelectValue />
@@ -138,26 +138,26 @@ export function ReportGenerator({ portfolioId, portfolioName }) {
           </Select>
           
           {selectedReportType && (
-            <p className="text-xs text-white/40 mt-2">{selectedReportType.description}</p>
+            <p className="text-xs text-gray-500 mt-2">{selectedReportType.description}</p>
           )}
         </div>
         
         {/* Advanced Options Toggle */}
         <button
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="flex items-center gap-1 text-xs text-white/40 hover:text-white/70"
+          className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700"
         >
           {showAdvanced ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
           Advanced Options
         </button>
         
         {showAdvanced && (
-          <div className="space-y-4 p-3 bg-white/[0.02] rounded-lg">
+          <div className="space-y-4 p-3 bg-gray-50 rounded-lg">
             {/* Time Horizon */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <Label className="text-xs text-white/60">Time Horizon</Label>
-                <span className="text-xs font-medium text-white/70">{timeHorizon} years</span>
+                <Label className="text-xs text-gray-600">Time Horizon</Label>
+                <span className="text-xs font-medium text-gray-700">{timeHorizon} years</span>
               </div>
               <Slider
                 value={[timeHorizon]}
@@ -171,7 +171,7 @@ export function ReportGenerator({ portfolioId, portfolioName }) {
             
             {/* Include Charts */}
             <div className="flex items-center justify-between">
-              <Label className="text-xs text-white/60">Include Charts</Label>
+              <Label className="text-xs text-gray-600">Include Charts</Label>
               <Switch
                 checked={includeCharts}
                 onCheckedChange={setIncludeCharts}
@@ -180,7 +180,7 @@ export function ReportGenerator({ portfolioId, portfolioName }) {
             
             {/* Include Property Details */}
             <div className="flex items-center justify-between">
-              <Label className="text-xs text-white/60">Include Property Details</Label>
+              <Label className="text-xs text-gray-600">Include Property Details</Label>
               <Switch
                 checked={includeDetails}
                 onCheckedChange={setIncludeDetails}
@@ -220,24 +220,24 @@ export function ReportGenerator({ portfolioId, portfolioName }) {
             {/* Executive Summary */}
             {generatedReport.executive_summary && (
               <div className="space-y-2 text-sm">
-                <p className="font-medium text-white/70">Executive Summary</p>
+                <p className="font-medium text-gray-700">Executive Summary</p>
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="bg-[#0d1424] p-2 rounded">
-                    <p className="text-xs text-white/40">Portfolio</p>
+                  <div className="bg-white p-2 rounded">
+                    <p className="text-xs text-gray-500">Portfolio</p>
                     <p className="font-medium">{generatedReport.executive_summary.portfolio_name}</p>
                   </div>
-                  <div className="bg-[#0d1424] p-2 rounded">
-                    <p className="text-xs text-white/40">Properties</p>
+                  <div className="bg-white p-2 rounded">
+                    <p className="text-xs text-gray-500">Properties</p>
                     <p className="font-medium">{generatedReport.executive_summary.property_count}</p>
                   </div>
-                  <div className="bg-[#0d1424] p-2 rounded">
-                    <p className="text-xs text-white/40">Total Value</p>
+                  <div className="bg-white p-2 rounded">
+                    <p className="text-xs text-gray-500">Total Value</p>
                     <p className="font-medium">
                       ${(generatedReport.executive_summary.total_value / 1e6).toFixed(1)}M
                     </p>
                   </div>
-                  <div className="bg-[#0d1424] p-2 rounded">
-                    <p className="text-xs text-white/40">Avg Risk Score</p>
+                  <div className="bg-white p-2 rounded">
+                    <p className="text-xs text-gray-500">Avg Risk Score</p>
                     <p className="font-medium">{generatedReport.executive_summary.avg_risk_score?.toFixed(1)}</p>
                   </div>
                 </div>
@@ -245,10 +245,10 @@ export function ReportGenerator({ portfolioId, portfolioName }) {
                 {/* Key Findings */}
                 {generatedReport.executive_summary.key_findings?.length > 0 && (
                   <div className="mt-2">
-                    <p className="text-xs text-white/40 mb-1">Key Findings</p>
+                    <p className="text-xs text-gray-500 mb-1">Key Findings</p>
                     <ul className="space-y-1">
                       {generatedReport.executive_summary.key_findings.map((finding, i) => (
-                        <li key={i} className="text-xs text-white/60 flex items-start gap-1">
+                        <li key={i} className="text-xs text-gray-600 flex items-start gap-1">
                           <span className="text-emerald-500 mt-0.5">•</span>
                           {finding}
                         </li>

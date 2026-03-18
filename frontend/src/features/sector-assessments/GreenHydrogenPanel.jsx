@@ -27,7 +27,7 @@ const COLOUR_STYLES = {
   "Turquoise": "bg-teal-500/10 text-teal-400 border-teal-500/20",
   "Grey": "bg-gray-500/10 text-gray-400 border-gray-500/20",
   "Brown/Black": "bg-amber-700/10 text-amber-700 border-amber-700/20",
-  "Low-Carbon": "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
+  "Low-Carbon": "bg-gray-100 text-gray-700 border-gray-200",
   "Grey/High-Carbon Electrolysis": "bg-gray-500/10 text-gray-400 border-gray-500/20",
 };
 
@@ -102,7 +102,7 @@ export function GreenHydrogenPanel() {
     setLoading(false);
   }, [form]);
 
-  const colourStyle = result ? COLOUR_STYLES[result.colour] || "bg-white/5 text-white/60" : "";
+  const colourStyle = result ? COLOUR_STYLES[result.colour] || "bg-gray-50 text-gray-600" : "";
   const fStyle = result ? FEASIBILITY_STYLES[result.feasibility] || FEASIBILITY_STYLES.developing : FEASIBILITY_STYLES.developing;
 
   // Chart data — LCOH waterfall
@@ -128,9 +128,9 @@ export function GreenHydrogenPanel() {
 
   const inputField = (key, label, type = "number", step = "0.1") => (
     <div key={key}>
-      <label className="text-xs text-white/40 block mb-1">{label}</label>
+      <label className="text-xs text-gray-500 block mb-1">{label}</label>
       <input type={type} step={step}
-        className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+        className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
         value={form[key]} onChange={e => set(key, type === "text" ? e.target.value : +e.target.value)} />
     </div>
   );
@@ -150,15 +150,15 @@ export function GreenHydrogenPanel() {
       {/* Input form + Results */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Inputs */}
-        <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4 space-y-3">
-          <h3 className="text-sm font-semibold text-white/80">Project Parameters</h3>
+        <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-3">
+          <h3 className="text-sm font-semibold text-gray-800">Project Parameters</h3>
 
           {inputField("project_name", "Project Name", "text")}
           {inputField("country", "Country", "text")}
 
           <div>
-            <label className="text-xs text-white/40 block mb-1">Production Pathway</label>
-            <select className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+            <label className="text-xs text-gray-500 block mb-1">Production Pathway</label>
+            <select className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
               value={form.production_pathway} onChange={e => set("production_pathway", e.target.value)}>
               {PATHWAYS.map(p => <option key={p} value={p}>{p.replace(/_/g, " ")}</option>)}
             </select>
@@ -170,8 +170,8 @@ export function GreenHydrogenPanel() {
           {isElectrolysis && (
             <>
               <div>
-                <label className="text-xs text-white/40 block mb-1">Electricity Source</label>
-                <select className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+                <label className="text-xs text-gray-500 block mb-1">Electricity Source</label>
+                <select className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
                   value={form.electricity_source} onChange={e => set("electricity_source", e.target.value)}>
                   {ELECTRICITY_SOURCES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                 </select>
@@ -189,7 +189,7 @@ export function GreenHydrogenPanel() {
             </>
           )}
 
-          <h4 className="text-xs font-semibold text-white/40 pt-2">Cost Additions</h4>
+          <h4 className="text-xs font-semibold text-gray-500 pt-2">Cost Additions</h4>
           {inputField("compression_storage_usd_per_kg", "Compression / Storage (USD/kg)", "number", "0.05")}
           {inputField("transport_cost_usd_per_kg", "Transport (USD/kg H₂)", "number", "0.1")}
           {inputField("carbon_price_usd_per_tco2", "Carbon Price (USD/tCO₂)", "number", "5")}
@@ -199,11 +199,11 @@ export function GreenHydrogenPanel() {
             <input type="checkbox" id="ira_45v" checked={form.ira_45v_eligible}
               onChange={e => set("ira_45v_eligible", e.target.checked)}
               className="w-4 h-4 accent-emerald-500" />
-            <label htmlFor="ira_45v" className="text-xs text-white/50">US IRA 45V Credit eligible</label>
+            <label htmlFor="ira_45v" className="text-xs text-gray-500">US IRA 45V Credit eligible</label>
           </div>
 
           <button onClick={compute} disabled={loading}
-            className="mt-2 w-full px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg flex items-center justify-center gap-2">
+            className="mt-2 w-full px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-gray-900 text-xs font-medium rounded-lg flex items-center justify-center gap-2">
             {loading
               ? <><RefreshCw className="h-3.5 w-3.5 animate-spin" /> Computing…</>
               : <><Zap className="h-3.5 w-3.5" /> Compute LCOH</>
@@ -231,30 +231,30 @@ export function GreenHydrogenPanel() {
               {[
                 { label: "LCOH (after subsidy)", val: `$${fmt2(result.lcoh.after_subsidy)}/kg`, cls: result.lcoh.after_subsidy <= 2 ? "text-emerald-400" : result.lcoh.after_subsidy <= 4 ? "text-amber-400" : "text-red-400", sub: `Total: $${fmt2(result.lcoh.total)}/kg` },
                 { label: "CO₂ Intensity", val: `${fmt3(result.carbon_intensity.kg_co2_per_kg_h2)} kgCO₂/kg`, cls: result.carbon_intensity.kg_co2_per_kg_h2 <= 0.5 ? "text-emerald-400" : result.carbon_intensity.kg_co2_per_kg_h2 <= 3.38 ? "text-amber-400" : "text-red-400", sub: `${result.carbon_intensity.gco2_per_mj} gCO₂/MJ` },
-                { label: "Annual Production", val: fmtK(result.production.annual_production_kt), cls: "text-indigo-400", sub: `${(result.production.annual_production_t).toFixed(0)} t H₂/yr` },
+                { label: "Annual Production", val: fmtK(result.production.annual_production_kt), cls: "text-gray-700", sub: `${(result.production.annual_production_t).toFixed(0)} t H₂/yr` },
                 { label: "vs DOE 2031 Target", val: result.benchmarks.vs_doe_target_pct >= 0 ? `+${result.benchmarks.vs_doe_target_pct}%` : `${result.benchmarks.vs_doe_target_pct}%`, cls: result.benchmarks.vs_doe_target_pct <= 0 ? "text-emerald-400" : result.benchmarks.vs_doe_target_pct <= 100 ? "text-amber-400" : "text-red-400", sub: "vs $1/kg DOE target" },
               ].map(({ label, val, cls, sub }) => (
-                <div key={label} className="bg-[#0d1424] border border-white/[0.06] rounded-lg p-3">
+                <div key={label} className="bg-white border border-gray-200 rounded-lg p-3">
                   <div className={`text-xl font-bold ${cls}`}>{val}</div>
-                  <div className="text-xs text-white/40 mt-0.5">{label}</div>
-                  {sub && <div className="text-[11px] text-white/25 mt-0.5">{sub}</div>}
+                  <div className="text-xs text-gray-500 mt-0.5">{label}</div>
+                  {sub && <div className="text-[11px] text-gray-400 mt-0.5">{sub}</div>}
                 </div>
               ))}
             </div>
 
             {/* Certification badges */}
-            <div className="bg-[#0d1424] border border-white/[0.06] rounded-lg p-3">
-              <div className="text-xs font-semibold text-white/50 mb-2">Certification / Label Eligibility</div>
+            <div className="bg-white border border-gray-200 rounded-lg p-3">
+              <div className="text-xs font-semibold text-gray-500 mb-2">Certification / Label Eligibility</div>
               <div className="flex flex-wrap gap-2">
-                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border ${result.certification.iea_green_eligible ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-white/5 text-white/30 border-white/10"}`}>
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border ${result.certification.iea_green_eligible ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-gray-50 text-gray-500 border-black/10"}`}>
                   {result.certification.iea_green_eligible ? <CheckCircle className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
                   IEA Green (&lt;0.5 kgCO₂/kg)
                 </span>
-                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border ${result.certification.eu_rfnbo_eligible ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-white/5 text-white/30 border-white/10"}`}>
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border ${result.certification.eu_rfnbo_eligible ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-gray-50 text-gray-500 border-black/10"}`}>
                   {result.certification.eu_rfnbo_eligible ? <CheckCircle className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
                   EU RFNBO (&lt;3.38 kgCO₂/kg)
                 </span>
-                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border ${result.certification.low_carbon_label ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/20" : "bg-white/5 text-white/30 border-white/10"}`}>
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border ${result.certification.low_carbon_label ? "bg-gray-100 text-gray-700 border-gray-200" : "bg-gray-50 text-gray-500 border-black/10"}`}>
                   {result.certification.low_carbon_label ? <CheckCircle className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
                   Low-Carbon (&lt;4 kgCO₂/kg)
                 </span>
@@ -268,8 +268,8 @@ export function GreenHydrogenPanel() {
       {result && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* LCOH Waterfall */}
-          <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-            <h3 className="text-sm font-semibold text-white/70 mb-3">LCOH Breakdown (USD/kg H₂)</h3>
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">LCOH Breakdown (USD/kg H₂)</h3>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={lcohData} layout="vertical" margin={{ left: 60, right: 30 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" horizontal={false} />
@@ -284,8 +284,8 @@ export function GreenHydrogenPanel() {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
-            <div className="text-xs text-white/30 mt-2">
-              Total LCOH: <span className="text-white/60 font-medium">${fmt2(result.lcoh.total)}/kg</span>
+            <div className="text-xs text-gray-500 mt-2">
+              Total LCOH: <span className="text-gray-600 font-medium">${fmt2(result.lcoh.total)}/kg</span>
               {result.lcoh.after_subsidy !== result.lcoh.total && (
                 <span> → After subsidy: <span className="text-emerald-400 font-medium">${fmt2(result.lcoh.after_subsidy)}/kg</span></span>
               )}
@@ -293,8 +293,8 @@ export function GreenHydrogenPanel() {
           </div>
 
           {/* Benchmark comparison */}
-          <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-            <h3 className="text-sm font-semibold text-white/70 mb-3">LCOH vs Industry Benchmarks (USD/kg)</h3>
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">LCOH vs Industry Benchmarks (USD/kg)</h3>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={benchmarkData} margin={{ left: 0, right: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" vertical={false} />
@@ -314,17 +314,17 @@ export function GreenHydrogenPanel() {
 
       {/* Carbon intensity + cost table */}
       {result && (
-        <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4 text-xs">
-          <h3 className="text-sm font-semibold text-white/70 mb-3">Carbon Analysis</h3>
+        <div className="bg-white border border-gray-200 rounded-lg p-4 text-xs">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">Carbon Analysis</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               ["CO₂ Intensity (kg/kg H₂)", `${fmt3(result.carbon_intensity.kg_co2_per_kg_h2)}`, result.carbon_intensity.kg_co2_per_kg_h2 <= 0.5 ? "text-emerald-400" : result.carbon_intensity.kg_co2_per_kg_h2 <= 3.38 ? "text-amber-400" : "text-red-400"],
-              ["CO₂ Intensity (gCO₂/MJ)", `${result.carbon_intensity.gco2_per_mj}`, "text-white/60"],
+              ["CO₂ Intensity (gCO₂/MJ)", `${result.carbon_intensity.gco2_per_mj}`, "text-gray-600"],
               ["Embedded Carbon Cost (USD/kg)", `$${result.carbon_intensity.embedded_carbon_cost_usd_per_kg.toFixed(3)}`, "text-orange-400"],
               ["Abatement Cost vs Grey (USD/tCO₂)", result.carbon_intensity.abatement_cost_vs_grey_usd_per_tco2 != null ? `$${result.carbon_intensity.abatement_cost_vs_grey_usd_per_tco2}/t` : "N/A", result.carbon_intensity.abatement_cost_vs_grey_usd_per_tco2 < 100 ? "text-emerald-400" : "text-amber-400"],
             ].map(([label, val, cls]) => (
               <div key={label}>
-                <div className="text-white/30">{label}</div>
+                <div className="text-gray-500">{label}</div>
                 <div className={`text-base font-bold mt-1 ${cls}`}>{val}</div>
               </div>
             ))}
@@ -333,8 +333,8 @@ export function GreenHydrogenPanel() {
       )}
 
       {/* Colour guide reference */}
-      <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-        <h3 className="text-xs font-semibold text-white/40 mb-3 uppercase tracking-wide">H₂ Colour Classification Reference</h3>
+      <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <h3 className="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wide">H₂ Colour Classification Reference</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
           {[
             ["Green", "Electrolysis + 100% certified RE", "< 0.5 kgCO₂/kg (IEA)"],
@@ -346,7 +346,7 @@ export function GreenHydrogenPanel() {
             ["Brown/Black", "Coal gasification", "18–22 kgCO₂/kg"],
             ["Low-Carbon", "Below 4 kg threshold", "< 4 kgCO₂/kg"],
           ].map(([colour, pathway, threshold]) => (
-            <div key={colour} className={`p-2 rounded border text-[11px] ${COLOUR_STYLES[colour] || "bg-white/5 text-white/40 border-white/10"}`}>
+            <div key={colour} className={`p-2 rounded border text-[11px] ${COLOUR_STYLES[colour] || "bg-gray-50 text-gray-500 border-black/10"}`}>
               <div className="font-bold mb-0.5">{colour}</div>
               <div className="opacity-70">{pathway}</div>
               <div className="opacity-50 mt-0.5 font-mono">{threshold}</div>

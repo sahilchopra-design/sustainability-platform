@@ -94,13 +94,13 @@ const fmtPctDirect = (n, dp = 2) => n == null ? '—' : `${parseFloat(n).toFixed
 function CustomTooltip({ active, payload, label, prefix = '$', dp = 2 }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#0d1628] border border-white/10 rounded-lg p-3 text-xs shadow-xl">
-      <div className="text-white/60 mb-1 font-mono">{label}</div>
+    <div className="bg-white border border-black/10 rounded-lg p-3 text-xs shadow-xl">
+      <div className="text-gray-600 mb-1 font-mono">{label}</div>
       {payload.map((p) => (
         <div key={p.dataKey} className="flex items-center gap-2 py-0.5">
           <div className="w-2 h-2 rounded-full" style={{ background: p.color }} />
-          <span className="text-white/50">{p.name}:</span>
-          <span className="text-white font-mono">
+          <span className="text-gray-500">{p.name}:</span>
+          <span className="text-gray-900 font-mono">
             {prefix === '$' ? fmtM(p.value) : fmtPctDirect(p.value, dp)}
           </span>
         </div>
@@ -116,7 +116,7 @@ function FanChart({ data, title, yLabel, prefix = '$' }) {
   if (!data?.length) return null;
   return (
     <div>
-      <div className="text-xs text-white/50 mb-3 font-mono">{title}</div>
+      <div className="text-xs text-gray-500 mb-3 font-mono">{title}</div>
       <ResponsiveContainer width="100%" height={220}>
         <AreaChart data={data} margin={{ top: 4, right: 12, left: 0, bottom: 0 }}>
           <defs>
@@ -138,7 +138,7 @@ function FanChart({ data, title, yLabel, prefix = '$' }) {
           <YAxis tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }} axisLine={false} tickLine={false}
             tickFormatter={v => prefix === '$' ? `$${(v / 1e6).toFixed(1)}M` : `${v.toFixed(1)}%`} />
           <Tooltip content={<CustomTooltip prefix={prefix} />} />
-          <Legend iconSize={10} wrapperStyle={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }} />
+          <Legend iconSize={10} wrapperStyle={{ fontSize: 10, color: 'rgba(0,0,0,0.4)' }} />
           {/* P5-P95 outer band */}
           <Area type="monotone" dataKey="p95" name="P95" stroke={PERCENTILE_COLOURS.p95} strokeWidth={1}
             fill="url(#g75_95)" strokeDasharray="3 3" />
@@ -167,7 +167,7 @@ function ScenarioComparisonChart({ data, metric, label, prefix = '$' }) {
   }));
   return (
     <div>
-      <div className="text-xs text-white/50 mb-3 font-mono">{label}</div>
+      <div className="text-xs text-gray-500 mb-3 font-mono">{label}</div>
       <ResponsiveContainer width="100%" height={160}>
         <BarChart data={chartData} barCategoryGap="35%">
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
@@ -176,9 +176,9 @@ function ScenarioComparisonChart({ data, metric, label, prefix = '$' }) {
             tickFormatter={v => prefix === '$' ? `$${(v / 1e6).toFixed(1)}M` : `${(v * 100).toFixed(2)}%`} />
           <Tooltip
             formatter={(v) => prefix === '$' ? [`$${(v / 1e6).toFixed(2)}M`, label] : [`${(v * 100).toFixed(3)}%`, label]}
-            contentStyle={{ background: '#0d1628', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 11 }}
-            labelStyle={{ color: 'rgba(255,255,255,0.5)' }}
-            itemStyle={{ color: '#fff' }}
+            contentStyle={{ background: '#0d1628', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 8, fontSize: 11 }}
+            labelStyle={{ color: 'rgba(0,0,0,0.5)' }}
+            itemStyle={{ color: '#111' }}
           />
           <Bar dataKey="value" radius={[4, 4, 0, 0]}>
             {chartData.map((entry, i) => (
@@ -219,7 +219,7 @@ function AssetTable({ assets, onChange }) {
         const raw = e.target.value;
         update(idx, field, type === 'number' ? (raw === '' ? '' : Number(raw)) : raw);
       }}
-      className="w-full bg-transparent text-white/80 text-xs font-mono outline-none text-right"
+      className="w-full bg-transparent text-gray-800 text-xs font-mono outline-none text-right"
     />
   );
 
@@ -227,7 +227,7 @@ function AssetTable({ assets, onChange }) {
     <div className="overflow-x-auto">
       <table className="w-full text-xs">
         <thead>
-          <tr className="text-white/30 font-mono uppercase text-[10px]">
+          <tr className="text-gray-500 font-mono uppercase text-[10px]">
             <th className="text-left py-2 pr-2">Name</th>
             <th className="text-left py-2 pr-2">Sector</th>
             <th className="text-right py-2 pr-2">Exposure</th>
@@ -240,16 +240,16 @@ function AssetTable({ assets, onChange }) {
             <th className="py-2" />
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/5">
+        <tbody className="divide-y divide-black/5">
           {assets.map((a, i) => (
-            <tr key={a.id} className="hover:bg-white/[0.02]">
+            <tr key={a.id} className="hover:bg-gray-50">
               <td className="py-1.5 pr-2">
                 <input value={a.name} onChange={e => update(i, 'name', e.target.value)}
-                  className="bg-transparent text-white/80 text-xs outline-none w-36" />
+                  className="bg-transparent text-gray-800 text-xs outline-none w-36" />
               </td>
               <td className="py-1.5 pr-2">
                 <select value={a.sector} onChange={e => update(i, 'sector', e.target.value)}
-                  className="bg-[#0d1628] text-white/70 text-xs rounded px-1 outline-none border border-white/10 w-36">
+                  className="bg-white text-gray-700 text-xs rounded px-1 outline-none border border-black/10 w-36">
                   {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </td>
@@ -259,7 +259,7 @@ function AssetTable({ assets, onChange }) {
               <td className="py-1.5 pr-2 text-right w-14">{inp(i, 'emission_intensity', 'number', 0.1)}</td>
               <td className="py-1.5 pr-2">
                 <select value={a.emissions_trend} onChange={e => update(i, 'emissions_trend', e.target.value)}
-                  className="bg-[#0d1628] text-white/70 text-xs rounded px-1 outline-none border border-white/10">
+                  className="bg-white text-gray-700 text-xs rounded px-1 outline-none border border-black/10">
                   {TRENDS.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </td>
@@ -267,14 +267,14 @@ function AssetTable({ assets, onChange }) {
               <td className="py-1.5 pr-2 text-center w-10">{inp(i, 'physical_risk_score', 'number', 1)}</td>
               <td className="py-1.5 pl-1">
                 <button onClick={() => removeRow(i)}
-                  className="text-white/20 hover:text-red-400 transition-colors text-[10px] font-mono">×</button>
+                  className="text-gray-400 hover:text-red-400 transition-colors text-[10px] font-mono">×</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
       <button onClick={addRow}
-        className="mt-2 text-[10px] font-mono text-cyan-400/60 hover:text-cyan-300 transition-colors">
+        className="mt-2 text-[10px] font-mono text-gray-500 hover:text-gray-800 transition-colors">
         + Add asset
       </button>
     </div>
@@ -287,19 +287,19 @@ function AssetTable({ assets, onChange }) {
 function DistCard({ label, dist, prefix = '$', highlight = false }) {
   if (!dist) return null;
   return (
-    <div className={`rounded-xl border p-4 ${highlight ? 'border-cyan-500/30 bg-cyan-500/5' : 'border-white/8 bg-white/[0.02]'}`}>
-      <div className="text-[10px] text-white/40 font-mono mb-3">{label}</div>
+    <div className={`rounded-xl border p-4 ${highlight ? 'border-gray-300 bg-gray-50' : 'border-gray-200 bg-gray-50'}`}>
+      <div className="text-[10px] text-gray-500 font-mono mb-3">{label}</div>
       <div className="grid grid-cols-5 gap-1 text-center">
         {['p5', 'p25', 'p50', 'p75', 'p95'].map(p => (
           <div key={p}>
-            <div className="text-[9px] text-white/30 font-mono mb-1">{p.toUpperCase()}</div>
-            <div className={`text-xs font-mono ${p === 'p50' ? 'text-cyan-300 font-bold' : 'text-white/60'}`}>
+            <div className="text-[9px] text-gray-500 font-mono mb-1">{p.toUpperCase()}</div>
+            <div className={`text-xs font-mono ${p === 'p50' ? 'text-gray-800 font-bold' : 'text-gray-600'}`}>
               {prefix === '$' ? fmtM(dist[p]) : fmtPctDirect(dist[p] * 100)}
             </div>
           </div>
         ))}
       </div>
-      <div className="mt-2 pt-2 border-t border-white/5 flex justify-between text-[9px] text-white/30 font-mono">
+      <div className="mt-2 pt-2 border-t border-black/5 flex justify-between text-[9px] text-gray-500 font-mono">
         <span>Mean: {prefix === '$' ? fmtM(dist.mean) : fmtPctDirect(dist.mean * 100)}</span>
         <span>σ: {prefix === '$' ? fmtM(dist.std_dev) : fmtPctDirect(dist.std_dev * 100)}</span>
       </div>
@@ -398,11 +398,11 @@ export default function MonteCarloPage() {
   // Slider row component
   const SliderRow = ({ label, value, setValue, min = 0.05, max = 0.60, step = 0.01, display }) => (
     <div className="flex items-center gap-3">
-      <span className="text-[10px] text-white/40 font-mono w-36 shrink-0">{label}</span>
+      <span className="text-[10px] text-gray-500 font-mono w-36 shrink-0">{label}</span>
       <input type="range" min={min} max={max} step={step} value={value}
         onChange={e => setValue(Number(e.target.value))}
-        className="flex-1 h-1 appearance-none bg-white/10 rounded-full accent-cyan-400" />
-      <span className="text-[10px] text-cyan-400 font-mono w-10 text-right">
+        className="flex-1 h-1 appearance-none bg-gray-100 rounded-full accent-cyan-400" />
+      <span className="text-[10px] text-gray-700 font-mono w-10 text-right">
         {display || `±${(value * 100).toFixed(0)}%`}
       </span>
     </div>
@@ -417,15 +417,15 @@ export default function MonteCarloPage() {
   ];
 
   return (
-    <div className="min-h-full bg-[#080e1c] text-white p-6">
+    <div className="min-h-full bg-white text-gray-900 p-6">
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-lg font-semibold text-white/90 mb-1">
+            <h1 className="text-lg font-semibold text-gray-900 mb-1">
               Monte Carlo Simulation
             </h1>
-            <p className="text-xs text-white/40 max-w-2xl">
+            <p className="text-xs text-gray-500 max-w-2xl">
               Parameter Uncertainty Monte Carlo — P5/P25/P50/P75/P95 distributions for Expected Loss,
               VaR (Vasicek 99.9%), Carbon Cost, and WACI. Aligned with Basel III Pillar 2,
               NGFS Phase IV, TCFD, and EBA GL/2022/16.
@@ -433,7 +433,7 @@ export default function MonteCarloPage() {
           </div>
           <div className="flex gap-2 flex-wrap">
             {['Basel III', 'NGFS Phase IV', 'Vasicek', 'PCAF WACI'].map(b => (
-              <span key={b} className="text-[9px] font-mono bg-white/5 border border-white/10 text-white/40 px-2 py-0.5 rounded">
+              <span key={b} className="text-[9px] font-mono bg-gray-50 border border-black/10 text-gray-500 px-2 py-0.5 rounded">
                 {b}
               </span>
             ))}
@@ -445,25 +445,25 @@ export default function MonteCarloPage() {
         {/* ---- Left: Controls ---- */}
         <div className="space-y-4">
           {/* Simulation parameters */}
-          <div className="bg-[#0d1628] rounded-xl border border-white/8 p-4">
-            <div className="text-[10px] font-mono text-white/40 uppercase mb-3">Simulation Parameters</div>
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <div className="text-[10px] font-mono text-gray-500 uppercase mb-3">Simulation Parameters</div>
             <div className="space-y-3">
               <div>
-                <label className="text-[10px] text-white/40 font-mono block mb-1">Primary Scenario</label>
+                <label className="text-[10px] text-gray-500 font-mono block mb-1">Primary Scenario</label>
                 <select value={scenario} onChange={e => setScenario(e.target.value)}
-                  className="w-full bg-[#0a1220] border border-white/10 text-white/80 text-xs rounded-lg px-3 py-2 outline-none">
+                  className="w-full bg-[#f5f6f8] border border-black/10 text-gray-800 text-xs rounded-lg px-3 py-2 outline-none">
                   {SCENARIOS.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
-                <label className="text-[10px] text-white/40 font-mono block mb-1">Time Horizon</label>
+                <label className="text-[10px] text-gray-500 font-mono block mb-1">Time Horizon</label>
                 <div className="flex gap-2">
                   {HORIZONS.map(h => (
                     <button key={h} onClick={() => setHorizon(h)}
                       className={`flex-1 text-xs py-1.5 rounded-lg font-mono border transition-all ${
                         horizon === h
-                          ? 'border-cyan-500/50 bg-cyan-500/10 text-cyan-300'
-                          : 'border-white/10 text-white/40 hover:border-white/20'
+                          ? 'border-black/50 bg-gray-100 text-gray-800'
+                          : 'border-black/10 text-gray-500 hover:border-black/20'
                       }`}>
                       {h}
                     </button>
@@ -471,13 +471,13 @@ export default function MonteCarloPage() {
                 </div>
               </div>
               <div>
-                <label className="text-[10px] text-white/40 font-mono block mb-1">
+                <label className="text-[10px] text-gray-500 font-mono block mb-1">
                   Simulations: {fmt(nSims)}
                 </label>
                 <input type="range" min={100} max={5000} step={100} value={nSims}
                   onChange={e => setNSims(Number(e.target.value))}
-                  className="w-full h-1 appearance-none bg-white/10 rounded-full accent-cyan-400" />
-                <div className="flex justify-between text-[9px] text-white/20 font-mono mt-0.5">
+                  className="w-full h-1 appearance-none bg-gray-100 rounded-full accent-cyan-400" />
+                <div className="flex justify-between text-[9px] text-gray-400 font-mono mt-0.5">
                   <span>100</span><span>5,000</span>
                 </div>
               </div>
@@ -485,15 +485,15 @@ export default function MonteCarloPage() {
           </div>
 
           {/* Uncertainty parameters */}
-          <div className="bg-[#0d1628] rounded-xl border border-white/8 p-4">
-            <div className="text-[10px] font-mono text-white/40 uppercase mb-3">Uncertainty Parameters</div>
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <div className="text-[10px] font-mono text-gray-500 uppercase mb-3">Uncertainty Parameters</div>
             <div className="space-y-2.5">
               <SliderRow label="PD Uncertainty (σ)" value={pdSigma} setValue={setPdSigma} />
               <SliderRow label="LGD Uncertainty (σ)" value={lgdSigma} setValue={setLgdSigma} max={0.40} />
               <SliderRow label="Carbon Price (σ)" value={cpSigma} setValue={setCpSigma} />
               <SliderRow label="Physical Risk (σ)" value={phSigma} setValue={setPhSigma} />
             </div>
-            <div className="mt-3 pt-3 border-t border-white/5 text-[9px] text-white/25 font-mono leading-relaxed">
+            <div className="mt-3 pt-3 border-t border-black/5 text-[9px] text-gray-400 font-mono leading-relaxed">
               Log-normal (multiplicative) for PD, carbon price, physical risk.
               Normal (additive) for LGD.
             </div>
@@ -505,13 +505,13 @@ export default function MonteCarloPage() {
             disabled={loading || assets.length === 0}
             className={`w-full py-3 rounded-xl font-mono text-sm font-medium transition-all ${
               loading
-                ? 'bg-white/5 text-white/30 cursor-wait'
-                : 'bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300'
+                ? 'bg-gray-50 text-gray-500 cursor-wait'
+                : 'bg-gray-100 hover:bg-gray-300 border border-gray-400 text-gray-800'
             }`}
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <span className="w-4 h-4 border-2 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin" />
+                <span className="w-4 h-4 border-2 border-gray-300 border-t-cyan-400 rounded-full animate-spin" />
                 Running {fmt(nSims)} simulations…
               </span>
             ) : `Run Simulation  (N={fmt(nSims)})`}
@@ -530,17 +530,17 @@ export default function MonteCarloPage() {
                 ? 'border-emerald-500/20 bg-emerald-500/5'
                 : 'border-amber-500/20 bg-amber-500/5'
             }`}>
-              <div className="text-[10px] font-mono text-white/40 mb-1.5">Convergence</div>
+              <div className="text-[10px] font-mono text-gray-500 mb-1.5">Convergence</div>
               <div className="grid grid-cols-2 gap-2 text-[10px] font-mono">
                 <div>
-                  <div className="text-white/30">R-hat</div>
+                  <div className="text-gray-500">R-hat</div>
                   <div className={conv.converged ? 'text-emerald-400' : 'text-amber-400'}>
                     {conv.gelman_rubin_rhat}
                   </div>
                 </div>
                 <div>
-                  <div className="text-white/30">Eff. N</div>
-                  <div className="text-white/70">{fmt(conv.effective_n)}</div>
+                  <div className="text-gray-500">Eff. N</div>
+                  <div className="text-gray-700">{fmt(conv.effective_n)}</div>
                 </div>
               </div>
               <div className={`mt-1.5 text-[9px] font-mono ${conv.converged ? 'text-emerald-400/60' : 'text-amber-400/60'}`}>
@@ -553,12 +553,12 @@ export default function MonteCarloPage() {
         {/* ---- Right: Portfolio + Results ---- */}
         <div className="space-y-4">
           {/* Portfolio table */}
-          <div className="bg-[#0d1628] rounded-xl border border-white/8 p-4">
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
             <div className="flex items-center justify-between mb-3">
-              <div className="text-[10px] font-mono text-white/40 uppercase">
+              <div className="text-[10px] font-mono text-gray-500 uppercase">
                 Portfolio ({assets.length} assets · {fmtM(assets.reduce((s, a) => s + Number(a.exposure || 0), 0))} total)
               </div>
-              <div className="text-[9px] text-white/20 font-mono">
+              <div className="text-[9px] text-gray-400 font-mono">
                 EI = emission intensity (tCO2e/unit) · TP = transition plan (1-5) · PR = physical risk (1-5)
               </div>
             </div>
@@ -576,23 +576,23 @@ export default function MonteCarloPage() {
                   { label: 'VaR 99.9% (P50)', val: fmtM(dist?.portfolio_var_999?.p50), sub: `Vasicek ρ=0.30` },
                   { label: 'Avg PD (P50)', val: fmtPct(dist?.avg_pd?.p50), sub: `P95: ${fmtPct(dist?.avg_pd?.p95)}` },
                 ].map(k => (
-                  <div key={k.label} className="bg-[#0d1628] rounded-xl border border-white/8 p-4">
-                    <div className="text-[10px] text-white/40 font-mono mb-1">{k.label}</div>
-                    <div className="text-base font-mono font-bold text-white/90">{k.val}</div>
-                    <div className="text-[10px] text-white/30 font-mono mt-0.5">{k.sub}</div>
+                  <div key={k.label} className="bg-white rounded-xl border border-gray-200 p-4">
+                    <div className="text-[10px] text-gray-500 font-mono mb-1">{k.label}</div>
+                    <div className="text-base font-mono font-bold text-gray-900">{k.val}</div>
+                    <div className="text-[10px] text-gray-500 font-mono mt-0.5">{k.sub}</div>
                   </div>
                 ))}
               </div>
 
               {/* Tab nav */}
-              <div className="bg-[#0d1628] rounded-xl border border-white/8">
-                <div className="flex border-b border-white/8 overflow-x-auto">
+              <div className="bg-white rounded-xl border border-gray-200">
+                <div className="flex border-b border-gray-200 overflow-x-auto">
                   {TABS.map(t => (
                     <button key={t.id} onClick={() => setActiveTab(t.id)}
                       className={`px-4 py-2.5 text-xs font-mono whitespace-nowrap transition-colors ${
                         activeTab === t.id
-                          ? 'text-cyan-300 border-b-2 border-cyan-400 -mb-px'
-                          : 'text-white/35 hover:text-white/60'
+                          ? 'text-gray-800 border-b-2 border-[#164E8A] -mb-px'
+                          : 'text-gray-500 hover:text-gray-600'
                       }`}>
                       {t.label}
                     </button>
@@ -615,20 +615,20 @@ export default function MonteCarloPage() {
                         <DistCard label="WACI (tCO2e/unit)" dist={dist?.waci} prefix="%" />
                       </div>
                       {dist?.expected_shortfall_95 && (
-                        <div className="bg-[#0a1220] rounded-xl border border-amber-500/20 p-4 flex items-center gap-6">
+                        <div className="bg-[#f5f6f8] rounded-xl border border-amber-500/20 p-4 flex items-center gap-6">
                           <div>
-                            <div className="text-[10px] text-white/40 font-mono">Expected Shortfall (CVaR 95%)</div>
+                            <div className="text-[10px] text-gray-500 font-mono">Expected Shortfall (CVaR 95%)</div>
                             <div className="text-lg font-mono font-bold text-amber-300">
                               {fmtM(dist.expected_shortfall_95.value)}
                             </div>
                           </div>
                           <div>
-                            <div className="text-[10px] text-white/40 font-mono">% of Total Exposure</div>
-                            <div className="text-lg font-mono font-bold text-white/80">
+                            <div className="text-[10px] text-gray-500 font-mono">% of Total Exposure</div>
+                            <div className="text-lg font-mono font-bold text-gray-800">
                               {(dist.expected_shortfall_95.pct_of_exposure * 100).toFixed(2)}%
                             </div>
                           </div>
-                          <div className="text-[10px] text-white/25 font-mono">
+                          <div className="text-[10px] text-gray-400 font-mono">
                             Average EL in worst 5% of {fmt(result.n_simulations)} simulations
                           </div>
                         </div>
@@ -664,7 +664,7 @@ export default function MonteCarloPage() {
                           prefix="$"
                         />
                       </div>
-                      <div className="text-[10px] text-white/25 font-mono">
+                      <div className="text-[10px] text-gray-400 font-mono">
                         Fan width represents parameter uncertainty. Wider bands indicate higher sensitivity to carbon price,
                         physical risk amplification, and PD uncertainty assumptions.
                         Median (P50) is the central estimate.
@@ -687,7 +687,7 @@ export default function MonteCarloPage() {
                       </div>
                       <table className="w-full text-xs">
                         <thead>
-                          <tr className="text-white/30 font-mono uppercase text-[10px]">
+                          <tr className="text-gray-500 font-mono uppercase text-[10px]">
                             <th className="text-left py-2 pr-4">Scenario</th>
                             <th className="text-right py-2 pr-4">Exp. Loss</th>
                             <th className="text-right py-2 pr-4">VaR 99.9%</th>
@@ -696,24 +696,24 @@ export default function MonteCarloPage() {
                             <th className="text-right py-2">Loss Rate</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className="divide-y divide-black/5">
                           {SCENARIOS.map(sc => {
                             const r = result.scenario_comparison?.[sc];
                             if (!r) return null;
                             return (
-                              <tr key={sc} className="hover:bg-white/[0.02]">
+                              <tr key={sc} className="hover:bg-gray-50">
                                 <td className="py-2 pr-4">
                                   <div className="flex items-center gap-2">
                                     <div className="w-2 h-2 rounded-full"
                                       style={{ background: SCENARIO_COLOURS[sc] }} />
-                                    <span className="text-white/70 font-mono">{sc}</span>
+                                    <span className="text-gray-700 font-mono">{sc}</span>
                                   </div>
                                 </td>
-                                <td className="text-right py-2 pr-4 text-white/80 font-mono">{fmtM(r.expected_loss)}</td>
-                                <td className="text-right py-2 pr-4 text-white/80 font-mono">{fmtM(r.portfolio_var_999)}</td>
-                                <td className="text-right py-2 pr-4 text-white/80 font-mono">{fmtM(r.carbon_cost)}</td>
-                                <td className="text-right py-2 pr-4 text-white/80 font-mono">{fmtPct(r.avg_pd)}</td>
-                                <td className="text-right py-2 text-white/80 font-mono">{fmtPct(r.loss_rate)}</td>
+                                <td className="text-right py-2 pr-4 text-gray-800 font-mono">{fmtM(r.expected_loss)}</td>
+                                <td className="text-right py-2 pr-4 text-gray-800 font-mono">{fmtM(r.portfolio_var_999)}</td>
+                                <td className="text-right py-2 pr-4 text-gray-800 font-mono">{fmtM(r.carbon_cost)}</td>
+                                <td className="text-right py-2 pr-4 text-gray-800 font-mono">{fmtPct(r.avg_pd)}</td>
+                                <td className="text-right py-2 text-gray-800 font-mono">{fmtPct(r.loss_rate)}</td>
                               </tr>
                             );
                           })}
@@ -727,7 +727,7 @@ export default function MonteCarloPage() {
                     <div>
                       <table className="w-full text-xs">
                         <thead>
-                          <tr className="text-white/30 font-mono uppercase text-[10px]">
+                          <tr className="text-gray-500 font-mono uppercase text-[10px]">
                             <th className="text-left py-2 pr-3">Asset</th>
                             <th className="text-left py-2 pr-3">Sector</th>
                             <th className="text-right py-2 pr-3">Exposure</th>
@@ -738,16 +738,16 @@ export default function MonteCarloPage() {
                             <th className="text-right py-2">EL P95</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className="divide-y divide-black/5">
                           {result.asset_level.map(a => (
-                            <tr key={a.id} className="hover:bg-white/[0.02]">
-                              <td className="py-2 pr-3 text-white/80 font-mono text-[11px]">{a.name}</td>
-                              <td className="py-2 pr-3 text-white/50 font-mono text-[10px]">{a.sector}</td>
-                              <td className="py-2 pr-3 text-right text-white/70 font-mono">{fmtM(a.exposure)}</td>
-                              <td className="py-2 pr-3 text-right text-white/50 font-mono">{fmtPct(a.pd?.p5)}</td>
-                              <td className="py-2 pr-3 text-right text-cyan-300 font-mono font-medium">{fmtPct(a.pd?.p50)}</td>
+                            <tr key={a.id} className="hover:bg-gray-50">
+                              <td className="py-2 pr-3 text-gray-800 font-mono text-[11px]">{a.name}</td>
+                              <td className="py-2 pr-3 text-gray-500 font-mono text-[10px]">{a.sector}</td>
+                              <td className="py-2 pr-3 text-right text-gray-700 font-mono">{fmtM(a.exposure)}</td>
+                              <td className="py-2 pr-3 text-right text-gray-500 font-mono">{fmtPct(a.pd?.p5)}</td>
+                              <td className="py-2 pr-3 text-right text-gray-800 font-mono font-medium">{fmtPct(a.pd?.p50)}</td>
                               <td className="py-2 pr-3 text-right text-amber-300 font-mono">{fmtPct(a.pd?.p95)}</td>
-                              <td className="py-2 pr-3 text-right text-white/70 font-mono">{fmtM(a.el_p50)}</td>
+                              <td className="py-2 pr-3 text-right text-gray-700 font-mono">{fmtM(a.el_p50)}</td>
                               <td className="py-2 text-right text-amber-300/70 font-mono">{fmtM(a.el_p95)}</td>
                             </tr>
                           ))}
@@ -761,16 +761,16 @@ export default function MonteCarloPage() {
                     <div className="space-y-4">
                       {/* Methodology */}
                       <div>
-                        <div className="text-[10px] text-white/40 font-mono uppercase mb-3">Methodology</div>
+                        <div className="text-[10px] text-gray-500 font-mono uppercase mb-3">Methodology</div>
                         <div className="grid grid-cols-2 gap-3 text-xs">
                           {result.methodology && Object.entries(result.methodology).filter(([k]) =>
                             !['uncertainty_params', 'standards', 'calculation_timestamp'].includes(k)
                           ).map(([k, v]) => (
-                            <div key={k} className="bg-[#0a1220] rounded-lg p-3 border border-white/5">
-                              <div className="text-[9px] text-white/30 font-mono mb-1">
+                            <div key={k} className="bg-[#f5f6f8] rounded-lg p-3 border border-black/5">
+                              <div className="text-[9px] text-gray-500 font-mono mb-1">
                                 {k.replace(/_/g, ' ').toUpperCase()}
                               </div>
-                              <div className="text-white/65 font-mono text-[11px]">{String(v)}</div>
+                              <div className="text-gray-600 font-mono text-[11px]">{String(v)}</div>
                             </div>
                           ))}
                         </div>
@@ -778,14 +778,14 @@ export default function MonteCarloPage() {
                       {/* Uncertainty params used */}
                       {result.methodology?.uncertainty_params && (
                         <div>
-                          <div className="text-[10px] text-white/40 font-mono uppercase mb-3">Uncertainty Parameters Used</div>
+                          <div className="text-[10px] text-gray-500 font-mono uppercase mb-3">Uncertainty Parameters Used</div>
                           <div className="grid grid-cols-3 gap-3">
                             {Object.entries(result.methodology.uncertainty_params).map(([k, v]) => (
-                              <div key={k} className="bg-[#0a1220] rounded-lg p-3 border border-white/5 text-center">
-                                <div className="text-[9px] text-white/30 font-mono mb-1">
+                              <div key={k} className="bg-[#f5f6f8] rounded-lg p-3 border border-black/5 text-center">
+                                <div className="text-[9px] text-gray-500 font-mono mb-1">
                                   {k.replace(/_/g, ' ').toUpperCase()}
                                 </div>
-                                <div className="text-cyan-300 font-mono text-sm">±{(v * 100).toFixed(0)}%</div>
+                                <div className="text-gray-800 font-mono text-sm">±{(v * 100).toFixed(0)}%</div>
                               </div>
                             ))}
                           </div>
@@ -794,18 +794,18 @@ export default function MonteCarloPage() {
                       {/* Standards */}
                       {result.methodology?.standards && (
                         <div>
-                          <div className="text-[10px] text-white/40 font-mono uppercase mb-3">Regulatory Alignment</div>
+                          <div className="text-[10px] text-gray-500 font-mono uppercase mb-3">Regulatory Alignment</div>
                           <div className="space-y-1">
                             {result.methodology.standards.map(s => (
-                              <div key={s} className="text-[11px] text-white/40 font-mono flex items-center gap-2">
-                                <div className="w-1 h-1 rounded-full bg-cyan-500/50" />
+                              <div key={s} className="text-[11px] text-gray-500 font-mono flex items-center gap-2">
+                                <div className="w-1 h-1 rounded-full bg-gray-500" />
                                 {s}
                               </div>
                             ))}
                           </div>
                         </div>
                       )}
-                      <div className="text-[9px] text-white/20 font-mono">
+                      <div className="text-[9px] text-gray-400 font-mono">
                         Calculated: {result.calculation_timestamp}
                       </div>
                     </div>
@@ -817,11 +817,11 @@ export default function MonteCarloPage() {
 
           {/* Empty state */}
           {!result && !loading && (
-            <div className="bg-[#0d1628] rounded-xl border border-white/8 p-12 text-center">
-              <div className="text-white/20 text-xs font-mono mb-2">
+            <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+              <div className="text-gray-400 text-xs font-mono mb-2">
                 Configure the portfolio and parameters, then run the simulation
               </div>
-              <div className="text-white/10 text-[10px] font-mono">
+              <div className="text-gray-300 text-[10px] font-mono">
                 Default portfolio: {DEFAULT_ASSETS.length} assets across {new Set(DEFAULT_ASSETS.map(a => a.sector)).size} sectors
               </div>
             </div>

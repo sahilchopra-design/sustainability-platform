@@ -47,7 +47,7 @@ export function CompareWorkspace({ scenarios, onRemove, onClear, onRun, compareD
         <CardContent>
           <div className="flex flex-wrap gap-1.5 mb-3">
             {scenarios.map((sc, i) => (
-              <Badge key={sc.id} className="gap-1 pr-1" style={{ backgroundColor: COLORS[i % COLORS.length], color: 'white' }}>
+              <Badge key={sc.id} className="gap-1 pr-1" style={{ backgroundColor: COLORS[i % COLORS.length], color: '#111' }}>
                 <span className="truncate max-w-[140px] text-xs">{sc.display_name || sc.name}</span>
                 {i === 0 && <span className="text-[8px] opacity-60">(BASE)</span>}
                 <button onClick={() => onRemove(sc.id)} className="ml-1 hover:bg-white/20 rounded p-0.5">

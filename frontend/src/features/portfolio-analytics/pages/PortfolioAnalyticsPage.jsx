@@ -4,11 +4,13 @@
  */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
 import { Badge } from '../../../components/ui/badge';
 import {
   LayoutDashboard, Building2, FileText, GitCompare,
-  PieChart, Calendar, Leaf, Play, RefreshCw,
+  PieChart, Calendar, Leaf, Play, RefreshCw, AlertCircle,
+  Plus, Upload, Sparkles, ArrowRight, Database, CheckCircle2,
 } from 'lucide-react';
 import {
   PieChart as RechartsPieChart, Pie, Cell,
@@ -22,6 +24,7 @@ import { HoldingsTable } from '../components/HoldingsTable';
 import { ReportGenerator } from '../components/ReportGenerator';
 import { ScenarioComparison } from '../components/ScenarioComparison';
 import { ScheduledReportsManager } from '../../../components/shared/ScheduledReportsManager';
+import { DataRequiredNotice } from '../../../components/shared/DataRequiredNotice';
 import {
   usePortfolios,
   useDashboard,
@@ -66,9 +69,17 @@ function dqsColour(dqs) {
 
 // ── PCAF KPI Strip ─────────────────────────────────────────────────────────────
 
-function PcafKpiStrip({ portfolioId, pcafResults, pcafLoading, onRunPcaf, isRunning }) {
+function PcafKpiStrip({ portfolioId, pcafResults, pcafLoading, pcafError, onRunPcaf, isRunning }) {
   const summary = pcafResults?.portfolio_summary;
   const isDemo = pcafResults?.data_quality_note === 'dqs5_demo';
+  // Detect missing datapoints and show estimates
+  const missingFields = [];
+  if (summary) {
+    if (summary.waci_tco2e_meur == null) missingFields.push('WACI (emissions data)');
+    if (summary.implied_temp_rise == null) missingFields.push('Implied Temperature Rise');
+    if (summary.pcaf_coverage_pct != null && summary.pcaf_coverage_pct < 100)
+      missingFields.push(`${(100 - summary.pcaf_coverage_pct).toFixed(0)}% assets missing emissions — estimated via DQS-5 proxies`);
+  }
 
   const kpis = [
     {
@@ -111,14 +122,14 @@ function PcafKpiStrip({ portfolioId, pcafResults, pcafLoading, onRunPcaf, isRunn
 
   return (
     <div
-      className="mb-4 rounded-xl border border-white/[0.07] bg-[#0d1424] px-4 py-3"
+      className="mb-4 rounded-xl border border-gray-200 bg-white px-4 py-3"
       data-testid="pcaf-kpi-strip"
     >
       {/* Strip header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2 flex-wrap">
           <Leaf className="h-4 w-4 text-emerald-400 flex-shrink-0" />
-          <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">
+          <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
             PCAF Standard v2.0 — Financed Emissions
           </span>
           {isDemo && (
@@ -152,26 +163,68 @@ function PcafKpiStrip({ portfolioId, pcafResults, pcafLoading, onRunPcaf, isRunn
         </button>
       </div>
 
+      {/* Missing field notification */}
+      {summary && missingFields.length > 0 && (
+        <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2" data-testid="pcaf-missing-fields">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="h-3.5 w-3.5 text-amber-400 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-[10px] font-semibold text-amber-700 uppercase tracking-wider mb-0.5">
+                Missing Datapoints — Estimated via Reference Data
+              </p>
+              {missingFields.map((f, i) => (
+                <p key={i} className="text-[10px] text-amber-600">• {f}</p>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* KPI cards */}
       {pcafLoading ? (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-14 rounded-lg bg-white/5 animate-pulse" />
+            <div key={i} className="h-14 rounded-lg bg-gray-50 animate-pulse" />
           ))}
         </div>
+      ) : pcafError ? (
+        <DataRequiredNotice
+          title="PCAF Calculation Error"
+          message={pcafError.message || 'Failed to calculate financed emissions.'}
+          severity="error"
+          requirements={pcafError.requiredData?.length > 0 ? pcafError.requiredData : [
+            'Assets must exist in assets_pg table for this portfolio',
+            'Each asset needs: company_name, exposure/market_value, sector',
+            'Emissions data (scope1/2/3) improves DQS quality scores',
+            'Missing emissions are auto-estimated using DQS-5 sector proxies',
+          ]}
+          onRetry={() => onRunPcaf(portfolioId)}
+          retryLabel="Run PCAF Calculation"
+          testId="pcaf-error-notice"
+        />
       ) : !summary ? (
-        <p className="text-xs text-white/30 py-2">
-          No PCAF data yet — select a portfolio and click Run PCAF Calculation.
-        </p>
+        <DataRequiredNotice
+          title="PCAF Data Loading"
+          message="Financed emissions are auto-calculated when you select a portfolio. If calculation fails, click Run PCAF Calculation above."
+          severity="info"
+          requirements={[
+            'Assets must have company_name and exposure/market_value',
+            'Sector classification enables sector-level WACI attribution',
+            'Missing emissions are estimated using DQS-5 proxy methodology',
+          ]}
+          onRetry={() => onRunPcaf(portfolioId)}
+          retryLabel="Run PCAF Calculation"
+          testId="pcaf-empty-notice"
+        />
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {kpis.map(kpi => (
             <div
               key={kpi.label}
-              className="rounded-lg px-3 py-2.5 bg-white/[0.04] border border-white/[0.06]"
+              className="rounded-lg px-3 py-2.5 bg-gray-50 border border-gray-200"
               data-testid={kpi.testId}
             >
-              <p className="text-[10px] text-white/40 uppercase tracking-wider mb-1">
+              <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">
                 {kpi.label}
               </p>
               <p
@@ -180,7 +233,7 @@ function PcafKpiStrip({ portfolioId, pcafResults, pcafLoading, onRunPcaf, isRunn
               >
                 {kpi.value || '—'}
               </p>
-              <p className="text-[10px] text-white/30 mt-0.5">{kpi.sub}</p>
+              <p className="text-[10px] text-gray-500 mt-0.5">{kpi.sub}</p>
             </div>
           ))}
         </div>
@@ -194,7 +247,7 @@ function PcafKpiStrip({ portfolioId, pcafResults, pcafLoading, onRunPcaf, isRunn
 function DqsDonutChart({ dqsDistribution }) {
   if (!dqsDistribution || Object.keys(dqsDistribution).length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-48 text-white/20 text-xs gap-1">
+      <div className="flex flex-col items-center justify-center h-48 text-gray-400 text-xs gap-1">
         <span>Run PCAF to see DQS distribution</span>
       </div>
     );
@@ -227,8 +280,8 @@ function DqsDonutChart({ dqsDistribution }) {
           </Pie>
           <Tooltip
             contentStyle={{
-              background: '#0d1424',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: '#ffffff',
+              border: '1px solid rgba(0,0,0,0.1)',
               borderRadius: 8,
               fontSize: 11,
             }}
@@ -236,7 +289,7 @@ function DqsDonutChart({ dqsDistribution }) {
           />
           <Legend
             formatter={value => (
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)' }}>{value}</span>
+              <span style={{ fontSize: 11, color: 'rgba(0,0,0,0.55)' }}>{value}</span>
             )}
           />
         </RechartsPieChart>
@@ -253,7 +306,7 @@ function GlidepathPreviewChart({ waciHistory }) {
 
   if (history.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-48 text-white/20 text-xs gap-2">
+      <div className="flex flex-col items-center justify-center h-48 text-gray-400 text-xs gap-2">
         <span>No trajectory data yet</span>
         <span>Run PCAF Calculation to populate glidepath</span>
       </div>
@@ -286,15 +339,15 @@ function GlidepathPreviewChart({ waciHistory }) {
           />
           <Tooltip
             contentStyle={{
-              background: '#0d1424',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: '#ffffff',
+              border: '1px solid rgba(0,0,0,0.1)',
               borderRadius: 8,
               fontSize: 11,
             }}
           />
           <Legend
             formatter={value => (
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)' }}>{value}</span>
+              <span style={{ fontSize: 11, color: 'rgba(0,0,0,0.55)' }}>{value}</span>
             )}
           />
           <Line
@@ -334,7 +387,7 @@ function GlidepathPreviewChart({ waciHistory }) {
 function InvesteeTable({ investees }) {
   if (!investees || investees.length === 0) {
     return (
-      <div className="text-center py-8 text-white/30 text-xs">
+      <div className="text-center py-8 text-gray-500 text-xs">
         No investee data — run PCAF calculation first.
       </div>
     );
@@ -344,11 +397,11 @@ function InvesteeTable({ investees }) {
     <div className="overflow-x-auto" data-testid="pcaf-investee-table">
       <table className="w-full text-xs">
         <thead>
-          <tr className="border-b border-white/[0.07] text-left">
+          <tr className="border-b border-gray-200 text-left">
             {['Company', 'Sector', 'Asset Class', 'Attrib. Factor', 'Financed tCO₂e', 'WACI Contrib.', 'DQS'].map(h => (
               <th
                 key={h}
-                className="pb-2 pr-4 text-white/40 font-medium uppercase tracking-wider text-[10px]"
+                className="pb-2 pr-4 text-gray-500 font-medium uppercase tracking-wider text-[10px]"
               >
                 {h}
               </th>
@@ -361,22 +414,22 @@ function InvesteeTable({ investees }) {
             return (
               <tr
                 key={i}
-                className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
+                className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
               >
-                <td className="py-2 pr-4 text-white/80 font-medium truncate max-w-[140px]">
+                <td className="py-2 pr-4 text-gray-800 font-medium truncate max-w-[140px]">
                   {inv.company_name || '—'}
                 </td>
-                <td className="py-2 pr-4 text-white/50">{inv.sector || '—'}</td>
-                <td className="py-2 pr-4 text-white/50">{inv.asset_class || '—'}</td>
-                <td className="py-2 pr-4 font-mono tabular-nums text-white/70">
+                <td className="py-2 pr-4 text-gray-500">{inv.sector || '—'}</td>
+                <td className="py-2 pr-4 text-gray-500">{inv.asset_class || '—'}</td>
+                <td className="py-2 pr-4 font-mono tabular-nums text-gray-700">
                   {inv.attribution_factor != null
                     ? `${(inv.attribution_factor * 100).toFixed(1)} %`
                     : '—'}
                 </td>
-                <td className="py-2 pr-4 font-mono tabular-nums text-white/70">
+                <td className="py-2 pr-4 font-mono tabular-nums text-gray-700">
                   {inv.financed_emissions_tco2e != null ? fmt(inv.financed_emissions_tco2e, 0) : '—'}
                 </td>
-                <td className="py-2 pr-4 font-mono tabular-nums text-white/70">
+                <td className="py-2 pr-4 font-mono tabular-nums text-gray-700">
                   {inv.waci_contribution != null ? fmt(inv.waci_contribution, 2) : '—'}
                 </td>
                 <td className="py-2">
@@ -410,14 +463,14 @@ function PcafTabContent({ portfolioId, pcafResults, waciHistory }) {
     <div className="space-y-4">
       {/* DQS donut + Glidepath preview — side by side */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="rounded-xl border border-white/[0.07] bg-[#0d1424] p-4">
-          <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3">
+        <div className="rounded-xl border border-gray-200 bg-white p-4">
+          <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-3">
             DQS Distribution — % of Financed Emissions
           </h3>
           <DqsDonutChart dqsDistribution={pcafResults?.dqs_distribution} />
         </div>
-        <div className="rounded-xl border border-white/[0.07] bg-[#0d1424] p-4">
-          <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3">
+        <div className="rounded-xl border border-gray-200 bg-white p-4">
+          <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-3">
             WACI Trajectory vs. NZBA Glidepath
           </h3>
           <GlidepathPreviewChart waciHistory={waciHistory} portfolioId={portfolioId} />
@@ -426,16 +479,16 @@ function PcafTabContent({ portfolioId, pcafResults, waciHistory }) {
 
       {/* Sector breakdown */}
       {hasSectorBreakdown && (
-        <div className="rounded-xl border border-white/[0.07] bg-[#0d1424] p-4">
-          <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3">
+        <div className="rounded-xl border border-gray-200 bg-white p-4">
+          <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-3">
             Sector Attribution
           </h3>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-white/[0.07] text-left">
+                <tr className="border-b border-gray-200 text-left">
                   {['Sector', 'WACI (tCO₂e/MEUR)', 'Total tCO₂e', 'Assets', '% Portfolio WACI'].map(h => (
-                    <th key={h} className="pb-2 pr-4 text-white/40 font-medium uppercase tracking-wider text-[10px]">
+                    <th key={h} className="pb-2 pr-4 text-gray-500 font-medium uppercase tracking-wider text-[10px]">
                       {h}
                     </th>
                   ))}
@@ -443,16 +496,16 @@ function PcafTabContent({ portfolioId, pcafResults, waciHistory }) {
               </thead>
               <tbody>
                 {pcafResults.sector_breakdown.map((s, i) => (
-                  <tr key={i} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
-                    <td className="py-2 pr-4 text-white/80">{s.sector}</td>
-                    <td className="py-2 pr-4 font-mono tabular-nums text-cyan-400">
+                  <tr key={i} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                    <td className="py-2 pr-4 text-gray-800">{s.sector}</td>
+                    <td className="py-2 pr-4 font-mono tabular-nums text-gray-700">
                       {fmt(s.waci, 1)}
                     </td>
-                    <td className="py-2 pr-4 font-mono tabular-nums text-white/70">
+                    <td className="py-2 pr-4 font-mono tabular-nums text-gray-700">
                       {fmt(s.total_tco2e, 0)}
                     </td>
-                    <td className="py-2 pr-4 text-white/50">{s.asset_count}</td>
-                    <td className="py-2 pr-4 text-white/50">
+                    <td className="py-2 pr-4 text-gray-500">{s.asset_count}</td>
+                    <td className="py-2 pr-4 text-gray-500">
                       {s.pct_portfolio_waci != null ? `${fmt(s.pct_portfolio_waci, 1)} %` : '—'}
                     </td>
                   </tr>
@@ -464,8 +517,8 @@ function PcafTabContent({ portfolioId, pcafResults, waciHistory }) {
       )}
 
       {/* Investee attribution */}
-      <div className="rounded-xl border border-white/[0.07] bg-[#0d1424] p-4">
-        <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3">
+      <div className="rounded-xl border border-gray-200 bg-white p-4">
+        <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-3">
           Investee Attribution — PCAF Standard v2.0
         </h3>
         <InvesteeTable investees={pcafResults?.investee_results} />
@@ -473,20 +526,20 @@ function PcafTabContent({ portfolioId, pcafResults, waciHistory }) {
 
       {/* SFDR PAI indicators */}
       {hasPai && (
-        <div className="rounded-xl border border-white/[0.07] bg-[#0d1424] p-4">
-          <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3">
+        <div className="rounded-xl border border-gray-200 bg-white p-4">
+          <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-3">
             SFDR PAI Indicators
           </h3>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {Object.entries(pcafResults.pai_indicators).map(([key, value]) => (
               <div
                 key={key}
-                className="rounded-lg px-3 py-2.5 bg-white/[0.04] border border-white/[0.06]"
+                className="rounded-lg px-3 py-2.5 bg-gray-50 border border-gray-200"
               >
-                <p className="text-[10px] text-white/40 uppercase tracking-wider mb-1">
+                <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">
                   {key.replace(/_/g, ' ')}
                 </p>
-                <p className="text-sm font-bold font-mono tabular-nums text-white/80">
+                <p className="text-sm font-bold font-mono tabular-nums text-gray-800">
                   {typeof value === 'number' ? fmt(value, 1) : String(value)}
                 </p>
               </div>
@@ -498,16 +551,169 @@ function PcafTabContent({ portfolioId, pcafResults, waciHistory }) {
   );
 }
 
+// ── Empty-State / Onboarding ──────────────────────────────────────────────────
+
+const QUICKSTART_STEPS = [
+  {
+    icon: Database,
+    title: 'Create a portfolio',
+    desc: 'Add a named portfolio to group your assets and run climate risk analytics.',
+    color: '#164E8A',
+  },
+  {
+    icon: Building2,
+    title: 'Add holdings',
+    desc: 'Upload assets (bonds, loans, equity) with exposure, sector, and rating.',
+    color: '#059669',
+  },
+  {
+    icon: Leaf,
+    title: 'Run PCAF Calculation',
+    desc: 'Compute financed emissions (WACI, ITR, DQS) per the PCAF Standard v2.0.',
+    color: '#7c3aed',
+  },
+  {
+    icon: GitCompare,
+    title: 'Compare Scenarios',
+    desc: 'Stress-test against NGFS Net Zero 2050, Delayed Transition, and Hot House scenarios.',
+    color: '#d97706',
+  },
+];
+
+function EmptyPortfolioState({ onSampleCreated }) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [created, setCreated] = useState(false);
+
+  async function handleCreateSample() {
+    setLoading(true);
+    setError(null);
+    try {
+      await axios.post('/api/pg/portfolios/seed-sample');
+      setCreated(true);
+      setTimeout(() => onSampleCreated(), 800);
+    } catch (e) {
+      setError(e?.response?.data?.detail || 'Failed to create sample portfolio');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="flex flex-col items-center justify-center py-16 px-6 text-center max-w-2xl mx-auto" data-testid="portfolio-empty-state">
+      {/* Icon */}
+      <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mb-6">
+        <PieChart className="w-8 h-8 text-gray-400" />
+      </div>
+
+      {/* Heading */}
+      <h2 className="text-2xl font-bold text-gray-900 mb-2">No portfolios yet</h2>
+      <p className="text-sm text-gray-500 mb-8 max-w-md">
+        Create your first portfolio to start running PCAF financed emissions, scenario comparisons,
+        and WACI glidepath analysis.
+      </p>
+
+      {/* CTAs */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-10">
+        <button
+          onClick={handleCreateSample}
+          disabled={loading || created}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-white transition-all disabled:opacity-60"
+          style={{ background: '#164E8A' }}
+          data-testid="create-sample-portfolio-btn"
+        >
+          {created ? (
+            <><CheckCircle2 className="w-4 h-4" /> Created!</>
+          ) : loading ? (
+            <><RefreshCw className="w-4 h-4 animate-spin" /> Creating…</>
+          ) : (
+            <><Sparkles className="w-4 h-4" /> Load Sample Portfolio</>
+          )}
+        </button>
+        <button
+          className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 transition-all"
+          data-testid="create-new-portfolio-btn"
+        >
+          <Plus className="w-4 h-4" /> Create Portfolio
+        </button>
+        <button
+          className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 transition-all"
+        >
+          <Upload className="w-4 h-4" /> Import from CSV
+        </button>
+      </div>
+
+      {/* Error */}
+      {error && (
+        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+          {error}
+        </div>
+      )}
+
+      {/* Quickstart steps */}
+      <div className="w-full">
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Getting started</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+          {QUICKSTART_STEPS.map((step, i) => {
+            const Icon = step.icon;
+            return (
+              <div
+                key={i}
+                className="flex items-start gap-3 p-4 rounded-xl bg-white border border-gray-200"
+              >
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+                  style={{ background: `${step.color}18` }}
+                >
+                  <Icon className="w-4 h-4" style={{ color: step.color }} />
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <span
+                      className="text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center text-white flex-shrink-0"
+                      style={{ background: step.color }}
+                    >
+                      {i + 1}
+                    </span>
+                    <p className="text-sm font-semibold text-gray-800">{step.title}</p>
+                  </div>
+                  <p className="text-xs text-gray-500">{step.desc}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Data requirements note */}
+      <div className="mt-8 w-full rounded-xl bg-blue-50 border border-blue-200 p-4 text-left">
+        <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+          <ArrowRight className="w-3 h-3" /> Minimum data required per asset
+        </p>
+        <ul className="space-y-1 text-xs text-blue-700">
+          <li>• <strong>Company name</strong> — used for entity resolution and sector inference</li>
+          <li>• <strong>Exposure / market value</strong> (EUR) — used for PCAF attribution factor</li>
+          <li>• <strong>Sector</strong> (e.g. Power Generation, Oil &amp; Gas) — enables sector-level WACI</li>
+          <li>• <strong>Asset type</strong> (Bond / Loan / Equity) — determines PCAF Part A methodology</li>
+          <li>• Scope 1/2/3 emissions (tCO₂e) — optional; auto-estimated via DQS-5 proxies if absent</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+
 // ── Main Page ──────────────────────────────────────────────────────────────────
 
 export default function PortfolioAnalyticsPage() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedPortfolioId, setSelectedPortfolioId] = useState(null);
 
-  const { data: portfolios, isLoading: portfoliosLoading } = usePortfolios();
-  const { data: dashboard, isLoading: dashboardLoading } = useDashboard(selectedPortfolioId);
-  const { data: holdings, isLoading: holdingsLoading } = useHoldings(selectedPortfolioId);
-  const { data: pcafResults, isLoading: pcafLoading } = usePCAFResults(selectedPortfolioId);
+  const { data: portfolios, isLoading: portfoliosLoading, refetch: refetchPortfolios } = usePortfolios();
+  const { data: dashboard, isLoading: dashboardLoading, error: dashboardError } = useDashboard(selectedPortfolioId);
+  const { data: holdings, isLoading: holdingsLoading, error: holdingsError } = useHoldings(selectedPortfolioId);
+  const { data: pcafResults, isLoading: pcafLoading, error: pcafError } = usePCAFResults(selectedPortfolioId);
   const { data: waciHistory } = useWACIHistory(selectedPortfolioId, 10);
   const runPcafMutation = useRunPCAF();
 
@@ -518,6 +724,8 @@ export default function PortfolioAnalyticsPage() {
     }
   }, [portfolios, selectedPortfolioId]);
 
+  const hasNoPortfolios = !portfoliosLoading && portfolios?.items?.length === 0;
+
   const selectedPortfolio = portfolios?.items?.find(p => p.id === selectedPortfolioId);
 
   function handleRunPcaf(portfolioId) {
@@ -526,16 +734,16 @@ export default function PortfolioAnalyticsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white/[0.02]" data-testid="portfolio-analytics-page">
+    <div className="min-h-screen bg-gray-50" data-testid="portfolio-analytics-page">
       {/* Page header */}
-      <div className="bg-[#0d1424] border-b border-white/[0.06] px-6 py-4">
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-cyan-400/10 rounded-lg">
-            <PieChart className="h-6 w-6 text-cyan-400" />
+          <div className="p-2 bg-gray-50 rounded-lg">
+            <PieChart className="h-6 w-6 text-gray-700" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">Portfolio Analytics</h1>
-            <p className="text-sm text-white/40">
+            <h1 className="text-xl font-bold text-gray-900">Portfolio Analytics</h1>
+            <p className="text-sm text-gray-500">
               PCAF Standard v2.0 financed emissions · WACI · ITR · Glidepath · Scenario comparison
             </p>
           </div>
@@ -562,7 +770,12 @@ export default function PortfolioAnalyticsPage() {
 
       {/* Main content */}
       <div className="p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Empty state — shown when no portfolios exist */}
+        {hasNoPortfolios && (
+          <EmptyPortfolioState onSampleCreated={() => refetchPortfolios()} />
+        )}
+
+        {!hasNoPortfolios && <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar — Portfolio Selector */}
           <div className="lg:col-span-1">
             <PortfolioSelector
@@ -581,6 +794,7 @@ export default function PortfolioAnalyticsPage() {
                 portfolioId={selectedPortfolioId}
                 pcafResults={pcafResults}
                 pcafLoading={pcafLoading}
+                pcafError={pcafError}
                 onRunPcaf={handleRunPcaf}
                 isRunning={runPcafMutation.isPending}
               />
@@ -588,10 +802,10 @@ export default function PortfolioAnalyticsPage() {
 
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-6 mb-6 bg-[#0d1424] border border-white/[0.06]">
+              <TabsList className="grid w-full grid-cols-6 mb-6 bg-white border border-gray-200">
                 <TabsTrigger
                   value="dashboard"
-                  className="flex items-center gap-1.5 data-[state=active]:bg-cyan-400/10 data-[state=active]:text-cyan-300"
+                  className="flex items-center gap-1.5 data-[state=active]:bg-gray-50 data-[state=active]:text-gray-800"
                   data-testid="tab-dashboard"
                 >
                   <LayoutDashboard className="h-3.5 w-3.5" />
@@ -631,7 +845,7 @@ export default function PortfolioAnalyticsPage() {
                 </TabsTrigger>
                 <TabsTrigger
                   value="scheduled"
-                  className="flex items-center gap-1.5 data-[state=active]:bg-white/10 data-[state=active]:text-white/80"
+                  className="flex items-center gap-1.5 data-[state=active]:bg-gray-100 data-[state=active]:text-gray-800"
                   data-testid="tab-scheduled"
                 >
                   <Calendar className="h-3.5 w-3.5" />
@@ -642,14 +856,16 @@ export default function PortfolioAnalyticsPage() {
               <TabsContent value="dashboard" className="mt-0">
                 <PortfolioDashboard
                   dashboard={dashboard}
-                  isLoading={dashboardLoading && selectedPortfolioId}
+                  isLoading={dashboardLoading && !!selectedPortfolioId}
+                  error={dashboardError}
                 />
               </TabsContent>
 
               <TabsContent value="holdings" className="mt-0">
                 <HoldingsTable
                   holdings={holdings}
-                  isLoading={holdingsLoading && selectedPortfolioId}
+                  isLoading={holdingsLoading && !!selectedPortfolioId}
+                  error={holdingsError}
                 />
               </TabsContent>
 
@@ -677,7 +893,7 @@ export default function PortfolioAnalyticsPage() {
               </TabsContent>
             </Tabs>
           </div>
-        </div>
+        </div>}
       </div>
     </div>
   );

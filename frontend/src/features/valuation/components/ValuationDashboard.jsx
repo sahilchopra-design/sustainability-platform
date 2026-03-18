@@ -75,7 +75,7 @@ export function ValuationDashboard() {
     <div className="space-y-6">
       {/* Header with Export */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-white/90">Valuation Overview</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Valuation Overview</h2>
         <ExportButton 
           onExport={handleExport}
           label="Export Valuation"
@@ -160,7 +160,7 @@ export function ValuationDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <PieChart className="h-5 w-5 text-white/40" />
+              <PieChart className="h-5 w-5 text-gray-500" />
               Properties by Type
             </CardTitle>
           </CardHeader>
@@ -175,7 +175,7 @@ export function ValuationDashboard() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-32 bg-white/[0.06] rounded-full h-2">
+                    <div className="w-32 bg-gray-50 rounded-full h-2">
                       <div 
                         className="bg-emerald-500 h-2 rounded-full" 
                         style={{ 
@@ -183,7 +183,7 @@ export function ValuationDashboard() {
                         }}
                       />
                     </div>
-                    <span className="text-sm text-white/60 w-8 text-right">{count}</span>
+                    <span className="text-sm text-gray-600 w-8 text-right">{count}</span>
                   </div>
                 </div>
               ))}
@@ -194,7 +194,7 @@ export function ValuationDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Calculator className="h-5 w-5 text-white/40" />
+              <Calculator className="h-5 w-5 text-gray-500" />
               Valuations by Method
             </CardTitle>
           </CardHeader>
@@ -213,7 +213,7 @@ export function ValuationDashboard() {
                       {method.replace('_', ' ')}
                     </span>
                     <div className="flex items-center gap-2">
-                      <div className="w-32 bg-white/[0.06] rounded-full h-2">
+                      <div className="w-32 bg-gray-50 rounded-full h-2">
                         <div 
                           className={`${colors[method] || 'bg-white/[0.07]'} h-2 rounded-full`} 
                           style={{ 
@@ -221,7 +221,7 @@ export function ValuationDashboard() {
                           }}
                         />
                       </div>
-                      <span className="text-sm text-white/60 w-8 text-right">{count}</span>
+                      <span className="text-sm text-gray-600 w-8 text-right">{count}</span>
                     </div>
                   </div>
                 );
@@ -235,45 +235,45 @@ export function ValuationDashboard() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-white/40" />
+            <Building2 className="h-5 w-5 text-gray-500" />
             Property Portfolio
           </CardTitle>
         </CardHeader>
         <CardContent>
           {propsLoading ? (
             <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white/[0.08]"></div>
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-300"></div>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-white/[0.06]">
-                    <th className="text-left py-3 px-2 text-sm font-medium text-white/60">Property</th>
-                    <th className="text-left py-3 px-2 text-sm font-medium text-white/60">Type</th>
-                    <th className="text-left py-3 px-2 text-sm font-medium text-white/60">Location</th>
-                    <th className="text-right py-3 px-2 text-sm font-medium text-white/60">Size (SF)</th>
-                    <th className="text-right py-3 px-2 text-sm font-medium text-white/60">Market Value</th>
-                    <th className="text-right py-3 px-2 text-sm font-medium text-white/60">Cap Rate</th>
-                    <th className="text-center py-3 px-2 text-sm font-medium text-white/60">Quality</th>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-2 text-sm font-medium text-gray-600">Property</th>
+                    <th className="text-left py-3 px-2 text-sm font-medium text-gray-600">Type</th>
+                    <th className="text-left py-3 px-2 text-sm font-medium text-gray-600">Location</th>
+                    <th className="text-right py-3 px-2 text-sm font-medium text-gray-600">Size (SF)</th>
+                    <th className="text-right py-3 px-2 text-sm font-medium text-gray-600">Market Value</th>
+                    <th className="text-right py-3 px-2 text-sm font-medium text-gray-600">Cap Rate</th>
+                    <th className="text-center py-3 px-2 text-sm font-medium text-gray-600">Quality</th>
                   </tr>
                 </thead>
                 <tbody>
                   {properties.map((property) => (
                     <tr 
                       key={property.id} 
-                      className="border-b border-white/[0.04] hover:bg-white/[0.02] cursor-pointer transition-colors"
+                      className="border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
                     >
                       <td className="py-3 px-2">
                         <div className="font-medium text-sm">{property.property_name}</div>
-                        <div className="text-xs text-white/40">{property.address}</div>
+                        <div className="text-xs text-gray-500">{property.address}</div>
                       </td>
                       <td className="py-3 px-2">
                         <Badge variant="outline" className="capitalize">
                           {property.property_type?.replace('_', ' ')}
                         </Badge>
                       </td>
-                      <td className="py-3 px-2 text-sm text-white/60">
+                      <td className="py-3 px-2 text-sm text-gray-600">
                         {property.city}, {property.state_province}
                       </td>
                       <td className="py-3 px-2 text-sm text-right">
@@ -292,7 +292,7 @@ export function ValuationDashboard() {
                               ? 'bg-emerald-100 text-emerald-300' 
                               : property.quality_rating === 'class_b'
                               ? 'bg-blue-100 text-blue-300'
-                              : 'bg-white/[0.06] text-white/90'
+                              : 'bg-gray-50 text-gray-900'
                           }
                         >
                           {property.quality_rating?.replace('class_', 'Class ').toUpperCase()}

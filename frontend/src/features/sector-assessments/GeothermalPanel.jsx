@@ -43,10 +43,10 @@ const PLANT_LABELS = {
 };
 
 const KPI = ({ label, value, sub, accent }) => (
-  <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-    <div className={`text-2xl font-bold ${accent || 'text-white'}`}>{value}</div>
-    <div className="text-[11px] text-white/40 mt-1">{label}</div>
-    {sub && <div className="text-[10px] text-white/25 mt-0.5">{sub}</div>}
+  <div className="bg-white border border-gray-200 rounded-lg p-4">
+    <div className={`text-2xl font-bold ${accent || 'text-gray-900'}`}>{value}</div>
+    <div className="text-[11px] text-gray-500 mt-1">{label}</div>
+    {sub && <div className="text-[10px] text-gray-400 mt-0.5">{sub}</div>}
   </div>
 );
 
@@ -87,10 +87,10 @@ export function GeothermalPanel() {
 
   const Field = ({ label, k, type = 'number', opts, step }) => (
     <div>
-      <label className="text-[11px] text-white/40 block mb-1">{label}</label>
+      <label className="text-[11px] text-gray-500 block mb-1">{label}</label>
       {opts ? (
         <select value={form[k]} onChange={e => set(k, e.target.value)}
-          className="w-full bg-[#1a2332] border border-white/[0.08] rounded px-2 py-1.5 text-sm text-white">
+          className="w-full bg-[#1a2332] border border-gray-300 rounded px-2 py-1.5 text-sm text-gray-900">
           {Object.entries(opts).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
         </select>
       ) : type === 'checkbox' ? (
@@ -99,7 +99,7 @@ export function GeothermalPanel() {
       ) : (
         <input type="number" step={step || 'any'} value={form[k]}
           onChange={e => num(k, e.target.value)}
-          className="w-full bg-[#1a2332] border border-white/[0.08] rounded px-2 py-1.5 text-sm text-white" />
+          className="w-full bg-[#1a2332] border border-gray-300 rounded px-2 py-1.5 text-sm text-gray-900" />
       )}
     </div>
   );
@@ -114,16 +114,16 @@ export function GeothermalPanel() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6">
-        <h2 className="text-xl font-bold text-white">Geothermal Energy Project Assessment</h2>
-        <p className="text-xs text-white/40 mt-1">
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h2 className="text-xl font-bold text-gray-900">Geothermal Energy Project Assessment</h2>
+        <p className="text-xs text-gray-500 mt-1">
           IRENA Geothermal Power Technology Brief 2024 / IEA World Energy Outlook 2023
         </p>
       </div>
 
       {/* Input Form */}
-      <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6">
-        <h3 className="text-sm font-semibold text-white/70 mb-4">Project Parameters</h3>
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h3 className="text-sm font-semibold text-gray-700 mb-4">Project Parameters</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Field label="Project Name" k="project_name" type="text" />
           <Field label="Country (ISO2)" k="country_iso2" type="text" />
@@ -141,12 +141,12 @@ export function GeothermalPanel() {
           <Field label="Carbon Price (USD/tCO2)" k="carbon_price_usd_tco2" />
           <Field label="Grid EF (gCO2/kWh)" k="grid_emission_factor_gco2_kwh" />
           <div>
-            <label className="text-[11px] text-white/40 block mb-1">District Heating</label>
+            <label className="text-[11px] text-gray-500 block mb-1">District Heating</label>
             <div className="flex items-center gap-3">
               <input type="checkbox" checked={form.has_district_heating}
                 onChange={e => set('has_district_heating', e.target.checked)}
                 className="accent-blue-500" />
-              <span className="text-xs text-white/50">Enabled</span>
+              <span className="text-xs text-gray-500">Enabled</span>
             </div>
           </div>
           {form.has_district_heating && (
@@ -155,7 +155,7 @@ export function GeothermalPanel() {
         </div>
 
         <button onClick={run} disabled={loading}
-          className="mt-6 px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium disabled:opacity-40 transition-colors">
+          className="mt-6 px-6 py-2 bg-blue-600 hover:bg-blue-500 text-gray-900 rounded-lg text-sm font-medium disabled:opacity-40 transition-colors">
           {loading ? 'Assessing...' : 'Run Assessment'}
         </button>
         {error && <div className="mt-3 text-sm text-red-400">{error}</div>}
@@ -199,33 +199,33 @@ export function GeothermalPanel() {
           </div>
 
           {/* Resource & Risk */}
-          <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6">
-            <h3 className="text-sm font-semibold text-white/70 mb-4">Resource Viability & Risk</h3>
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h3 className="text-sm font-semibold text-gray-700 mb-4">Resource Viability & Risk</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div>
-                <div className="text-[11px] text-white/40 mb-1">Resource Viability</div>
+                <div className="text-[11px] text-gray-500 mb-1">Resource Viability</div>
                 <div className={`text-lg font-bold ${
                   result.resource_viability === 'High' ? 'text-green-400' :
                   result.resource_viability === 'Medium' ? 'text-amber-400' : 'text-red-400'
                 }`}>{result.resource_viability}</div>
               </div>
               <div>
-                <div className="text-[11px] text-white/40 mb-1">Temperature Adequacy</div>
+                <div className="text-[11px] text-gray-500 mb-1">Temperature Adequacy</div>
                 <div className={`text-lg font-bold ${
                   result.temp_adequacy === 'Optimal' ? 'text-green-400' :
                   result.temp_adequacy === 'Adequate' ? 'text-amber-400' : 'text-red-400'
                 }`}>{result.temp_adequacy}</div>
-                <div className="text-[10px] text-white/30">{form.reservoir_temp_c}C</div>
+                <div className="text-[10px] text-gray-500">{form.reservoir_temp_c}C</div>
               </div>
               <div>
-                <div className="text-[11px] text-white/40 mb-1">Induced Seismicity Risk</div>
+                <div className="text-[11px] text-gray-500 mb-1">Induced Seismicity Risk</div>
                 <div className="text-lg font-bold" style={{ color: RISK_COLORS[result.seismicity_risk] }}>
                   {result.seismicity_risk.toUpperCase()}
                 </div>
-                <div className="text-[10px] text-white/30">{result.seismicity_note}</div>
+                <div className="text-[10px] text-gray-500">{result.seismicity_note}</div>
               </div>
               <div>
-                <div className="text-[11px] text-white/40 mb-1">LCOE vs IRENA</div>
+                <div className="text-[11px] text-gray-500 mb-1">LCOE vs IRENA</div>
                 <div className={`text-sm font-semibold ${
                   result.lcoe_vs_irena.includes('competitive') ? 'text-green-400' :
                   result.lcoe_vs_irena.includes('Within') ? 'text-blue-400' : 'text-red-400'
@@ -235,9 +235,9 @@ export function GeothermalPanel() {
 
             {/* District Heating */}
             {result.district_heating_benefit.enabled && (
-              <div className="mt-4 pt-4 border-t border-white/[0.06]">
-                <div className="text-[11px] text-white/40 mb-1">District Heating Benefit</div>
-                <div className="text-sm text-white">
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="text-[11px] text-gray-500 mb-1">District Heating Benefit</div>
+                <div className="text-sm text-gray-900">
                   Revenue: ${result.district_heating_benefit.annual_revenue_musd}M/yr
                   {result.district_heating_benefit.lcoe_reduction_pct > 0 &&
                     ` | LCOE offset: ${result.district_heating_benefit.lcoe_reduction_pct}%`}
@@ -248,31 +248,31 @@ export function GeothermalPanel() {
 
           {/* IRENA Benchmark Charts */}
           {benchData.length > 0 && (
-            <div className="bg-[#0d1424] rounded-xl border border-white/[0.06] p-6">
-              <h3 className="text-sm font-semibold text-white/70 mb-4">
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-4">
                 IRENA Geothermal Benchmarks (Historical)
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <div className="text-[11px] text-white/40 mb-2">LCOE Trend (USD/MWh)</div>
+                  <div className="text-[11px] text-gray-500 mb-2">LCOE Trend (USD/MWh)</div>
                   <ResponsiveContainer width="100%" height={220}>
                     <LineChart data={benchData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" />
                       <XAxis dataKey="year" tick={{ fill: '#ffffff60', fontSize: 10 }} />
                       <YAxis tick={{ fill: '#ffffff60', fontSize: 10 }} />
-                      <Tooltip contentStyle={{ background: '#111827', border: '1px solid #ffffff15', borderRadius: 8, fontSize: 11 }} />
+                      <Tooltip contentStyle={{ background: '#ffffff', border: '1px solid #ffffff15', borderRadius: 8, fontSize: 11 }} />
                       <Line type="monotone" dataKey="lcoe" stroke="#3b82f6" strokeWidth={2} dot={{ r: 3 }} name="LCOE" />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
                 <div>
-                  <div className="text-[11px] text-white/40 mb-2">Capacity Factor Trend (%)</div>
+                  <div className="text-[11px] text-gray-500 mb-2">Capacity Factor Trend (%)</div>
                   <ResponsiveContainer width="100%" height={220}>
                     <BarChart data={benchData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" />
                       <XAxis dataKey="year" tick={{ fill: '#ffffff60', fontSize: 10 }} />
                       <YAxis domain={[0, 100]} tick={{ fill: '#ffffff60', fontSize: 10 }} />
-                      <Tooltip contentStyle={{ background: '#111827', border: '1px solid #ffffff15', borderRadius: 8, fontSize: 11 }} />
+                      <Tooltip contentStyle={{ background: '#ffffff', border: '1px solid #ffffff15', borderRadius: 8, fontSize: 11 }} />
                       <Bar dataKey="cf" fill="#22c55e" radius={[3, 3, 0, 0]} name="Capacity Factor %" />
                     </BarChart>
                   </ResponsiveContainer>

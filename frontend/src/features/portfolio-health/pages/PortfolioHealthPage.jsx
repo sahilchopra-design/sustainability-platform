@@ -27,10 +27,10 @@ const POLL_MS = 60_000; // 1 minute
 function KpiStrip({ label, value, unit, colour }) {
   return (
     <div className="flex flex-col">
-      <span className="text-[10px] text-white/40 uppercase tracking-wider mb-0.5">{label}</span>
+      <span className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">{label}</span>
       <span className="text-base font-semibold tabular-nums" style={{ color: colour, fontFamily: 'IBM Plex Mono, monospace' }}>
         {value ?? '—'}
-        {unit && <span className="text-xs text-white/30 ml-1">{unit}</span>}
+        {unit && <span className="text-xs text-gray-500 ml-1">{unit}</span>}
       </span>
     </div>
   );
@@ -42,7 +42,7 @@ function PortfolioSelector({ portfolios, selected, onChange }) {
     <select
       value={selected || ''}
       onChange={e => onChange(e.target.value)}
-      className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-[#38bdf8] transition-colors"
+      className="bg-gray-50 border border-black/10 rounded-lg px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:border-[#38bdf8] transition-colors"
       data-testid="portfolio-health-selector"
     >
       <option value="">Select portfolio…</option>
@@ -152,17 +152,17 @@ export default function PortfolioHealthPage() {
   const unreadCount = alerts.filter(a => !a.is_read).length;
 
   return (
-    <div className="min-h-screen bg-[#080e1c] p-6 space-y-6">
+    <div className="min-h-screen bg-white p-6 space-y-6">
       {/* ── Page header ───────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div>
           <h1
-            className="text-2xl font-bold text-white"
+            className="text-2xl font-bold text-gray-900"
             style={{ fontFamily: "'Space Grotesk', sans-serif" }}
           >
             Portfolio Health
           </h1>
-          <p className="text-sm text-white/40 mt-0.5">
+          <p className="text-sm text-gray-500 mt-0.5">
             Continuous sustainability + financial risk monitoring
           </p>
         </div>
@@ -175,7 +175,7 @@ export default function PortfolioHealthPage() {
           />
           <button
             onClick={handleRefresh}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-xs text-white/60 hover:text-white hover:border-white/20 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-black/10 bg-gray-50 text-xs text-gray-600 hover:text-gray-900 hover:border-black/20 transition-all"
             data-testid="portfolio-health-refresh"
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -184,7 +184,7 @@ export default function PortfolioHealthPage() {
             Refresh
           </button>
           {lastRefresh && (
-            <span className="text-[10px] text-white/25 tabular-nums">
+            <span className="text-[10px] text-gray-400 tabular-nums">
               Updated {lastRefresh}
             </span>
           )}
@@ -200,8 +200,8 @@ export default function PortfolioHealthPage() {
 
       {/* ── No portfolio selected ─────────────────────────────────────────── */}
       {!selectedId && !error && (
-        <div className="rounded-xl border border-white/10 bg-white/[0.02] px-8 py-16 text-center">
-          <p className="text-white/40 text-sm">
+        <div className="rounded-xl border border-black/10 bg-gray-50 px-8 py-16 text-center">
+          <p className="text-gray-500 text-sm">
             Select a portfolio above to view health scores
           </p>
         </div>
@@ -211,9 +211,9 @@ export default function PortfolioHealthPage() {
         <>
           {/* ── Overall score banner ─────────────────────────────────────── */}
           {scores && (
-            <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-6 py-4">
+            <div className="flex items-center justify-between rounded-xl border border-black/10 bg-gray-50 px-6 py-4">
               <div>
-                <span className="text-xs text-white/40 uppercase tracking-wider">Overall Score</span>
+                <span className="text-xs text-gray-500 uppercase tracking-wider">Overall Score</span>
                 <div className="flex items-baseline gap-2 mt-0.5">
                   <span
                     className="text-4xl font-bold tabular-nums"
@@ -225,14 +225,14 @@ export default function PortfolioHealthPage() {
                   >
                     {scores.overall_score?.toFixed(1)}
                   </span>
-                  <span className="text-sm text-white/30">/100</span>
+                  <span className="text-sm text-gray-500">/100</span>
                 </div>
               </div>
               <div className="flex items-center gap-8">
                 <KpiStrip label="Portfolio" value={scores.portfolio_name} colour="#ffffff" />
                 {unreadCount > 0 && (
                   <div className="flex flex-col">
-                    <span className="text-[10px] text-white/40 uppercase tracking-wider mb-0.5">Alerts</span>
+                    <span className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Alerts</span>
                     <span className="text-base font-semibold text-[#ef4444] tabular-nums">
                       {unreadCount} unread
                     </span>
@@ -281,12 +281,12 @@ export default function PortfolioHealthPage() {
           {/* ── Score trends + Alert feed ────────────────────────────────── */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
             {/* Trend sparklines (3 cols) */}
-            <div className="lg:col-span-3 rounded-xl border border-white/10 bg-white/[0.02] p-5">
-              <h2 className="text-sm font-semibold text-white mb-4">Score Trends</h2>
+            <div className="lg:col-span-3 rounded-xl border border-black/10 bg-gray-50 p-5">
+              <h2 className="text-sm font-semibold text-gray-900 mb-4">Score Trends</h2>
               <div className="space-y-5">
                 <div>
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs text-white/40">Climate Health</span>
+                    <span className="text-xs text-gray-500">Climate Health</span>
                     <span className="text-xs tabular-nums" style={{ color: '#22d3ee' }}>
                       {scores?.climate_health?.value?.toFixed(1) ?? '—'}
                     </span>
@@ -295,7 +295,7 @@ export default function PortfolioHealthPage() {
                 </div>
                 <div>
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs text-white/40">Financial Resilience</span>
+                    <span className="text-xs text-gray-500">Financial Resilience</span>
                     <span className="text-xs tabular-nums" style={{ color: '#a78bfa' }}>
                       {scores?.financial_resilience?.value?.toFixed(1) ?? '—'}
                     </span>
@@ -304,7 +304,7 @@ export default function PortfolioHealthPage() {
                 </div>
                 <div>
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs text-white/40">Transition Readiness</span>
+                    <span className="text-xs text-gray-500">Transition Readiness</span>
                     <span className="text-xs tabular-nums" style={{ color: '#34d399' }}>
                       {scores?.transition_readiness?.value?.toFixed(1) ?? '—'}
                     </span>
@@ -313,18 +313,18 @@ export default function PortfolioHealthPage() {
                 </div>
               </div>
               {history.length === 0 && !loadingScores && (
-                <p className="text-xs text-white/25 text-center mt-4">
+                <p className="text-xs text-gray-400 text-center mt-4">
                   Trend data populates after PCAF calculations are run across reporting years
                 </p>
               )}
             </div>
 
             {/* Alert feed (2 cols) */}
-            <div className="lg:col-span-2 rounded-xl border border-white/10 bg-white/[0.02] p-5 overflow-y-auto max-h-[480px]">
-              <h2 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+            <div className="lg:col-span-2 rounded-xl border border-black/10 bg-gray-50 p-5 overflow-y-auto max-h-[480px]">
+              <h2 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 Signal Feed
                 {unreadCount > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full bg-[#ef4444] text-white text-[10px] font-bold tabular-nums">
+                  <span className="px-1.5 py-0.5 rounded-full bg-[#ef4444] text-gray-900 text-[10px] font-bold tabular-nums">
                     {unreadCount}
                   </span>
                 )}
@@ -339,8 +339,8 @@ export default function PortfolioHealthPage() {
           </div>
 
           {/* ── Quick Actions ────────────────────────────────────────────── */}
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-            <h2 className="text-sm font-semibold text-white mb-3">Quick Actions</h2>
+          <div className="rounded-xl border border-black/10 bg-gray-50 p-5">
+            <h2 className="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h2>
             <div className="flex flex-wrap gap-3">
               {[
                 { label: 'Review glidepath deviations', link: '/glidepath-tracker', colour: '#22d3ee' },

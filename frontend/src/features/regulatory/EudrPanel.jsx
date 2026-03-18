@@ -12,16 +12,16 @@ import {
 } from 'recharts';
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
-function Badge({ label, color = 'bg-[#0d1424]/[0.06] text-white/40' }) {
+function Badge({ label, color = 'bg-gray-50 text-gray-500' }) {
   return <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${color}`}>{label}</span>;
 }
 function Card({ title, subtitle, children, className = '' }) {
   return (
-    <div className={`bg-[#0d1424] rounded-xl border border-white/[0.06] ${className}`}>
+    <div className={`bg-white rounded-xl border border-gray-200 ${className}`}>
       {(title || subtitle) && (
-        <div className="px-6 py-4 border-b border-white/[0.05]">
-          {title && <h2 className="text-sm font-semibold text-white/90">{title}</h2>}
-          {subtitle && <p className="text-xs text-white/40 mt-0.5">{subtitle}</p>}
+        <div className="px-6 py-4 border-b border-gray-200">
+          {title && <h2 className="text-sm font-semibold text-gray-900">{title}</h2>}
+          {subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}
         </div>
       )}
       <div className="p-6">{children}</div>
@@ -44,7 +44,7 @@ const COUNTRY_RISK = [
   { v: 'low', l: 'Low Risk — Simplified DDS Allowed', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
   { v: 'standard', l: 'Standard Risk — Full DDS Required', color: 'bg-amber-500/10 text-amber-400 border-amber-200' },
   { v: 'high', l: 'High Risk — Enhanced DDS + Mitigation', color: 'bg-red-500/10 text-red-600 border-red-500/20' },
-  { v: 'unknown', l: 'Unknown / Not Benchmarked', color: 'bg-white/[0.06] text-white/40 border-white/[0.08]' },
+  { v: 'unknown', l: 'Unknown / Not Benchmarked', color: 'bg-gray-50 text-gray-500 border-gray-300' },
 ];
 
 const DDS_STEPS = [
@@ -91,7 +91,7 @@ const STATUS_COLOR = {
   in_progress: 'bg-amber-500/10 text-amber-400 border-amber-200',
   compliant: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
   non_compliant: 'bg-red-700/20 text-red-400 border-red-700/20',
-  na: 'bg-white/[0.04] text-white/30 border-white/[0.06]',
+  na: 'bg-gray-50 text-gray-500 border-gray-200',
 };
 
 /* ── Component ────────────────────────────────────────────────────────────── */
@@ -161,7 +161,7 @@ export default function EudrPanel() {
       <div className="flex flex-wrap gap-2">
         <Badge label="EU 2023/1115 (EUDR)" color="bg-emerald-400/10 text-emerald-400" />
         <Badge label="7 Forest-Risk Commodities" color="bg-blue-400/10 text-blue-300" />
-        <Badge label="Due Diligence System" color="bg-cyan-400/10 text-cyan-300" />
+        <Badge label="Due Diligence System" color="bg-gray-50 text-gray-800" />
         <Badge label={`Deadline: ${deadline}`} color="bg-amber-500/10 text-amber-700" />
       </div>
 
@@ -169,16 +169,16 @@ export default function EudrPanel() {
       <Card title="EUDR Compliance Tracker" subtitle="EU Regulation 2023/1115 — due diligence system for 7 forest-risk commodities. Applies to operators placing products on the EU market or exporting from it.">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-2">
           <div>
-            <label className="block text-xs text-white/40 mb-1">Entity Size</label>
-            <select className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0b1120] text-white/70 focus:outline-none"
+            <label className="block text-xs text-gray-500 mb-1">Entity Size</label>
+            <select className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-[#f5f6f8] text-gray-700 focus:outline-none"
               value={entitySize} onChange={e => setEntitySize(e.target.value)}>
               <option value="large">Large Operator (>250 employees OR >€50M turnover)</option>
               <option value="sme">SME (≤250 employees AND ≤€50M turnover)</option>
             </select>
           </div>
           <div>
-            <label className="block text-xs text-white/40 mb-1">Role in Supply Chain</label>
-            <select className="w-full border border-white/[0.06] rounded px-2 py-1.5 text-sm bg-[#0b1120] text-white/70 focus:outline-none"
+            <label className="block text-xs text-gray-500 mb-1">Role in Supply Chain</label>
+            <select className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-[#f5f6f8] text-gray-700 focus:outline-none"
               value={role} onChange={e => setRole(e.target.value)}>
               <option value="operator">Operator (places product on EU market)</option>
               <option value="trader">Trader (makes available on EU market)</option>
@@ -187,9 +187,9 @@ export default function EudrPanel() {
           </div>
           <div className="flex items-center gap-2 p-3 bg-amber-500/[0.06] border border-amber-500/10 rounded-lg col-span-2">
             <div>
-              <p className="text-[10px] text-white/40">Your Compliance Deadline</p>
+              <p className="text-[10px] text-gray-500">Your Compliance Deadline</p>
               <p className="text-sm font-bold text-amber-400">{deadline}</p>
-              <p className="text-[10px] text-white/30">
+              <p className="text-[10px] text-gray-500">
                 {entitySize === 'sme' ? 'SME extended deadline (EU Del. Reg. 2024/2955)' : 'Large operators / non-EU companies'}
               </p>
             </div>
@@ -201,22 +201,22 @@ export default function EudrPanel() {
       <Card title="Commodity Scoping — Activate Relevant Commodities" subtitle="Select all commodities you source, produce or trade. Confirm origin country risk level and geolocation data coverage.">
         <div className="space-y-3">
           {COMMODITIES.map(c => (
-            <div key={c.id} className={`border rounded-xl p-4 transition-all ${commodityData[c.id]?.active ? 'border-cyan-400/20 bg-cyan-400/[0.03]' : 'border-white/[0.04]'}`}>
+            <div key={c.id} className={`border rounded-xl p-4 transition-all ${commodityData[c.id]?.active ? 'border-gray-200 bg-gray-50' : 'border-gray-200'}`}>
               <div className="flex items-center gap-3 mb-2">
                 <input type="checkbox" checked={commodityData[c.id]?.active || false}
                   onChange={e => setCommodity(c.id, 'active', e.target.checked)} className="accent-cyan-400" />
-                <span className="text-sm font-semibold text-white/80">{c.label}</span>
-                <span className="text-[10px] text-white/30 ml-auto">{c.hs_codes}</span>
+                <span className="text-sm font-semibold text-gray-800">{c.label}</span>
+                <span className="text-[10px] text-gray-500 ml-auto">{c.hs_codes}</span>
               </div>
               {commodityData[c.id]?.active && (
                 <div className="grid grid-cols-3 gap-3 mt-2">
                   <div>
-                    <label className="block text-xs text-white/40 mb-1">Volume (kt/yr)</label>
-                    <input type="number" className="w-full border border-white/[0.06] rounded px-2 py-1 text-xs bg-[#0b1120] text-white/70 focus:outline-none"
+                    <label className="block text-xs text-gray-500 mb-1">Volume (kt/yr)</label>
+                    <input type="number" className="w-full border border-gray-200 rounded px-2 py-1 text-xs bg-[#f5f6f8] text-gray-700 focus:outline-none"
                       value={commodityData[c.id]?.volume_kt || ''} onChange={e => setCommodity(c.id, 'volume_kt', e.target.value)} placeholder="e.g. 5.0" />
                   </div>
                   <div>
-                    <label className="block text-xs text-white/40 mb-1">Country Risk Level</label>
+                    <label className="block text-xs text-gray-500 mb-1">Country Risk Level</label>
                     <select className={`w-full border rounded px-2 py-1 text-xs focus:outline-none ${COUNTRY_RISK.find(r => r.v === commodityData[c.id]?.country_risk)?.color || ''}`}
                       value={commodityData[c.id]?.country_risk}
                       onChange={e => setCommodity(c.id, 'country_risk', e.target.value)}>
@@ -224,8 +224,8 @@ export default function EudrPanel() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-white/40 mb-1">Geolocation Data Coverage (%)</label>
-                    <input type="number" min="0" max="100" className="w-full border border-white/[0.06] rounded px-2 py-1 text-xs bg-[#0b1120] text-white/70 focus:outline-none"
+                    <label className="block text-xs text-gray-500 mb-1">Geolocation Data Coverage (%)</label>
+                    <input type="number" min="0" max="100" className="w-full border border-gray-200 rounded px-2 py-1 text-xs bg-[#f5f6f8] text-gray-700 focus:outline-none"
                       value={commodityData[c.id]?.geo_data_pct || ''} onChange={e => setCommodity(c.id, 'geo_data_pct', Math.min(100, Math.max(0, parseFloat(e.target.value) || 0)))} placeholder="0–100%" />
                   </div>
                 </div>
@@ -239,22 +239,22 @@ export default function EudrPanel() {
       <Card title="Due Diligence System Readiness — 3-Step Process (Art. 8–11)" subtitle="Score each DDS component. Step 3 (Risk Mitigation) required only for standard and high-risk countries.">
         <div className="space-y-5">
           {DDS_STEPS.map(step => (
-            <div key={step.id} className="border border-white/[0.06] rounded-xl p-4">
+            <div key={step.id} className="border border-gray-200 rounded-xl p-4">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs font-bold text-white/80">{step.label}</h3>
-                <Badge label={step.ref} color="bg-white/[0.06] text-white/40" />
+                <h3 className="text-xs font-bold text-gray-800">{step.label}</h3>
+                <Badge label={step.ref} color="bg-gray-50 text-gray-500" />
               </div>
               <div className="space-y-2">
                 {step.items.map(item => (
-                  <div key={item.id} className="bg-[#0b1120] rounded-lg p-2.5 border border-white/[0.04]">
-                    <p className="text-xs text-white/60 mb-2">{item.label}</p>
+                  <div key={item.id} className="bg-[#f5f6f8] rounded-lg p-2.5 border border-gray-200">
+                    <p className="text-xs text-gray-600 mb-2">{item.label}</p>
                     <div className="flex items-center gap-2">
                       <select className={`border rounded px-2 py-1 text-xs focus:outline-none w-48 ${STATUS_COLOR[ddsReadiness[item.id]?.status] || ''}`}
                         value={ddsReadiness[item.id]?.status}
                         onChange={e => setDds(item.id, 'status', e.target.value)}>
                         {COMPLIANCE_STATUS.map(s => <option key={s.v} value={s.v}>{s.l}</option>)}
                       </select>
-                      <input className="flex-1 border border-white/[0.06] rounded px-2 py-1 text-xs bg-[#0b1120] text-white/40 focus:outline-none"
+                      <input className="flex-1 border border-gray-200 rounded px-2 py-1 text-xs bg-[#f5f6f8] text-gray-500 focus:outline-none"
                         placeholder="Notes / evidence / system name"
                         value={ddsReadiness[item.id]?.notes || ''}
                         onChange={e => setDds(item.id, 'notes', e.target.value)} />
@@ -268,7 +268,7 @@ export default function EudrPanel() {
 
         <div className="mt-6 flex justify-end">
           <button onClick={compute}
-            className="bg-emerald-400 hover:bg-emerald-300 text-[#080e1c] text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors">
+            className="bg-emerald-400 hover:bg-emerald-300 text-[#ffffff] text-sm font-semibold px-8 py-2.5 rounded-lg shadow transition-colors">
             Generate EUDR Compliance Report
           </button>
         </div>
@@ -279,16 +279,16 @@ export default function EudrPanel() {
           {/* KPI summary */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className={`rounded-xl border p-5 text-center ${result.readinessPct >= 75 ? 'bg-emerald-500/10 border-emerald-500/20' : result.readinessPct >= 50 ? 'bg-amber-500/10 border-amber-200' : 'bg-red-500/10 border-red-500/20'}`}>
-              <p className="text-xs text-white/40 mb-1">DDS Readiness</p>
+              <p className="text-xs text-gray-500 mb-1">DDS Readiness</p>
               <p className={`text-3xl font-bold ${result.readinessPct >= 75 ? 'text-emerald-400' : result.readinessPct >= 50 ? 'text-amber-400' : 'text-red-500'}`}>
                 {result.readinessPct.toFixed(0)}%
               </p>
-              <p className="text-[10px] text-white/30 mt-1">{result.compliantItems}/{result.totalItems} items compliant</p>
+              <p className="text-[10px] text-gray-500 mt-1">{result.compliantItems}/{result.totalItems} items compliant</p>
             </div>
-            <div className="bg-[#0d1424] border border-white/[0.06] rounded-xl p-4 text-center">
-              <p className="text-xs text-white/40 mb-1">Active Commodities</p>
-              <p className="text-2xl font-bold text-cyan-300">{result.activeCommodities}</p>
-              <p className="text-[10px] text-white/30 mt-1">of 7 EUDR commodities</p>
+            <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
+              <p className="text-xs text-gray-500 mb-1">Active Commodities</p>
+              <p className="text-2xl font-bold text-gray-800">{result.activeCommodities}</p>
+              <p className="text-[10px] text-gray-500 mt-1">of 7 EUDR commodities</p>
             </div>
             {Object.entries(result.riskSummary).map(([risk, count]) => {
               const riskObj = COUNTRY_RISK.find(r => r.v === risk);
@@ -309,7 +309,7 @@ export default function EudrPanel() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
                 <XAxis dataKey="step" tick={{ fontSize: 9, fill: '#ffffff60' }} />
                 <YAxis domain={[0, 100]} tick={{ fontSize: 9, fill: '#ffffff60' }} tickFormatter={v => `${v}%`} />
-                <Tooltip contentStyle={{ background: '#0d1424', border: '1px solid #ffffff10', borderRadius: 8 }} formatter={v => [`${v}%`]} />
+                <Tooltip contentStyle={{ background: '#ffffff', border: '1px solid #ffffff10', borderRadius: 8 }} formatter={v => [`${v}%`]} />
                 <Bar dataKey="pct" name="Compliance %" radius={[4, 4, 0, 0]}>
                   {result.stepScores.map((s, i) => (
                     <Cell key={i} fill={s.pct >= 75 ? '#10b981' : s.pct >= 50 ? '#f59e0b' : '#ef4444'} />
@@ -336,14 +336,14 @@ export default function EudrPanel() {
       )}
 
       {/* Methodology */}
-      <Card title="Methodology Reference" className="border-white/[0.03]">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs text-white/50">
-          <div><span className="font-semibold text-white/70">Regulation:</span> EU 2023/1115 (EUDR)</div>
-          <div><span className="font-semibold text-white/70">Cutoff Date:</span> 31 December 2020</div>
-          <div><span className="font-semibold text-white/70">Commodities:</span> Cattle, Cocoa, Coffee, Palm Oil, Soya, Wood, Rubber</div>
-          <div><span className="font-semibold text-white/70">DDS:</span> Art. 8–11 (Information, Risk Assessment, Mitigation)</div>
-          <div><span className="font-semibold text-white/70">Large Ops:</span> 30 December 2025</div>
-          <div><span className="font-semibold text-white/70">SMEs:</span> 30 June 2026 (Del. Reg. 2024/2955)</div>
+      <Card title="Methodology Reference" className="border-gray-100">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs text-gray-500">
+          <div><span className="font-semibold text-gray-700">Regulation:</span> EU 2023/1115 (EUDR)</div>
+          <div><span className="font-semibold text-gray-700">Cutoff Date:</span> 31 December 2020</div>
+          <div><span className="font-semibold text-gray-700">Commodities:</span> Cattle, Cocoa, Coffee, Palm Oil, Soya, Wood, Rubber</div>
+          <div><span className="font-semibold text-gray-700">DDS:</span> Art. 8–11 (Information, Risk Assessment, Mitigation)</div>
+          <div><span className="font-semibold text-gray-700">Large Ops:</span> 30 December 2025</div>
+          <div><span className="font-semibold text-gray-700">SMEs:</span> 30 June 2026 (Del. Reg. 2024/2955)</div>
         </div>
       </Card>
     </div>

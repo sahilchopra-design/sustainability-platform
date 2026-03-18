@@ -44,7 +44,7 @@ const INSTRUMENT_TYPES_SLGS = [
 const STATUSES = ["Draft", "Submitted", "Under Review", "Approved", "Disbursed", "Rejected"];
 
 const STATUS_COLORS = {
-  Draft: "bg-white/10 text-white/50",
+  Draft: "bg-gray-100 text-gray-500",
   Submitted: "bg-blue-500/10 text-blue-400",
   "Under Review": "bg-amber-500/10 text-amber-400",
   Approved: "bg-emerald-500/10 text-emerald-400",
@@ -110,7 +110,7 @@ function calcGrant(app) {
 // ── Components ────────────────────────────────────────────────────────────────
 function StatusBadge({ status }) {
   return (
-    <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium ${STATUS_COLORS[status] || "bg-white/5 text-white/40"}`}>
+    <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium ${STATUS_COLORS[status] || "bg-gray-50 text-gray-500"}`}>
       {status}
     </span>
   );
@@ -187,7 +187,7 @@ export function SLGSTrackerPanel() {
   return (
     <div className="space-y-6">
       {/* Methodology note */}
-      <div className="p-3 bg-cyan-500/5 border border-cyan-500/20 rounded-lg text-xs text-cyan-300 flex items-start gap-2">
+      <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-800 flex items-start gap-2">
         <Info className="h-4 w-4 mt-0.5 shrink-0" />
         <span>
           MAS Sustainable Loan Grant Scheme (SLGS) — CMG Circular 02/2022, updated 2024. Reimburses up to S$120,000 per external review
@@ -199,24 +199,24 @@ export function SLGSTrackerPanel() {
       {/* Portfolio KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { label: "Total Applications", val: applications.length, color: "text-white" },
+          { label: "Total Applications", val: applications.length, color: "text-gray-900" },
           { label: "Eligible Applications", val: eligibleCount, color: "text-emerald-400" },
-          { label: "Estimated Total Grant", val: fmtSGD(totalGrant), color: "text-indigo-400", sub: `≈ ${fmtM(totalGrant * (1 / SGD_USD))} USD` },
+          { label: "Estimated Total Grant", val: fmtSGD(totalGrant), color: "text-gray-700", sub: `≈ ${fmtM(totalGrant * (1 / SGD_USD))} USD` },
           { label: "Approved / Disbursed", val: fmtSGD(totalApproved), color: "text-emerald-400" },
         ].map(({ label, val, color, sub }) => (
-          <div key={label} className="bg-[#0d1424] border border-white/[0.06] rounded-lg p-3">
+          <div key={label} className="bg-white border border-gray-200 rounded-lg p-3">
             <div className={`text-xl font-bold ${color}`}>{val}</div>
-            <div className="text-xs text-white/40 mt-0.5">{label}</div>
-            {sub && <div className="text-[11px] text-white/20 mt-0.5">{sub}</div>}
+            <div className="text-xs text-gray-500 mt-0.5">{label}</div>
+            {sub && <div className="text-[11px] text-gray-400 mt-0.5">{sub}</div>}
           </div>
         ))}
       </div>
 
       {/* Application log header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-white/80">Application Portfolio</h3>
+        <h3 className="text-sm font-semibold text-gray-800">Application Portfolio</h3>
         <button onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-cyan-600/80 hover:bg-cyan-600 text-white text-xs font-medium rounded-lg">
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-900/80 hover:bg-gray-900 text-gray-900 text-xs font-medium rounded-lg">
           <Plus className="h-3.5 w-3.5" />
           New Application
         </button>
@@ -224,8 +224,8 @@ export function SLGSTrackerPanel() {
 
       {/* New application form */}
       {showForm && (
-        <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4 space-y-4">
-          <h4 className="text-xs font-semibold text-white/60 uppercase tracking-wide">New SLGS Application</h4>
+        <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-4">
+          <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">New SLGS Application</h4>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {/* Entity details */}
@@ -235,16 +235,16 @@ export function SLGSTrackerPanel() {
               ["reviewer_name", "External Reviewer Name", "text"],
             ].map(([k, label, type]) => (
               <div key={k}>
-                <label className="text-xs text-white/40 block mb-1">{label}</label>
-                <input type={type} className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+                <label className="text-xs text-gray-500 block mb-1">{label}</label>
+                <input type={type} className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
                   value={form[k]} onChange={e => set(k, e.target.value)} />
               </div>
             ))}
 
             {/* Instrument type */}
             <div>
-              <label className="text-xs text-white/40 block mb-1">Instrument Type</label>
-              <select className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+              <label className="text-xs text-gray-500 block mb-1">Instrument Type</label>
+              <select className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
                 value={form.instrument_type} onChange={e => set("instrument_type", e.target.value)}>
                 {INSTRUMENT_TYPES_SLGS.map(i => <option key={i} value={i}>{i}</option>)}
               </select>
@@ -252,13 +252,13 @@ export function SLGSTrackerPanel() {
 
             {/* Review type */}
             <div>
-              <label className="text-xs text-white/40 block mb-1">Review / Service Type</label>
-              <select className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+              <label className="text-xs text-gray-500 block mb-1">Review / Service Type</label>
+              <select className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
                 value={form.review_type_id} onChange={e => set("review_type_id", e.target.value)}>
                 {REVIEW_TYPES.map(r => <option key={r.id} value={r.id}>{r.label}</option>)}
               </select>
               {grantCalc?.reviewType && (
-                <div className="text-[10px] text-white/30 mt-0.5">Cap: {fmtSGD(grantCalc.reviewType.cap_sgd)}</div>
+                <div className="text-[10px] text-gray-500 mt-0.5">Cap: {fmtSGD(grantCalc.reviewType.cap_sgd)}</div>
               )}
             </div>
 
@@ -270,8 +270,8 @@ export function SLGSTrackerPanel() {
               ["review_count", "Review # for Issuer (1 or 2)"],
             ].map(([k, label]) => (
               <div key={k}>
-                <label className="text-xs text-white/40 block mb-1">{label}</label>
-                <input type="number" className="w-full bg-[#0d1424] border border-white/[0.08] rounded px-3 py-2 text-xs text-white"
+                <label className="text-xs text-gray-500 block mb-1">{label}</label>
+                <input type="number" className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-xs text-gray-900"
                   value={form[k]} onChange={e => set(k, +e.target.value)} />
               </div>
             ))}
@@ -284,16 +284,16 @@ export function SLGSTrackerPanel() {
               <div key={k} className="flex items-center gap-2 mt-4">
                 <input type="checkbox" id={k} checked={form[k]} onChange={e => set(k, e.target.checked)}
                   className="w-4 h-4 accent-cyan-500" />
-                <label htmlFor={k} className="text-xs text-white/50">{label}</label>
+                <label htmlFor={k} className="text-xs text-gray-500">{label}</label>
               </div>
             ))}
           </div>
 
           {/* Live eligibility preview */}
           {eligibility && (
-            <div className="border border-white/[0.06] rounded-lg p-3 space-y-2">
+            <div className="border border-gray-200 rounded-lg p-3 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-white/60">Eligibility Check</span>
+                <span className="text-xs font-semibold text-gray-600">Eligibility Check</span>
                 <span className={`text-xs font-bold ${eligibility.eligible ? "text-emerald-400" : "text-red-400"}`}>
                   {eligibility.eligible ? "Eligible" : `${eligibility.pass_count}/${eligibility.checks.length} criteria met`}
                 </span>
@@ -304,8 +304,8 @@ export function SLGSTrackerPanel() {
                     ? <CheckCircle className="h-3.5 w-3.5 text-emerald-400 shrink-0 mt-0.5" />
                     : <XCircle className="h-3.5 w-3.5 text-red-400 shrink-0 mt-0.5" />
                   }
-                  <span className={c.pass ? "text-white/50" : "text-red-300"}>{c.criterion}</span>
-                  {!c.pass && <span className="text-white/30 italic">— {c.note}</span>}
+                  <span className={c.pass ? "text-gray-500" : "text-red-300"}>{c.criterion}</span>
+                  {!c.pass && <span className="text-gray-500 italic">— {c.note}</span>}
                 </div>
               ))}
               {grantCalc && eligibility.eligible && (
@@ -320,11 +320,11 @@ export function SLGSTrackerPanel() {
           <div className="flex gap-2">
             <button onClick={addApplication}
               disabled={!form.entity_name || !form.instrument_name}
-              className="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-medium rounded-lg disabled:opacity-40">
+              className="px-4 py-2 bg-[#164E8A] hover:bg-[#12407A] text-gray-900 text-xs font-medium rounded-lg disabled:opacity-40">
               Add Application
             </button>
             <button onClick={() => setShowForm(false)}
-              className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white/60 text-xs rounded-lg">
+              className="px-4 py-2 bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs rounded-lg">
               Cancel
             </button>
           </div>
@@ -333,35 +333,35 @@ export function SLGSTrackerPanel() {
 
       {/* Application table */}
       {applications.length === 0 ? (
-        <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-8 text-center text-white/30 text-sm">
+        <div className="bg-white border border-gray-200 rounded-lg p-8 text-center text-gray-500 text-sm">
           <FileText className="h-10 w-10 mx-auto mb-3 opacity-30" />
           <p>No SLGS applications yet. Click "New Application" to add one.</p>
         </div>
       ) : (
-        <div className="bg-[#111827] border border-white/[0.06] rounded-lg overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-white/[0.06]">
+                <tr className="border-b border-gray-200">
                   {["Entity / Instrument", "Type", "Review Service", "Issuance Size", "Est. Grant", "Eligibility", "Status", ""].map(h => (
-                    <th key={h} className="text-left px-4 py-3 text-white/30 font-medium whitespace-nowrap">{h}</th>
+                    <th key={h} className="text-left px-4 py-3 text-gray-500 font-medium whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {applications.map(app => (
-                  <tr key={app.id} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
+                  <tr key={app.id} className="border-b border-gray-200 hover:bg-gray-50">
                     <td className="px-4 py-3">
-                      <div className="font-medium text-white/80">{app.entity_name}</div>
-                      <div className="text-white/30">{app.instrument_name}</div>
+                      <div className="font-medium text-gray-800">{app.entity_name}</div>
+                      <div className="text-gray-500">{app.instrument_name}</div>
                     </td>
-                    <td className="px-4 py-3 text-white/50">{app.instrument_type}</td>
-                    <td className="px-4 py-3 text-white/50">
+                    <td className="px-4 py-3 text-gray-500">{app.instrument_type}</td>
+                    <td className="px-4 py-3 text-gray-500">
                       {REVIEW_TYPES.find(r => r.id === app.review_type_id)?.label || app.review_type_id}
                     </td>
-                    <td className="px-4 py-3 text-white/50">S${app.issuance_size_sgd_m}M</td>
+                    <td className="px-4 py-3 text-gray-500">S${app.issuance_size_sgd_m}M</td>
                     <td className="px-4 py-3">
-                      <span className={`font-medium ${app.eligibility?.eligible ? "text-emerald-400" : "text-white/30"}`}>
+                      <span className={`font-medium ${app.eligibility?.eligible ? "text-emerald-400" : "text-gray-500"}`}>
                         {app.eligibility?.eligible ? fmtSGD(app.grant?.estimated_grant || 0) : "—"}
                       </span>
                     </td>
@@ -374,13 +374,13 @@ export function SLGSTrackerPanel() {
                     <td className="px-4 py-3">
                       <select value={app.status}
                         onChange={e => updateStatus(app.id, e.target.value)}
-                        className="bg-transparent border border-white/[0.08] rounded px-2 py-1 text-[11px] text-white/60">
+                        className="bg-transparent border border-gray-300 rounded px-2 py-1 text-[11px] text-gray-600">
                         {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                       </select>
                     </td>
                     <td className="px-4 py-3">
                       <button onClick={() => setActiveApp(activeApp?.id === app.id ? null : app)}
-                        className="text-indigo-400 hover:text-indigo-300 text-[11px]">
+                        className="text-gray-700 hover:text-gray-600 text-[11px]">
                         {activeApp?.id === app.id ? "Hide" : "Detail"}
                       </button>
                     </td>
@@ -392,9 +392,9 @@ export function SLGSTrackerPanel() {
 
           {/* Expanded detail */}
           {activeApp && (
-            <div className="border-t border-white/[0.06] p-4 bg-[#0d1424] space-y-3">
+            <div className="border-t border-gray-200 p-4 bg-white space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-semibold text-white/60">Application Detail — {activeApp.entity_name}</h4>
+                <h4 className="text-xs font-semibold text-gray-600">Application Detail — {activeApp.entity_name}</h4>
                 <StatusBadge status={activeApp.status} />
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
@@ -409,17 +409,17 @@ export function SLGSTrackerPanel() {
                   ["Added", activeApp.created_at],
                 ].map(([label, val]) => (
                   <div key={label}>
-                    <div className="text-white/30">{label}</div>
-                    <div className="text-white/70 font-medium mt-0.5">{val}</div>
+                    <div className="text-gray-500">{label}</div>
+                    <div className="text-gray-700 font-medium mt-0.5">{val}</div>
                   </div>
                 ))}
               </div>
               <div className="space-y-1.5">
-                <div className="text-xs text-white/30 font-medium">Eligibility Criteria</div>
+                <div className="text-xs text-gray-500 font-medium">Eligibility Criteria</div>
                 {activeApp.eligibility?.checks.map((c, i) => (
                   <div key={i} className="flex items-center gap-2 text-xs">
                     {c.pass ? <CheckCircle className="h-3 w-3 text-emerald-400" /> : <XCircle className="h-3 w-3 text-red-400" />}
-                    <span className={c.pass ? "text-white/50" : "text-red-300"}>{c.criterion}</span>
+                    <span className={c.pass ? "text-gray-500" : "text-red-300"}>{c.criterion}</span>
                   </div>
                 ))}
               </div>
@@ -431,8 +431,8 @@ export function SLGSTrackerPanel() {
       {/* Portfolio charts (only when apps exist) */}
       {applications.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-            <h3 className="text-xs font-semibold text-white/50 mb-3">Applications by Status</h3>
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <h3 className="text-xs font-semibold text-gray-500 mb-3">Applications by Status</h3>
             <ResponsiveContainer width="100%" height={140}>
               <BarChart data={statusData} margin={{ left: 0, right: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" vertical={false} />
@@ -444,8 +444,8 @@ export function SLGSTrackerPanel() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-            <h3 className="text-xs font-semibold text-white/50 mb-3">Grant by Instrument Type (SGD)</h3>
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <h3 className="text-xs font-semibold text-gray-500 mb-3">Grant by Instrument Type (SGD)</h3>
             <ResponsiveContainer width="100%" height={140}>
               <BarChart data={instrumentData} margin={{ left: 0, right: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" vertical={false} />
@@ -461,19 +461,19 @@ export function SLGSTrackerPanel() {
       )}
 
       {/* SLGS Programme Reference */}
-      <div className="bg-[#111827] border border-white/[0.06] rounded-lg p-4">
-        <h3 className="text-xs font-semibold text-white/50 mb-3 uppercase tracking-wide">SLGS Grant Caps Reference (2024)</h3>
+      <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <h3 className="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wide">SLGS Grant Caps Reference (2024)</h3>
         <div className="space-y-2 text-xs">
           {REVIEW_TYPES.map(r => (
-            <div key={r.id} className="flex items-start justify-between gap-4 border-b border-white/[0.04] pb-2">
+            <div key={r.id} className="flex items-start justify-between gap-4 border-b border-gray-200 pb-2">
               <div>
-                <div className="text-white/70 font-medium">{r.label}</div>
-                <div className="text-white/30 mt-0.5">{r.desc}</div>
+                <div className="text-gray-700 font-medium">{r.label}</div>
+                <div className="text-gray-500 mt-0.5">{r.desc}</div>
               </div>
-              <div className="text-cyan-400 font-mono font-bold whitespace-nowrap">{fmtSGD(r.cap_sgd)}</div>
+              <div className="text-gray-700 font-mono font-bold whitespace-nowrap">{fmtSGD(r.cap_sgd)}</div>
             </div>
           ))}
-          <div className="text-white/20 mt-2">
+          <div className="text-gray-400 mt-2">
             Programme valid until 31 December 2027. MAS may extend at discretion. Max 2 review grants per issuer.
             Source: MAS Circular CMG 02/2022 (updated 2024).
           </div>

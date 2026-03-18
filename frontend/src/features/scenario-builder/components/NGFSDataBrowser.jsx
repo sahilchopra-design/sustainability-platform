@@ -37,10 +37,10 @@ function TrajectoryPreview({ paramId }) {
           <YAxis tick={{ fill: 'rgba(255,255,255,0.2)', fontSize: 9 }} axisLine={false} tickLine={false} width={36}
             tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(1)}k` : v.toFixed(1)} />
           <Tooltip
-            contentStyle={{ background: '#0d1526', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 10 }}
-            labelStyle={{ color: 'rgba(255,255,255,0.5)' }}
+            contentStyle={{ background: '#0d1526', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 8, fontSize: 10 }}
+            labelStyle={{ color: 'rgba(0,0,0,0.5)' }}
           />
-          <Legend wrapperStyle={{ fontSize: 9, color: 'rgba(255,255,255,0.35)' }} />
+          <Legend wrapperStyle={{ fontSize: 9, color: 'rgba(0,0,0,0.35)' }} />
           {['Orderly', 'Disorderly', 'Hot house world'].map(fam => (
             <Line key={fam} dataKey={fam} stroke={FAMILY_COLORS[fam]} strokeWidth={1.8} dot={false}
               name={fam === 'Hot house world' ? 'Hot House' : fam} connectNulls />
@@ -61,16 +61,16 @@ function VariableCard({ variable, isSelected, onSelect, onImport }) {
     <div
       className={`rounded-lg border p-3 cursor-pointer transition-all ${
         isSelected
-          ? 'border-cyan-500/50 bg-cyan-500/8'
-          : 'border-white/8 bg-[#0d1526] hover:border-white/16'
+          ? 'border-blue-300 bg-blue-50'
+          : 'border-gray-200 bg-white hover:border-black/16'
       }`}
       onClick={() => onSelect(variable)}
       data-testid={`ngfs-variable-${variable.id}`}
     >
       <div className="flex items-start justify-between gap-2 mb-1">
         <div>
-          <h5 className="text-[12px] font-semibold text-white/85">{variable.name}</h5>
-          <p className="text-[10px] text-white/35">{variable.unit}</p>
+          <h5 className="text-[12px] font-semibold text-gray-800">{variable.name}</h5>
+          <p className="text-[10px] text-gray-500">{variable.unit}</p>
         </div>
         <div className="flex flex-col items-end gap-1">
           {familyMeta ? (
@@ -78,14 +78,14 @@ function VariableCard({ variable, isSelected, onSelect, onImport }) {
               {variable.family === 'Hot house world' ? 'Hot House' : variable.family}
             </span>
           ) : (
-            <span className="text-[9px] text-white/30 bg-white/5 px-1.5 py-0.5 rounded border border-white/10">
+            <span className="text-[9px] text-gray-500 bg-gray-50 px-1.5 py-0.5 rounded border border-black/10">
               All Scenarios
             </span>
           )}
         </div>
       </div>
 
-      <div className="flex items-center justify-between text-[9px] text-white/25 mt-2">
+      <div className="flex items-center justify-between text-[9px] text-gray-400 mt-2">
         <span>{variable.source}</span>
         <span>Updated {variable.lastUpdated}</span>
       </div>
@@ -125,10 +125,10 @@ export function NGFSDataBrowser({ onImportVariable }) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h4 className="text-[13px] font-semibold text-white/85">NGFS Phase IV Variables</h4>
-          <p className="text-[10px] text-white/35">Official scenarios · REMIND-MAgPIE · GCAM · MAGICC</p>
+          <h4 className="text-[13px] font-semibold text-gray-800">NGFS Phase IV Variables</h4>
+          <p className="text-[10px] text-gray-500">Official scenarios · REMIND-MAgPIE · GCAM · MAGICC</p>
         </div>
-        <span className="text-[10px] text-white/30 bg-white/5 px-2 py-0.5 rounded">
+        <span className="text-[10px] text-gray-500 bg-gray-50 px-2 py-0.5 rounded">
           {filtered.length} variables
         </span>
       </div>
@@ -136,7 +136,7 @@ export function NGFSDataBrowser({ onImportVariable }) {
       {/* Filters */}
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
-          <svg className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-white/25" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <input
@@ -144,13 +144,13 @@ export function NGFSDataBrowser({ onImportVariable }) {
             placeholder="Search variables..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-7 pr-3 py-1.5 text-[11px] bg-white/5 border border-white/10 rounded text-white/75 placeholder-white/20 focus:outline-none focus:border-cyan-500/40"
+            className="w-full pl-7 pr-3 py-1.5 text-[11px] bg-gray-50 border border-black/10 rounded text-gray-700 placeholder-gray-400 focus:outline-none focus:border-blue-500"
           />
         </div>
         <select
           value={familyFilter}
           onChange={e => setFamilyFilter(e.target.value)}
-          className="text-[11px] bg-white/5 border border-white/10 rounded px-2 py-1.5 text-white/55 focus:outline-none"
+          className="text-[11px] bg-gray-50 border border-black/10 rounded px-2 py-1.5 text-gray-500 focus:outline-none"
         >
           <option value="all">All Families</option>
           <option value="Orderly">Orderly</option>
@@ -172,23 +172,23 @@ export function NGFSDataBrowser({ onImportVariable }) {
             />
           ))}
           {filtered.length === 0 && (
-            <div className="text-center py-8 text-white/25 text-sm">No variables match your filters</div>
+            <div className="text-center py-8 text-gray-400 text-sm">No variables match your filters</div>
           )}
         </div>
 
         {/* Detail panel */}
-        <div className="bg-[#0d1526] border border-white/8 rounded-lg p-3">
+        <div className="bg-white border border-gray-200 rounded-lg p-3">
           {selectedVariable ? (
             <>
               <div className="flex items-start justify-between mb-2">
                 <div>
-                  <h5 className="text-[13px] font-semibold text-white/90">{selectedVariable.name}</h5>
-                  <p className="text-[10px] text-white/40">{selectedVariable.unit} · {selectedVariable.region}</p>
+                  <h5 className="text-[13px] font-semibold text-gray-900">{selectedVariable.name}</h5>
+                  <p className="text-[10px] text-gray-500">{selectedVariable.unit} · {selectedVariable.region}</p>
                 </div>
                 {onImportVariable && selectedParam && (
                   <button
                     onClick={() => onImportVariable(selectedVariable.paramId, selectedVariable.family)}
-                    className="text-[10px] font-semibold px-2.5 py-1 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/25 transition-colors"
+                    className="text-[10px] font-semibold px-2.5 py-1 rounded bg-gray-200 text-gray-800 border border-gray-300 hover:bg-gray-300 transition-colors"
                   >
                     Import to Scenario
                   </button>
@@ -206,10 +206,10 @@ export function NGFSDataBrowser({ onImportVariable }) {
                         <div className={`text-[9px] font-semibold mb-0.5 ${meta.textClass}`}>
                           {fam === 'Hot house world' ? 'Hot House' : fam}
                         </div>
-                        <div className="text-[13px] font-bold text-white/85">
+                        <div className="text-[13px] font-bold text-gray-800">
                           {val2050?.toFixed(2) ?? '—'}
                         </div>
-                        <div className="text-[9px] text-white/30">{selectedVariable.unit}</div>
+                        <div className="text-[9px] text-gray-500">{selectedVariable.unit}</div>
                       </div>
                     );
                   })}
@@ -221,13 +221,13 @@ export function NGFSDataBrowser({ onImportVariable }) {
                 <TrajectoryPreview paramId={selectedVariable.paramId} />
               )}
 
-              <div className="flex items-center justify-between text-[9px] text-white/25 mt-2 pt-2 border-t border-white/8">
+              <div className="flex items-center justify-between text-[9px] text-gray-400 mt-2 pt-2 border-t border-gray-200">
                 <span>Source: {selectedVariable.source}</span>
                 <span>Last updated: {selectedVariable.lastUpdated}</span>
               </div>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center h-64 text-white/20">
+            <div className="flex flex-col items-center justify-center h-64 text-gray-400">
               <svg className="h-10 w-10 mb-2 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>

@@ -61,7 +61,7 @@ const SectorGlidepathChart = ({ dataPoints, sector }) => {
           <XAxis dataKey="year" tick={{ fill: '#9ca3af', fontSize: 11 }} />
           <YAxis tick={{ fill: '#9ca3af', fontSize: 11 }} tickFormatter={v => `${v}`} />
           <Tooltip
-            contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8 }}
+            contentStyle={{ backgroundColor: '#ffffff', border: '1px solid rgba(0,0,0,0.15)', borderRadius: 8 }}
             labelStyle={{ color: '#e5e7eb' }}
             formatter={(v, name) => [
               v == null ? 'No data' : `${Number(v).toFixed(1)} tCO₂e/MEUR`,
@@ -96,7 +96,7 @@ const GlidepathStatusGrid = ({ grid, sectors, years }) => {
     <div data-testid="glidepath-status-grid" className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-white/10">
+          <tr className="border-b border-black/10">
             <th className="text-left py-2 text-xs text-gray-400 font-medium pr-4">Sector</th>
             {years.map(yr => (
               <th key={yr} className="text-center py-2 text-xs text-gray-400 font-medium px-2">{yr}</th>
@@ -107,7 +107,7 @@ const GlidepathStatusGrid = ({ grid, sectors, years }) => {
           {sectors.map(sector => {
             const sectorRows = grid.filter(r => r.sector === sector);
             return (
-              <tr key={sector} className="border-b border-white/5 hover:bg-white/3">
+              <tr key={sector} className="border-b border-black/5 hover:bg-white/3">
                 <td className="py-2 pr-4 text-gray-300 font-medium">{sector}</td>
                 {years.map(yr => {
                   const cell = sectorRows.find(r => r.year === yr);
@@ -210,7 +210,7 @@ export default function GlidepathTrackerPage() {
     <div className="min-h-screen p-6 space-y-6" style={{ background: 'hsl(222, 35%, 7%)' }}>
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+        <h1 className="text-2xl font-bold text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
           Glidepath Tracker
         </h1>
         <p className="text-sm text-gray-400 mt-1">
@@ -226,7 +226,7 @@ export default function GlidepathTrackerPage() {
           <select
             value={portfolioId}
             onChange={e => setPortfolioId(e.target.value)}
-            className="bg-white/5 border border-white/15 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-cyan-500/60"
+            className="bg-gray-50 border border-black/15 rounded px-3 py-2 text-gray-900 text-sm focus:outline-none focus:border-black/60"
             data-testid="glidepath-portfolio-select"
           >
             {portfolios.length === 0 && <option value="">Select portfolio...</option>}
@@ -246,8 +246,8 @@ export default function GlidepathTrackerPage() {
                 onClick={() => toggleSector(s)}
                 className={`px-3 py-1 rounded-full text-xs font-medium transition-colors border ${
                   selectedSectors.includes(s)
-                    ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40'
-                    : 'bg-white/5 text-gray-400 border-white/10 hover:border-white/20'
+                    ? 'bg-gray-100 text-gray-700 border-gray-400'
+                    : 'bg-gray-50 text-gray-400 border-black/10 hover:border-black/20'
                 }`}
               >
                 {s}
@@ -259,7 +259,7 @@ export default function GlidepathTrackerPage() {
         <button
           onClick={handleFetchGlidepath}
           disabled={loading || !portfolioId}
-          className="px-5 py-2 rounded-lg text-sm font-semibold text-white disabled:opacity-40"
+          className="px-5 py-2 rounded-lg text-sm font-semibold text-gray-900 disabled:opacity-40"
           style={{ background: 'linear-gradient(135deg, hsl(199,89%,40%), hsl(199,89%,30%))' }}
           data-testid="glidepath-fetch-btn"
         >
@@ -277,17 +277,17 @@ export default function GlidepathTrackerPage() {
       </div>
 
       {/* Sector chart tabs */}
-      <div className="rounded-xl border border-white/10 p-5" style={{ background: 'hsl(222,35%,9%)' }}>
+      <div className="rounded-xl border border-black/10 p-5" style={{ background: 'hsl(222,35%,9%)' }}>
         {/* Sector tabs */}
-        <div className="flex gap-1 mb-5 border-b border-white/10">
+        <div className="flex gap-1 mb-5 border-b border-black/10">
           {selectedSectors.map(s => (
             <button
               key={s}
               onClick={() => setActiveSector(s)}
               className={`px-4 py-2 text-sm font-medium rounded-t transition-colors ${
                 activeSector === s
-                  ? 'text-cyan-400 border-b-2 border-cyan-400'
-                  : 'text-gray-400 hover:text-white'
+                  ? 'text-gray-700 border-b-2 border-[#164E8A]'
+                  : 'text-gray-400 hover:text-gray-900'
               }`}
             >
               {s}
@@ -302,7 +302,7 @@ export default function GlidepathTrackerPage() {
         <div className="mb-4">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h3 className="text-base font-semibold text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              <h3 className="text-base font-semibold text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                 {activeSector} — WACI Trajectory (tCO₂e / MEUR)
               </h3>
               {nzbaRef && (
@@ -316,16 +316,16 @@ export default function GlidepathTrackerPage() {
 
         {/* Chart legend note */}
         <div className="flex items-center gap-6 text-xs text-gray-500 mt-3">
-          <div className="flex items-center gap-2"><span className="w-4 h-0.5 bg-cyan-400 inline-block" />Actual WACI (portfolio)</div>
+          <div className="flex items-center gap-2"><span className="w-4 h-0.5 bg-gray-800 inline-block" />Actual WACI (portfolio)</div>
           <div className="flex items-center gap-2"><span className="w-4 h-0.5 border-t-2 border-dashed border-emerald-400 inline-block" />NZBA Target</div>
           <div className="flex items-center gap-2"><span className="w-4 h-0.5 border-t border-dashed border-gray-400 inline-block opacity-40" />IEA NZE Reference</div>
         </div>
       </div>
 
       {/* Status Grid */}
-      <div className="rounded-xl border border-white/10 p-5" style={{ background: 'hsl(222,35%,9%)' }}>
+      <div className="rounded-xl border border-black/10 p-5" style={{ background: 'hsl(222,35%,9%)' }}>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-semibold text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+          <h3 className="text-base font-semibold text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
             Portfolio Glidepath Status — Sector × Year
           </h3>
           <span className="text-xs text-gray-500">vs NZBA sector targets</span>
@@ -339,13 +339,13 @@ export default function GlidepathTrackerPage() {
 
       {/* NZBA reference table */}
       {nzbaRef && (
-        <div className="rounded-xl border border-white/10 p-5" style={{ background: 'hsl(222,35%,9%)' }}>
+        <div className="rounded-xl border border-black/10 p-5" style={{ background: 'hsl(222,35%,9%)' }}>
           <SectionTitle>{activeSector} — NZBA Reference Values</SectionTitle>
           <div className="grid grid-cols-3 md:grid-cols-7 gap-3">
             {nzbaRef.glidepath.filter(g => [2025, 2030, 2035, 2040, 2045, 2050].includes(g.year)).map(g => (
               <div key={g.year} className="text-center">
                 <div className="text-xs text-gray-500">{g.year}</div>
-                <div className="text-lg font-bold text-white" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>{g.value.toFixed(0)}</div>
+                <div className="text-lg font-bold text-gray-900" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>{g.value.toFixed(0)}</div>
                 <div className="text-xs text-gray-600">tCO₂e/MEUR</div>
               </div>
             ))}

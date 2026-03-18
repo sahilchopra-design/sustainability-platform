@@ -25,12 +25,54 @@ const EXPORT_SECTIONS = [
   { id: 'methodology', label: 'Methodology Notes', default: false },
 ];
 
+// Seeded fallback used when no live analysis results are available (demo / offline mode)
+function buildFallbackResults(portfolioData) {
+  const portfolioName = portfolioData?.name || 'Demo Portfolio';
+  const totalExposure = portfolioData?.total_exposure || 850_000_000;
+  const scenarios = [
+    { scenario_name: 'Net Zero 2050', horizon: 2030, el_pct: 0.031, pd_change: 0.18, cap_charge: 0.048 },
+    { scenario_name: 'Net Zero 2050', horizon: 2050, el_pct: 0.019, pd_change: 0.09, cap_charge: 0.031 },
+    { scenario_name: 'Below 2°C', horizon: 2030, el_pct: 0.044, pd_change: 0.27, cap_charge: 0.062 },
+    { scenario_name: 'Below 2°C', horizon: 2050, el_pct: 0.029, pd_change: 0.14, cap_charge: 0.041 },
+    { scenario_name: 'Delayed Transition', horizon: 2030, el_pct: 0.061, pd_change: 0.43, cap_charge: 0.089 },
+    { scenario_name: 'Delayed Transition', horizon: 2050, el_pct: 0.082, pd_change: 0.58, cap_charge: 0.11 },
+    { scenario_name: 'Current Policies', horizon: 2030, el_pct: 0.078, pd_change: 0.51, cap_charge: 0.104 },
+    { scenario_name: 'Current Policies', horizon: 2050, el_pct: 0.134, pd_change: 0.94, cap_charge: 0.168 },
+  ];
+  return {
+    portfolio_id: portfolioData?.id || 'demo',
+    portfolio_name: portfolioName,
+    total_exposure: totalExposure,
+    run_date: new Date().toISOString(),
+    results: scenarios.map(s => ({
+      scenario_name: s.scenario_name,
+      horizon: s.horizon,
+      portfolio_metrics: {
+        expected_loss: totalExposure * s.el_pct,
+        avg_pd_change: s.pd_change,
+        capital_charge: totalExposure * s.cap_charge,
+      },
+    })),
+    sector_breakdown: {
+      'Energy': totalExposure * 0.22,
+      'Utilities': totalExposure * 0.18,
+      'Industrials': totalExposure * 0.16,
+      'Real Estate': totalExposure * 0.14,
+      'Materials': totalExposure * 0.12,
+      'Financials': totalExposure * 0.10,
+      'Other': totalExposure * 0.08,
+    },
+    _fallback: true,
+  };
+}
+
 export function ReportExportButton({
   analysisResults = null,
   portfolioData = null,
   disabled = false,
   className,
 }) {
+  const isFallback = !analysisResults;
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedFormat, setSelectedFormat] = useState(null);
   const [selectedSections, setSelectedSections] = useState(
@@ -65,11 +107,12 @@ export function ReportExportButton({
         setExportProgress(i);
       }
 
-      // Generate export data
+      // Generate export data — use live results or seeded fallback for demo mode
+      const resultsToExport = analysisResults || buildFallbackResults(portfolioData);
       const exportData = generateExportData(
         selectedFormat.id,
         selectedSections,
-        analysisResults,
+        resultsToExport,
         portfolioData
       );
 
@@ -92,7 +135,7 @@ export function ReportExportButton({
         <DropdownMenuTrigger asChild>
           <Button
             variant="outline"
-            disabled={disabled || !analysisResults}
+            disabled={disabled}
             className={className}
             data-testid="report-export-button"
           >
@@ -130,6 +173,11 @@ export function ReportExportButton({
             </DialogTitle>
             <DialogDescription>
               Select which sections to include in your report
+              {isFallback && (
+                <span className="block mt-1 text-amber-600 dark:text-amber-400 text-xs font-medium">
+                  Using seeded demo data — run an analysis to export live results
+                </span>
+              )}
             </DialogDescription>
           </DialogHeader>
 
@@ -213,31 +261,44 @@ function generateExportData(format, sections, analysisResults, portfolioData) {
 }
 
 function generateCSV(data) {
+  const analysis = data.analysis;
+  const fmt = (n) => typeof n === 'number' ? n.toLocaleString('en-US', { maximumFractionDigits: 2 }) : (n || 'N/A');
   const rows = [
     ['Climate Risk Analysis Report'],
     ['Export Date', data.exportDate],
+    analysis?._fallback ? ['Data Mode', 'Seeded Demo (backend offline)'] : ['Data Mode', 'Live Analysis'],
     [],
     ['Portfolio Summary'],
-    ['Portfolio Name', data.portfolio?.name || 'N/A'],
-    ['Total Exposure', data.portfolio?.total_exposure || 'N/A'],
+    ['Portfolio Name', analysis?.portfolio_name || data.portfolio?.name || 'N/A'],
+    ['Total Exposure (EUR)', fmt(analysis?.total_exposure || data.portfolio?.total_exposure)],
+    ['Run Date', analysis?.run_date || data.exportDate],
     [],
   ];
 
-  if (data.analysis?.results) {
+  if (analysis?.results?.length) {
     rows.push(['Scenario Analysis Results']);
-    rows.push(['Scenario', 'Horizon', 'Expected Loss', 'PD Change']);
-    
-    data.analysis.results.forEach(result => {
+    rows.push(['Scenario', 'Horizon', 'Expected Loss (EUR)', 'Avg PD Change', 'Capital Charge (EUR)']);
+    analysis.results.forEach(result => {
       rows.push([
         result.scenario_name,
         result.horizon,
-        result.portfolio_metrics?.expected_loss || 0,
-        result.portfolio_metrics?.avg_pd_change || 0,
+        fmt(result.portfolio_metrics?.expected_loss),
+        fmt(result.portfolio_metrics?.avg_pd_change),
+        fmt(result.portfolio_metrics?.capital_charge),
       ]);
+    });
+    rows.push([]);
+  }
+
+  if (analysis?.sector_breakdown) {
+    rows.push(['Sector Breakdown']);
+    rows.push(['Sector', 'Exposure (EUR)']);
+    Object.entries(analysis.sector_breakdown).forEach(([sector, exposure]) => {
+      rows.push([sector, fmt(exposure)]);
     });
   }
 
-  return rows.map(row => row.join(',')).join('\n');
+  return rows.map(row => row.map(v => `"${v}"`).join(',')).join('\n');
 }
 
 function downloadFile(content, format) {
@@ -252,7 +313,7 @@ function downloadFile(content, format) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `climate_risk_report_${new Date().toISOString().split('T')[0]}.${format}`;
+  a.download = `sustainability_platform_report_${new Date().toISOString().split('T')[0]}.${format}`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

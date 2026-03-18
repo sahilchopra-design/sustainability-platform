@@ -55,22 +55,22 @@ export function HealthScoreCard({
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center p-6 rounded-xl border border-white/10 bg-white/[0.02] animate-pulse">
-        <div className="w-28 h-28 rounded-full bg-white/10 mb-4" />
-        <div className="h-4 w-28 bg-white/10 rounded mb-2" />
-        <div className="h-3 w-36 bg-white/10 rounded" />
+      <div className="flex flex-col items-center p-6 rounded-xl border border-black/10 bg-gray-50 animate-pulse">
+        <div className="w-28 h-28 rounded-full bg-gray-100 mb-4" />
+        <div className="h-4 w-28 bg-gray-100 rounded mb-2" />
+        <div className="h-3 w-36 bg-gray-100 rounded" />
       </div>
     );
   }
 
   return (
     <div
-      className="flex flex-col items-center p-6 rounded-xl border border-white/10 transition-all duration-200"
+      className="flex flex-col items-center p-6 rounded-xl border border-black/10 transition-all duration-200"
       style={{ background: colours.bg }}
       data-testid={`health-score-card-${title?.toLowerCase().replace(/\s+/g, '-')}`}
     >
       {/* Title */}
-      <div className="text-xs font-semibold uppercase tracking-wider text-white/50 mb-4">
+      <div className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">
         {title}
       </div>
 
@@ -111,7 +111,7 @@ export function HealthScoreCard({
           >
             {Math.round(score)}
           </span>
-          <span className="text-[10px] text-white/30 mt-0.5">/100</span>
+          <span className="text-[10px] text-gray-500 mt-0.5">/100</span>
         </div>
       </div>
 
@@ -124,7 +124,7 @@ export function HealthScoreCard({
       </div>
 
       {/* Status label */}
-      <p className="text-xs text-white/60 text-center leading-snug mb-3 px-2">
+      <p className="text-xs text-gray-600 text-center leading-snug mb-3 px-2">
         {label}
       </p>
 

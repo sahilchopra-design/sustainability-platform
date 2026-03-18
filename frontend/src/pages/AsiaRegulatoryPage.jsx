@@ -49,21 +49,21 @@ function bps(v)   { return v == null ? '—' : `${fmt(v, 0)} bps`; }
 // ─── Layout atoms ─────────────────────────────────────────────────────────────
 function Card({ children, className = '' }) {
   return (
-    <div className={`bg-[#0e1829] border border-white/[0.07] rounded-lg ${className}`}>
+    <div className={`bg-white border border-gray-200 rounded-lg ${className}`}>
       {children}
     </div>
   );
 }
 function SectionTitle({ children }) {
-  return <h3 className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-3">{children}</h3>;
+  return <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">{children}</h3>;
 }
 function Stat({ label, value, sub, color = 'cyan', small = false }) {
-  const colorMap = { cyan: 'text-cyan-400', green: 'text-emerald-400', amber: 'text-amber-400', red: 'text-red-400', purple: 'text-purple-400', blue: 'text-blue-400' };
+  const colorMap = { cyan: 'text-gray-700', green: 'text-emerald-400', amber: 'text-amber-400', red: 'text-red-400', purple: 'text-purple-400', blue: 'text-blue-400' };
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-[10px] text-white/35 uppercase tracking-wider">{label}</span>
-      <span className={`${small ? 'text-lg' : 'text-2xl'} font-semibold tabular-nums ${colorMap[color] || 'text-cyan-400'}`}>{value}</span>
-      {sub && <span className="text-[10px] text-white/25">{sub}</span>}
+      <span className="text-[10px] text-gray-500 uppercase tracking-wider">{label}</span>
+      <span className={`${small ? 'text-lg' : 'text-2xl'} font-semibold tabular-nums ${colorMap[color] || 'text-gray-700'}`}>{value}</span>
+      {sub && <span className="text-[10px] text-gray-400">{sub}</span>}
     </div>
   );
 }
@@ -72,29 +72,29 @@ function Badge({ text, color = 'default' }) {
     green:   'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
     amber:   'bg-amber-500/15  text-amber-400  border-amber-500/30',
     red:     'bg-red-500/15    text-red-400    border-red-500/30',
-    cyan:    'bg-cyan-500/15   text-cyan-400   border-cyan-500/30',
+    cyan:    'bg-black/15   text-gray-700   border-black/[0.20]',
     purple:  'bg-purple-500/15 text-purple-400 border-purple-500/30',
-    default: 'bg-white/5       text-white/50   border-white/10',
-  }[color] || 'bg-white/5 text-white/50 border-white/10';
+    default: 'bg-gray-50       text-gray-500   border-black/10',
+  }[color] || 'bg-gray-50 text-gray-500 border-black/10';
   return <span className={`text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded border ${c}`}>{text}</span>;
 }
 function Spinner() {
   return (
     <div className="flex items-center justify-center h-32">
-      <div className="w-5 h-5 border-2 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin" />
+      <div className="w-5 h-5 border-2 border-black/30 border-t-cyan-400 rounded-full animate-spin" />
     </div>
   );
 }
 function Empty({ msg = 'No data' }) {
-  return <div className="text-xs text-white/25 py-8 text-center">{msg}</div>;
+  return <div className="text-xs text-gray-400 py-8 text-center">{msg}</div>;
 }
 
 // ─── Tooltip ─────────────────────────────────────────────────────────────────
 function TT({ active, payload, label }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#0e1829] border border-white/10 rounded px-3 py-2 text-[11px]">
-      <div className="font-medium text-white/70 mb-1">{label}</div>
+    <div className="bg-white border border-black/10 rounded px-3 py-2 text-[11px]">
+      <div className="font-medium text-gray-700 mb-1">{label}</div>
       {payload.map((p, i) => (
         <div key={i} style={{ color: p.color }} className="flex gap-2">
           <span>{p.name}:</span>
@@ -111,9 +111,9 @@ function MaturityTile({ label, score, max = 5 }) {
   const color = pct >= 80 ? C.green : pct >= 60 ? C.cyan : pct >= 40 ? C.amber : C.red;
   return (
     <div className="bg-[#111c2e] rounded-lg p-3 flex flex-col gap-2">
-      <span className="text-[10px] text-white/45 uppercase tracking-wider">{label}</span>
-      <span className="text-xl font-bold tabular-nums" style={{ color }}>{score ? fmt(score, 1) : '—'}<span className="text-xs text-white/30">/{max}</span></span>
-      <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+      <span className="text-[10px] text-gray-500 uppercase tracking-wider">{label}</span>
+      <span className="text-xl font-bold tabular-nums" style={{ color }}>{score ? fmt(score, 1) : '—'}<span className="text-xs text-gray-500">/{max}</span></span>
+      <div className="h-1 bg-gray-50 rounded-full overflow-hidden">
         <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: color }} />
       </div>
     </div>
@@ -122,7 +122,7 @@ function MaturityTile({ label, score, max = 5 }) {
 
 // ─── Traffic light cell ───────────────────────────────────────────────────────
 function TLBadge({ value }) {
-  if (!value) return <span className="text-white/25 text-xs">—</span>;
+  if (!value) return <span className="text-gray-400 text-xs">—</span>;
   const map = { Green: C.green, Amber: C.amber, Red: C.red };
   return (
     <span className="inline-flex items-center gap-1 text-xs font-semibold" style={{ color: map[value] || C.slate }}>
@@ -227,11 +227,11 @@ function BRSRTab() {
               const ratio = count / total;
               return (
                 <div key={sec} className="flex items-center gap-3">
-                  <span className="text-xs text-white/50 w-20">Section {sec}</span>
-                  <div className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden">
+                  <span className="text-xs text-gray-500 w-20">Section {sec}</span>
+                  <div className="flex-1 h-2 bg-gray-50 rounded-full overflow-hidden">
                     <div className="h-full rounded-full" style={{ width: `${ratio * 100}%`, backgroundColor: C.cyan }} />
                   </div>
-                  <span className="text-xs font-mono text-white/50 w-10 text-right">{Math.round(ratio * 100)}%</span>
+                  <span className="text-xs font-mono text-gray-500 w-10 text-right">{Math.round(ratio * 100)}%</span>
                 </div>
               );
             })}
@@ -247,7 +247,7 @@ function BRSRTab() {
                 return (
                   <div key={k.key} className="flex items-center gap-1.5 text-[10px]">
                     <span className={`w-1.5 h-1.5 rounded-full ${good ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-                    <span className="text-white/45 truncate">{k.label}</span>
+                    <span className="text-gray-500 truncate">{k.label}</span>
                     <span className={`ml-auto font-mono ${good ? 'text-emerald-400' : 'text-amber-400'}`}>{Math.round(filled / total * 100)}%</span>
                   </div>
                 );
@@ -260,18 +260,18 @@ function BRSRTab() {
       {/* Regulatory context */}
       <Card className="p-5">
         <SectionTitle>Regulatory Context</SectionTitle>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[11px] text-white/55">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[11px] text-gray-500">
           <div>
-            <div className="text-white/70 font-medium mb-1">Mandate</div>
+            <div className="text-gray-700 font-medium mb-1">Mandate</div>
             SEBI LODR Amendment 2021 — mandatory for Top 1000 listed companies by market cap from FY 2022-23.
           </div>
           <div>
-            <div className="text-white/70 font-medium mb-1">Core KPIs (Mandatory)</div>
+            <div className="text-gray-700 font-medium mb-1">Core KPIs (Mandatory)</div>
             15 quantitative KPIs across Environment (E1–E6), Social (S1–S4), Governance (G1–G3).
             External assurance required for Core KPIs from FY 2024-25.
           </div>
           <div>
-            <div className="text-white/70 font-medium mb-1">BRSR Core Assurance</div>
+            <div className="text-gray-700 font-medium mb-1">BRSR Core Assurance</div>
             Reasonable assurance standard required from FY 2024-25.
             Top 150 companies: FY 2023-24.  SEBI circular SEBI/HO/CFD/CMD1/CIR/P/2023/145.
           </div>
@@ -381,14 +381,14 @@ function HKMATab() {
         <div className="overflow-x-auto">
           <table className="w-full text-[11px]">
             <thead>
-              <tr className="border-b border-white/5">
-                <th className="text-left py-2 pr-4 text-white/40 font-medium">Sector</th>
+              <tr className="border-b border-black/5">
+                <th className="text-left py-2 pr-4 text-gray-500 font-medium">Sector</th>
                 {scenarios.map(s => (
                   <React.Fragment key={s}>
-                    <th className="text-right py-2 px-2 text-white/40 font-medium">
+                    <th className="text-right py-2 px-2 text-gray-500 font-medium">
                       {s === 'Below2C' ? '<2°C' : s === '2-3C' ? '2–3°C' : '>3°C'} PD
                     </th>
-                    <th className="text-right py-2 px-2 text-white/40 font-medium">LGD</th>
+                    <th className="text-right py-2 px-2 text-gray-500 font-medium">LGD</th>
                   </React.Fragment>
                 ))}
               </tr>
@@ -401,8 +401,8 @@ function HKMATab() {
                 { sector: 'Transport',          Below2C: [95, 45],  '2-3C': [160, 70], Above3C: [270, 120] },
                 { sector: 'Financial Services', Below2C: [25, 15],  '2-3C': [50, 25],  Above3C: [100, 50] },
               ].map(row => (
-                <tr key={row.sector} className="border-b border-white/[0.03] hover:bg-white/[0.02]">
-                  <td className="py-2 pr-4 text-white/70">{row.sector}</td>
+                <tr key={row.sector} className="border-b border-black/[0.04] hover:bg-gray-50">
+                  <td className="py-2 pr-4 text-gray-700">{row.sector}</td>
                   {scenarios.map(s => {
                     const [pd, lgd] = row[s];
                     const color = s === 'Below2C' ? 'text-emerald-400' : s === '2-3C' ? 'text-amber-400' : 'text-red-400';
@@ -418,7 +418,7 @@ function HKMATab() {
             </tbody>
           </table>
         </div>
-        <p className="text-[10px] text-white/25 mt-3">Source: HKMA Supervisory Policy Manual GS-1 (2023). NGFS v4 overlay applied. CAR impact = Credit Loss % × 8.5.</p>
+        <p className="text-[10px] text-gray-400 mt-3">Source: HKMA Supervisory Policy Manual GS-1 (2023). NGFS v4 overlay applied. CAR impact = Credit Loss % × 8.5.</p>
       </Card>
     </div>
   );
@@ -481,17 +481,17 @@ function BOJTab() {
     <div className="space-y-5">
       {/* Horizon selector */}
       <div className="flex items-center gap-2">
-        <span className="text-xs text-white/40">Time Horizon:</span>
+        <span className="text-xs text-gray-500">Time Horizon:</span>
         {['2030', '2050', '2100'].map(h => (
           <button
             key={h}
             onClick={() => setHorizon(h)}
-            className={`px-3 py-1 text-xs rounded font-mono transition-colors ${horizon === h ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40' : 'bg-white/5 text-white/40 border border-white/10 hover:bg-white/10'}`}
+            className={`px-3 py-1 text-xs rounded font-mono transition-colors ${horizon === h ? 'bg-black/[0.08] text-gray-700 border border-black/40' : 'bg-gray-50 text-gray-500 border border-black/10 hover:bg-black/[0.06]'}`}
           >
             {h}
           </button>
         ))}
-        <span className="text-[10px] text-white/25 ml-2">
+        <span className="text-[10px] text-gray-400 ml-2">
           Physical risk scenarios not available at 2030 horizon (short-term)
         </span>
       </div>
@@ -544,18 +544,18 @@ function BOJTab() {
           ].map(s => (
             <div key={s.name} className="bg-[#111c2e] rounded-lg p-4" style={{ borderLeft: `3px solid ${s.color}` }}>
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-semibold text-white/80">{s.name}</span>
+                <span className="text-xs font-semibold text-gray-800">{s.name}</span>
                 <Badge text={s.type} color={s.type === 'Transition' ? 'cyan' : 'amber'} />
               </div>
-              <div className="text-[10px] text-white/40 space-y-0.5">
+              <div className="text-[10px] text-gray-500 space-y-0.5">
                 <div>Pathway: {s.path}</div>
                 <div>Model: {s.model}</div>
-                <div className="text-white/60 mt-1">{s.key}</div>
+                <div className="text-gray-600 mt-1">{s.key}</div>
               </div>
             </div>
           ))}
         </div>
-        <p className="text-[10px] text-white/25 mt-4">
+        <p className="text-[10px] text-gray-400 mt-4">
           Source: Bank of Japan — Climate-Related Financial Risk Scenario Analysis (2023 Exercise).
           Horizons: 2030 (short), 2050 (medium), 2100 (long). GICS-based sector classification.
         </p>
@@ -607,7 +607,7 @@ function ASEANTab() {
             <button
               key={c}
               onClick={() => setSelectedCountry(c)}
-              className={`px-3 py-1.5 text-xs rounded font-mono transition-colors ${selectedCountry === c ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40' : 'bg-white/5 text-white/40 border border-white/10 hover:bg-white/10'}`}
+              className={`px-3 py-1.5 text-xs rounded font-mono transition-colors ${selectedCountry === c ? 'bg-black/[0.08] text-gray-700 border border-black/40' : 'bg-gray-50 text-gray-500 border border-black/10 hover:bg-black/[0.06]'}`}
             >
               {c} — {countryNames[c]}
             </button>
@@ -633,11 +633,11 @@ function ASEANTab() {
                 {trafficPie.map(e => (
                   <div key={e.name} className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: e.fill }} />
-                    <span className="text-xs text-white/60">{e.name}</span>
+                    <span className="text-xs text-gray-600">{e.name}</span>
                     <span className="text-xs font-mono font-semibold ml-auto" style={{ color: e.fill }}>{pct(e.value)}</span>
                   </div>
                 ))}
-                <div className="text-[10px] text-white/30 border-t border-white/5 pt-2 mt-1">
+                <div className="text-[10px] text-gray-500 border-t border-black/5 pt-2 mt-1">
                   Total activities: {countryData?.total_activities ?? '—'}
                 </div>
               </div>
@@ -651,13 +651,13 @@ function ASEANTab() {
               {tierData.map(t => (
                 <div key={t.name} className="bg-[#111c2e] rounded-lg p-3">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-white/70">{t.name}</span>
-                    <span className="text-xs font-mono text-cyan-400">{t.value}%</span>
+                    <span className="text-xs font-medium text-gray-700">{t.name}</span>
+                    <span className="text-xs font-mono text-gray-700">{t.value}%</span>
                   </div>
-                  <div className="h-1.5 bg-white/5 rounded-full overflow-hidden mb-2">
-                    <div className="h-full bg-cyan-400/60 rounded-full" style={{ width: `${t.value}%` }} />
+                  <div className="h-1.5 bg-gray-50 rounded-full overflow-hidden mb-2">
+                    <div className="h-full bg-black/60 rounded-full" style={{ width: `${t.value}%` }} />
                   </div>
-                  <p className="text-[10px] text-white/35">{t.desc}</p>
+                  <p className="text-[10px] text-gray-500">{t.desc}</p>
                 </div>
               ))}
             </div>
@@ -671,15 +671,15 @@ function ASEANTab() {
         <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 mt-3">
           {focusAreas.map(f => (
             <div key={f.code} className="bg-[#111c2e] rounded-lg p-3 border-t-2" style={{ borderColor: f.color }}>
-              <div className="text-[9px] font-mono text-white/35 mb-1">{f.code}</div>
-              <div className="text-[11px] text-white/70 leading-snug">{f.label}</div>
+              <div className="text-[9px] font-mono text-gray-500 mb-1">{f.code}</div>
+              <div className="text-[11px] text-gray-700 leading-snug">{f.label}</div>
             </div>
           ))}
         </div>
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-[11px] text-white/50">
-          <div><span className="text-white/70 font-medium block mb-1">Tier Classification</span>Foundation: substantial contribution to ≥1 focus area. Plus: Foundation + DNSh (for all 5) + minimum social safeguards.</div>
-          <div><span className="text-white/70 font-medium block mb-1">DNSh Assessment</span>Do No Significant Harm criteria assessed against all 5 focus areas for Plus tier. Country-specific thresholds apply.</div>
-          <div><span className="text-white/70 font-medium block mb-1">Country Overlays</span>Each ASEAN member may add country-specific guidance on top of regional criteria (e.g. Thailand BOT, MAS Singapore).</div>
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-[11px] text-gray-500">
+          <div><span className="text-gray-700 font-medium block mb-1">Tier Classification</span>Foundation: substantial contribution to ≥1 focus area. Plus: Foundation + DNSh (for all 5) + minimum social safeguards.</div>
+          <div><span className="text-gray-700 font-medium block mb-1">DNSh Assessment</span>Do No Significant Harm criteria assessed against all 5 focus areas for Plus tier. Country-specific thresholds apply.</div>
+          <div><span className="text-gray-700 font-medium block mb-1">Country Overlays</span>Each ASEAN member may add country-specific guidance on top of regional criteria (e.g. Thailand BOT, MAS Singapore).</div>
         </div>
       </Card>
 
@@ -690,21 +690,21 @@ function ASEANTab() {
           <div className="overflow-x-auto">
             <table className="w-full text-[11px]">
               <thead>
-                <tr className="border-b border-white/5">
+                <tr className="border-b border-black/5">
                   {['Activity', 'Focus Area', 'Tier', 'Traffic Light', 'Eligible %', 'Aligned %'].map(h => (
-                    <th key={h} className="text-left py-2 pr-3 text-white/35 font-medium">{h}</th>
+                    <th key={h} className="text-left py-2 pr-3 text-gray-500 font-medium">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {countryData.activities.slice(0, 20).map((a, i) => (
-                  <tr key={i} className="border-b border-white/[0.03] hover:bg-white/[0.02]">
-                    <td className="py-1.5 pr-3 text-white/70 truncate max-w-[200px]">{a.activity_name}</td>
-                    <td className="py-1.5 pr-3 text-white/45 truncate max-w-[150px]">{a.focus_area}</td>
+                  <tr key={i} className="border-b border-black/[0.04] hover:bg-gray-50">
+                    <td className="py-1.5 pr-3 text-gray-700 truncate max-w-[200px]">{a.activity_name}</td>
+                    <td className="py-1.5 pr-3 text-gray-500 truncate max-w-[150px]">{a.focus_area}</td>
                     <td className="py-1.5 pr-3"><Badge text={a.tier || '—'} color={a.tier === 'Plus' ? 'purple' : 'default'} /></td>
                     <td className="py-1.5 pr-3"><TLBadge value={a.traffic_light} /></td>
-                    <td className="py-1.5 pr-3 font-mono text-white/50">{pct(a.eligible_pct)}</td>
-                    <td className="py-1.5 pr-3 font-mono text-cyan-400">{pct(a.aligned_pct)}</td>
+                    <td className="py-1.5 pr-3 font-mono text-gray-500">{pct(a.eligible_pct)}</td>
+                    <td className="py-1.5 pr-3 font-mono text-gray-700">{pct(a.aligned_pct)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -765,8 +765,8 @@ function PBoCTab() {
                 {catData.map((c, i) => (
                   <div key={i} className="flex items-center gap-1.5 text-[10px]">
                     <span className="w-2 h-2 rounded-full" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
-                    <span className="text-white/55 truncate max-w-[120px]">{c.name}</span>
-                    <span className="ml-auto font-mono text-white/40">{fmt(c.value, 0)}</span>
+                    <span className="text-gray-500 truncate max-w-[120px]">{c.name}</span>
+                    <span className="ml-auto font-mono text-gray-500">{fmt(c.value, 0)}</span>
                   </div>
                 ))}
               </div>
@@ -792,8 +792,8 @@ function PBoCTab() {
                 {Object.entries(catLabels).map(([code, label], i) => (
                   <div key={code} className="flex items-center gap-1.5 text-[10px]">
                     <span className="w-2 h-2 rounded-full" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
-                    <span className="text-[9px] font-mono text-white/35">{code}</span>
-                    <span className="text-white/55 truncate max-w-[110px]">{label}</span>
+                    <span className="text-[9px] font-mono text-gray-500">{code}</span>
+                    <span className="text-gray-500 truncate max-w-[110px]">{label}</span>
                   </div>
                 ))}
               </div>
@@ -807,8 +807,8 @@ function PBoCTab() {
           <div className="space-y-3 mt-3">
             {greenTypes.map(t => (
               <div key={t.type} className="flex items-center gap-3">
-                <span className="text-xs text-white/55 w-28">{t.type}</span>
-                <div className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden">
+                <span className="text-xs text-gray-500 w-28">{t.type}</span>
+                <div className="flex-1 h-2 bg-gray-50 rounded-full overflow-hidden">
                   <div className="h-full rounded-full" style={{ width: `${t.share}%`, backgroundColor: t.color }} />
                 </div>
                 <span className="text-xs font-mono w-8 text-right" style={{ color: t.color }}>{t.share}%</span>
@@ -826,10 +826,10 @@ function PBoCTab() {
                   <circle cx="18" cy="18" r="15.9" fill="none" stroke={C.cyan} strokeWidth="3"
                     strokeDasharray={`${38} ${100 - 38}`} strokeLinecap="round" />
                 </svg>
-                <span className="absolute inset-0 flex items-center justify-center text-base font-bold text-cyan-400">38%</span>
+                <span className="absolute inset-0 flex items-center justify-center text-base font-bold text-gray-700">38%</span>
               </div>
-              <div className="text-[11px] text-white/50">
-                <div className="text-white/70 font-medium mb-1">CGT Aligned Instruments</div>
+              <div className="text-[11px] text-gray-500">
+                <div className="text-gray-700 font-medium mb-1">CGT Aligned Instruments</div>
                 38% of China green finance instruments are aligned with the China Transition Finance Guidance (2023).
                 Covers high-carbon sectors (steel, cement, coal, chemicals) with credible decarbonisation pathways.
               </div>
@@ -844,15 +844,15 @@ function PBoCTab() {
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {Object.entries(catLabels).map(([code, label], i) => (
             <div key={code} className="bg-[#111c2e] rounded-lg p-3 border-l-2" style={{ borderColor: PIE_COLORS[i % PIE_COLORS.length] }}>
-              <div className="text-[9px] font-mono text-white/35 mb-0.5">{code}</div>
-              <div className="text-xs text-white/70 font-medium">{label}</div>
+              <div className="text-[9px] font-mono text-gray-500 mb-0.5">{code}</div>
+              <div className="text-xs text-gray-700 font-medium">{label}</div>
             </div>
           ))}
         </div>
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-[11px] text-white/50">
-          <div><span className="text-white/70 font-medium block mb-1">GBEPC 2021</span>Joint PBOC/NDRC/CSRC standard. Replaced Coal and similar exclusions expanded in 2021 revision.</div>
-          <div><span className="text-white/70 font-medium block mb-1">Green Asset Ratio (GAR)</span>PBOC requires large banks to report GAR quarterly. Target: 10%+ by 2025. Current banking sector avg ~9.6%.</div>
-          <div><span className="text-white/70 font-medium block mb-1">CBI Alignment</span>GBEPC aligns ~82% with CBI taxonomy. Gap: coal (phase-down) and "clean coal" excluded by CBI but was in pre-2021 GBEPC.</div>
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-[11px] text-gray-500">
+          <div><span className="text-gray-700 font-medium block mb-1">GBEPC 2021</span>Joint PBOC/NDRC/CSRC standard. Replaced Coal and similar exclusions expanded in 2021 revision.</div>
+          <div><span className="text-gray-700 font-medium block mb-1">Green Asset Ratio (GAR)</span>PBOC requires large banks to report GAR quarterly. Target: 10%+ by 2025. Current banking sector avg ~9.6%.</div>
+          <div><span className="text-gray-700 font-medium block mb-1">CBI Alignment</span>GBEPC aligns ~82% with CBI taxonomy. Gap: coal (phase-down) and "clean coal" excluded by CBI but was in pre-2021 GBEPC.</div>
         </div>
       </Card>
     </div>
@@ -915,11 +915,11 @@ function CBITab() {
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="px-3 py-1.5 text-xs bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded hover:bg-cyan-500/20 transition-colors disabled:opacity-40"
+            className="px-3 py-1.5 text-xs bg-black/[0.06] border border-black/[0.20] text-gray-700 rounded hover:bg-black/[0.08] transition-colors disabled:opacity-40"
           >
             {refreshing ? 'Refreshing…' : 'Refresh CBI Data'}
           </button>
-          {lastRefreshed && <span className="text-[10px] text-white/25">Updated {lastRefreshed}</span>}
+          {lastRefreshed && <span className="text-[10px] text-gray-400">Updated {lastRefreshed}</span>}
         </div>
       </div>
 
@@ -973,7 +973,7 @@ function CBITab() {
           <SectionTitle>Live Certified Deal Feed</SectionTitle>
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_4px_#34d399] animate-pulse" />
-            <span className="text-[10px] text-white/30 font-mono">
+            <span className="text-[10px] text-gray-500 font-mono">
               {overview?.snapshot_date || new Date().toLocaleDateString('en-GB')}
             </span>
           </div>
@@ -981,33 +981,33 @@ function CBITab() {
         <div className="overflow-x-auto">
           <table className="w-full text-[11px]">
             <thead>
-              <tr className="border-b border-white/5">
+              <tr className="border-b border-black/5">
                 {['ISIN', 'Issuer', 'Amount (USD mn)', 'Sector', 'Country', 'Label', 'Date'].map(h => (
-                  <th key={h} className="text-left py-2 pr-4 text-white/35 font-medium whitespace-nowrap">{h}</th>
+                  <th key={h} className="text-left py-2 pr-4 text-gray-500 font-medium whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {deals.slice(0, 20).map((d, i) => (
-                <tr key={i} className="border-b border-white/[0.03] hover:bg-white/[0.02]">
-                  <td className="py-2 pr-4 font-mono text-white/40 text-[10px]">{d.isin || '—'}</td>
-                  <td className="py-2 pr-4 text-white/75 max-w-[160px] truncate">{d.issuer || d.issuer_name || '—'}</td>
-                  <td className="py-2 pr-4 font-mono text-cyan-400">{d.amount_usd_mn ? fmt(d.amount_usd_mn, 0) : '—'}</td>
-                  <td className="py-2 pr-4 text-white/45 max-w-[100px] truncate">{d.sector || d.cbi_taxonomy_sector || '—'}</td>
-                  <td className="py-2 pr-4 text-white/50 font-mono">{d.country || d.issuer_country || '—'}</td>
+                <tr key={i} className="border-b border-black/[0.04] hover:bg-gray-50">
+                  <td className="py-2 pr-4 font-mono text-gray-500 text-[10px]">{d.isin || '—'}</td>
+                  <td className="py-2 pr-4 text-gray-700 max-w-[160px] truncate">{d.issuer || d.issuer_name || '—'}</td>
+                  <td className="py-2 pr-4 font-mono text-gray-700">{d.amount_usd_mn ? fmt(d.amount_usd_mn, 0) : '—'}</td>
+                  <td className="py-2 pr-4 text-gray-500 max-w-[100px] truncate">{d.sector || d.cbi_taxonomy_sector || '—'}</td>
+                  <td className="py-2 pr-4 text-gray-500 font-mono">{d.country || d.issuer_country || '—'}</td>
                   <td className="py-2 pr-4">
                     <Badge
                       text={d.label || d.cbi_label || 'CBI'}
                       color={(d.label || d.cbi_label || '').includes('Certified') ? 'green' : 'cyan'}
                     />
                   </td>
-                  <td className="py-2 pr-4 text-white/35 font-mono text-[10px] whitespace-nowrap">{d.date || d.issue_date || '—'}</td>
+                  <td className="py-2 pr-4 text-gray-500 font-mono text-[10px] whitespace-nowrap">{d.date || d.issue_date || '—'}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <p className="text-[10px] text-white/20 mt-3">
+        <p className="text-[10px] text-gray-400 mt-3">
           Source: Climate Bond Initiative Market Data. CBI certified = independently verified against CBI Climate Bonds Standard.
           CBI verified = meets ICMA Green Bond Principles + third-party review. Data via CBI API with curated fallback.
         </p>
@@ -1047,15 +1047,15 @@ export default function AsiaRegulatoryPage() {
   const [activeTab, setActiveTab] = useState('brsr');
 
   return (
-    <div className="min-h-screen bg-[#080e1c] text-white p-5">
+    <div className="min-h-screen bg-white text-gray-900 p-5">
       {/* Page header */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-1">
-          <h1 className="text-base font-semibold text-white/90">Asia-Pacific Regulatory Frameworks</h1>
+          <h1 className="text-base font-semibold text-gray-900">Asia-Pacific Regulatory Frameworks</h1>
           <Badge text="6 FRAMEWORKS" color="cyan" />
           <Badge text="BRSR · HKMA · BoJ · ASEAN · PBoC · CBI" color="default" />
         </div>
-        <p className="text-[11px] text-white/35">
+        <p className="text-[11px] text-gray-500">
           Integrated coverage of Asia-Pacific sustainability reporting, climate scenario analysis, green taxonomies and live sustainable finance deal data.
         </p>
       </div>
@@ -1068,18 +1068,18 @@ export default function AsiaRegulatoryPage() {
             onClick={() => setActiveTab(t.id)}
             className={`flex flex-col px-4 py-2.5 rounded-lg text-left transition-colors shrink-0 ${
               activeTab === t.id
-                ? 'bg-cyan-500/15 border border-cyan-500/30 text-cyan-400'
-                : 'bg-white/[0.04] border border-white/[0.06] text-white/50 hover:bg-white/[0.07] hover:text-white/70'
+                ? 'bg-black/15 border border-black/[0.20] text-gray-700'
+                : 'bg-gray-50 border border-gray-200 text-gray-500 hover:bg-white/[0.07] hover:text-gray-700'
             }`}
           >
             <div className="flex items-center gap-1.5">
               <span className="text-xs font-medium">{t.label}</span>
               {t.live && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_4px_#34d399] animate-pulse" />}
-              <span className={`text-[8px] font-mono font-bold px-1 py-0.5 rounded ${activeTab === t.id ? 'bg-cyan-400/20 text-cyan-300' : 'bg-white/5 text-white/30'}`}>
+              <span className={`text-[8px] font-mono font-bold px-1 py-0.5 rounded ${activeTab === t.id ? 'bg-black/[0.08] text-gray-800' : 'bg-gray-50 text-gray-500'}`}>
                 {t.badge}
               </span>
             </div>
-            <span className="text-[10px] text-white/30 mt-0.5">{t.sub}</span>
+            <span className="text-[10px] text-gray-500 mt-0.5">{t.sub}</span>
           </button>
         ))}
       </div>

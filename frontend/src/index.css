@@ -1,95 +1,66 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Light mode colors - Finance/Credit Risk theme */
-  --background: 210 20% 98%;
-  --foreground: 222 47% 11%;
-  --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
+  /* ── Professional Finance App palette ───────────────────────── */
+  --background: 220 14% 96%;        /* #F3F4F6 — light cool gray */
+  --foreground: 220 20% 14%;        /* #1E2433 — near-black text */
+  --card: 0 0% 100%;                /* #FFFFFF */
+  --card-foreground: 220 20% 14%;
   --popover: 0 0% 100%;
-  --popover-foreground: 222 47% 11%;
+  --popover-foreground: 220 20% 14%;
 
-  --primary: 214 84% 32%;
-  --primary-foreground: 210 40% 98%;
+  --primary: 215 72% 30%;           /* #164E8A — rich corporate blue */
+  --primary-foreground: 0 0% 100%;
 
-  --secondary: 210 22% 95%;
-  --secondary-foreground: 222 47% 11%;
+  --secondary: 220 14% 93%;         /* #EBEDF0 — soft gray */
+  --secondary-foreground: 220 16% 30%;
 
-  --muted: 210 18% 96%;
-  --muted-foreground: 215 16% 42%;
+  --muted: 220 12% 93%;
+  --muted-foreground: 220 10% 46%;  /* #6B7280 — readable gray */
 
-  --accent: 189 64% 28%;
-  --accent-foreground: 210 40% 98%;
+  --accent: 215 72% 30%;
+  --accent-foreground: 0 0% 100%;
 
-  --destructive: 0 72% 45%;
-  --destructive-foreground: 210 40% 98%;
+  --destructive: 0 65% 48%;         /* #C73E3E */
+  --destructive-foreground: 0 0% 100%;
 
-  --border: 214 20% 88%;
-  --input: 214 20% 88%;
-  --ring: 214 84% 32%;
+  --border: 220 13% 87%;            /* #D5D8DE */
+  --input: 220 13% 89%;
+  --ring: 215 72% 45%;
 
-  --radius: 0.75rem;
+  --radius: 0.5rem;
 
-  --success: 158 64% 28%;
-  --warning: 30 90% 52%;
-  --info: 199 89% 48%;
+  --success: 152 55% 38%;           /* #2B9B5A */
+  --warning: 38 92% 50%;            /* #F5A623 */
+  --info: 215 72% 48%;              /* #2D6FBA */
 
-  /* Scenario colors */
-  --scenario-orderly: 158 64% 28%;
-  --scenario-disorderly: 30 90% 52%;
-  --scenario-hot-house: 0 72% 45%;
+  /* Sidebar */
+  --sidebar: 220 26% 14%;           /* #1A2035 — professional dark navy */
+  --sidebar-foreground: 220 20% 82%;
+  --sidebar-hover: 220 24% 20%;
+  --sidebar-active: 215 50% 28%;
+  --sidebar-muted: 220 15% 45%;
+
+  /* Scenario colors — accessible contrast */
+  --scenario-orderly: 152 55% 38%;   /* green — Net Zero / orderly */
+  --scenario-disorderly: 38 90% 46%; /* amber — disorderly transition */
+  --scenario-hot-house: 0 65% 48%;   /* red — hot-house world */
 
   /* Heat map */
-  --heat-low: 203 92% 95%;
-  --heat-mid: 199 89% 48%;
-  --heat-high: 14 90% 63%;
-}
+  --heat-low: 152 40% 92%;
+  --heat-mid: 215 60% 55%;
+  --heat-high: 0 60% 55%;
 
-.dark {
-  /* Fintech dark theme — deep navy/charcoal with cyan accents */
-  --background:        220 40% 5%;      /* #070d1a */
-  --foreground:        210 30% 92%;     /* near-white text */
-  --card:              220 35% 8%;      /* #0d1424 card surface */
-  --card-foreground:   210 25% 88%;
-  --popover:           220 38% 7%;
-  --popover-foreground:210 25% 88%;
-
-  --primary:           192 95% 48%;     /* cyan-400 #08d4f8 */
-  --primary-foreground:220 47% 8%;
-
-  --secondary:         220 28% 12%;     /* subtle elevated surface */
-  --secondary-foreground:210 20% 80%;
-
-  --muted:             220 28% 11%;
-  --muted-foreground:  215 15% 52%;
-
-  --accent:            192 80% 40%;
-  --accent-foreground: 220 47% 8%;
-
-  --destructive:       0 72% 55%;
-  --destructive-foreground: 210 40% 98%;
-
-  --border:            220 25% 13%;     /* #141e30 */
-  --input:             220 28% 12%;
-  --ring:              192 95% 48%;
-
-  --radius:            0.5rem;
-
-  --success:           158 70% 38%;
-  --warning:           38  92% 52%;
-  --info:              199 89% 52%;
-
-  --scenario-orderly:  158 70% 40%;
-  --scenario-disorderly:38 90% 56%;
-  --scenario-hot-house: 0 80% 60%;
-
-  --heat-low:          220 40% 16%;
-  --heat-mid:          192 89% 40%;
-  --heat-high:         14  90% 65%;
+  /* Chart palette — 5 distinct, accessible colors */
+  --chart-1: 215 72% 40%;           /* blue */
+  --chart-2: 152 55% 38%;           /* green */
+  --chart-3: 38 92% 50%;            /* amber */
+  --chart-4: 340 60% 48%;           /* rose */
+  --chart-5: 262 48% 48%;           /* purple */
 }
 
 @layer base {
@@ -98,14 +69,21 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 600;
+    letter-spacing: -0.01em;
+    color: hsl(220 20% 14%);
   }
+  h1 { font-weight: 700; letter-spacing: -0.025em; }
+  h2 { font-weight: 600; letter-spacing: -0.02em; }
+  h3 { font-weight: 600; }
   .font-mono {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
   }
   .tabular-nums {
     font-feature-settings: 'tnum';
@@ -114,16 +92,16 @@
 }
 
 @layer base {
-  /* Fintech scrollbar — thin, dark */
-  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  /* Refined scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
+  ::-webkit-scrollbar-thumb { background: hsl(220 12% 80%); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(220 12% 66%); }
   .scrollbar-none::-webkit-scrollbar { display: none; }
   .scrollbar-none { scrollbar-width: none; }
 
   /* Selection */
-  ::selection { background: rgba(8,212,248,0.2); }
+  ::selection { background: hsla(215, 72%, 40%, 0.15); }
 }
 
 @layer utilities {
@@ -137,24 +115,71 @@
     @apply text-[hsl(var(--scenario-hot-house))];
   }
 
-  /* Fintech card — dark glassy surface */
+  /* Card — clean elevated white */
   .fin-card {
-    @apply bg-[#0d1424] border border-white/[0.06] rounded-lg;
+    @apply bg-white border border-gray-200 rounded-lg shadow-sm;
   }
-  /* Stat chip — tiny metric badge */
-  .fin-badge-up   { @apply text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold; }
-  .fin-badge-down { @apply text-red-400 bg-red-400/10 px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold; }
-  .fin-badge-flat { @apply text-white/40 bg-white/5 px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold; }
+
+  /* Stat badges — accessible contrast */
+  .fin-badge-up   { @apply text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-mono font-semibold; }
+  .fin-badge-down { @apply text-red-800 bg-red-50 border border-red-200 px-2 py-0.5 rounded text-[11px] font-mono font-semibold; }
+  .fin-badge-flat { @apply text-gray-600 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-[11px] font-mono font-semibold; }
 
   /* Divider */
-  .fin-divider { @apply border-t border-white/[0.05]; }
+  .fin-divider { @apply border-t border-gray-200; }
 
-  /* Glow accent line */
-  .fin-accent-line { @apply h-0.5 w-10 bg-gradient-to-r from-cyan-400 to-transparent rounded-full; }
+  /* Accent line */
+  .fin-accent-line { @apply h-0.5 w-10 bg-gradient-to-r from-[#164E8A] to-transparent rounded-full; }
 
   /* Monospace numbers */
   .mono-num {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-variant-numeric: tabular-nums;
+  }
+
+  /* Framework badge */
+  .framework-badge {
+    @apply text-[11px] font-semibold px-2.5 py-1 rounded-full border;
+  }
+
+  /* Primary button */
+  .btn-navy {
+    @apply bg-[#164E8A] text-white px-4 py-2 rounded-lg text-sm font-medium
+           hover:bg-[#12407A] transition-colors shadow-sm;
+  }
+  .btn-navy-outline {
+    @apply border border-[#164E8A] text-[#164E8A] px-4 py-2 rounded-lg text-sm font-medium
+           hover:bg-[#164E8A]/5 transition-colors;
+  }
+
+  /* KPI card — high contrast */
+  .kpi-card {
+    @apply bg-white rounded-lg border border-gray-200 shadow-sm p-5;
+  }
+  .kpi-value {
+    @apply text-2xl font-bold text-gray-900 font-mono tabular-nums tracking-tight;
+  }
+  .kpi-label {
+    @apply text-xs font-medium text-gray-500 uppercase tracking-wider;
+  }
+
+  /* Tab — underline style */
+  .tab-nav {
+    @apply flex border-b border-gray-200 gap-1;
+  }
+  .tab-item {
+    @apply px-4 py-2.5 text-sm font-medium text-gray-500 border-b-2 border-transparent
+           hover:text-gray-800 hover:border-gray-300 transition-all cursor-pointer;
+  }
+  .tab-item-active {
+    @apply px-4 py-2.5 text-sm font-medium text-[#164E8A] border-b-2 border-[#164E8A] cursor-pointer;
+  }
+
+  /* Section header */
+  .section-title {
+    @apply text-lg font-semibold text-gray-900 tracking-tight;
+  }
+  .section-subtitle {
+    @apply text-sm text-gray-500 mt-0.5;
   }
 }

@@ -36,28 +36,28 @@ function VersionEntry({ version, previous, isLatest, isFirst, onRestore, showDif
       {/* Dot */}
       <div className={`relative z-10 w-7 h-7 rounded-full border flex items-center justify-center shrink-0 ${
         isLatest
-          ? 'bg-cyan-500/20 border-cyan-500/40 shadow-[0_0_8px_rgba(34,211,238,0.2)]'
-          : 'bg-white/5 border-white/15'
+          ? 'bg-gray-100 border-gray-400 shadow-[0_0_8px_rgba(34,211,238,0.2)]'
+          : 'bg-gray-50 border-black/15'
       }`}>
         {isLatest ? (
-          <div className="w-2 h-2 rounded-full bg-cyan-400" />
+          <div className="w-2 h-2 rounded-full bg-gray-800" />
         ) : (
-          <span className="text-[9px] font-bold text-white/30">{version.version}</span>
+          <span className="text-[9px] font-bold text-gray-500">{version.version}</span>
         )}
       </div>
 
       {/* Content */}
       <div className="flex-1 min-w-0 pb-1">
         <div className="flex items-center justify-between gap-2 mb-0.5">
-          <span className="text-[12px] font-semibold text-white/85">{version.label}</span>
+          <span className="text-[12px] font-semibold text-gray-800">{version.label}</span>
           {isLatest && (
-            <span className="text-[9px] font-bold text-cyan-400/80 bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20">
+            <span className="text-[9px] font-bold text-gray-700 bg-gray-100 px-1.5 py-0.5 rounded border border-gray-200">
               CURRENT
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-2 text-[10px] text-white/30 mb-1">
+        <div className="flex items-center gap-2 text-[10px] text-gray-500 mb-1">
           <span>{version.changedBy}</span>
           <span>·</span>
           <span>{formatDate(version.changedAt)}</span>
@@ -75,7 +75,7 @@ function VersionEntry({ version, previous, isLatest, isFirst, onRestore, showDif
         </div>
 
         {version.summary && (
-          <p className="text-[11px] text-white/45 leading-snug mb-1">{version.summary}</p>
+          <p className="text-[11px] text-gray-500 leading-snug mb-1">{version.summary}</p>
         )}
 
         {/* Parameter diffs */}
@@ -83,13 +83,13 @@ function VersionEntry({ version, previous, isLatest, isFirst, onRestore, showDif
           <div className="mt-1.5 space-y-1">
             {diffs.map(d => (
               <div key={d.id} className="flex items-center gap-2 text-[10px] bg-white/3 rounded px-2 py-1">
-                <span className="text-white/50 flex-1">{d.label}</span>
-                <span className="text-white/30 line-through">{d.from?.toFixed(2)}</span>
-                <svg className="h-2.5 w-2.5 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <span className="text-gray-500 flex-1">{d.label}</span>
+                <span className="text-gray-500 line-through">{d.from?.toFixed(2)}</span>
+                <svg className="h-2.5 w-2.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
                 <span className="text-amber-400/80 font-semibold">{d.to?.toFixed(2)}</span>
-                <span className="text-white/25">{d.unit}</span>
+                <span className="text-gray-400">{d.unit}</span>
               </div>
             ))}
           </div>
@@ -99,7 +99,7 @@ function VersionEntry({ version, previous, isLatest, isFirst, onRestore, showDif
         {!isLatest && onRestore && (
           <button
             onClick={() => onRestore(version.id)}
-            className="mt-1.5 text-[10px] text-white/30 hover:text-white/60 flex items-center gap-1 transition-colors"
+            className="mt-1.5 text-[10px] text-gray-500 hover:text-gray-600 flex items-center gap-1 transition-colors"
           >
             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
@@ -119,7 +119,7 @@ export function ScenarioVersionTimeline({ scenario, onRestoreVersion }) {
 
   if (!versions.length) {
     return (
-      <div className="flex flex-col items-center justify-center py-8 text-white/20 text-sm gap-2"
+      <div className="flex flex-col items-center justify-center py-8 text-gray-400 text-sm gap-2"
            data-testid="version-timeline-empty">
         <svg className="h-8 w-8 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -133,8 +133,8 @@ export function ScenarioVersionTimeline({ scenario, onRestoreVersion }) {
   return (
     <div className="flex flex-col gap-0" data-testid="scenario-version-timeline">
       <div className="flex items-center justify-between mb-3">
-        <h4 className="text-[12px] font-semibold text-white/70">Version History</h4>
-        <span className="text-[10px] text-white/30">{versions.length} snapshot{versions.length !== 1 ? 's' : ''}</span>
+        <h4 className="text-[12px] font-semibold text-gray-700">Version History</h4>
+        <span className="text-[10px] text-gray-500">{versions.length} snapshot{versions.length !== 1 ? 's' : ''}</span>
       </div>
 
       <div className="space-y-0">

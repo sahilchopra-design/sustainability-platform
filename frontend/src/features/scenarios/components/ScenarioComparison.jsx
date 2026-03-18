@@ -116,7 +116,7 @@ export function ScenarioComparison() {
                     className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
                       selectedScenarioIds.includes(s.id) 
                         ? 'bg-blue-500/10 border border-blue-500/20' 
-                        : 'bg-white/[0.02] hover:bg-white/[0.06]'
+                        : 'bg-gray-50 hover:bg-gray-50'
                     }`}
                     onClick={() => toggleScenario(s.id)}
                   >
@@ -126,7 +126,7 @@ export function ScenarioComparison() {
                     />
                     <div className="flex-1">
                       <div className="font-medium text-sm">{s.scenario_name}</div>
-                      <div className="text-xs text-white/40">
+                      <div className="text-xs text-gray-500">
                         {formatCurrency(s.adjusted_value)} 
                         <span className={parseFloat(s.value_change_pct) > 0 ? 'text-emerald-400' : 'text-red-400'}>
                           {' '}({parseFloat(s.value_change_pct) > 0 ? '+' : ''}{parseFloat(s.value_change_pct).toFixed(1)}%)
@@ -137,7 +137,7 @@ export function ScenarioComparison() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-white/40 text-sm">
+              <div className="text-center py-8 text-gray-500 text-sm">
                 No scenarios created yet. Build scenarios first.
               </div>
             )}
@@ -177,9 +177,9 @@ export function ScenarioComparison() {
               </div>
 
               <div className="pt-2 border-t">
-                <div className="text-xs text-white/40 mb-2">Key Differentiators</div>
+                <div className="text-xs text-gray-500 mb-2">Key Differentiators</div>
                 {result.key_differentiators?.map((d, idx) => (
-                  <div key={idx} className="text-xs text-white/60 mb-1">• {d}</div>
+                  <div key={idx} className="text-xs text-gray-600 mb-1">• {d}</div>
                 ))}
               </div>
             </CardContent>
@@ -191,7 +191,7 @@ export function ScenarioComparison() {
       {result && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-white/70">Comparison Results</h3>
+            <h3 className="font-semibold text-gray-700">Comparison Results</h3>
             <ExportButton 
               onExport={handleExport}
               label="Export Comparison"
@@ -253,7 +253,7 @@ export function ScenarioComparison() {
                   </thead>
                   <tbody>
                     {result.comparison_table?.map((row, idx) => (
-                      <tr key={idx} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
+                      <tr key={idx} className="border-b border-gray-200 hover:bg-gray-50">
                         <td className="py-2 px-2">
                           <div className="flex items-center gap-2">
                             <div 
@@ -272,7 +272,7 @@ export function ScenarioComparison() {
                               ? 'bg-emerald-100 text-emerald-400' 
                               : parseFloat(row.value_change_pct) < 0
                                 ? 'bg-red-100 text-red-400'
-                                : 'bg-white/[0.06] text-white/70'
+                                : 'bg-gray-50 text-gray-700'
                           }>
                             {parseFloat(row.value_change_pct) > 0 ? (
                               <TrendingUp className="h-3 w-3 mr-1 inline" />
@@ -282,7 +282,7 @@ export function ScenarioComparison() {
                             {parseFloat(row.value_change_pct).toFixed(1)}%
                           </Badge>
                         </td>
-                        <td className="py-2 px-2 text-right text-white/60">
+                        <td className="py-2 px-2 text-right text-gray-600">
                           {(parseFloat(row.cap_rate) * 100).toFixed(2)}%
                         </td>
                       </tr>
@@ -298,8 +298,8 @@ export function ScenarioComparison() {
 
       {!result && !compareMutation.isPending && (
         <Card className="border-dashed">
-          <CardContent className="py-12 text-center text-white/40">
-            <GitCompare className="h-12 w-12 mx-auto mb-4 text-white/20" />
+          <CardContent className="py-12 text-center text-gray-500">
+            <GitCompare className="h-12 w-12 mx-auto mb-4 text-gray-400" />
             <p>Select scenarios to compare them side by side</p>
           </CardContent>
         </Card>
